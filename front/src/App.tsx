@@ -1,0 +1,25 @@
+import React from "react";
+import AppRoutes from "./AppRoutes.tsx";
+import { AppProvider } from "@/context/app";
+import { ThemeProvider } from "@mui/material";
+import theme from "@/styles/theme"
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './globals.css'
+import ModuleFallBack from "@/components/ModuleFallBack";
+
+function App() {
+
+    return (
+        <ThemeProvider theme={theme}>
+            <React.Suspense fallback={<ModuleFallBack />}>
+                <AppProvider>
+                    <AppRoutes />
+                    <ToastContainer theme={"colored"} />
+                </AppProvider>
+            </React.Suspense >
+        </ThemeProvider>
+    )
+}
+
+export default App
