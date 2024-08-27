@@ -106,7 +106,7 @@ const ChatView: React.FC = () => {
   }, [chatHistory]);
 
   return (
-    <MainComponentContainer container display={"flex"} sx={{justifyContent:"center", background:"rgb(195,195,195)"}} alignContent={"center"}>
+    <MainComponentContainer container>
       <Grid item xs={8} md={6} lg={3} >
         <ChatHeader>
           <ChatHeaderTitle variant="h5">

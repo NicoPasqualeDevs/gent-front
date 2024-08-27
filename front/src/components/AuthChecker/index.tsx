@@ -9,7 +9,7 @@ const AuthChecker: React.FC<Props> = ({ children }) => {
   const navigate = useNavigate();
   const { auth } = useAppContext();
   useEffect(() => {
-    if (!(auth.user)) {
+    if (!auth.user) {
       navigate("/auth/admLogin");
     }
   }, [auth]);

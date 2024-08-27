@@ -3,6 +3,18 @@ import { StyledTextField } from "@/utils/StyledInputUtils";
 import { Ktag } from "@/types/Bots";
 import theme from "@/styles/theme";
 
+const getInputNameUtil = (propKey: string) => {
+  switch (propKey) {
+    case "name":
+      return "Palabras claves";
+    case "value":
+      return "Conocimiento relacionado";
+    default:
+      return propKey;
+  }
+};
+
+
 // LONG INPUT
 
 interface LongInputFieldProps {
@@ -23,12 +35,12 @@ const LongInputField: React.FC<LongInputFieldProps> = ({
     size="medium"
     color="secondary"
     id={`${propKey}-short-id`}
-    label={`${propKey.charAt(0).toUpperCase()}${propKey.slice(1)}`}
+    label={`${getInputNameUtil(propKey)}`}
     InputProps={{
       style: {
-        color: theme.palette.secondary.dark,
+        color: theme.palette.primary.main,
         fontSize: "16px",
-        backgroundColor: "white",
+        backgroundColor: "transparent",
       },
     }}
     InputLabelProps={{
@@ -38,9 +50,9 @@ const LongInputField: React.FC<LongInputFieldProps> = ({
       },
     }}
     multiline
-    rows={6}
-    name={propKey}
-    placeholder={`Ingrese ${propKey}...`}
+    rows={12}
+    name={getInputNameUtil(propKey)}
+    placeholder={`Ingrese ${getInputNameUtil(propKey)}...`}
     onChange={onChange}
     value={value || ""}
   />
@@ -87,12 +99,12 @@ const ShortInputField: React.FC<ShortInputFieldProps> = ({
     sx={{ width: "100%" }}
     color="secondary"
     id={`${propKey}-short-id`}
-    label={`${propKey.charAt(0).toUpperCase()}${propKey.slice(1)}`}
+    label={`${getInputNameUtil(propKey)}`}
     InputProps={{
       style: {
-        color: theme.palette.secondary.dark,
+        color: theme.palette.primary.main,
         fontSize: "16px",
-        backgroundColor: "white",
+        backgroundColor: "transparent",
       },
     }}
     InputLabelProps={{
@@ -101,8 +113,8 @@ const ShortInputField: React.FC<ShortInputFieldProps> = ({
         fontSize: "16px",
       },
     }}
-    name={propKey}
-    placeholder={`Ingrese ${propKey}...`}
+    name={getInputNameUtil(propKey)}
+    placeholder={`Ingrese ${getInputNameUtil(propKey)}...`}
     onChange={onChange}
     value={value || ""}
   />

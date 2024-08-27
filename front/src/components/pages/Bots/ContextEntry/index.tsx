@@ -1,207 +1,267 @@
-import { Grid, Box, Stack } from "@mui/material";
-import { LongInput, ShortInput, StaticInput } from "./Inputs";
+import { Button, Grid, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { BotMetaData } from "@/types/Bots";
-import { CenterComponentContainer } from "@/utils/ContainerUtil";
-import { StyledDefaultButton } from "@/components/styledComponents/Buttons";
-import { StyledPageTitle } from "@/components/styledComponents/Typography";
+import { ContextEntryData } from "@/types/Bots";
+import { MainGridContainer } from "@/utils/ContainerUtil";
 import { useNavigate } from "react-router-dom";
 import useBotsApi from "@/hooks/useBots";
-import theme from "@/styles/theme";
 import { useEffect, useState, useCallback } from "react";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import PromptSetCheckBox from "./CheckBox";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { MultilineInput, TextInput } from "@/components/Inputs";
 
-// INITIAL STATE TEMPLATES
-
-let emptyContextMetaData: BotMetaData = {
-  description: "",
-  name: "",
-};
-
-const emptyStaticPromptValue = "";
-
-const ContextEntryComponent: React.FC = () => {
+const ContextEntry: React.FC = () => {
   const { clientId, botId } = useParams();
-  const [staticPrompt, setStaticPrompt] = useState<boolean>(false);
-  const [promptChange, setPromptChange] = useState<boolean>(false);
-  const [staticPromptValue, setStaticPromptValue] = useState<string>(
-    emptyStaticPromptValue
-  );
-  const [loading, setLoading] = useState<boolean>(true);
-  const [botData, setBotData] = useState<BotMetaData>(emptyContextMetaData);
-
-  const { createBot, updateBot, getBotData, changePromptTemplateSetting } =
-    useBotsApi();
   const navigate = useNavigate();
+  const {
+    getBotData,
+    getPromptTemplate,
+    createBot,
+    updateBot,
+    postPromptTemplate,
+  } = useBotsApi();
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [inputError, setInputError] = useState<ContextEntryData>({
+    name: "",
+    description: "",
+    prompt_template: "",
+  });
 
-  const BotData = useCallback((botId: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getBotData(botId)
-        .then((r) => {
-          const loadedMetaData: BotMetaData = {
-            id: clientId,
-            name: r.name,
-            description: r.description,
-          };
-          setStaticPromptValue("");
-          setBotData(loadedMetaData);
-          emptyContextMetaData = loadedMetaData;
-          setLoading(false);
-          resolve();
-        })
-        .catch((err) => reject(err));
-    });
-  }, []);
+  const [initialValues, setInitialValues] = useState<ContextEntryData>({
+    description: "",
+    name: "",
+    prompt_template: "",
+  });
 
-  const handlestaticPrompt = () => {
-    setStaticPrompt(!staticPrompt);
-    if (promptChange === false) {
-      setPromptChange(!promptChange);
+  const validationSchema = Yup.object({
+    description: Yup.string().required("Descripción es un campo requerido"),
+    name: Yup.string().required("Nombre es un campo requerido"),
+    prompt_template: botId
+      ? Yup.string().required("Prompt Template es un campo requerido")
+      : Yup.string().optional(),
+  });
+
+  const onSubmit = (values: ContextEntryData) => {
+    if (botId) {
+      updateBotData(values);
+    } else {
+      createNewBot(values);
     }
   };
 
-  const handleSavePromptState = () => {
-    if (botId) changePromptTemplateSetting(botId, staticPrompt);
-  };
+  const { values, errors, handleSubmit, handleChange, setValues } = useFormik({
+    initialValues,
+    onSubmit,
+    validationSchema,
+  });
 
-  useEffect(() => {
-    if (clientId && botId) {
-      BotData(botId);
-    } else if (clientId) {
-      const newContextMetaData: BotMetaData = {
-        description: "",
-        name: "",
-      };
-      emptyContextMetaData = newContextMetaData;
-      setBotData(emptyContextMetaData);
-      setLoading(false);
-    }
-  }, [clientId, botId]);
-
-  const handleSaveBot = () => {
-    if (clientId) {
-      if (
-        emptyContextMetaData.description.length !== 0 &&
-        emptyContextMetaData.name.length !== 0
-      ) {
-        setLoading(true);
-        createBot(clientId, emptyContextMetaData)
-          .then(() => {
-            SuccessToast("Nuevo bot creado con exito");
-            navigate(`/bots/iaPanel/${clientId}`);
-            setLoading(false);
+  const loadPromptTemplateData = useCallback(
+    (name: string, description: string) => {
+      if (botId) {
+        getPromptTemplate(botId)
+          .then((response) => {
+            setInitialValues({
+              name: name,
+              description: description,
+              prompt_template: response.data,
+            });
+            setValues({
+              name: name,
+              description: description,
+              prompt_template: response.data,
+            });
+            setLoaded(true);
           })
-          .catch(() => {
-            ErrorToast("Ups algo salio mal intentelo de nuevo");
-            navigate(`/bots/iaPanel/${clientId}`);
+          .catch((error) => {
+            ErrorToast(
+              `${error.status} - ${error.error} ${
+                error.data ? ": " + error.data : ""
+              }`
+            );
+            setTimeout(() => {
+              navigate(-1);
+            }, 1000);
           });
       }
-    }
-  };
+    },
+    []
+  );
 
-  const handleUpdateBot = () => {
-    setLoading(true);
-    if (clientId && botId) {
-      emptyContextMetaData.id = clientId;
-      updateBot(botId, emptyContextMetaData)
-        .then(() => {
-          SuccessToast("Bot actualizado con exito");
-          setLoading(false);
-        })
-        .catch(() => {
-          ErrorToast("Ups algo salio mal intentelo de nuevo");
-          navigate(`/bots/iaPanel/${clientId}`);
+  const updatePromptTemplateData = (prompt_template: string) => {
+    if (botId) {
+      postPromptTemplate(botId, { prompt_template })
+        .then(() => SuccessToast("Información actualizada satisfactoriamente"))
+        .catch((error) => {
+          ErrorToast(
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
+            }`
+          );
+          setTimeout(() => {
+            navigate(-1);
+          }, 1000);
         });
     }
   };
 
+  const loadBotData = useCallback(() => {
+    if (botId) {
+      getBotData(botId)
+        .then((response) => {
+          loadPromptTemplateData(response.name, response.description);
+        })
+        .catch((error) => {
+          ErrorToast(
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
+            }`
+          );
+          setTimeout(() => {
+            navigate(-1);
+          }, 1000);
+        });
+    }
+  }, []);
+
+  const createNewBot = (values: ContextEntryData) => {
+    if (clientId) {
+      createBot(clientId, {
+        name: values.name,
+        description: values.description,
+      })
+        .then((response) => {
+          SuccessToast("Bot creado satisfactoriamente");
+          setTimeout(() => {
+            navigate(`/bots/contextEntry/${clientId}/${response.id}`);
+          }, 1000);
+        })
+        .catch((error) => {
+          ErrorToast(
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
+            }`
+          );
+          setTimeout(() => {
+            navigate(-1);
+          }, 1000);
+        });
+    } else {
+      ErrorToast(
+        "Error al cargar clientId en la vista. No se puede crear el bot."
+      );
+      setTimeout(() => {
+        navigate(-1);
+      }, 1000);
+    }
+  };
+
+  const updateBotData = (values: ContextEntryData) => {
+    if (clientId && botId) {
+      updateBot(botId, { name: values.name, description: values.description })
+        .then(() => {
+          updatePromptTemplateData(values.prompt_template);
+        })
+        .catch((error) => {
+          ErrorToast(
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
+            }`
+          );
+          setTimeout(() => {
+            navigate(-1);
+          }, 1000);
+        });
+    } else {
+      ErrorToast(
+        "Error al cargar botId o clientId en la vista. No se pueden actualizar los datos."
+      );
+      setTimeout(() => {
+        navigate(-1);
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    if (clientId) {
+      if (botId) {
+        loadBotData();
+      } else {
+        setLoaded(true);
+      }
+    } else {
+      ErrorToast("Error al cargar clientId en el vista");
+      setTimeout(() => {
+        navigate(-1);
+      }, 1000);
+    }
+  }, []);
+
   return (
-    <CenterComponentContainer
-      container
-      sx={{
-        backgroundColor: theme.palette.info.light,
-      }}
-    >
-      <Grid item xs={10} md={8} xl={6} sx={{ margin: "0 auto" }}>
-        {!loading && botData && (
-          <Box
-            sx={{
-              padding: "32px",
-              marginBottom: "24px",
+    <MainGridContainer container paddingTop={"70px"}>
+      <Grid item xs={10} md={7} lg={5}>
+        {!loaded ? (
+          <PageCircularProgress />
+        ) : (
+          <Grid
+            container
+            component={"form"}
+            onSubmit={(e) => {
+              setInputError({
+                name: errors.name || "",
+                description: errors.description || "",
+                prompt_template: errors.prompt_template || "",
+              });
+              handleSubmit(e);
             }}
+            gap={1}
           >
-            <Stack gap={2} alignContent={"right"}>
-              <StyledPageTitle
-                fontSize={"24px"}
-                color="primary.main"
-                variant="h4"
-                textAlign="left"
-                gap={2}
-              >
-                Datos de contexto
-              </StyledPageTitle>
-              <PromptSetCheckBox
-                main={staticPrompt}
-                handler={handlestaticPrompt}
+            <Grid item xs={12}>
+              <Typography variant="h4" marginBottom={"10px"}>
+                {botId ? "Editar Prompt Template" : "Crear nueva IA"}
+              </Typography>
+            </Grid>
+            <Grid item xs={12}>
+              <TextInput
+                name="name"
+                label="Nombre"
+                value={values.name}
+                helperText={inputError.name}
+                onChange={handleChange}
               />
-              {promptChange && (
-                <StyledDefaultButton
-                  onClick={() => handleSavePromptState()}
-                  sx={{ width: "50px" }}
-                >
-                  Guardar
-                </StyledDefaultButton>
-              )}
-
-              {!promptChange && (
-                <>
-                  <ShortInput
-                    emptyData={emptyContextMetaData}
-                    data={botData}
-                    propKey="name"
-                  />
-                  <LongInput
-                    emptyData={emptyContextMetaData}
-                    data={botData}
-                    propKey="description"
-                  />
-                </>
-              )}
-
-              {promptChange && (
-                <>
-                  <StaticInput
-                    data={staticPromptValue}
-                    botId={botId}
-                  />
-                </>
-              )}
-
-              {!promptChange && (
-                <Box display="flex">
-                  {botId ? (
-                    <StyledDefaultButton
-                      sx={{ width: "150px" }}
-                      onClick={() => handleUpdateBot()}
-                    >
-                      Actualizar
-                    </StyledDefaultButton>
-                  ) : (
-                    <StyledDefaultButton onClick={() => handleSaveBot()}>
-                      Crear Bot
-                    </StyledDefaultButton>
-                  )}
-                </Box>
-              )}
-            </Stack>
-          </Box>
+            </Grid>
+            <Grid item xs={12}>
+              <MultilineInput
+                name="description"
+                label="Descripción"
+                value={values.description}
+                rows={6}
+                helperText={inputError.description}
+                onChange={handleChange}
+              />
+            </Grid>
+            {botId ? (
+              <Grid item xs={12}>
+                <MultilineInput
+                  name="prompt_template"
+                  label="Prompt Template"
+                  value={values.prompt_template}
+                  rows={19}
+                  helperText={inputError.prompt_template}
+                  onChange={handleChange}
+                />
+              </Grid>
+            ) : null}
+            <Grid item xs={12}>
+              <Button variant="contained" type="submit">
+                Guardar
+              </Button>
+            </Grid>
+          </Grid>
         )}
-        {loading && <PageCircularProgress />}
       </Grid>
-    </CenterComponentContainer>
+    </MainGridContainer>
   );
 };
 
-export default ContextEntryComponent;
+export default ContextEntry;

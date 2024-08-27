@@ -1,9 +1,10 @@
 import { Box, Grid, styled } from "@mui/material";
 
 export const MainComponentContainer = styled(Grid)(() => ({
-  height: "100vh",
-  alignItems: "start",
-  justifyContent: "start",
+  alignItems: "center",
+  justifyContent: "center",
+  background: "transparent",
+  margin: "40px auto",
 }));
 
 export const CenterComponentContainer = styled(Grid)(() => ({
@@ -18,16 +19,39 @@ export const ChatViewComponentContainer = styled(Grid)(() => ({
 }));
 
 export const ChatViewContainer = styled(Box)(() => ({
-  display: 'flex',
+  display: "flex",
   justifyContent: "center",
-  alignContent: "center",  
-}))
-
-export const LoginComponentContainer = styled(Box)(() => ({
-  height: "100vh",
-  width: "100%",
-  overflow: 'hidden',
+  alignContent: "center",
 }));
 
+//----------------- Nuevas
 
+export const MainGridContainer = styled(Grid)(({ theme }) => ({
+  justifyContent: "center",
+  height: "100vh",
+  width: "100vw",
+  overflow: "hidden",
+  overflowY: "scroll",
+  scrollBehavior: "smooth",
+  scrollbarGutter: "none",
+  scrollbarWidth: "thin",
+  scrollbarColor: `${theme.palette.primary.main} transparent`,
+}));
 
+export const CardDivider = styled(Box)(() => ({
+  width: "100%",
+  display: "flex",
+  justifyContent: "center",
+}));
+
+export const ActionAllowerContainer = styled(Box)(() => ({
+  backdropFilter: "blur(2px)",
+  width: "100vw",
+  height: "100vh",
+  zIndex: "100",
+  position: "fixed",
+  top: "0px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+}));

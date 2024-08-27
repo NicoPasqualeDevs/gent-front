@@ -10,7 +10,7 @@ const HeaderContainer = styled(Box)<BoxProps>(({ theme }) => ({
     zIndex: 2,
     width: "100%",
     //top: 0,
-    background: theme.palette.secondary.dark,
+    background: "transparent",
     minHeight: "68px",
     color: theme.palette.secondary.dark,
     borderRadius: "0px 0px 16px 0px",

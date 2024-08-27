@@ -1,185 +1,244 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { MainComponentContainer } from "@/utils/ContainerUtil";
-import { Box, Divider, Grid, Paper, Typography } from "@mui/material";
-import useBotsApi from "@/hooks/useBots";
+import { MainGridContainer } from "@/utils/ContainerUtil";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
-  StyledDefaultButton,
-  StyledLinkButton,
-} from "@/components/styledComponents/Buttons";
-import { StyledPageTitle } from "@/components/styledComponents/Typography";
+  Grid,
+  CardContent,
+  Typography,
+  Pagination,
+  Card,
+  CardActions,
+  Stack,
+  Button,
+  Divider,
+} from "@mui/material";
+import useBotsApi from "@/hooks/useBots";
 import { PageCircularProgress } from "@/components/CircularProgress";
-import ButtonOpenURL from "@/components/ButtonOpenURL";
-import theme from "@/styles/theme";
 import { BotData } from "@/types/Bots";
+import ActionAllower from "@/components/ActionAllower";
+import { ErrorToast, SuccessToast } from "@/components/Toast";
+import chuckArray from "@/helpers/chunkArray";
+import useApi from "@/hooks/useApi";
+import concatArrays from "@/helpers/concatArrays";
 
 const IaPanel: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const { clientId } = useParams();
-  const [botsList, setBotsList] = useState<BotData[]>();
-  const { getBotsList, deleteBot } = useBotsApi();
+  const { clientName, clientId } = useParams();
   const navigate = useNavigate();
+  const { apiBase } = useApi();
+  const { getBotsList, deleteBot } = useBotsApi();
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [allowerState, setAllowerState] = useState<boolean>(false);
+  const [botToDelete, setbotToDelete] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [pageContent, setPageContent] = useState<Array<BotData[]>>([]);
 
-  const BotList = useCallback((clientId: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getBotsList(clientId)
-        .then((r) => {
-          setBotsList(r);
-          setLoading(false);
-          resolve();
+  const handlePagination = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    event.preventDefault();
+    setPage(value);
+  };
+
+  const deleteAction = (botId: string) => {
+    if (botId && botId !== "") {
+      deleteBot(botId)
+        .then(() => {
+          let temp = concatArrays(pageContent);
+          temp = temp.filter((item) => item.id !== botId);
+          setPage(1);
+          setPageContent(chuckArray(temp));
+          setAllowerState(false);
+          setbotToDelete("");
+          SuccessToast("chatbot eliminado satisfactoriamente");
         })
-        .catch((err) => reject(err));
-    });
+        .catch((error) => {
+          if (error instanceof Error) {
+            ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          } else {
+            ErrorToast(
+              `${error.status} - ${error.error} ${
+                error.data ? ": " + error.data : ""
+              }`
+            );
+          }
+        });
+    } else {
+      ErrorToast("Error al cargar botId al borrar");
+    }
+  };
+
+  const getBotsData = useCallback((clientId: string) => {
+    getBotsList(clientId)
+      .then((response) => {
+        setPageContent(chuckArray(response));
+        setLoaded(true);
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+        } else {
+          ErrorToast(
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
+            }`
+          );
+        }
+      });
   }, []);
 
   useEffect(() => {
-    if (clientId && loading) {
-      BotList(clientId);
+    if (clientId) {
+      getBotsData(clientId);
+    } else {
+      ErrorToast("Error al cargar clientId en esta vista");
     }
-  }, [clientId, loading]);
-
-  const handleEditBase = (botId: string | undefined) => {
-    if (botId) navigate(`/bots/dataEntry/${botId}`);
-  };
+  }, []);
 
   return (
-    <MainComponentContainer
-      container
-      sx={{ backgroundColor: "white", paddingTop: "120px" }}
-    >
-      <Grid
-        item
-        xs={10}
-        md={8}
-        xl={6}
-        textAlign={"center"}
-        sx={{ margin: "40px auto" }}
-      >
-        {!loading && botsList && (
-          <>
-            <Box textAlign={"left"} marginBottom={"20px"}>
-              <Typography
-                color={"secondary.dark"}
-                component={"p"}
-                fontSize={"30px"}
-                gutterBottom
-                variant="h3"
-              >
-                Listado de chatbots
+    <>
+      <MainGridContainer container>
+        <Grid item xs={10} md={7} lg={5}>
+          {!loaded ? (
+            <PageCircularProgress />
+          ) : (
+            <>
+              <Typography variant="h4" paddingTop={"70px"}>
+                {clientName} Chatbots
               </Typography>
-            </Box>
-            {botsList &&
-              botsList.map((botData, i) => {
-                return (
-                  <Paper
-                    key={`bot-paper-${i}`}
-                    sx={{
-                      position: "relative",
-                      padding: 2,
-                      backgroundColor: theme.palette.info.light,
-                      borderRadius: "10px",
-                      marginBottom: "16px",
-                    }}
-                  >
-                    <Box marginBottom={"10px"}>
-                      <StyledPageTitle>{botData?.name}</StyledPageTitle>
-                    </Box>
-                    <Grid container spacing={2} textAlign={"justify"}>
-                      <Grid item xs={12}>
-                        <Typography variant="h6" component={"p"}>
-                          Descripción General
+              <Pagination
+                count={pageContent.length}
+                page={page}
+                onChange={handlePagination}
+                size="large"
+                color="primary"
+              />
+              {pageContent.length > 0 ? (
+                pageContent[page - 1].map((bot, index) => {
+                  return (
+                    <Card key={`bot-${index}`}>
+                      <CardContent>
+                        <Typography variant="subtitle1" marginBottom={"10px"}>
+                          {bot.name}
                         </Typography>
-                        <Typography>{botData?.description}</Typography>
-                      </Grid>
-                      <Grid item xs={12}>
-                        {botData.iframe_code || botData.widget_url ? (
-                          <Typography variant="h6" component={"p"}>
-                            Extras
+                        <Typography
+                          sx={{
+                            minHeight: "72px",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          {bot.description.length > 150
+                            ? bot.description.substring(0, 150) + "..."
+                            : bot.description}
+                        </Typography>
+                        <Stack direction={"row"} alignItems={"center"}>
+                          <Typography marginRight={"6px"}>
+                            Descargar Widget:
                           </Typography>
-                        ) : null}
-                        {botData.widget_url && (
-                          <Box display={"flex"}>
-                            <Typography marginTop={"5px"}>
-                              Descargue nuestro widget
-                            </Typography>
-                            <ButtonOpenURL
-                              url={botData.widget_url}
-                              text="click aquí"
-                            />
-                          </Box>
-                        )}
-                      </Grid>
-                    </Grid>
-                    <Divider sx={{ marginTop: "40px", marginBottom: "20px" }} />
-                    <Box textAlign={"left"} marginTop={"10px"}>
-                      <Box
-                        display={{ sm: "inline" }}
-                        marginRight={"10px"}
-                        marginBottom={"10px"}
-                      >
-                        <StyledLinkButton
-                          onClick={() =>
-                            navigate(
-                              `/bots/contextEntry/${clientId}/${botData.id}`
-                            )
-                          }
-                        >
-                          Metadatos
-                        </StyledLinkButton>
-                      </Box>
-                      <Box display={"inline"} marginTop={"10px"}>
-                        <StyledLinkButton
-                          onClick={() => handleEditBase(botData.id)}
-                        >
-                          Base de Conocimientos
-                        </StyledLinkButton>
-                        <StyledLinkButton>
-                          Personalizar Web-Chat
-                        </StyledLinkButton>
-                        <StyledLinkButton
-                          sx={{
-                            minHeight: "32px",
-                            fontSize: "17px !important",
-                          }}
-                          onClick={() => navigate(`/bots/chat/${botData.id}`)}
-                        >
-                          Probar
-                        </StyledLinkButton>
-                        <StyledLinkButton
-                          sx={{
-                            minHeight: "32px",
-                            fontSize: "17px !important",
-                          }}
-                          onClick={() =>
-                            confirm(
-                              `¿Esta seguro que desea eliminar el bot llamado ${botData.name}?`
-                            )
-                              ? deleteBot(botData.id)
-                              : ""
-                          }
-                        >
-                          Eliminar
-                        </StyledLinkButton>
-                      </Box>
-                    </Box>
-                  </Paper>
-                );
-              })}
-            <Grid item xs={12}>
-              <Box textAlign={"right"} marginBottom={"20px"}>
-                <StyledDefaultButton
-                  sx={{ width: "135px", height: "55px", marginBottom: "24px" }}
-                  onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
-                >
-                  Crear nueva IA
-                </StyledDefaultButton>
-              </Box>
-            </Grid>
-          </>
-        )}
-        {loading && <PageCircularProgress />}
-      </Grid>
-    </MainComponentContainer>
+                          <Button
+                            size="small"
+                            onClick={() => {
+                              window.open(
+                                apiBase.slice(0, -1) + bot.widget_url,
+                                "_blanck"
+                              );
+                            }}
+                          >
+                            click aquí
+                          </Button>
+                        </Stack>
+                      </CardContent>
+                      <Divider />
+                      <CardActions>
+                        <Grid container>
+                          <Grid item xs={9}>
+                            <Button
+                              size="small"
+                              onClick={() =>
+                                navigate(
+                                  `/bots/contextEntry/${clientId}/${bot.id}`
+                                )
+                              }
+                            >
+                              Detalles
+                            </Button>
+                            <Button
+                              size="small"
+                              onClick={() =>
+                                navigate(`/bots/dataEntry/${bot.id}`)
+                              }
+                            >
+                              Ktags
+                            </Button>
+                            <Button
+                              size="small"
+                              onClick={() =>
+                                navigate(`/bots/widgetCustomizer/${bot.id}`)
+                              }
+                            >
+                              Widget
+                            </Button>
+                            <Button
+                              size="small"
+                              onClick={() =>
+                                navigate(`/bots/customMessages/${bot.id}`)
+                              }
+                            >
+                              Saludos
+                            </Button>
+                            <Button
+                              size="small"
+                              onClick={() => navigate(`/bots/chat/${bot.id}`)}
+                            >
+                              Probar
+                            </Button>
+                          </Grid>
+
+                          <Grid item xs={3} textAlign={"end"}>
+                            <Button
+                              size="small"
+                              color="error"
+                              onClick={() => {
+                                setAllowerState(true);
+                                setbotToDelete(bot.id);
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </CardActions>
+                    </Card>
+                  );
+                })
+              ) : (
+                <Typography variant="subtitle2" marginTop={"10px"}>
+                  No hay chatbots para mostrar
+                </Typography>
+              )}
+              <Button
+                variant="contained"
+                sx={{
+                  marginTop: "20px",
+                  marginBottom: "20px",
+                }}
+                onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
+              >
+                Crear Nueva IA
+              </Button>
+            </>
+          )}
+        </Grid>
+      </MainGridContainer>
+      {allowerState && (
+        <ActionAllower
+          allowerStateCleaner={setAllowerState}
+          actionToDo={deleteAction}
+          actionParams={botToDelete}
+        />
+      )}
+    </>
   );
 };
 

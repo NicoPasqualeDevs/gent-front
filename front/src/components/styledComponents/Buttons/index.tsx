@@ -1,11 +1,9 @@
-
-import { Button, styled } from "@mui/material";
+import { Button, Typography, styled } from "@mui/material";
 
 export const StyledDefaultButton = styled(Button)(({ theme }) => ({
   "&.MuiButton-root": {
-    minWidth: "72px",
+    minWidth: "155px",
     lineHeight: "20px",
-    //maxWidth: "144px",
     cursor: "pointer",
     fontSize: "14px",
     color: theme.palette.info.main,
@@ -13,19 +11,48 @@ export const StyledDefaultButton = styled(Button)(({ theme }) => ({
   },
   ":hover": {
     background: theme.palette.primary.main,
+    color: theme.palette.secondary.main,
   },
 }));
 
-export const StyledLinkButton = styled(Button)(({ theme }) => ({
+export const StyledDangerButton = styled(Button)(({ theme }) => ({
   "&.MuiButton-root": {
     minWidth: "72px",
     lineHeight: "20px",
     cursor: "pointer",
+    fontSize: "14px",
+    color: theme.palette.info.main,
+    background: theme.palette.error.main,
+  },
+  ":hover": {
+    background: theme.palette.error.dark,
+  },
+}));
+
+export const StyledLinkButton = styled(Typography)(({ theme }) => ({
+  "&.MuiTypography-root": {
+    lineHeight: "32px",
+    cursor: "pointer",
     fontSize: "16px",
-    color: theme.palette.secondary.main,
+    color: theme.palette.primary.main,
+    marginRight: "16px",
   },
   ":hover": {
     color: theme.palette.primary.dark,
+  },
+}));
+
+export const StyledDangerLinkButton = styled(Typography)(({ theme }) => ({
+  "&.MuiTypography-root": {
+    textAlign: "right",
+    position: "relative",
+    lineHeight: "32px",
+    cursor: "pointer",
+    fontSize: "16px",
+    color: "white",
+  },
+  ":hover": {
+    color: theme.palette.error.main,
   },
 }));
 
@@ -33,12 +60,12 @@ export const StyledLoginButton = styled(Button)(({ theme }) => ({
   "&.MuiButton-root": {
     background: theme.palette.primary.main,
     borderRadius: "10px",
-    color: theme.palette.info.main,
+    fontWeight: 700,
+    color: theme.palette.secondary.dark,
     cursor: "pointer",
     fontSize: "14px",
     lineHeight: "40px",
-    width: "100%",
-    
+    width: "320px",
   },
   ":hover": {
     background: theme.palette.primary.dark,

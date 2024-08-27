@@ -1,44 +1,18 @@
 import { Box, styled, Stack, Grid, Typography } from "@mui/material";
 import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
-import Logo from "@/components/Logo";
+import BackButton from "../BackButton";
 import theme from "@/styles/theme";
 
-const LeftMenuContainer = styled(Box)(({ theme }) => ({
+const LeftMenuContainer = styled(Box)(() => ({
   "&.MuiBox-root": {
-    background: theme.palette.primary.main,
-    minHeight: "1000px",
-    minWidth: "1000px",
-    left: -720,
-    top: 95,
-    //color: "red",
+    background: "transparent",
     borderRadius: "64px",
     padding: "16px",
+    marginTop: "180px",
     position: "fixed",
-    transform: "rotate(85deg)",
     zIndex: 2,
   },
-}));
-
-const HeaderProfileIcon = styled(Box)(({ theme }) => ({
-  "&.MuiBox-root": {
-    zIndex: 3,
-    position: "absolute",
-    background: "white",
-    height: "108px !important",
-    width: "108px !important",
-    top: -155,
-    left: 105,
-    borderRadius: "56px",
-    border: `solid 3px ${theme.palette.primary.main}`,
-  },
-}));
-
-const StyledImage = styled(Logo)(() => ({
-  height: "108px !important",
-  width: "108px !important",
-  borderRadius: "54px",
-  cursor: "pointer",
 }));
 
 const NavButtons = styled(Typography)(({ theme }) => ({
@@ -49,13 +23,10 @@ const NavButtons = styled(Typography)(({ theme }) => ({
     margin: "7px 0px",
     cursor: "pointer",
     transition: "color 0.2s ease-in-out",
-    //color: "white",
-
     ":hover": {
-      color: theme.palette.secondary.dark,
+      color: theme.palette.primary.main,
     },
   },
-  
 }));
 
 const LeftMenu: React.FC = () => {
@@ -64,20 +35,19 @@ const LeftMenu: React.FC = () => {
 
   return (
     <LeftMenuContainer>
-      <Grid
-        sx={{
-          transform: "rotate(-85deg)",
-          position: "absolute",
-          top: 80,
-          left: 85,
-        }}
-      >
+      <Grid>
         <Stack sx={{ position: "relative !important" }}>
+          {window.location.pathname === "/" ? <></> : <BackButton />}
           <NavButtons
             sx={{
-              color: navElevation === "clients" ? theme.palette.secondary.dark : "white",
-              borderTop: `1px solid ${
-                navElevation === "clients" ? theme.palette.secondary.dark : "transparent"
+              color:
+                navElevation === "clients"
+                  ? theme.palette.primary.main
+                  : "white",
+              borderBottom: `1px solid ${
+                navElevation === "clients"
+                  ? theme.palette.primary.main
+                  : "transparent"
               }`,
             }}
             onClick={() => {
@@ -87,42 +57,26 @@ const LeftMenu: React.FC = () => {
           >
             Clientes
           </NavButtons>
-{/*           <NavButtons
-            sx={{
-              color: navElevation === "teams" ? theme.palette.secondary.dark : "white",
-              borderTop: `1px solid ${
-                navElevation === "teams" ? theme.palette.secondary.dark : "transparent"
-              }`,
-            }}
-            onClick={() => {
-              setNavElevation("teams");
-            }}
-          >
-            Teams
-          </NavButtons> */}
           <NavButtons
             sx={{
-              color: navElevation === "client" ? theme.palette.secondary.dark : "white",
-              borderTop: `1px solid ${
-                navElevation === "client" ? theme.palette.secondary.dark : "transparent"
+              color:
+                navElevation === "Register"
+                  ? theme.palette.primary.main
+                  : "white",
+              borderBottom: `1px solid ${
+                navElevation === "Register"
+                  ? theme.palette.primary.main
+                  : "transparent"
               }`,
             }}
             onClick={() => {
               navigate("/clients/form");
-              setNavElevation("client");
+              setNavElevation("Register");
             }}
           >
             Registrar nuevo cliente
           </NavButtons>
         </Stack>
-        <HeaderProfileIcon
-          onClick={() => {
-            navigate("/");
-            setNavElevation("");
-          }}
-        >
-          <StyledImage />
-        </HeaderProfileIcon>
       </Grid>
     </LeftMenuContainer>
   );

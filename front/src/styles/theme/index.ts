@@ -1,99 +1,177 @@
-import { createTheme, responsiveFontSizes } from "@mui/material";
+import { createTheme } from "@mui/material";
 
 const theme = createTheme({
   typography: {
-    fontSize: 13,
-    button: {
-      textTransform: "none",
-    },
     fontFamily: "Nunito",
-    h6: {                     
-      color: "#15163B", //"#3969AD"
-    }
+    h1: {
+      fontSize: "280%",
+      color: "#8BE067", //primary.main.
+    },
+    h2: {
+      fontSize: "240%",
+      color: "#8BE067", //primary.main.
+    },
+    h3: {
+      fontSize: "220%",
+      color: "#8BE067", //primary.main.
+    },
+    h4: {
+      fontSize: "190%",
+      color: "#8BE067", //primary.main.
+    },
+    h5: {
+      fontSize: "160%",
+      color: "#8BE067", //primary.main.
+    },
+    h6: {
+      fontSize: "130%",
+      color: "#8BE067", //primary.main.
+    },
+    body1: {
+      fontSize: "100%",
+      color: "#FFFFFF",
+      textAlign: "justify",
+    },
+    subtitle1: {
+      fontSize: "130%",
+      color: "#8BE067", //primary.main.
+    },
+    subtitle2: {
+      fontSize: "120%",
+      color: "#FFFFFF",
+    },
   },
   palette: {
-    primary: {  
-      main:   "#8BE067 ", 
-      light:  "#A2E685",   
-      dark:   "#619C48", 
+    primary: {
+      main: "#8BE067",
+      light: "#A2E685",
+      dark: "#619C48",
+      contrastText: "#15163B", //secondary.dark.
     },
     secondary: {
       main: "#303287",
       light: "#546A83",
       dark: "#15163B",
+      contrastText: "#8BE067", //primary.main.
     },
     info: {
       main: "#FFFFFF",
       light: "#F2F4F4",
       dark: "#F2FAFA",
-    }
-    
-    
-
-    //parques colombia
-    /*primary: {
-      main: "#3969AD",
-      light: "#F6A72D",
-      dark: "#F2F4F4",
-    },*/ 
-
-    /* HELPIA
-    
-        primary: {
-      main: "#94FF7A", 
-      light: "#42FF14",
-      dark: "#22AD00",
+      contrastText: "#000000",
     },
-    secondary: {
-      main: "#303287",
-      dark: "#15163B",
-      light: "#5A5CC4",
+    error: {
+      main: "#F44336",
+      light: "#E57373",
+      dark: "#D32F2F",
+      contrastText: "#FFFFFF",
     },
-
-    */
-
-/*          primary: {
-      main: "#34b1eb",
-      light: "#f296eb",
-      dark: "#F2F4F4",
-    },  */
-
-    /*     secondary: {
-      main: "#F6A72D",
-      light: "#F6A72D",
-      dark: "#F6A72D",
+    warning: {
+      main: "#FFC107",
+      light: "#E57373",
+      dark: "#D32F2F",
+      contrastText: "#FFFFFF",
     },
-    info: {
-      main: "#F6A72D",
-      light: "#F6A72D",
-      dark: "#F6A72D",
-      contrastText: "#F6A72D",
-    }, */
+    background: {
+      default: "#0C0C22",
+      paper: "#15163B",
+    },
   },
   breakpoints: {
     values: {
       xs: 0,
       sm: 600,
-      md: 900,
-      lg: 1200,
-      xl: 1536,
+      md: 960,
+      lg: 1280,
+      xl: 1920,
     },
   },
-  components: {},
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          fontSize: "100%",
+          borderRadius: "5px",
+          width: "100%",
+          height: "100%",
+          maxHeight: "50px",
+          textTransform: "none",
+        },
+        sizeSmall: {
+          width: "auto",
+          minWidth: "0px",
+          padding: "0px 5px",
+        },
+        sizeMedium: {
+          maxWidth: "200px",
+        },
+      },
+    },
+    MuiLink: {
+      styleOverrides: {
+        root: {
+          fontSize: "110%",
+          cursor: "pointer",
+        },
+      },
+    },
+    MuiPagination: {
+      styleOverrides: {
+        root: {
+          display: "flex",
+          marginTop: "10px",
+          marginBottom: "10px",
+          ".MuiPaginationItem-root": {
+            color: "white",
+          },
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          border: "1px solid #8BE067", //primary.main.
+          marginTop: "0px",
+          marginBottom: "20px",
+          marginRight: "0px,",
+          marginLeft: "0px",
+        },
+      },
+    },
+    MuiCardActions: {
+      styleOverrides: {
+        root: {
+          padding: "1% 2.5%",
+        },
+      },
+    },
+    MuiCardContent: {
+      styleOverrides: {
+        root: {
+          padding: "2.5%",
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          borderColor: "#8BE067", //primary.color.
+          width: "95%",
+          margin: "0 auto",
+        },
+      },
+    },
+  },
   transitions: {
     duration: {
       shortest: 150,
       shorter: 200,
       short: 250,
-      // most basic recommended timing
       standard: 300,
-      // this is to be used in complex animations
       complex: 375,
-      // recommended when something is entering screen
       enteringScreen: 225,
-      // recommended when something is leaving screen
       leavingScreen: 195,
     },
   },
 });
-export default responsiveFontSizes(theme);
+export default theme;

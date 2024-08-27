@@ -1,8 +1,6 @@
 import React, { useEffect } from "react";
-import Header from "./Header";
 import LeftMenu from "./LeftMenu";
 import { useAppContext } from "@/context/app";
-import { Grid } from "@mui/material";
 import ShortHeader from "./ShortHeader";
 
 interface ComponentProps {
@@ -22,37 +20,16 @@ const AppLayout: React.FC<ComponentProps> = ({ children }) => {
 
   return (
     <>
-      {breakpoint === "xl" && (
-        <Grid>
-          <Header />
+      {breakpoint === "xl" || breakpoint === "lg" ? (
+        <>
           <LeftMenu />
-          <Grid sx={{ marginLeft: "180px" }}>{children}</Grid>
-        </Grid>
-      )}
-      {breakpoint === "lg" && (
-        <Grid>
-          <Header />
-          <LeftMenu />
-          <Grid sx={{ marginLeft: "180px" }}>{children}</Grid>
-        </Grid>
-      )}
-      {breakpoint === "md" && (
-        <Grid>
+          {children}
+        </>
+      ) : (
+        <>
           <ShortHeader />
-          <Grid sx={{ marginLeft: "0px" }}>{children}</Grid>
-        </Grid>
-      )}
-      {breakpoint === "sm" && (
-        <Grid>
-          <ShortHeader />
-          <Grid sx={{  marginLeft: "0px" }}>{children}</Grid>
-        </Grid>
-      )}
-      {breakpoint === "xs" && (
-        <Grid>
-          <ShortHeader />
-          <Grid sx={{  marginLeft: "0px" }}>{children}</Grid>
-        </Grid>
+          {children}
+        </>
       )}
     </>
   );

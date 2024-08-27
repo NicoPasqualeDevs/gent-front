@@ -11,8 +11,6 @@ export interface AuthTempInfo {
   businessName?: string;
 }
 
-// Eddy test auth
-// Me dice que AuthRegister esta duplicado.
 export type SendRegister = {
   email: string;
 };

@@ -1,3 +1,8 @@
+import {
+  NewGreetingData,
+  PromptTemplateData,
+  PromptTemplatePost,
+} from "./../types/Bots";
 import useApi from "@/hooks/useApi.ts";
 import {
   ChatHistory,
@@ -5,6 +10,9 @@ import {
   Ktag,
   BotData,
   BotMetaData,
+  WidgetData,
+  GetCustomGreetingData,
+  CustomGreetingData,
 } from "@/types/Bots";
 
 type MessageUp = {
@@ -16,26 +24,44 @@ type UseBotsApiHook = {
   getKnowledgeTags: (clientId: string) => Promise<Ktag[]>;
   getChatHistory: (botId: string) => Promise<ChatHistory>;
   getBotData: (botId: string) => Promise<BotData>;
+  getNoAuthBotData: (botId: string) => Promise<BotData>;
   getBotsList: (clientId: string) => Promise<BotData[]>;
   getKtags: (botId: string) => Promise<Ktag[]>;
+  getWidget: (botId: string) => Promise<WidgetData>;
+  getCustomMessages: (botId: string) => Promise<GetCustomGreetingData>;
+  getPromptTemplate: (botId: string) => Promise<PromptTemplateData>;
 
   //Post
   createBot: (clientId: string, data: BotMetaData) => Promise<BotData>;
   sendMessage: (botId: string, data: MessageUp) => Promise<UpdatedChatHistory>;
   saveKtag: (botId: string, data: Ktag) => Promise<Ktag>;
-  changePromptTemplateSetting: (botId: string, StaticPromptTemplate: boolean) => Promise<void>;
-  changePromptTemplateValue: (botId: string, PromptTemplate: string) => Promise<void>;
+  postWidget: (botId: string, data: WidgetData) => Promise<WidgetData>;
+  postCustomMessages: (data: NewGreetingData) => Promise<CustomGreetingData>;
+  postPromptTemplate: (
+    botId: string,
+    data: PromptTemplatePost
+  ) => Promise<PromptTemplateData>;
 
   //Puts
   updateBot: (botId: string, data: BotMetaData) => Promise<BotData>;
   editKtag: (tagId: string, data: Ktag) => Promise<void>;
+  putWidget: (botId: string, data: WidgetData) => Promise<WidgetData>;
+  putCustomMessage: (
+    messageId: string,
+    data: CustomGreetingData
+  ) => Promise<CustomGreetingData>;
 
-  //Puts
-  deleteBot: (botId: string) => Promise<void>;
+  //patchs
+  patchWidget: (widgetId: string, data: WidgetData) => Promise<WidgetData>;
+
+  //Deletes
+  deleteBot: (botId: string) => Promise<Response>;
+  deleteKtag: (KtagId: string) => Promise<Response>;
+  deleteCustomMessage: (messageId: string) => Promise<Response>;
 };
 
 const useBotsApi = (): UseBotsApiHook => {
-  const { apiPut, apiPost, apiGet, apiDelete } = useApi();
+  const { apiPut, apiPost, apiGet, noAuthGet, apiDelete, apiPatch } = useApi();
 
   // GETS
   const getBotsList = (clientId: string): Promise<BotData[]> => {
@@ -46,19 +72,34 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/bot/modify/${botId}`;
     return apiGet<BotData>(path);
   };
+  const getNoAuthBotData = (botId: string): Promise<BotData> => {
+    const path = `api/bot/modify/${botId}`;
+    return noAuthGet<BotData>(path);
+  };
   const getChatHistory = (botId: string): Promise<ChatHistory> => {
     const path = `chat/api/${botId}`;
     return apiGet<ChatHistory>(path);
   };
   const getKnowledgeTags = (clientId: string): Promise<Ktag[]> => {
-    const path = `/api/ktag/${clientId}`;
+    const path = `api/ktag/${clientId}`;
     return apiGet<Ktag[]>(path);
   };
   const getKtags = (botId: string): Promise<Ktag[]> => {
     const path = `api/ktag/${botId}`;
     return apiGet<Ktag[]>(path);
   };
-  
+  const getWidget = (botId: string): Promise<WidgetData> => {
+    const path = `api/widget/${botId}`;
+    return apiGet<WidgetData>(path);
+  };
+  const getCustomMessages = (botId: string): Promise<GetCustomGreetingData> => {
+    const path = `api/greetings/list-bot/${botId}`;
+    return apiGet<GetCustomGreetingData>(path);
+  };
+  const getPromptTemplate = (botId: string): Promise<PromptTemplateData> => {
+    const path = `api/bot/prompt/${botId}`;
+    return apiGet<PromptTemplateData>(path);
+  };
 
   // POST
   const createBot = (clientId: string, data: BotMetaData): Promise<BotData> => {
@@ -76,15 +117,24 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/ktag/${botId}`;
     return apiPost(path, data);
   };
-  const changePromptTemplateSetting = (botId: string, StaticPromptTemplate: boolean ): Promise<void> => {
+  const postWidget = (botId: string, data: WidgetData): Promise<WidgetData> => {
+    const path = `api/widget/${botId}`;
+    return apiPost(path, data);
+  };
+  const postCustomMessages = (
+    data: NewGreetingData
+  ): Promise<CustomGreetingData> => {
+    const path = `api/greetings/create`;
+    return apiPost(path, data);
+  };
+  const postPromptTemplate = (
+    botId: string,
+    data: PromptTemplatePost
+  ): Promise<PromptTemplateData> => {
     const path = `api/bot/prompt/${botId}`;
-    return apiPost(path, {value: StaticPromptTemplate});
+    return apiPost(path, data);
   };
-  const changePromptTemplateValue = (botId: string, PromptTemplate: string ): Promise<void> => {
-    const path = `api/bot/set/prompt/${botId}`;
-    return apiPost(path, {value: PromptTemplate});
-  };
-  // api/bot/set/prompt/{bot_id}
+
   // PUT
   const updateBot = (botId: string, data: BotMetaData): Promise<BotData> => {
     const path = `api/bot/modify/${botId}`;
@@ -94,10 +144,38 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/ktag/modify/${tagId}`;
     return apiPut(path, data);
   };
+  const putWidget = (botId: string, data: WidgetData): Promise<WidgetData> => {
+    const path = `api/widget/modify/${botId}`;
+    return apiPut(path, data);
+  };
+  const putCustomMessage = (
+    messageId: string,
+    data: CustomGreetingData
+  ): Promise<CustomGreetingData> => {
+    const path = `api/greetings/${messageId}`;
+    return apiPut(path, data);
+  };
+
+  //Patch
+  const patchWidget = (
+    widgetId: string,
+    data: WidgetData
+  ): Promise<WidgetData> => {
+    const path = `api/widget/modify/${widgetId}`;
+    return apiPatch(path, data);
+  };
 
   // DELETE
-  const deleteBot = (botId: string): Promise<void> => {
+  const deleteBot = (botId: string): Promise<Response> => {
     const path = `api/bot/modify/${botId}`;
+    return apiDelete(path);
+  };
+  const deleteKtag = (KtagId: string): Promise<Response> => {
+    const path = `api/ktag/modify/${KtagId}`;
+    return apiDelete(path);
+  };
+  const deleteCustomMessage = (messageId: string): Promise<Response> => {
+    const path = `api/greetings/${messageId}`;
     return apiDelete(path);
   };
 
@@ -105,23 +183,35 @@ const useBotsApi = (): UseBotsApiHook => {
     // Gets
     getKnowledgeTags,
     getChatHistory,
+    getNoAuthBotData,
     getBotData,
     getBotsList,
     getKtags,
+    getWidget,
+    getCustomMessages,
+    getPromptTemplate,
 
     //Post
     createBot,
     sendMessage,
     saveKtag,
-    changePromptTemplateSetting,
-    changePromptTemplateValue,
+    postWidget,
+    postCustomMessages,
+    postPromptTemplate,
 
     //Put
     updateBot,
     editKtag,
+    putWidget,
+    putCustomMessage,
+
+    //patch
+    patchWidget,
 
     //Delete
     deleteBot,
+    deleteKtag,
+    deleteCustomMessage,
   };
 };
 

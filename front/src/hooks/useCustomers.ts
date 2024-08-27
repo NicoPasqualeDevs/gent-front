@@ -9,19 +9,20 @@ type UseCustomersApiHook = {
     data: ClientDetails,
     clientId: string
   ) => Promise<ClientDetails>;
+  deleteClientDetails: (clientId: string) => Promise<Response>;
 };
 
 const useCustomersApi = (): UseCustomersApiHook => {
-  const { apiPut, apiPost, apiGet } = useApi();
+  const { apiPut, apiPost, apiGet, apiDelete } = useApi();
 
   // GETS
   const getCustomerList = (): Promise<ClientDetails[]> => {
-    const path = "api/client/actions";
+    const path = "api/client/actions/";
     return apiGet<ClientDetails[]>(path);
   };
 
   const getClientDetails = (clientId: string): Promise<ClientDetails> => {
-    const path = `/api/customer/details/${clientId}`;
+    const path = `api/client/actions/${clientId}/`;
     return apiGet<ClientDetails>(path);
   };
 
@@ -40,11 +41,17 @@ const useCustomersApi = (): UseCustomersApiHook => {
     return apiPut(path, data);
   };
 
+  const deleteClientDetails = (clientId: string): Promise<Response> => {
+    const path = `api/client/actions/${clientId}/`;
+    return apiDelete(path);
+  };
+
   return {
     getCustomerList,
     getClientDetails,
     postClientDetails,
     putClientDetails,
+    deleteClientDetails,
   };
 };
 

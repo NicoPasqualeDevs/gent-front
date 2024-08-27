@@ -23,12 +23,22 @@ type UseApiHook = {
     body: B,
     headers?: HeadersInit
   ) => Promise<R>;
+  apiPatch: <B = unknown, R = unknown>(
+    path: string,
+    body: B,
+    headers?: HeadersInit
+  ) => Promise<R>;
   apiGet: <R = unknown, Q = Record<string, string>>(
     path: string,
     query?: Q,
     headers?: HeadersInit
   ) => Promise<R>;
-  apiDelete: <R = unknown>(path: string) => Promise<R>;
+  noAuthGet: <R = unknown, Q = Record<string, string>>(
+    path: string,
+    query?: Q,
+    headers?: HeadersInit
+  ) => Promise<R>;
+  apiDelete: (path: string) => Promise<Response>;
 };
 
 const useApi = (): UseApiHook => {
@@ -36,7 +46,7 @@ const useApi = (): UseApiHook => {
     auth: { user },
   } = useAppContext();
   const token = user?.token; // || sessionStorage.getItem("user_token");
-  const apiBase = "https://helpiabot.com/"; //`${process.env.VITE_APP_REST_API_DOMAIN}`;
+  const apiBase = "https://helpiamakerdevelop.com/"; //"https://nicoiatest.com/""https://helpiabot.com/"
 
   const buildUri = <Q = Record<string, string>>(
     path: string,
@@ -60,7 +70,7 @@ const useApi = (): UseApiHook => {
   };
 
   const noBodyApiPost = React.useCallback(
-    <R>(path: string, ): Promise<R> => {
+    <R>(path: string): Promise<R> => {
       return new Promise((resolve, reject) => {
         fetch(buildUri(path), {
           method: "POST",
@@ -85,7 +95,6 @@ const useApi = (): UseApiHook => {
       /* token */
     ]
   );
-
 
   const apiPost = React.useCallback(
     <B, R>(path: string, body: B /* , headers?: HeadersInit */): Promise<R> => {
@@ -103,9 +112,11 @@ const useApi = (): UseApiHook => {
             if (resp.status === 200 || resp.status === 201) {
               return resolve(await resp.json());
             }
-            return reject(
-              new Error(`Status: [${resp.status}] ${await resp.json()}`)
-            );
+            return reject({
+              status: resp.status,
+              error: resp.statusText,
+              data: await resp.json(),
+            });
           })
           .catch((err) => reject(err));
       });
@@ -116,7 +127,7 @@ const useApi = (): UseApiHook => {
   );
 
   const apiPut = React.useCallback(
-    <B, R>(path: string, body: B, /* headers?: HeadersInit */): Promise<R> => {
+    <B, R>(path: string, body: B /* headers?: HeadersInit */): Promise<R> => {
       return new Promise((resolve, reject) => {
         fetch(buildUri(path), {
           method: "PUT",
@@ -146,6 +157,73 @@ const useApi = (): UseApiHook => {
     ]
   );
 
+  const apiPatch = React.useCallback(
+    <B, R>(path: string, body: B /* headers?: HeadersInit */): Promise<R> => {
+      return new Promise((resolve, reject) => {
+        fetch(buildUri(path), {
+          method: "PATCH",
+          body: JSON.stringify(body),
+          headers: {
+            //...(token && {Authorization: `Bearer ${token}`}),
+            Authorization: `Token ${token}`,
+            "Content-Type": "application/json",
+            //...(headers && { ...headers }),
+          },
+        })
+          .then(async (resp) => {
+            if (resp.status === 200 || resp.status === 201) {
+              return resolve(await resp.json());
+            }
+            return reject({
+              status: resp.status,
+              error: resp.statusText,
+              data: await resp.json(),
+            });
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    },
+    [
+      /* token */
+    ]
+  );
+
+  const noAuthGet = React.useCallback(
+    <R, Q = Record<string, string>>(
+      path: string,
+      query?: Q
+      //headers?: HeadersInit
+    ): Promise<R> => {
+      return new Promise((resolve, reject) => {
+        fetch(buildUri(path, query), {
+          method: "GET",
+          headers: {
+            /*...(token && { Authorization: `Bearer ${token}` }),*/
+            "Content-Type": "application/json",
+            /*   "Accept" : "/", */
+            /*   "Access-Control-Allow-Origin": "*" */
+            /*...(headers && { ...headers }), */
+          },
+        })
+          .then(async (resp) => {
+            if (resp.status === 200 || resp.status === 201) {
+              return resolve(await resp.json());
+            }
+            return reject({
+              status: resp.status,
+              error: resp.statusText,
+              data: await resp.json(),
+            });
+          })
+          .catch((err) => reject(err));
+      });
+    },
+    [
+      /* token */
+    ]
+  );
   const apiGet = React.useCallback(
     <R, Q = Record<string, string>>(
       path: string,
@@ -168,9 +246,11 @@ const useApi = (): UseApiHook => {
             if (resp.status === 200 || resp.status === 201) {
               return resolve(await resp.json());
             }
-            return reject(
-              new Error(`Status: [${resp.status}] ${await resp.json()}`)
-            );
+            return reject({
+              status: resp.status,
+              error: resp.statusText,
+              data: await resp.json(),
+            });
           })
           .catch((err) => reject(err));
       });
@@ -181,7 +261,7 @@ const useApi = (): UseApiHook => {
   );
 
   const apiDelete = React.useCallback(
-    <R>(path: string, /* headers?: HeadersInit */): Promise<R> => {
+    (path: string /* headers?: HeadersInit */): Promise<Response> => {
       return new Promise((resolve, reject) => {
         fetch(buildUri(path), {
           method: "DELETE",
@@ -191,12 +271,14 @@ const useApi = (): UseApiHook => {
           },
         })
           .then(async (resp) => {
-            if (resp.status === 200 || resp.status === 201) {
-              return resolve(await resp.json());
+            if (resp.ok) {
+              return resolve(await resp);
             }
-            return reject(
-              new Error(`Status: [${resp.status}] ${await resp.json()}`)
-            );
+            return reject({
+              status: resp.status,
+              error: resp.statusText,
+              data: await resp.json(),
+            });
           })
           .catch((err) => reject(err));
       });
@@ -213,7 +295,9 @@ const useApi = (): UseApiHook => {
     apiPost,
     noBodyApiPost,
     apiPut,
+    apiPatch,
     apiGet,
+    noAuthGet,
     apiDelete,
   };
 };

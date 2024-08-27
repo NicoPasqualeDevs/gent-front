@@ -20,6 +20,19 @@ export interface UpdatedChatHistory {
 }
 
 // BOT KDATA
+export interface ContextEntryData {
+  name: string;
+  description: string;
+  prompt_template: string;
+}
+
+export interface PromptTemplateData {
+  data: string;
+}
+
+export interface PromptTemplatePost {
+  prompt_template: string;
+}
 
 export interface Ktag {
   [propKey: string]: string | undefined;
@@ -46,5 +59,47 @@ export interface BotMetaData {
   [propKey: string]: string | undefined;
   id?: string;
   name: string;
-  description: string
+  description: string;
+}
+
+export interface WidgetData {
+  [propKey: string]: string | boolean | undefined;
+  id: string;
+  customer_bot?: string;
+  primary_color?: string;
+  primary_textContrast?: string;
+  secondary_color?: string;
+  secondary_textContrast?: string;
+  badge_color?: string;
+  badge_contrast?: string;
+  font_family?: string;
+  faq_questions?: string;
+  brand_alt?: string;
+  brand_logo?: string;
+  icon_chat?: string;
+  icon_bot?: string;
+  icon_send?: string;
+  icon_hidden?: string;
+  band_list?: string;
+  sql_injection_tester?: boolean;
+  php_injection_tester?: boolean;
+  strange_chars_tester?: boolean;
+}
+
+export interface CustomGreetingData {
+  [propKey: string]: string | undefined;
+  id: string;
+  bot: string;
+  text: string;
+}
+
+export interface NewGreetingData {
+  [propKey: string]: string;
+  bot: string;
+  text: string;
+}
+
+export interface GetCustomGreetingData {
+  success: boolean;
+  data: CustomGreetingData[];
 }

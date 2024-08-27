@@ -1,6 +1,5 @@
 import { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
-import AuthChecker from "./components/AuthChecker";
 
 const HomeModule = lazy(() => import("./modules/home"));
 const AuthModule = lazy(() => import("./modules/auth"));
@@ -11,15 +10,13 @@ const ChatViewModule = lazy(() => import("./modules/chatView"));
 
 function App() {
   return (
-    <AuthChecker>
-      <Routes>
+    <Routes>
         <Route path={"/*"} index element={<HomeModule />} />
         <Route path={"/bots/*"} index element={<BotsDetailsModule />} />
         <Route path={"/clients/*"} index element={<ClientsModule />} />
         <Route path={"/auth/*"} element={<AuthModule />} />
-        <Route path={"/bots/chat/:botId"} element={<ChatViewModule />} />
-      </Routes>
-    </AuthChecker>
+      <Route path={"/bots/chat/:botId"} element={<ChatViewModule />} />
+    </Routes>
   );
 }
 

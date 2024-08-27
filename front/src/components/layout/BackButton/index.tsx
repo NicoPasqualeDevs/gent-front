@@ -4,16 +4,20 @@ import { useNavigate } from "react-router-dom";
 
 const StyledBackButton = styled(ArrowBackIcon)(({ theme }) => ({
   "&.MuiSvgIcon-root": {
+    position: "absolute",
+    top: -124,
     color: "white",
     height: "32px",
     width: "32px !important",
     borderRadius: "16px",
-    cursor:"pointer",
-    transition: `${theme.transitions.duration.shortest}ms`
-  },":hover":{
+    cursor: "pointer",
+    transition: `${theme.transitions.duration.standard}ms`,
+  },
+  ":hover": {
     color: theme.palette.primary.light,
   },
 }));
+
 
 const BackButton: React.FC = () => {
   const navigate = useNavigate();

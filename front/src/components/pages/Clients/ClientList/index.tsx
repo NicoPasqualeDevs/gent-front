@@ -1,128 +1,188 @@
 import { useEffect, useCallback, useState } from "react";
 import { useAppContext } from "@/context/app";
-import { MainComponentContainer } from "@/utils/ContainerUtil";
+import { MainGridContainer } from "@/utils/ContainerUtil";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { useNavigate } from "react-router-dom";
-import { StyledLinkButton } from "@/components/styledComponents/Buttons";
 import {
-  Grid,
+  Button,
   Card,
   CardActions,
   CardContent,
-  Typography,
   Divider,
-  Box,
+  Grid,
+  Pagination,
+  Typography,
 } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
-import theme from "@/styles/theme";
 import useCustomersApi from "@/hooks/useCustomers";
+import { ErrorToast, SuccessToast } from "@/components/Toast";
+import ActionAllower from "@/components/ActionAllower";
+import { ClientDetails } from "@/types/Clients";
+import chuckArray from "@/helpers/chunkArray";
+import concatArrays from "@/helpers/concatArrays";
 
 const ClientList: React.FC = () => {
-  const { setCustomersList, clientsList, loaded } = useAppContext();
-  const [loading, setLoading] = useState<boolean>(true);
-  const { getCustomerList } = useCustomersApi();
+  const navigate = useNavigate();
+  const { setNavElevation } = useAppContext();
+  const { getCustomerList, deleteClientDetails } = useCustomersApi();
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [allowerState, setAllowerState] = useState<boolean>(false);
+  const [clientToDelete, setClientToDelete] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [pageContent, setPageContent] = useState<Array<ClientDetails[]>>([]);
 
-  const ClientList = useCallback((): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      getCustomerList()
-        .then((r) => {
-          setCustomersList(r);
-          setLoading(false);
-          resolve();
-        })
-        .catch((err) => reject(err));
-    });
+  const handlePagination = (
+    event: React.ChangeEvent<unknown>,
+    value: number
+  ) => {
+    event.preventDefault();
+    setPage(value);
+  };
+
+  const deleteAction = (clientId: string) => {
+    deleteClientDetails(clientId)
+      .then(() => {
+        let temp = concatArrays(pageContent);
+        temp = temp.filter((item) => item.id !== clientId);
+        setPage(1);
+        setPageContent(chuckArray(temp));
+        setAllowerState(false);
+        setClientToDelete("");
+        SuccessToast("Cliente eliminado satisfactoriamente");
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+        } else {
+          ErrorToast(
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
+            }`
+          );
+        }
+      });
+  };
+
+  const getClientsData = useCallback(() => {
+    getCustomerList()
+      .then((response) => {
+        setPageContent(chuckArray(response));
+        setLoaded(true);
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+        } else {
+          ErrorToast(
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
+            }`
+          );
+        }
+      });
   }, []);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
-    if (!loaded) {
-      ClientList();
-    }
-  }, [loading]);
+    setNavElevation("clients");
+    getClientsData();
+  }, []);
 
   return (
-    <MainComponentContainer
-      container
-      sx={{ backgroundColor: "white", paddingTop: "120px" }}
-    >
-      <Grid
-        item
-        xs={10}
-        md={8}
-        xl={6}
-        textAlign={"center"}
-        sx={{ margin: "40px auto" }}
-      >
-        {!loading && clientsList && (
-          <>
-            <Box textAlign={"left"} marginBottom={"20px"}>
-              <Typography
-                color={"secondary.dark"}
-                component={"p"}
-                fontSize={"30px"}
-                gutterBottom
-                variant="h3"
-              >
+    <>
+      <MainGridContainer container>
+        <Grid item xs={10} md={7} lg={5}>
+          {!loaded ? (
+            <PageCircularProgress />
+          ) : (
+            <>
+              <Typography variant="h2" paddingTop={"70px"}>
                 Clientes
               </Typography>
-            </Box>
-            {clientsList?.map((client, i) => (
-              <Card
-                key={`botList-card-${i}`}
-                sx={{
-                  minHeight: "200px",
-                  minWidth: "280px",
-                  marginBottom: "24px",
-                  backgroundColor: theme.palette.info.light,
-                  borderRadius: "10px",
-                }}
-              >
-                <CardContent sx={{ minHeight: "100px" }}>
-                  <Typography
-                    textAlign={"left"}
-                    gutterBottom
-                    variant="h4"
-                    component="div"
-                    fontSize={"28px !important"}
-                    color={theme.palette.secondary.dark}
-                  >
-                    {client.name}
-                  </Typography>
-                  <Typography
-                    fontSize={14}
-                    padding={"10px 0px"}
-                    textAlign={"left"}
-                  >
-                    {client.description.length > 150
-                      ? client.description.substring(0, 150) + "..."
-                      : client.description}
-                  </Typography>
-                  <Box marginTop={"20px"}>
-                    <Divider />
-                  </Box>
-                </CardContent>
-                <CardActions sx={{ float: "left", marginBottom: "10px" }}>
-                  <StyledLinkButton
-                    sx={{ minHeight: "32px", fontSize: "17px !important" }}
-                    onClick={() => navigate(`/bots/IaPanel/${client.id}`)}
-                  >
-                    Bots
-                  </StyledLinkButton>
-                  <StyledLinkButton
-                    sx={{ minHeight: "32px", fontSize: "17px !important" }}
-                    onClick={() => navigate(`/clients/form/${client.id}`)}
-                  >
-                    Editar
-                  </StyledLinkButton>
-                </CardActions>
-              </Card>
-            ))}
-          </>
-        )}
-        {loading && <PageCircularProgress />}
-      </Grid>
-    </MainComponentContainer>
+              <Pagination
+                count={pageContent.length}
+                page={page}
+                onChange={handlePagination}
+                size="large"
+                color="primary"
+              />
+              {pageContent.length > 0 ? (
+                pageContent[page - 1].map((client, index) => {
+                  return (
+                    <Card key={`client-${index}`}>
+                      <CardContent>
+                        <Typography variant="subtitle1" marginBottom={"10px"}>
+                          {client.name}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            minHeight: "72px",
+                          }}
+                        >
+                          {client.description.length > 150
+                            ? client.description.substring(0, 150) + "..."
+                            : client.description}
+                        </Typography>
+                      </CardContent>
+                      <Divider />
+                      <CardActions>
+                        <Grid container>
+                          <Grid item xs={11}>
+                            <Button
+                              size="small"
+                              sx={{
+                                marginRight: "5%",
+                              }}
+                              onClick={() =>
+                                navigate(
+                                  `/bots/IaPanel/${client.name}/${client.id}`
+                                )
+                              }
+                            >
+                              Bots
+                            </Button>
+                            <Button
+                              size="small"
+                              onClick={() =>
+                                navigate(`/clients/form/${client.id}`)
+                              }
+                            >
+                              Editar
+                            </Button>
+                          </Grid>
+                          <Grid item xs={1} textAlign={"end"}>
+                            <Button
+                              size="small"
+                              color="error"
+                              onClick={() => {
+                                setAllowerState(true);
+                                setClientToDelete(client.id);
+                              }}
+                            >
+                              <DeleteIcon fontSize="small" />
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      </CardActions>
+                    </Card>
+                  );
+                })
+              ) : (
+                <Typography variant="subtitle2" marginTop={"10px"}>
+                  No hay clientes registrados
+                </Typography>
+              )}
+            </>
+          )}
+        </Grid>
+      </MainGridContainer>
+      {allowerState && (
+        <ActionAllower
+          allowerStateCleaner={setAllowerState}
+          actionToDo={deleteAction}
+          actionParams={clientToDelete}
+        />
+      )}
+    </>
   );
 };
 
