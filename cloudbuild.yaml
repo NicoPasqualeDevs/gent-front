@@ -1,0 +1,55 @@
+steps:
+  # Step 1: Build your container image using Dockerfile
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '$_GCR_HOSTNAME/$_PROJECT_ID/$_REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '-f'
+      - './front/Dockerfile'
+      - './front'
+
+  # Step 2: Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - '$_GCR_HOSTNAME/$_PROJECT_ID/$_REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+
+  # Step 3: Deploy to Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - '$_SERVICE_NAME'  # Replace with your Cloud Run service name
+      - '--image=$_GCR_HOSTNAME/$_PROJECT_ID/$_REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - '--region=$_DEPLOY_REGION'  # Replace with your region 
+      - '--platform=managed'
+      - '--allow-unauthenticated'  
+
+ # Step 4 to update traffic to the latest stable image
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    args:
+      - run
+      - services
+      - update-traffic
+      - '$_SERVICE_NAME'  # Replace with your Cloud Run service name
+      - '--to-latest'
+      - '--region=$_DEPLOY_REGION'  # Replace with your deployment region
+      - '--quiet'
+    id: Route-Traffic  # Identifier for this step
+    entrypoint: gcloud  # Use the gcloud CLI as the entrypoint
+
+images:
+  # Specify the image to deploy
+  - '$_GCR_HOSTNAME/$_PROJECT_ID/$_REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+
+options:
+  substitutionOption: ALLOW_LOOSE  # Allow undefined substitutions to be empty
+  logging: CLOUD_LOGGING_ONLY  # Log only to Cloud Logging
+
+substitutions:
+  _GCR_HOSTNAME: us-central1-docker.pkg.dev   # Replace with your Google Container Registry hostname
+  _PROJECT_ID: helpiamakerprod                # Replace with your Google project ID
+  _REPO_NAME: helpiamakerprod-registry        # Replace with your Google GCR
+  _SERVICE_NAME: helpiamakerprod-front-prod   # Replace with your Cloud Run service name  
+  _DEPLOY_REGION: us-central1                 # Replace with your deployment region
