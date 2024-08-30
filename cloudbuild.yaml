@@ -51,5 +51,5 @@ substitutions:
   _GCR_HOSTNAME: us-central1-docker.pkg.dev   # Replace with your Google Container Registry hostname
   _PROJECT_ID: helpiamakerprod                # Replace with your Google project ID
   _REPO_NAME: helpiamakerprod-registry        # Replace with your Google GCR
-  _SERVICE_NAME: helpiamakerprod-front-prod   # Replace with your Cloud Run service name  
   _DEPLOY_REGION: us-central1                 # Replace with your deployment region
+  _SERVICE_NAME: ''                           # This will be set by the trigger 
