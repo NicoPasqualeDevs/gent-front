@@ -102,6 +102,21 @@ const ShortHeader: React.FC = () => {
             Registrar nuevo cliente
           </NavButton>
         </AccordionDetails>
+        <AccordionDetails>
+          <NavButton
+            sx={{
+              color: `${
+                navElevation === "Tools" ? theme.palette.primary.main : "white"
+              }`,
+            }}
+            onClick={() => {
+              navigate("/bots/tools");
+              setNavElevation("Tools");
+            }}
+          >
+            Tools
+          </NavButton>
+        </AccordionDetails>
       </Accordion>
     </Box>
   );

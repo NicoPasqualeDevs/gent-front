@@ -76,6 +76,23 @@ const LeftMenu: React.FC = () => {
           >
             Registrar nuevo cliente
           </NavButtons>
+          <NavButtons
+            sx={{
+              color:
+                navElevation === "Tools" ? theme.palette.primary.main : "white",
+              borderBottom: `1px solid ${
+                navElevation === "Tools"
+                  ? theme.palette.primary.main
+                  : "transparent"
+              }`,
+            }}
+            onClick={() => {
+              navigate("/bots/tools");
+              setNavElevation("Tools");
+            }}
+          >
+            Tools
+          </NavButtons>
         </Stack>
       </Grid>
     </LeftMenuContainer>
