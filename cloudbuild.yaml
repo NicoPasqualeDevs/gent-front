@@ -46,10 +46,3 @@ images:
 options:
   substitutionOption: ALLOW_LOOSE  # Allow undefined substitutions to be empty
   logging: CLOUD_LOGGING_ONLY  # Log only to Cloud Logging
-
-substitutions:
-  _GCR_HOSTNAME: us-central1-docker.pkg.dev   # Replace with your Google Container Registry hostname
-  _PROJECT_ID: helpiamakerprod                # Replace with your Google project ID
-  _REPO_NAME: helpiamakerprod-registry        # Replace with your Google GCR
-  _DEPLOY_REGION: us-central1                 # Replace with your deployment region
-  _SERVICE_NAME: ''                           # This will be set by the trigger 
