@@ -174,6 +174,14 @@ const IaPanel: React.FC = () => {
                             <Button
                               size="small"
                               onClick={() =>
+                                navigate(`/bots/tools/${bot.name}/${bot.id}`)
+                              }
+                            >
+                              Tools
+                            </Button>
+                            <Button
+                              size="small"
+                              onClick={() =>
                                 navigate(`/bots/widgetCustomizer/${bot.id}`)
                               }
                             >

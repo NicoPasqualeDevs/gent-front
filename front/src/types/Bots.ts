@@ -103,3 +103,16 @@ export interface GetCustomGreetingData {
   success: boolean;
   data: CustomGreetingData[];
 }
+
+export interface ToolData {
+  [propKey: string]: string | File | undefined;
+  id?: string;
+  tool_name: string;
+  type?: string;
+  tool_code?: string | File;
+  instruction?: string;
+}
+
+export interface ToolRelationshipData {
+  agent_tool_ids: number[];
+}
