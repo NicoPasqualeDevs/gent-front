@@ -3,8 +3,7 @@ import { FileInput, MultilineInput, TextInput } from "@/components/Inputs";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import { ToolData } from "@/types/Bots";
-import { MainGridContainer } from "@/utils/ContainerUtil";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -66,7 +65,7 @@ const ToolsForm: React.FC = () => {
     const formData = new FormData();
     formData.append("tool_name", values.tool_name);
     formData.append("instruction", values.instruction ?? "");
-    formData.append("tool_code", values.tool_code ?? ""); 
+    formData.append("tool_code", values.tool_code ?? "");
 
     postTool(formData)
       .then(() => {
@@ -89,11 +88,11 @@ const ToolsForm: React.FC = () => {
   const getToolData = useCallback((toolId: string) => {
     getTool(toolId)
       .then((response) => {
-        const { tool_name, tool_code, instruction } = response
+        const { tool_name, tool_code, instruction } = response;
         const data = {
           tool_name: tool_name || "",
           instruction: instruction || "",
-          tool_code: tool_code || ""
+          tool_code: tool_code || "",
         };
         if (response.tool_code && typeof response.tool_code === "string") {
           const xhr = new XMLHttpRequest();
@@ -106,7 +105,9 @@ const ToolsForm: React.FC = () => {
                 type: "application/octet-stream",
               });
               const fullFileName = tool_code.split("/").pop() || "";
-              const file = new File([fileBlob], fullFileName, { type: fileBlob.type })
+              const file = new File([fileBlob], fullFileName, {
+                type: fileBlob.type,
+              });
               data.tool_code = file;
               setValues(data);
               setInitialValues(data);
@@ -116,8 +117,8 @@ const ToolsForm: React.FC = () => {
           xhr.onerror = () => {
             console.error("Error: no se pudo obtener el archivo.");
             setLoaded(true);
-          };  
-            xhr.send();
+          };
+          xhr.send();
         } else {
           setValues(data);
           setInitialValues(data);
@@ -170,64 +171,58 @@ const ToolsForm: React.FC = () => {
   }, [toolId]);
 
   return (
-    <MainGridContainer container>
-      <Grid item xs={10} md={7} lg={4} component={"form"} onSubmit={formSubmit}>
-        {!loaded ? (
-          <PageCircularProgress />
-        ) : (
-          <>
-            <Typography variant="h4" paddingTop={"70px"}>
-              {toolName ? `Editar ${toolName}` : "Crear Nueva Tool"}
-            </Typography>
-            <Box marginTop={"20px"}>
-              <TextInput
-                name="tool_name"
-                label="Nombre de Tool"
-                value={values.tool_name}
-                helperText={inputError.tool_name}
-                onChange={handleChange}
-              />
-            </Box>
-            <Box marginTop={"20px"}>
-              <TextInput
-                name="type"
-                label="Tipo de Tool"
-                value={values.type}
-                helperText={inputError.type}
-                onChange={handleChange}
-                disabled={true}
-              />
-            </Box>
-            <Box marginTop={"20px"}>
-              <MultilineInput
-                name="instruction"
-                label="Instrucciones"
-                rows={9}
-                value={values.instruction}
-                helperText={inputError.instruction}
-                onChange={handleChange}
-              />
-            </Box>
-            <Box marginTop={"20px"}>
-              <FileInput
-                name="tool_code"
-                label="Archivo de Tool"
-                onChange={handleChange}
-                value={values.tool_code}
-                helperText={inputError.tool_code}
-              />
-            </Box>
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{ marginTop: "20px" }}
-            >
-              {toolId ? "Actualizar" : "Crear"}
-            </Button>
-          </>
-        )}
-      </Grid>
-    </MainGridContainer>
+    <>
+      {!loaded ? (
+        <PageCircularProgress />
+      ) : (
+        <Box component={"form"} onSubmit={formSubmit}>
+          <Typography variant="h4">
+            {toolName ? `Editar ${toolName}` : "Crear Nueva Tool"}
+          </Typography>
+          <Box marginTop={"20px"}>
+            <TextInput
+              name="tool_name"
+              label="Nombre de Tool"
+              value={values.tool_name}
+              helperText={inputError.tool_name}
+              onChange={handleChange}
+            />
+          </Box>
+          <Box marginTop={"20px"}>
+            <TextInput
+              name="type"
+              label="Tipo de Tool"
+              value={values.type}
+              helperText={inputError.type}
+              onChange={handleChange}
+              disabled={true}
+            />
+          </Box>
+          <Box marginTop={"20px"}>
+            <MultilineInput
+              name="instruction"
+              label="Instrucciones"
+              rows={9}
+              value={values.instruction}
+              helperText={inputError.instruction}
+              onChange={handleChange}
+            />
+          </Box>
+          <Box marginTop={"20px"}>
+            <FileInput
+              name="tool_code"
+              label="Archivo de Tool"
+              onChange={handleChange}
+              value={values.tool_code}
+              helperText={inputError.tool_code}
+            />
+          </Box>
+          <Button variant="contained" type="submit" sx={{ marginTop: "20px" }}>
+            {toolId ? "Actualizar" : "Crear"}
+          </Button>
+        </Box>
+      )}
+    </>
   );
 };
 

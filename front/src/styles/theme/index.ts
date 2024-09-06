@@ -161,6 +161,15 @@ const theme = createTheme({
         },
       },
     },
+    MuiAvatar: {
+      styleOverrides: {
+        root: {
+          marginRight: "10px",
+          backgroundColor: "#8BE067", //primary.color
+          color: "#15163B", //primary.contrastText
+        },
+      },
+    },
   },
   transitions: {
     duration: {

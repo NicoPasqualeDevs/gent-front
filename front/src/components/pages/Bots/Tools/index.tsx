@@ -5,7 +5,6 @@ import useBotsApi from "@/hooks/useBots";
 import theme from "@/styles/theme";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ToolData } from "@/types/Bots";
-import { MainGridContainer } from "@/utils/ContainerUtil";
 import {
   Button,
   Card,
@@ -119,190 +118,192 @@ const Tools: React.FC = () => {
 
   return (
     <>
-      <MainGridContainer container>
-        <Grid item xs={10} md={7} lg={5}>
-          {!loaded ? (
-            <PageCircularProgress />
+      {!loaded ? (
+        <PageCircularProgress />
+      ) : (
+        <>
+          <Typography variant="h4">
+            {botName ? " Tools de " + botName : "Listado de Tools"}
+          </Typography>
+          <Pagination
+            count={pageContent.length}
+            page={page}
+            onChange={handlePagination}
+            size="large"
+            color="primary"
+          />
+          {pageContent.length > 0 ? (
+            pageContent[page - 1].map((tool, index) => {
+              return (
+                <Card key={`bot-${index}`}>
+                  <CardContent>
+                    <Typography variant="subtitle1" marginBottom={"10px"}>
+                      {tool.tool_name}
+                    </Typography>
+                    <Stack direction={"row"} marginBottom={"10px"}>
+                      <Typography
+                        sx={{
+                          color: theme.palette.primary.main,
+                        }}
+                      >
+                        ID:
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "white",
+                          marginLeft: "10px",
+                        }}
+                      >
+                        {tool.id}
+                      </Typography>
+                    </Stack>
+                    <Stack direction={"row"} marginBottom={"10px"}>
+                      <Typography
+                        sx={{
+                          color: theme.palette.primary.main,
+                        }}
+                      >
+                        Tipo:
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "white",
+                          marginLeft: "10px",
+                        }}
+                      >
+                        {tool.type}
+                      </Typography>
+                    </Stack>
+                    <Stack direction={"row"} marginBottom={"10px"}>
+                      <Typography
+                        sx={{
+                          color: theme.palette.primary.main,
+                        }}
+                      >
+                        Archivo:
+                      </Typography>
+                      <Link
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (tool.tool_code) {
+                            const xhr = new XMLHttpRequest();
+                            xhr.open(
+                              "GET",
+                              tool.tool_code !== null
+                                ? tool.tool_code.toString()
+                                : "",
+                              true
+                            );
+                            xhr.responseType = "blob";
+                            xhr.onload = () => {
+                              if (xhr.status === 200) {
+                                const blob = new Blob([xhr.response], {
+                                  type: "application/octet-stream",
+                                });
+                                const link = document.createElement("a");
+                                link.href = URL.createObjectURL(blob);
+                                link.download = `${tool.tool_name}.py`;
+                                link.target = "_blank";
+                                link.click();
+                              }
+                            };
+                            xhr.send();
+                          }
+                        }}
+                        sx={{
+                          color: "white",
+                          marginLeft: "10px",
+                        }}
+                      >
+                        descargar
+                      </Link>
+                    </Stack>
+                    <Stack marginBottom={"10px"}>
+                      <Typography
+                        sx={{
+                          color: theme.palette.primary.main,
+                        }}
+                      >
+                        Instrucciones:
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "white",
+                        }}
+                      >
+                        {tool.instruction}
+                      </Typography>
+                    </Stack>
+                  </CardContent>
+                  <Divider />
+                  <CardActions>
+                    <Grid container>
+                      <Grid item xs={9}>
+                        <Button
+                          size="small"
+                          sx={{
+                            marginRight: "5%",
+                          }}
+                          onClick={() =>
+                            navigate(
+                              `/bots/tools-form/${tool.tool_name}/${tool.id}`
+                            )
+                          }
+                        >
+                          Editar
+                        </Button>
+                      </Grid>
+                      <Grid item xs={3} textAlign={"end"}>
+                        <Button
+                          size="small"
+                          color="error"
+                          onClick={() => {
+                            setAllowerState(true);
+                            if (tool.id) {
+                              setToolToDelete(tool.id);
+                            }
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </CardActions>
+                </Card>
+              );
+            })
           ) : (
-            <>
-              <Typography variant="h4" paddingTop={"70px"}>
-                {botName ? " Tools de " + botName  : "Listado de Tools"}
-              </Typography>
-              <Pagination
-                count={pageContent.length}
-                page={page}
-                onChange={handlePagination}
-                size="large"
-                color="primary"
-              />
-              {pageContent.length > 0 ? (
-                pageContent[page - 1].map((tool, index) => {
-                  return (
-                    <Card key={`bot-${index}`}>
-                      <CardContent>
-                        <Typography variant="subtitle1" marginBottom={"10px"}>
-                          {tool.tool_name}
-                        </Typography>
-                        <Stack direction={"row"} marginBottom={"10px"}>
-                          <Typography
-                            sx={{
-                              color: theme.palette.primary.main,
-                            }}
-                          >
-                            ID:
-                          </Typography>
-                          <Typography
-                            sx={{
-                              color: "white",
-                              marginLeft: "10px",
-                            }}
-                          >
-                            {tool.id}
-                          </Typography>
-                        </Stack>
-                        <Stack direction={"row"} marginBottom={"10px"}>
-                          <Typography
-                            sx={{
-                              color: theme.palette.primary.main,
-                            }}
-                          >
-                            Tipo:
-                          </Typography>
-                          <Typography
-                            sx={{
-                              color: "white",
-                              marginLeft: "10px",
-                            }}
-                          >
-                            {tool.type}
-                          </Typography>
-                        </Stack>
-                        <Stack direction={"row"} marginBottom={"10px"}>
-                          <Typography
-                            sx={{
-                              color: theme.palette.primary.main,
-                            }}
-                          >
-                            Archivo:
-                          </Typography>
-                          <Link
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (tool.tool_code) {
-                                const xhr = new XMLHttpRequest();
-                                xhr.open("GET", tool.tool_code !== null ? tool.tool_code.toString() : "", true);
-                                xhr.responseType = "blob";
-                                xhr.onload = () => {
-                                  if (xhr.status === 200) {
-                                    const blob = new Blob([xhr.response], {
-                                      type: "application/octet-stream",
-                                    });
-                                    const link = document.createElement("a");
-                                    link.href = URL.createObjectURL(blob);
-                                    link.download = `${tool.tool_name}.py`;
-                                    link.target = "_blank";
-                                    link.click();
-                                  }
-                                };
-                                xhr.send();
-                              }
-                            }}
-                            sx={{
-                              color: "white",
-                              marginLeft: "10px",
-                            }}
-                          >
-                            descargar
-                          </Link>
-                        </Stack>
-                        <Stack marginBottom={"10px"}>
-                          <Typography
-                            sx={{
-                              color: theme.palette.primary.main,
-                            }}
-                          >
-                            Instrucciones:
-                          </Typography>
-                          <Typography
-                            sx={{
-                              color: "white",
-                            }}
-                          >
-                            {tool.instruction}
-                          </Typography>
-                        </Stack>
-                      </CardContent>
-                      <Divider />
-                      <CardActions>
-                        <Grid container>
-                          <Grid item xs={9}>
-                            <Button
-                              size="small"
-                              sx={{
-                                marginRight: "5%",
-                              }}
-                              onClick={() =>
-                                navigate(
-                                  `/bots/tools-form/${tool.tool_name}/${tool.id}`
-                                )
-                              }
-                            >
-                              Editar
-                            </Button>
-                          </Grid>
-                          <Grid item xs={3} textAlign={"end"}>
-                            <Button
-                              size="small"
-                              color="error"
-                              onClick={() => {
-                                setAllowerState(true);
-                                if (tool.id) {
-                                  setToolToDelete(tool.id);
-                                }
-                              }}
-                            >
-                              <DeleteIcon fontSize="small" />
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      </CardActions>
-                    </Card>
-                  );
-                })
-              ) : (
-                <Typography
-                  variant="subtitle2"
-                  marginTop={"10px"}
-                  marginBottom={"20px"}
-                >
-                  No hay chatbots para mostrar
-                </Typography>
-              )}
-              {botId ? (
-                <Button
-                  variant="contained"
-                  sx={{
-                    marginBottom: "20px",
-                  }}
-                  onClick={() =>
-                    navigate(`/bots/tools-relationship/${botName}/${botId}`)
-                  }
-                >
-                  Asignar Tools
-                </Button>
-              ) : (
-                <Button
-                  variant="contained"
-                  sx={{ marginBottom: "20px" }}
-                  onClick={() => navigate("/bots/tools-form/")}
-                >
-                  Crear Tool
-                </Button>
-              )}
-            </>
+            <Typography
+              variant="subtitle2"
+              marginTop={"10px"}
+              marginBottom={"20px"}
+            >
+              No hay Tools para mostrar
+            </Typography>
           )}
-        </Grid>
-      </MainGridContainer>
+          {botId ? (
+            <Button
+              variant="contained"
+              sx={{
+                marginBottom: "20px",
+              }}
+              onClick={() =>
+                navigate(`/bots/tools-relationship/${botName}/${botId}`)
+              }
+            >
+              Asignar Tools
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              sx={{ marginBottom: "20px" }}
+              onClick={() => navigate("/bots/tools-form/")}
+            >
+              Crear Tool
+            </Button>
+          )}
+        </>
+      )}
       {allowerState && (
         <ActionAllower
           allowerStateCleaner={setAllowerState}

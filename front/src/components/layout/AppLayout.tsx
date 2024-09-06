@@ -1,36 +1,48 @@
-import React, { useEffect } from "react";
+import React from "react";
 import LeftMenu from "./LeftMenu";
 import { useAppContext } from "@/context/app";
-import ShortHeader from "./ShortHeader";
+import Header from "./Header";
+import { Box, Grid, Typography } from "@mui/material";
+import theme from "@/styles/theme";
+import { MainContent } from "../styledComponents/Layout";
 
 interface ComponentProps {
   children: React.ReactNode;
 }
 
 const AppLayout: React.FC<ComponentProps> = ({ children }) => {
-  const {
-    layout: { breakpoint },
-  } = useAppContext();
-
-  useEffect(() => {
-    if (breakpoint) {
-      console.log(breakpoint, "<-- breakpoint");
-    }
-  }, [breakpoint]);
-
+  const { menu } = useAppContext();
   return (
     <>
-      {breakpoint === "xl" || breakpoint === "lg" ? (
-        <>
-          <LeftMenu />
+      <LeftMenu />
+      <Header />
+      <Box
+        sx={{
+          position: "fixed",
+          top: "70px",
+          width: "98%",
+          backgroundColor: "#0C0C22",
+          height: "50px",
+          zIndex: "101",
+          display: "flex",
+          alignItems: "center",
+          paddingLeft: "10px",
+        }}
+      >
+        <Typography
+          sx={{
+            paddingLeft: `${menu ? "220px" : "0px"}`,
+            transition: `padding-left ${theme.transitions.duration.standard}ms`,
+          }}
+        >
+          Prueba / Prueba / Prueba
+        </Typography>
+      </Box>
+      <MainContent container>
+        <Grid item xs={10} md={7} lg={5}>
           {children}
-        </>
-      ) : (
-        <>
-          <ShortHeader />
-          {children}
-        </>
-      )}
+        </Grid>
+      </MainContent>
     </>
   );
 };

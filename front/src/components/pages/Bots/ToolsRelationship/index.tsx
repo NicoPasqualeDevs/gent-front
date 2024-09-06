@@ -3,7 +3,6 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import theme from "@/styles/theme";
 import { ToolData } from "@/types/Bots";
-import { MainGridContainer } from "@/utils/ContainerUtil";
 import {
   Button,
   Checkbox,
@@ -123,7 +122,7 @@ const ToolsRelationship: React.FC = () => {
     const newCurrentTools: ToolData[] = [];
     const toolsToAdd: number[] = [];
     const toolsToRemove: number[] = [];
-  
+
     const relatedToolsSet = new Set(relatedTools.map((tool) => tool.id));
     const currentToolsSet = new Set(currentTools.map((tool) => tool.id));
     // Comparamos las relaciones que hay (currentTools) con las nuevas (relatedTools)
@@ -144,25 +143,25 @@ const ToolsRelationship: React.FC = () => {
         toolsToRemove.push(parseInt(tool.id));
       }
     });
-  
+
     try {
       // Realizamos los llamados solo si es necesario.
       if (toolsToRemove.length > 0) {
         await removeToolRelationship(botId, { agent_tool_ids: toolsToRemove });
       }
-  
+
       if (toolsToAdd.length > 0) {
         await setToolRelationship(botId, { agent_tool_ids: toolsToAdd });
       }
-  
+
       SuccessToast("Tools relacionadas satisfactoriamente");
       setCurrentTools(newCurrentTools);
-  
     } catch (error) {
-      const errorMessage = error instanceof Error
-        ? "Error: no se pudo establecer conexión con el servidor"
-        : "Error desconocido al establecer conexión con el servidor.";
-      
+      const errorMessage =
+        error instanceof Error
+          ? "Error: no se pudo establecer conexión con el servidor"
+          : "Error desconocido al establecer conexión con el servidor.";
+
       ErrorToast(errorMessage);
     }
   };
@@ -221,102 +220,94 @@ const ToolsRelationship: React.FC = () => {
 
   return (
     <>
-      <MainGridContainer container paddingTop={"70px"}>
-        <Grid item xs={10} md={7} lg={5}>
-          {!loaded ? (
-            <PageCircularProgress />
-          ) : (
-            <>
-              <Typography variant="h4">
-                {botName ? " Tools de " + botName  : "Asignación de Tools"}
+      {!loaded ? (
+        <PageCircularProgress />
+      ) : (
+        <>
+          <Typography variant="h4">
+            {botName ? " Tools de " + botName : "Asignación de Tools"}
+          </Typography>
+          <Grid
+            container
+            sx={{
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: "20px",
+            }}
+          >
+            <Grid item xs={5}>
+              <Typography variant="subtitle1" textAlign={"center"}>
+                No relacionadas
               </Typography>
-              <Grid
-                container
-                sx={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: "20px",
-                }}
-              >
-                <Grid item xs={5}>
-                  <Typography variant="subtitle1" textAlign={"center"}>
-                    No relacionadas
-                  </Typography>
-                  {customList(noRelatedTools)}
-                </Grid>
-                <Grid item xs={2}>
-                  <Grid
-                    container
-                    direction="column"
-                    sx={{ alignItems: "center" }}
-                  >
-                    <Button
-                      sx={{ my: 0.5 }}
-                      variant="outlined"
-                      size="small"
-                      onClick={handleAllRelated}
-                      disabled={noRelatedTools.length === 0}
-                      aria-label="move all right"
-                    >
-                      ≫
-                    </Button>
-                    <Button
-                      sx={{ my: 0.5 }}
-                      variant="outlined"
-                      size="small"
-                      onClick={handleCheckedRelated}
-                      disabled={noRelatedChecked.length === 0}
-                      aria-label="move selected right"
-                    >
-                      &gt;
-                    </Button>
-                    <Button
-                      sx={{ my: 0.5 }}
-                      variant="outlined"
-                      size="small"
-                      onClick={handleCheckedNoRelated}
-                      disabled={relatedChecked.length === 0}
-                      aria-label="move selected left"
-                    >
-                      &lt;
-                    </Button>
-                    <Button
-                      sx={{ my: 0.5 }}
-                      variant="outlined"
-                      size="small"
-                      onClick={handleAllNoRelated}
-                      disabled={relatedTools.length === 0}
-                      aria-label="move all left"
-                    >
-                      ≪
-                    </Button>
-                  </Grid>
-                </Grid>
-                <Grid item xs={5}>
-                  <Typography variant="subtitle1" textAlign={"center"}>
-                    Relacionadas
-                  </Typography>
-                  {customList(relatedTools)}
-                </Grid>
+              {customList(noRelatedTools)}
+            </Grid>
+            <Grid item xs={2}>
+              <Grid container direction="column" sx={{ alignItems: "center" }}>
+                <Button
+                  sx={{ my: 0.5 }}
+                  variant="outlined"
+                  size="small"
+                  onClick={handleAllRelated}
+                  disabled={noRelatedTools.length === 0}
+                  aria-label="move all right"
+                >
+                  ≫
+                </Button>
+                <Button
+                  sx={{ my: 0.5 }}
+                  variant="outlined"
+                  size="small"
+                  onClick={handleCheckedRelated}
+                  disabled={noRelatedChecked.length === 0}
+                  aria-label="move selected right"
+                >
+                  &gt;
+                </Button>
+                <Button
+                  sx={{ my: 0.5 }}
+                  variant="outlined"
+                  size="small"
+                  onClick={handleCheckedNoRelated}
+                  disabled={relatedChecked.length === 0}
+                  aria-label="move selected left"
+                >
+                  &lt;
+                </Button>
+                <Button
+                  sx={{ my: 0.5 }}
+                  variant="outlined"
+                  size="small"
+                  onClick={handleAllNoRelated}
+                  disabled={relatedTools.length === 0}
+                  aria-label="move all left"
+                >
+                  ≪
+                </Button>
               </Grid>
-              <Button
-                variant="contained"
-                sx={{
-                  marginTop: "20px",
-                  marginBottom: "20px",
-                }}
-                onClick={() => {
-                  if (botId) {
-                    setRelationship(botId);
-                  }
-                }}
-              >
-                Establecer Relación
-              </Button>
-            </>
-          )}
-        </Grid>
-      </MainGridContainer>
+            </Grid>
+            <Grid item xs={5}>
+              <Typography variant="subtitle1" textAlign={"center"}>
+                Relacionadas
+              </Typography>
+              {customList(relatedTools)}
+            </Grid>
+          </Grid>
+          <Button
+            variant="contained"
+            sx={{
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+            onClick={() => {
+              if (botId) {
+                setRelationship(botId);
+              }
+            }}
+          >
+            Establecer Relación
+          </Button>
+        </>
+      )}
     </>
   );
 };

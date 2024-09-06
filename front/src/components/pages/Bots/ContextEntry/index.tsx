@@ -1,7 +1,6 @@
 import { Button, Grid, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { ContextEntryData } from "@/types/Bots";
-import { MainGridContainer } from "@/utils/ContainerUtil";
 import { useNavigate } from "react-router-dom";
 import useBotsApi from "@/hooks/useBots";
 import { useEffect, useState, useCallback } from "react";
@@ -198,69 +197,67 @@ const ContextEntry: React.FC = () => {
   }, []);
 
   return (
-    <MainGridContainer container paddingTop={"70px"}>
-      <Grid item xs={10} md={7} lg={5}>
-        {!loaded ? (
-          <PageCircularProgress />
-        ) : (
-          <Grid
-            container
-            component={"form"}
-            onSubmit={(e) => {
-              setInputError({
-                name: errors.name || "",
-                description: errors.description || "",
-                prompt_template: errors.prompt_template || "",
-              });
-              handleSubmit(e);
-            }}
-            gap={1}
-          >
-            <Grid item xs={12}>
-              <Typography variant="h4" marginBottom={"10px"}>
-                {botId ? "Editar Prompt Template" : "Crear nueva IA"}
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="name"
-                label="Nombre"
-                value={values.name}
-                helperText={inputError.name}
-                onChange={handleChange}
-              />
-            </Grid>
+    <>
+      {!loaded ? (
+        <PageCircularProgress />
+      ) : (
+        <Grid
+          container
+          component={"form"}
+          onSubmit={(e) => {
+            setInputError({
+              name: errors.name || "",
+              description: errors.description || "",
+              prompt_template: errors.prompt_template || "",
+            });
+            handleSubmit(e);
+          }}
+          gap={1}
+        >
+          <Grid item xs={12}>
+            <Typography variant="h4">
+              {botId ? "Editar Prompt Template" : "Crear nueva IA"}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="name"
+              label="Nombre"
+              value={values.name}
+              helperText={inputError.name}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <MultilineInput
+              name="description"
+              label="Descripción"
+              value={values.description}
+              rows={6}
+              helperText={inputError.description}
+              onChange={handleChange}
+            />
+          </Grid>
+          {botId ? (
             <Grid item xs={12}>
               <MultilineInput
-                name="description"
-                label="Descripción"
-                value={values.description}
-                rows={6}
-                helperText={inputError.description}
+                name="prompt_template"
+                label="Prompt Template"
+                value={values.prompt_template}
+                rows={17}
+                helperText={inputError.prompt_template}
                 onChange={handleChange}
               />
             </Grid>
-            {botId ? (
-              <Grid item xs={12}>
-                <MultilineInput
-                  name="prompt_template"
-                  label="Prompt Template"
-                  value={values.prompt_template}
-                  rows={19}
-                  helperText={inputError.prompt_template}
-                  onChange={handleChange}
-                />
-              </Grid>
-            ) : null}
-            <Grid item xs={12}>
-              <Button variant="contained" type="submit">
-                Guardar
-              </Button>
-            </Grid>
+          ) : null}
+          <Grid item xs={12}>
+            <Button variant="contained" type="submit">
+              Guardar
+            </Button>
           </Grid>
-        )}
-      </Grid>
-    </MainGridContainer>
+        </Grid>
+      )}
+    </>
   );
 };
 
