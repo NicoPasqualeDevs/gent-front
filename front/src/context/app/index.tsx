@@ -27,7 +27,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
   }, [width]);
 
-  const setAuthUser = (value: AuthUser) => {
+  const setAuthUser = (value: AuthUser | null) => {
     dispatch({ type: "setAuthUser", payload: value });
   };
   const setLogin = (value: AuthUser) => {
@@ -42,8 +42,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     dispatch({ type: "setCustomersList", payload: value });
   };
 
-  const setMenuOpen = (value: boolean) => {
-    dispatch({ type: "setMenuOpen", payload: value });
+  const setMenu = (value: boolean) => {
+    dispatch({ type: "setMenu", payload: value });
   };
 
   const setNavElevation = (value: string) => {
@@ -66,7 +66,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         setCustomersList,
         setLogin,
         setLoaded,
-        setMenuOpen,
+        setMenu,
         setAuthUser,
         setNavElevation,
         cleanState,

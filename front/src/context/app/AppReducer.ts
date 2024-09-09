@@ -4,10 +4,10 @@ import { AuthUser } from "@/types/Auth.ts";
 import { ClientDetails } from "@/types/Clients.ts";
 
 type AppContextActions =
-  | { type: "setAuthUser"; payload: AuthUser }
+  | { type: "setAuthUser"; payload: AuthUser | null }
   | { type: "setLoaded"; payload: boolean }
   | { type: "setCustomersList"; payload: ClientDetails[] }
-  | { type: "setMenuOpen"; payload: boolean }
+  | { type: "setMenu"; payload: boolean }
   | { type: "setBreakPoint"; payload: Breakpoint }
   | { type: "setDevice"; payload: AppDevice }
   | { type: "setNavElevation"; payload: string }
@@ -44,10 +44,10 @@ export const AppReducer = (
       };
     }
 
-    case "setMenuOpen":
+    case "setMenu":
       return {
         ...state,
-        menu: { ...state.menu, open: action.payload },
+        menu: action.payload,
       };
 
     case "setBreakPoint":

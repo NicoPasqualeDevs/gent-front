@@ -1,7 +1,6 @@
 import { StyledPageTitle } from "@/components/styledComponents/Typography";
 import useBotsApi from "@/hooks/useBots";
 import { WidgetData } from "@/types/Bots";
-import { MainGridContainer } from "@/utils/ContainerUtil";
 import { Grid } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -178,207 +177,205 @@ export const WidgetCustomizer: React.FC = () => {
     }
   }, [botId]);
   return (
-    <MainGridContainer container paddingTop={"70px"}>
-      <Grid item xs={10} md={6} xl={4}>
-        {!isLoaded ? (
-          <PageCircularProgress />
-        ) : (
-          <Grid
-            container
-            component={"form"}
-            onSubmit={(e) => {
-              setHelperText();
-              handleSubmit(e);
-            }}
-            gap={2}
-          >
-            <Grid item xs={12}>
-              <StyledPageTitle>Widget Customizer</StyledPageTitle>
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="primary_color"
-                label="Color Primario"
-                placeholder="Ingrese código hexadecimal de color"
-                helperText={inputError.primary_color}
-                value={values.primary_color}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="primary_textContrast"
-                label="Color de Texto Primario"
-                placeholder="Ingrese código hexadecimal de color"
-                helperText={inputError.primary_textContrast}
-                value={values.primary_textContrast}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="secondary_color"
-                label="Color Secundario"
-                placeholder="Ingrese código hexadecimal de color"
-                helperText={inputError.secondary_color}
-                value={values.secondary_color}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="secondary_textContrast"
-                label="Color de Texto Secundario"
-                placeholder="Ingrese código hexadecimal de color"
-                helperText={inputError.secondary_textContrast}
-                value={values.secondary_textContrast}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="badge_color"
-                label="Color de Badge"
-                placeholder="Ingrese código hexadecimal de color"
-                helperText={inputError.badge_color}
-                value={values.badge_color}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="badge_contrast"
-                label="Color de texto del Badge"
-                placeholder="Ingrese código hexadecimal de color"
-                helperText={inputError.badge_contrast}
-                value={values.badge_contrast}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="font_family"
-                label="Tipo de Fuente"
-                placeholder="Ingrese el valor de atributo font-family deseado"
-                helperText={inputError.font_family}
-                value={values.font_family}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <MultilineInput
-                name="faq_questions"
-                label="Preguntas Frecuentes"
-                placeholder={`Ingrese las preguntas, en el siguiente formato:
+    <>
+      {!isLoaded ? (
+        <PageCircularProgress />
+      ) : (
+        <Grid
+          container
+          component={"form"}
+          onSubmit={(e) => {
+            setHelperText();
+            handleSubmit(e);
+          }}
+          gap={2}
+        >
+          <Grid item xs={12}>
+            <StyledPageTitle>Widget Customizer</StyledPageTitle>
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="primary_color"
+              label="Color Primario"
+              placeholder="Ingrese código hexadecimal de color"
+              helperText={inputError.primary_color}
+              value={values.primary_color}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="primary_textContrast"
+              label="Color de Texto Primario"
+              placeholder="Ingrese código hexadecimal de color"
+              helperText={inputError.primary_textContrast}
+              value={values.primary_textContrast}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="secondary_color"
+              label="Color Secundario"
+              placeholder="Ingrese código hexadecimal de color"
+              helperText={inputError.secondary_color}
+              value={values.secondary_color}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="secondary_textContrast"
+              label="Color de Texto Secundario"
+              placeholder="Ingrese código hexadecimal de color"
+              helperText={inputError.secondary_textContrast}
+              value={values.secondary_textContrast}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="badge_color"
+              label="Color de Badge"
+              placeholder="Ingrese código hexadecimal de color"
+              helperText={inputError.badge_color}
+              value={values.badge_color}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="badge_contrast"
+              label="Color de texto del Badge"
+              placeholder="Ingrese código hexadecimal de color"
+              helperText={inputError.badge_contrast}
+              value={values.badge_contrast}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="font_family"
+              label="Tipo de Fuente"
+              placeholder="Ingrese el valor de atributo font-family deseado"
+              helperText={inputError.font_family}
+              value={values.font_family}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <MultilineInput
+              name="faq_questions"
+              label="Preguntas Frecuentes"
+              placeholder={`Ingrese las preguntas, en el siguiente formato:
 
                       pregutna #1 | pregunta #2 | etc... 
                       
                       utilice el caracter "|" para separar las preguntas`}
-                value={values.faq_questions}
-                helperText={errors.faq_questions}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextInput
-                name="brand_alt"
-                label="Texto alternativo de Logo"
-                placeholder="Ingrese el texto alternativo"
-                helperText={errors.brand_alt}
-                value={values.brand_alt}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <ImageInput
-                name="brand_logo"
-                label="Logo de Cliente"
-                onChange={handleChange}
-                value={values.brand_logo ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <ImageInput
-                name="icon_bot"
-                label="ícono de bot"
-                onChange={handleChange}
-                value={values.icon_bot ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <ImageInput
-                name="icon_chat"
-                label="ícono de chat"
-                onChange={handleChange}
-                value={values.icon_chat ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <ImageInput
-                name="icon_hidden"
-                label="ícono de ocultar"
-                onChange={handleChange}
-                value={values.icon_hidden ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <ImageInput
-                name="icon_send"
-                label="ícono de enviar"
-                onChange={handleChange}
-                value={values.icon_send ? true : false}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CheckboxInput
-                name="sql_injection_tester"
-                label="Comprobación de Inyección de SQL"
-                onChange={handleChange}
-                value={values.sql_injection_tester}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CheckboxInput
-                name="php_injection_tester"
-                label="Comprobación de Inyección de PHP"
-                onChange={handleChange}
-                value={values.php_injection_tester}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <CheckboxInput
-                name="strange_chars_tester"
-                label="Comprobación de uso de caracteres extraños"
-                onChange={handleChange}
-                value={values.php_injection_tester}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <MultilineInput
-                name="band_list"
-                label="Palabras Baneadas"
-                placeholder={`Ingrese las palabras, en el siguiente formato:
+              value={values.faq_questions}
+              helperText={errors.faq_questions}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextInput
+              name="brand_alt"
+              label="Texto alternativo de Logo"
+              placeholder="Ingrese el texto alternativo"
+              helperText={errors.brand_alt}
+              value={values.brand_alt}
+              onChange={handleChange}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <ImageInput
+              name="brand_logo"
+              label="Logo de Cliente"
+              onChange={handleChange}
+              value={values.brand_logo ? true : false}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <ImageInput
+              name="icon_bot"
+              label="ícono de bot"
+              onChange={handleChange}
+              value={values.icon_bot ? true : false}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <ImageInput
+              name="icon_chat"
+              label="ícono de chat"
+              onChange={handleChange}
+              value={values.icon_chat ? true : false}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <ImageInput
+              name="icon_hidden"
+              label="ícono de ocultar"
+              onChange={handleChange}
+              value={values.icon_hidden ? true : false}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <ImageInput
+              name="icon_send"
+              label="ícono de enviar"
+              onChange={handleChange}
+              value={values.icon_send ? true : false}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <CheckboxInput
+              name="sql_injection_tester"
+              label="Comprobación de Inyección de SQL"
+              onChange={handleChange}
+              value={values.sql_injection_tester}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <CheckboxInput
+              name="php_injection_tester"
+              label="Comprobación de Inyección de PHP"
+              onChange={handleChange}
+              value={values.php_injection_tester}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <CheckboxInput
+              name="strange_chars_tester"
+              label="Comprobación de uso de caracteres extraños"
+              onChange={handleChange}
+              value={values.php_injection_tester}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <MultilineInput
+              name="band_list"
+              label="Palabras Baneadas"
+              placeholder={`Ingrese las palabras, en el siguiente formato:
   
                         palabra #1 | palabra #2 | etc... 
                         
                         utilice el caracter "|" para separar las preguntas`}
-                helperText={errors.band_list}
-                value={values.band_list}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <StyledDefaultButton
-                sx={{ fontSize: "16px", maxWidth: "150px" }}
-                type="submit"
-              >
-                Enviar formulario
-              </StyledDefaultButton>
-            </Grid>
+              helperText={errors.band_list}
+              value={values.band_list}
+              onChange={handleChange}
+            />
           </Grid>
-        )}
-      </Grid>
-    </MainGridContainer>
+          <Grid item xs={12}>
+            <StyledDefaultButton
+              sx={{ fontSize: "16px", maxWidth: "150px", marginBottom: "20px" }}
+              type="submit"
+            >
+              Enviar formulario
+            </StyledDefaultButton>
+          </Grid>
+        </Grid>
+      )}
+    </>
   );
 };
 

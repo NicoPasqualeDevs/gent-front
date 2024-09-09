@@ -11,17 +11,15 @@ export interface AppContextState {
     breakpoint: Breakpoint;
     device: "mobile" | "tablet" | "pc";
   };
-  menu: {
-    open: boolean;
-  };
+  menu: boolean;
   loaded: boolean;
   clientsList: ClientDetails[] | undefined;
   navElevation: string;
 
   setCustomersList: (value: ClientDetails[]) => void;
   setLogin: (value: AuthUser) => void;
-  setAuthUser: (value: AuthUser) => void;
-  setMenuOpen: (value: boolean) => void;
+  setAuthUser: (value: AuthUser | null) => void;
+  setMenu: (value: boolean) => void;
   setLoaded: (value: boolean) => void;
   setNavElevation: (value: string) => void;
   cleanState: () => void;
@@ -33,9 +31,7 @@ export const INITIAL_STATE: AppContextState = {
     breakpoint: "lg",
     device: "pc",
   },
-  menu: {
-    open: true,
-  },
+  menu: false,
   navElevation: "",
   loaded: false,
   clientsList: undefined,
