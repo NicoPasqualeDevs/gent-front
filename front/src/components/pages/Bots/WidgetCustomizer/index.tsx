@@ -15,9 +15,11 @@ import {
 } from "@/components/Inputs";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import { useAppContext } from "@/context/app";
 
 export const WidgetCustomizer: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const { replacePath, appNavigation } = useAppContext();
   const [widgetData, setWidgetData] = useState<WidgetData>({
     id: "",
   });
@@ -173,6 +175,14 @@ export const WidgetCustomizer: React.FC = () => {
 
   useEffect(() => {
     if (botId) {
+      replacePath([
+        ...appNavigation.slice(0, 2),
+        {
+          label: "Widget",
+          current_path: `bots/widgetCustomizer/${botId}`,
+          preview_path: "",
+        },
+      ]);
       getWidgetData(botId);
     }
   }, [botId]);

@@ -22,7 +22,7 @@ import concatArrays from "@/helpers/concatArrays";
 
 const ClientList: React.FC = () => {
   const navigate = useNavigate();
-  const { setNavElevation } = useAppContext();
+  const { setNavElevation, replacePath } = useAppContext();
   const { getCustomerList, deleteClientDetails } = useCustomersApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
@@ -82,6 +82,13 @@ const ClientList: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    replacePath([
+      {
+        label: "Clientes",
+        current_path: "/clients",
+        preview_path: "/clients",
+      },
+    ]);
     setNavElevation("clients");
     getClientsData();
   }, []);
@@ -127,17 +134,21 @@ const ClientList: React.FC = () => {
                           sx={{
                             marginRight: "5%",
                           }}
-                          onClick={() =>
+                          onClick={() => {
                             navigate(
                               `/bots/IaPanel/${client.name}/${client.id}`
-                            )
-                          }
+                            );
+                          }}
                         >
                           Agentes
                         </Button>
                         <Button
                           size="small"
-                          onClick={() => navigate(`/clients/form/${client.id}`)}
+                          onClick={() =>
+                            navigate(
+                              `/clients/form/${client.name}/${client.id}`
+                            )
+                          }
                         >
                           Editar
                         </Button>

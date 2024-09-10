@@ -9,10 +9,12 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MultilineInput, TextInput } from "@/components/Inputs";
+import { useAppContext } from "@/context/app";
 
 const ContextEntry: React.FC = () => {
   const { clientId, botId } = useParams();
   const navigate = useNavigate();
+  const { replacePath, appNavigation } = useAppContext();
   const {
     getBotData,
     getPromptTemplate,
@@ -184,8 +186,29 @@ const ContextEntry: React.FC = () => {
   useEffect(() => {
     if (clientId) {
       if (botId) {
+        /*setAppNavigation({
+          label: "Editar Agente",
+          current_path: `/bots/contextEntry/${clientId}/${botId}`,
+          preview_path: `/bots/contextEntry/${clientId}`,
+        });*/
+        replacePath([
+          ...appNavigation.slice(0, 2),
+          {
+            label: "Editar Agente",
+            current_path: `/bots/contextEntry/${clientId}/${botId}`,
+            preview_path: `/bots/contextEntry/${clientId}`,
+          },
+        ]);
         loadBotData();
       } else {
+        replacePath([
+          ...appNavigation.slice(0, 2),
+          {
+            label: "Crear Agente",
+            current_path: `/bots/contextEntry/${clientId}/`,
+            preview_path: `/bots/contextEntry/${clientId}`,
+          },
+        ]);
         setLoaded(true);
       }
     } else {
@@ -216,7 +239,7 @@ const ContextEntry: React.FC = () => {
         >
           <Grid item xs={12}>
             <Typography variant="h4">
-              {botId ? "Editar Prompt Template" : "Crear nueva IA"}
+              {botId ? "Editar" : "Crear Agente"}
             </Typography>
           </Grid>
           <Grid item xs={12}>

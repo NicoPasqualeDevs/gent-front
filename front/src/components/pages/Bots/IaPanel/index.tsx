@@ -20,10 +20,12 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import chuckArray from "@/helpers/chunkArray";
 import useApi from "@/hooks/useApi";
 import concatArrays from "@/helpers/concatArrays";
+import { useAppContext } from "@/context/app";
 
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
   const navigate = useNavigate();
+  const { replacePath, appNavigation } = useAppContext();
   const { apiBase } = useApi();
   const { getBotsList, deleteBot } = useBotsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -88,7 +90,15 @@ const IaPanel: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (clientId) {
+    if (clientId && clientName) {
+      replacePath([
+        ...appNavigation.slice(0, 1),
+        {
+          label: clientName,
+          current_path: `/bots/IaPanel/${clientName}/${clientId}`,
+          preview_path: "",
+        },
+      ]);
       getBotsData(clientId);
     } else {
       ErrorToast("Error al cargar clientId en esta vista");

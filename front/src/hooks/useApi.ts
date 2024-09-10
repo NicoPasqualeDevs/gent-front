@@ -97,7 +97,7 @@ const useApi = (): UseApiHook => {
   );
 
   const apiPost = React.useCallback(
-    <B, R>(path: string, body: B , headers?: HeadersInit ): Promise<R> => {
+    <B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => {
       return new Promise((resolve, reject) => {
         const fetch_header: HeadersInit = {
           Authorization: `Token ${token}`,
@@ -111,9 +111,9 @@ const useApi = (): UseApiHook => {
           body: isFormData ? (body as FormData) : JSON.stringify(body),
           headers: fetch_header,
           //{
-            //...(token && {Authorization: `Bearer ${token}`}),
-            //Authorization: `Token ${token}`,
-            //"Content-Type": "application/json",
+          //...(token && {Authorization: `Bearer ${token}`}),
+          //Authorization: `Token ${token}`,
+          //"Content-Type": "application/json",
           //},
         })
           .then(async (resp) => {
@@ -180,10 +180,10 @@ const useApi = (): UseApiHook => {
           body: isFormData ? (body as FormData) : JSON.stringify(body),
           headers: fetch_header,
           //{
-            //...(token && {Authorization: `Bearer ${token}`}),
-            //Authorization: `Token ${token}`,
-            //"Content-Type": "application/json",
-            //...(headers && { ...headers }),
+          //...(token && {Authorization: `Bearer ${token}`}),
+          //Authorization: `Token ${token}`,
+          //"Content-Type": "application/json",
+          //...(headers && { ...headers }),
           //},
         })
           .then(async (resp) => {

@@ -1,5 +1,6 @@
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
+import { useAppContext } from "@/context/app";
 import useBotsApi from "@/hooks/useBots";
 import theme from "@/styles/theme";
 import { ToolData } from "@/types/Bots";
@@ -34,7 +35,7 @@ const ToolsRelationship: React.FC = () => {
     setToolRelationship,
     removeToolRelationship,
   } = useBotsApi();
-
+  const { replacePath, appNavigation } = useAppContext();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [checked, setChecked] = useState<ToolData[]>([]);
   const [noRelatedTools, setNoRelatedTools] = useState<ToolData[]>([]);
@@ -212,6 +213,14 @@ const ToolsRelationship: React.FC = () => {
   useEffect(() => {
     setLoaded(false);
     if (botId) {
+      replacePath([
+        ...appNavigation.slice(0, 3),
+        {
+          label: "Asignar Tools",
+          current_path: `bots/tools-relationship/${botName}/${botId}`,
+          preview_path: "",
+        },
+      ]);
       getToolsData(botId);
     } else {
       ErrorToast("Error al cargar botId en la vista");

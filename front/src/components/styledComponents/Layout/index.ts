@@ -1,5 +1,5 @@
 import { Menu } from "@mui/icons-material";
-import { Box, Grid, styled } from "@mui/material";
+import { Box, Button, Grid, styled } from "@mui/material";
 
 export const HeaderContainer = styled(Grid)(({ theme }) => ({
   width: "100%",
@@ -64,4 +64,13 @@ export const MainContent = styled(Grid)(({ theme }) => ({
   scrollbarGutter: "none",
   scrollbarWidth: "thin",
   scrollbarColor: `${theme.palette.primary.main} transparent`,
+}));
+
+export const PathButton = styled(Button)(({ theme }) => ({
+  margin: "0px",
+  padding: "0px",
+  color: "white",
+  ":hover": {
+    color: theme.palette.primary.main,
+  },
 }));
