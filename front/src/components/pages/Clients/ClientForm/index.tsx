@@ -72,16 +72,16 @@ const ClientForm: React.FC = () => {
     getClientDetails(clientId)
       .then((response) => {
         setValues({
-          name: response.name,
-          address: response.address,
-          description: response.description,
-          model_ia: response.model_ia,
+          name: response.data.name,
+          address: response.data.address,
+          description: response.data.description,
+          model_ia: response.data.model_ia,
         });
         setInitialValues({
-          name: response.name,
-          address: response.address,
-          description: response.description,
-          model_ia: response.model_ia,
+          name: response.data.name,
+          address: response.data.address,
+          description: response.data.description,
+          model_ia: response.data.model_ia,
         });
         setLoaded(true);
       })

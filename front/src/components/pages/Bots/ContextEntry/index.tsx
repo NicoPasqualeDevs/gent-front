@@ -110,7 +110,7 @@ const ContextEntry: React.FC = () => {
     if (botId) {
       getBotData(botId)
         .then((response) => {
-          loadPromptTemplateData(response.name, response.description);
+          loadPromptTemplateData(response.data.name, response.data.description);
         })
         .catch((error) => {
           ErrorToast(
