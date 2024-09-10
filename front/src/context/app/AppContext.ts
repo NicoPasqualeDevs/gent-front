@@ -35,7 +35,7 @@ export const INITIAL_STATE: AppContextState = {
     breakpoint: "lg",
     device: "pc",
   },
-  menu: false,
+  menu: true,
   navElevation: "",
   loaded: false,
   clientsList: undefined,
