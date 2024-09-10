@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
+import { styled, alpha } from '@mui/material/styles';
 import {
   Grid,
   CardContent,
@@ -15,12 +18,60 @@ import {
 import useBotsApi from "@/hooks/useBots";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { BotData } from "@/types/Bots";
+import { Metadata } from "@/types/Api";
 import ActionAllower from "@/components/ActionAllower";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import chuckArray from "@/helpers/chunkArray";
 import useApi from "@/hooks/useApi";
-import concatArrays from "@/helpers/concatArrays";
 import { useAppContext } from "@/context/app";
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  right: -16,
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchWrapper = styled(Grid)(() => ({
+  position: "relative",
+  width: "100%",
+  height: "48px",
+  marginBottom: 8
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  right: -8,
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(0)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+}));
 
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
@@ -32,7 +83,9 @@ const IaPanel: React.FC = () => {
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [botToDelete, setbotToDelete] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const [pageContent, setPageContent] = useState<Array<BotData[]>>([]);
+  const [pageContent, setPageContent] = useState<BotData[]>([]);
+  const [paginationData, setPaginationData] = useState<Metadata>();
+  const [searchQuery, setSearchQuery] = useState<string>("")
 
   const handlePagination = (
     event: React.ChangeEvent<unknown>,
@@ -40,16 +93,24 @@ const IaPanel: React.FC = () => {
   ) => {
     event.preventDefault();
     setPage(value);
+    getBotsData(`?page=${value}`)
+  };
+
+  const handleSearch = (
+    value: string
+  ) => {
+    setSearchQuery(value)
+    getBotsData(`?name__icontains=${value}`)
   };
 
   const deleteAction = (botId: string) => {
     if (botId && botId !== "") {
       deleteBot(botId)
         .then(() => {
-          let temp = concatArrays(pageContent);
+          let temp = pageContent;
           temp = temp.filter((item) => item.id !== botId);
           setPage(1);
-          setPageContent(chuckArray(temp));
+          setPageContent(temp);
           setAllowerState(false);
           setbotToDelete("");
           SuccessToast("chatbot eliminado satisfactoriamente");
@@ -59,8 +120,7 @@ const IaPanel: React.FC = () => {
             ErrorToast("Error: no se pudo establecer conexión con el servidor");
           } else {
             ErrorToast(
-              `${error.status} - ${error.error} ${
-                error.data ? ": " + error.data : ""
+              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
               }`
             );
           }
@@ -70,10 +130,13 @@ const IaPanel: React.FC = () => {
     }
   };
 
-  const getBotsData = useCallback((clientId: string) => {
-    getBotsList(clientId)
+  const getBotsData = useCallback((filterParams: string) => {
+    clientId ? getBotsList(clientId, filterParams)
       .then((response) => {
-        setPageContent(chuckArray(response));
+        const data: BotData[] = response.data
+        const paginationData: Metadata = response.metadata
+        setPaginationData(paginationData);
+        setPageContent(data);
         setLoaded(true);
       })
       .catch((error) => {
@@ -81,12 +144,11 @@ const IaPanel: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
-      });
+      }) : ErrorToast("Conflicto en el id del cliente");
   }, []);
 
   useEffect(() => {
@@ -99,7 +161,7 @@ const IaPanel: React.FC = () => {
           preview_path: "",
         },
       ]);
-      getBotsData(clientId);
+      getBotsData("");
     } else {
       ErrorToast("Error al cargar clientId en esta vista");
     }
@@ -112,15 +174,31 @@ const IaPanel: React.FC = () => {
       ) : (
         <>
           <Typography variant="h4">Agentes de {clientName}</Typography>
-          <Pagination
-            count={pageContent.length}
-            page={page}
-            onChange={handlePagination}
-            size="large"
-            color="primary"
-          />
+          <SearchWrapper>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Buscar"
+                value={searchQuery}
+                inputProps={{ 'aria-label': 'search' }}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </Search>
+          </SearchWrapper>
+          <Button
+            variant="contained"
+            sx={{
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+            onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
+          >
+            Crear Agente
+          </Button>
           {pageContent.length > 0 ? (
-            pageContent[page - 1].map((bot, index) => {
+            pageContent.map((bot, index) => {
               return (
                 <Card key={`bot-${index}`}>
                   <CardContent>
@@ -226,16 +304,13 @@ const IaPanel: React.FC = () => {
               No hay chatbots para mostrar
             </Typography>
           )}
-          <Button
-            variant="contained"
-            sx={{
-              marginTop: "20px",
-              marginBottom: "20px",
-            }}
-            onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
-          >
-            Crear Agente
-          </Button>
+          <Pagination
+            count={paginationData?.total_pages}
+            page={page}
+            onChange={handlePagination}
+            size="large"
+            color="primary"
+          />
         </>
       )}
       {allowerState && (
