@@ -17,6 +17,7 @@ import useCustomersApi from "@/hooks/useCustomers";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
 import { ClientDetails } from "@/types/Clients";
+import { Metadata } from "@/types/Api";
 import chuckArray from "@/helpers/chunkArray";
 import concatArrays from "@/helpers/concatArrays";
 
@@ -29,6 +30,7 @@ const ClientList: React.FC = () => {
   const [clientToDelete, setClientToDelete] = useState<string>("");
   const [page, setPage] = useState<number>(1);
   const [pageContent, setPageContent] = useState<Array<ClientDetails[]>>([]);
+  const [paginationData, setPaginationData] = useState<Metadata>();
 
   const handlePagination = (
     event: React.ChangeEvent<unknown>,
@@ -54,8 +56,7 @@ const ClientList: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -65,7 +66,10 @@ const ClientList: React.FC = () => {
   const getClientsData = useCallback(() => {
     getCustomerList()
       .then((response) => {
-        setPageContent(chuckArray(response));
+        const data: ClientDetails[] = response.data
+        const paginationData: Metadata = response.metadata
+        setPageContent(chuckArray(data));
+        setPaginationData(paginationData)
         setLoaded(true);
       })
       .catch((error) => {
@@ -73,8 +77,7 @@ const ClientList: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -101,7 +104,7 @@ const ClientList: React.FC = () => {
         <>
           <Typography variant="h2">Clientes</Typography>
           <Pagination
-            count={pageContent.length}
+            count={paginationData?.total_pages}
             page={page}
             onChange={handlePagination}
             size="large"
