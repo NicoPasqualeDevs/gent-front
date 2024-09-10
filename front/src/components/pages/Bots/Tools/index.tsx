@@ -21,12 +21,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import concatArrays from "@/helpers/concatArrays";
 import ActionAllower from "@/components/ActionAllower";
+import { useAppContext } from "@/context/app";
 
 const Tools: React.FC = () => {
   const navigate = useNavigate();
   const { botName, botId } = useParams();
+  const { replacePath, appNavigation } = useAppContext();
   const { getAllTools, getBotTools, deleteTool } = useBotsApi();
-
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [toolToDelete, setToolToDelete] = useState<string>("");
@@ -110,8 +111,23 @@ const Tools: React.FC = () => {
   useEffect(() => {
     setLoaded(false);
     if (botId) {
+      replacePath([
+        ...appNavigation.slice(0, 2),
+        {
+          label: "Tools",
+          current_path: `/bots/tools/${botName}/${botId}`,
+          preview_path: "",
+        },
+      ]);
       getBotToolsData(botId);
     } else {
+      replacePath([
+        {
+          label: "tools",
+          current_path: `/bots/tools`,
+          preview_path: "",
+        },
+      ]);
       getToolsData();
     }
   }, [botId]);

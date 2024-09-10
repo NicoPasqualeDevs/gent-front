@@ -24,7 +24,8 @@ const options = [
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, navElevation, setNavElevation, setAuthUser } = useAppContext();
+  const { menu, navElevation, setNavElevation, setAuthUser } =
+    useAppContext();
   return (
     <>
       <LeftMenuContainer

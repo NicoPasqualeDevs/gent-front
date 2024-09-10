@@ -32,6 +32,11 @@ const theme = createTheme({
       color: "#FFFFFF",
       textAlign: "justify",
     },
+    body2: {
+      fontSize: "100%",
+      color: "#8BE067", //primary.main
+      textAlign: "justify",
+    },
     subtitle1: {
       fontSize: "130%",
       color: "#8BE067", //primary.main.

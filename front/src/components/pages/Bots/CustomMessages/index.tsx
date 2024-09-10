@@ -14,11 +14,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ShortInput } from "./Inputs";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
+import { useAppContext } from "@/context/app";
 
 type MessagesData = CustomGreetingData[];
 let emptyMessagesTemplate: MessagesData = [];
 
 export const CustomMessages = () => {
+  const { replacePath, appNavigation } = useAppContext();
   const {
     getCustomMessages,
     postCustomMessages,
@@ -47,6 +49,14 @@ export const CustomMessages = () => {
 
   useEffect(() => {
     if (botId) {
+      replacePath([
+        ...appNavigation.slice(0, 2),
+        {
+          label: "Saludos",
+          current_path: `bots/customMessages/${botId}`,
+          preview_path: "",
+        },
+      ]);
       getCustomMessagesData(botId);
       setNewMessage({ ...newMessage, bot: botId });
     }

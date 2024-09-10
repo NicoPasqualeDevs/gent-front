@@ -2,6 +2,7 @@ import { AppContextState, INITIAL_STATE, AppDevice } from "./AppContext.ts";
 import { Breakpoint } from "@mui/material";
 import { AuthUser } from "@/types/Auth.ts";
 import { ClientDetails } from "@/types/Clients.ts";
+import { PathData } from "@/types/Pathbar.ts";
 
 type AppContextActions =
   | { type: "setAuthUser"; payload: AuthUser | null }
@@ -11,6 +12,8 @@ type AppContextActions =
   | { type: "setBreakPoint"; payload: Breakpoint }
   | { type: "setDevice"; payload: AppDevice }
   | { type: "setNavElevation"; payload: string }
+  | { type: "setAppNavigation"; payload: PathData }
+  | { type: "replacePath"; payload: PathData[] }
   | { type: "cleanState" };
 
 export const AppReducer = (
@@ -67,7 +70,28 @@ export const AppReducer = (
         ...state,
         layout: { ...state.layout, device: action.payload },
       };
-
+    case "setAppNavigation": {
+      let exist_element = false;
+      state.appNavigation.forEach((item) => {
+        if (item.label === action.payload.label) {
+          exist_element = true;
+        }
+      });
+      if (!exist_element) {
+        return {
+          ...state,
+          appNavigation: [...state.appNavigation, action.payload],
+        };
+      } else {
+        return state;
+      }
+    }
+    case "replacePath": {
+      return {
+        ...state,
+        appNavigation: action.payload,
+      };
+    }
     default:
       return state;
   }

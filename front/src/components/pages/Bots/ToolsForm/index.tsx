@@ -1,6 +1,7 @@
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { FileInput, MultilineInput, TextInput } from "@/components/Inputs";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
+import { useAppContext } from "@/context/app";
 import useBotsApi from "@/hooks/useBots";
 import { ToolData } from "@/types/Bots";
 import { Box, Button, Typography } from "@mui/material";
@@ -11,6 +12,7 @@ import * as Yup from "yup";
 
 const ToolsForm: React.FC = () => {
   const navigate = useNavigate();
+  const { replacePath, appNavigation } = useAppContext();
   const { toolName, toolId } = useParams();
   const { postTool, getTool, patchTool } = useBotsApi();
 
@@ -164,6 +166,14 @@ const ToolsForm: React.FC = () => {
   useEffect(() => {
     setLoaded(false);
     if (toolId) {
+      replacePath([
+        ...appNavigation.slice(0, 3),
+        {
+          label: "Editar",
+          current_path: `/bots/tools-form/${toolName}/${toolId}`,
+          preview_path: "",
+        },
+      ]);
       getToolData(toolId);
     } else {
       setLoaded(true);

@@ -13,8 +13,8 @@ import { useAppContext } from "@/context/app";
 
 const ClientForm: React.FC = () => {
   const navigate = useNavigate();
-  const { clientId } = useParams();
-  const { setNavElevation } = useAppContext();
+  const { clientName, clientId } = useParams();
+  const { setNavElevation, appNavigation, replacePath } = useAppContext();
   const { getClientDetails, postClientDetails, putClientDetails } =
     useCustomersApi();
 
@@ -147,10 +147,30 @@ const ClientForm: React.FC = () => {
       description: "",
       model_ia: "",
     });
-    if (clientId) {
+    if (clientId && clientName) {
+      replacePath([
+        ...appNavigation.slice(0, 2),
+        {
+          label: clientName,
+          current_path: "/clients",
+          preview_path: "",
+        },
+        {
+          label: "Editar",
+          current_path: `bots/clients/form/${clientId}`,
+          preview_path: "",
+        },
+      ]);
       setNavElevation("clients");
       getClientData(clientId);
     } else {
+      replacePath([
+        {
+          label: "Registrar Cliente",
+          current_path: `bots/clients/form`,
+          preview_path: "",
+        },
+      ]);
       setLoaded(true);
     }
   }, [clientId]);

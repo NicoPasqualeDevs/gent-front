@@ -20,6 +20,7 @@ import {
   BasicCardDivider,
 } from "@/components/styledComponents/Cards";
 import { useEffect, useState, useCallback } from "react";
+import { useAppContext } from "@/context/app";
 
 const KTagContent = styled(Typography)(({ theme }) => ({
   "&.MuiTypography-root": {
@@ -37,6 +38,7 @@ let emptyKtagsList: Ktag[] = [];
 const DataEntryComponent: React.FC = () => {
   const { botId } = useParams();
   const navigate = useNavigate();
+  const { replacePath, appNavigation } = useAppContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [customTags, setCustomTags] = useState<Ktag[]>(emptyKtagsList);
   const [enableAdd, setEnableAdd] = useState<boolean>(false);
@@ -57,7 +59,17 @@ const DataEntryComponent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (botId) Ktags(botId);
+    if (botId) {
+      replacePath([
+        ...appNavigation.slice(0, 2),
+        {
+          label: "ktags",
+          current_path: `bots/dataEntry/${botId}`,
+          preview_path: "",
+        },
+      ]);
+      Ktags(botId);
+    }
   }, [botId]);
 
   const handleAddKTag = () => {
