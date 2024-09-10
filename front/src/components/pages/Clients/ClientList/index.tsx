@@ -1,7 +1,10 @@
 import { useEffect, useCallback, useState } from "react";
 import { useAppContext } from "@/context/app";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { styled, alpha } from '@mui/material/styles';
 import { useNavigate } from "react-router-dom";
+import SearchIcon from '@mui/icons-material/Search';
+import InputBase from '@mui/material/InputBase';
 import {
   Button,
   Card,
@@ -18,8 +21,55 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
 import { ClientDetails } from "@/types/Clients";
 import { Metadata } from "@/types/Api";
-import chuckArray from "@/helpers/chunkArray";
-import concatArrays from "@/helpers/concatArrays";
+
+const Search = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  right: -16,
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: '100%',
+  [theme.breakpoints.up('sm')]: {
+    marginLeft: theme.spacing(3),
+    width: 'auto',
+  },
+}));
+
+const SearchWrapper = styled(Grid)(() => ({
+  position: "relative",
+  width: "100%",
+  height: "48px",
+  marginBottom: 8
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  right: -8,
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(0)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: '20ch',
+    },
+  },
+}));
 
 const ClientList: React.FC = () => {
   const navigate = useNavigate();
@@ -29,8 +79,9 @@ const ClientList: React.FC = () => {
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
   const [page, setPage] = useState<number>(1);
-  const [pageContent, setPageContent] = useState<Array<ClientDetails[]>>([]);
+  const [pageContent, setPageContent] = useState<ClientDetails[]>([]);
   const [paginationData, setPaginationData] = useState<Metadata>();
+  const [searchQuery, setSearchQuery] = useState<string>("")
 
   const handlePagination = (
     event: React.ChangeEvent<unknown>,
@@ -38,15 +89,23 @@ const ClientList: React.FC = () => {
   ) => {
     event.preventDefault();
     setPage(value);
+    getClientsData(`?page=${value}`)
+  };
+
+  const handleSearch = (
+    value: string
+  ) => {
+    setSearchQuery(value)
+    getClientsData(`?name__icontains=${value}`)
   };
 
   const deleteAction = (clientId: string) => {
     deleteClientDetails(clientId)
       .then(() => {
-        let temp = concatArrays(pageContent);
+        let temp = pageContent;
         temp = temp.filter((item) => item.id !== clientId);
         setPage(1);
-        setPageContent(chuckArray(temp));
+        setPageContent(temp);
         setAllowerState(false);
         setClientToDelete("");
         SuccessToast("Cliente eliminado satisfactoriamente");
@@ -63,13 +122,17 @@ const ClientList: React.FC = () => {
       });
   };
 
-  const getClientsData = useCallback(() => {
-    getCustomerList()
+  const getClientsData = useCallback((filterParams: string) => {
+    setLoaded(false);
+    getCustomerList(filterParams)
       .then((response) => {
         const data: ClientDetails[] = response.data
         const paginationData: Metadata = response.metadata
-        setPageContent(chuckArray(data));
-        setPaginationData(paginationData)
+        setPage(paginationData.current_page || 1);
+        setPageContent(data);
+        setPaginationData(paginationData);
+        console.log(data);
+        console.log(paginationData);
         setLoaded(true);
       })
       .catch((error) => {
@@ -93,7 +156,10 @@ const ClientList: React.FC = () => {
       },
     ]);
     setNavElevation("clients");
-    getClientsData();
+    if (!loaded) {
+      getClientsData("");
+    }
+
   }, []);
 
   return (
@@ -103,15 +169,21 @@ const ClientList: React.FC = () => {
       ) : (
         <>
           <Typography variant="h2">Clientes</Typography>
-          <Pagination
-            count={paginationData?.total_pages}
-            page={page}
-            onChange={handlePagination}
-            size="large"
-            color="primary"
-          />
+          <SearchWrapper>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Buscar"
+                value={searchQuery}
+                inputProps={{ 'aria-label': 'search' }}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </Search>
+          </SearchWrapper>
           {pageContent.length > 0 ? (
-            pageContent[page - 1].map((client, index) => {
+            pageContent.map((client, index) => {
               return (
                 <Card key={`client-${index}`}>
                   <CardContent>
@@ -185,6 +257,15 @@ const ClientList: React.FC = () => {
           allowerStateCleaner={setAllowerState}
           actionToDo={deleteAction}
           actionParams={clientToDelete}
+        />
+      )}
+      {loaded && pageContent.length > 0 && (
+        <Pagination
+          count={paginationData?.total_pages}
+          page={page}
+          onChange={handlePagination}
+          size="large"
+          color="primary"
         />
       )}
     </>

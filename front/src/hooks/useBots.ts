@@ -16,6 +16,7 @@ import {
   GetCustomGreetingData,
   CustomGreetingData,
 } from "@/types/Bots";
+import { ApiResponseList, ApiResponse } from "@/types/Api";
 
 type MessageUp = {
   message: string;
@@ -25,9 +26,9 @@ type UseBotsApiHook = {
   // Gets
   getKnowledgeTags: (clientId: string) => Promise<Ktag[]>;
   getChatHistory: (botId: string) => Promise<ChatHistory>;
-  getBotData: (botId: string) => Promise<BotData>;
+  getBotData: (botId: string) => Promise<ApiResponse<BotData>>;
   getNoAuthBotData: (botId: string) => Promise<BotData>;
-  getBotsList: (clientId: string) => Promise<BotData[]>;
+  getBotsList: (clientId: string, filterParams: string) => Promise<ApiResponseList<BotData>>;
   getKtags: (botId: string) => Promise<Ktag[]>;
   getWidget: (botId: string) => Promise<WidgetData>;
   getCustomMessages: (botId: string) => Promise<GetCustomGreetingData>;
@@ -80,13 +81,13 @@ const useBotsApi = (): UseBotsApiHook => {
   const { apiPut, apiPost, apiGet, noAuthGet, apiDelete, apiPatch } = useApi();
 
   // GETS
-  const getBotsList = (clientId: string): Promise<BotData[]> => {
-    const path = `api/client/bots/${clientId}`;
-    return apiGet<BotData[]>(path);
+  const getBotsList = (clientId: string, filterParams: string): Promise<ApiResponseList<BotData>> => {
+    const path = `api/client/bots/${clientId}${filterParams}`;
+    return apiGet<ApiResponseList<BotData>>(path);
   };
-  const getBotData = (botId: string): Promise<BotData> => {
+  const getBotData = (botId: string): Promise<ApiResponse<BotData>> => {
     const path = `api/bot/modify/${botId}`;
-    return apiGet<BotData>(path);
+    return apiGet<ApiResponse<BotData>>(path);
   };
   const getNoAuthBotData = (botId: string): Promise<BotData> => {
     const path = `api/bot/modify/${botId}`;
