@@ -1,18 +1,24 @@
 import { useEffect, useCallback, useState } from "react";
 import { useAppContext } from "@/context/app";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { styled, alpha } from '@mui/material/styles';
+import { styled, alpha } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import SearchIcon from '@mui/icons-material/Search';
-import InputBase from '@mui/material/InputBase';
+import SearchIcon from "@mui/icons-material/Search";
+import InputBase from "@mui/material/InputBase";
 import {
   Button,
   Card,
   CardActions,
   CardContent,
   Divider,
+  FormControl,
   Grid,
+  InputLabel,
+  MenuItem,
   Pagination,
+  Select,
+  SelectChangeEvent,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
@@ -22,20 +28,20 @@ import ActionAllower from "@/components/ActionAllower";
 import { ClientDetails } from "@/types/Clients";
 import { Metadata } from "@/types/Api";
 
-const Search = styled('div')(({ theme }) => ({
-  position: 'absolute',
+const Search = styled("div")(({ theme }) => ({
+  position: "absolute",
   right: -16,
   borderRadius: theme.shape.borderRadius,
   backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
+  "&:hover": {
     backgroundColor: alpha(theme.palette.common.white, 0.25),
   },
   marginRight: theme.spacing(2),
   marginLeft: 0,
-  width: '100%',
-  [theme.breakpoints.up('sm')]: {
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
     marginLeft: theme.spacing(3),
-    width: 'auto',
+    width: "auto",
   },
 }));
 
@@ -43,30 +49,30 @@ const SearchWrapper = styled(Grid)(() => ({
   position: "relative",
   width: "100%",
   height: "48px",
-  marginBottom: 8
+  marginBottom: 8,
 }));
 
-const SearchIconWrapper = styled('div')(({ theme }) => ({
+const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
+  height: "100%",
+  position: "absolute",
   right: -8,
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  '& .MuiInputBase-input': {
+  color: "inherit",
+  "& .MuiInputBase-input": {
     padding: theme.spacing(1, 1, 1, 0),
     // vertical padding + font size from searchIcon
     paddingLeft: `calc(1em + ${theme.spacing(0)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: '20ch',
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      width: "20ch",
     },
   },
 }));
@@ -81,7 +87,8 @@ const ClientList: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [pageContent, setPageContent] = useState<ClientDetails[]>([]);
   const [paginationData, setPaginationData] = useState<Metadata>();
-  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [contentPerPage, setContentPerPage] = useState<string>("5");
 
   const handlePagination = (
     event: React.ChangeEvent<unknown>,
@@ -89,14 +96,13 @@ const ClientList: React.FC = () => {
   ) => {
     event.preventDefault();
     setPage(value);
-    getClientsData(`?page=${value}`)
+    setLoaded(false);
+    getClientsData(`?page_size=${contentPerPage}&page=${value}`);
   };
 
-  const handleSearch = (
-    value: string
-  ) => {
-    setSearchQuery(value)
-    getClientsData(`?name__icontains=${value}`)
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    getClientsData(`?name__icontains=${value}`);
   };
 
   const deleteAction = (clientId: string) => {
@@ -115,7 +121,8 @@ const ClientList: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -123,16 +130,14 @@ const ClientList: React.FC = () => {
   };
 
   const getClientsData = useCallback((filterParams: string) => {
-    setLoaded(false);
+    //setLoaded(false);
     getCustomerList(filterParams)
       .then((response) => {
-        const data: ClientDetails[] = response.data
-        const paginationData: Metadata = response.metadata
+        const data: ClientDetails[] = response.data;
+        const paginationData: Metadata = response.metadata;
         setPage(paginationData.current_page || 1);
         setPageContent(data);
         setPaginationData(paginationData);
-        console.log(data);
-        console.log(paginationData);
         setLoaded(true);
       })
       .catch((error) => {
@@ -140,7 +145,8 @@ const ClientList: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${
+              error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -157,9 +163,8 @@ const ClientList: React.FC = () => {
     ]);
     setNavElevation("clients");
     if (!loaded) {
-      getClientsData("");
+      getClientsData(`?page_size=${contentPerPage}`);
     }
-
   }, []);
 
   return (
@@ -168,7 +173,9 @@ const ClientList: React.FC = () => {
         <PageCircularProgress />
       ) : (
         <>
-          <Typography variant="h2">Clientes</Typography>
+          <Typography variant="h2" marginBottom={"20px"}>
+            Clientes
+          </Typography>
           <SearchWrapper>
             <Search>
               <SearchIconWrapper>
@@ -177,7 +184,7 @@ const ClientList: React.FC = () => {
               <StyledInputBase
                 placeholder="Buscar"
                 value={searchQuery}
-                inputProps={{ 'aria-label': 'search' }}
+                inputProps={{ "aria-label": "search" }}
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </Search>
@@ -204,41 +211,47 @@ const ClientList: React.FC = () => {
                   <CardActions>
                     <Grid container>
                       <Grid item xs={11}>
-                        <Button
-                          size="small"
-                          sx={{
-                            marginRight: "5%",
-                          }}
-                          onClick={() => {
-                            navigate(
-                              `/bots/IaPanel/${client.name}/${client.id}`
-                            );
-                          }}
-                        >
-                          Agentes
-                        </Button>
-                        <Button
-                          size="small"
-                          onClick={() =>
-                            navigate(
-                              `/clients/form/${client.name}/${client.id}`
-                            )
-                          }
-                        >
-                          Editar
-                        </Button>
+                        <Tooltip title="Acceder a Agentes" arrow>
+                          <Button
+                            size="small"
+                            sx={{
+                              marginRight: "5%",
+                            }}
+                            onClick={() => {
+                              navigate(
+                                `/bots/IaPanel/${client.name}/${client.id}`
+                              );
+                            }}
+                          >
+                            Agentes
+                          </Button>
+                        </Tooltip>
+                        <Tooltip title="Editar Cliente" arrow>
+                          <Button
+                            size="small"
+                            onClick={() =>
+                              navigate(
+                                `/clients/form/${client.name}/${client.id}`
+                              )
+                            }
+                          >
+                            Editar
+                          </Button>
+                        </Tooltip>
                       </Grid>
                       <Grid item xs={1} textAlign={"end"}>
-                        <Button
-                          size="small"
-                          color="error"
-                          onClick={() => {
-                            setAllowerState(true);
-                            setClientToDelete(client.id);
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </Button>
+                        <Tooltip title="Eliminar Cliente" arrow>
+                          <Button
+                            size="small"
+                            color="error"
+                            onClick={() => {
+                              setAllowerState(true);
+                              setClientToDelete(client.id);
+                            }}
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </Button>
+                        </Tooltip>
                       </Grid>
                     </Grid>
                   </CardActions>
@@ -247,7 +260,9 @@ const ClientList: React.FC = () => {
             })
           ) : (
             <Typography variant="subtitle2" marginTop={"10px"}>
-              No hay clientes registrados
+              {searchQuery && searchQuery.trim() !== ""
+                ? "No se encontraron clientes con ese nombre"
+                : "No hay clientes para mostrar"}
             </Typography>
           )}
         </>
@@ -260,13 +275,67 @@ const ClientList: React.FC = () => {
         />
       )}
       {loaded && pageContent.length > 0 && (
-        <Pagination
-          count={paginationData?.total_pages}
-          page={page}
-          onChange={handlePagination}
-          size="large"
-          color="primary"
-        />
+        <Grid container marginBottom={"20px"}>
+          <Grid
+            item
+            xs={12}
+            sm={9}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Pagination
+              count={paginationData?.total_pages}
+              page={page}
+              onChange={handlePagination}
+              size="large"
+              color="primary"
+            />
+            {paginationData &&
+            paginationData.page_size &&
+            paginationData.total_items ? (
+              <Typography>
+                {`${(page - 1) * paginationData.page_size + 1} - ${Math.min(
+                  page * paginationData.page_size,
+                  paginationData.total_items
+                )} de ${paginationData.total_items} Clientes`}
+              </Typography>
+            ) : null}
+          </Grid>
+          <Grid
+            item
+            xs={6}
+            sm={3}
+            marginTop={{ xs: "10px", sm: "0px" }}
+            sx={{
+              display: "flex",
+              justifyContent: "end",
+            }}
+          >
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                Elementos por página
+              </InputLabel>
+              <Select
+                value={contentPerPage}
+                label="Clientes por página"
+                onChange={(e: SelectChangeEvent) => {
+                  setContentPerPage(e.target.value);
+                  setLoaded(false);
+                  getClientsData(`?page_size=${e.target.value}`);
+                }}
+                sx={{
+                  color: "white",
+                }}
+              >
+                <MenuItem value="5">5</MenuItem>
+                <MenuItem value="10">10</MenuItem>
+                <MenuItem value="20">20</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
       )}
     </>
   );
