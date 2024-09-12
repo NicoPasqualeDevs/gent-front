@@ -32,6 +32,11 @@ const theme = createTheme({
       color: "#FFFFFF",
       textAlign: "justify",
     },
+    body2: {
+      fontSize: "100%",
+      color: "#8BE067", //primary.main
+      textAlign: "justify",
+    },
     subtitle1: {
       fontSize: "130%",
       color: "#8BE067", //primary.main.
@@ -158,6 +163,22 @@ const theme = createTheme({
           borderColor: "#8BE067", //primary.color.
           width: "95%",
           margin: "0 auto",
+        },
+      },
+    },
+    MuiAvatar: {
+      styleOverrides: {
+        root: {
+          marginRight: "10px",
+          backgroundColor: "#8BE067", //primary.color
+          color: "#15163B", //primary.contrastText
+        },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: "85%",
         },
       },
     },

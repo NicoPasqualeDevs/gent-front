@@ -97,16 +97,24 @@ const useApi = (): UseApiHook => {
   );
 
   const apiPost = React.useCallback(
-    <B, R>(path: string, body: B /* , headers?: HeadersInit */): Promise<R> => {
+    <B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => {
       return new Promise((resolve, reject) => {
+        const fetch_header: HeadersInit = {
+          Authorization: `Token ${token}`,
+        };
+        if (!headers) {
+          fetch_header["Content-Type"] = "application/json";
+        }
+        const isFormData = body instanceof FormData;
         fetch(buildUri(path), {
           method: "POST",
-          body: JSON.stringify(body),
-          headers: {
-            //...(token && {Authorization: `Bearer ${token}`}),
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
+          body: isFormData ? (body as FormData) : JSON.stringify(body),
+          headers: fetch_header,
+          //{
+          //...(token && {Authorization: `Bearer ${token}`}),
+          //Authorization: `Token ${token}`,
+          //"Content-Type": "application/json",
+          //},
         })
           .then(async (resp) => {
             if (resp.status === 200 || resp.status === 201) {
@@ -158,17 +166,25 @@ const useApi = (): UseApiHook => {
   );
 
   const apiPatch = React.useCallback(
-    <B, R>(path: string, body: B /* headers?: HeadersInit */): Promise<R> => {
+    <B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => {
       return new Promise((resolve, reject) => {
+        const fetch_header: HeadersInit = {
+          Authorization: `Token ${token}`,
+        };
+        if (!headers) {
+          fetch_header["Content-Type"] = "application/json";
+        }
+        const isFormData = body instanceof FormData;
         fetch(buildUri(path), {
           method: "PATCH",
-          body: JSON.stringify(body),
-          headers: {
-            //...(token && {Authorization: `Bearer ${token}`}),
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-            //...(headers && { ...headers }),
-          },
+          body: isFormData ? (body as FormData) : JSON.stringify(body),
+          headers: fetch_header,
+          //{
+          //...(token && {Authorization: `Bearer ${token}`}),
+          //Authorization: `Token ${token}`,
+          //"Content-Type": "application/json",
+          //...(headers && { ...headers }),
+          //},
         })
           .then(async (resp) => {
             if (resp.status === 200 || resp.status === 201) {

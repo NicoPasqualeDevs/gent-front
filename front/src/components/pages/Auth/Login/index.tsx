@@ -34,9 +34,9 @@ const Login: React.FC = () => {
   const onSubmit = (values: AuthLoginData) => {
     loginUser(values)
       .then((response) => {
-        setAuthUser(response);
-        sessionStorage.setItem("user_email", response.email);
-        sessionStorage.setItem("user_token", response.token);
+        setAuthUser(response.data);
+        sessionStorage.setItem("user_email", response.data.email);
+        sessionStorage.setItem("user_token", response.data.token);
         setNavElevation("clients");
         navigate("/clients");
       })

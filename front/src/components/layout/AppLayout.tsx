@@ -1,36 +1,25 @@
-import React, { useEffect } from "react";
+import React from "react";
 import LeftMenu from "./LeftMenu";
-import { useAppContext } from "@/context/app";
-import ShortHeader from "./ShortHeader";
+import Header from "./Header";
+import { Grid } from "@mui/material";
+import { MainContent } from "../styledComponents/Layout";
+import Pathbar from "./Pathbar";
 
 interface ComponentProps {
   children: React.ReactNode;
 }
 
 const AppLayout: React.FC<ComponentProps> = ({ children }) => {
-  const {
-    layout: { breakpoint },
-  } = useAppContext();
-
-  useEffect(() => {
-    if (breakpoint) {
-      console.log(breakpoint, "<-- breakpoint");
-    }
-  }, [breakpoint]);
-
   return (
     <>
-      {breakpoint === "xl" || breakpoint === "lg" ? (
-        <>
-          <LeftMenu />
+      <LeftMenu />
+      <Header />
+      <Pathbar />
+      <MainContent container>
+        <Grid item xs={10} md={7} lg={5}>
           {children}
-        </>
-      ) : (
-        <>
-          <ShortHeader />
-          {children}
-        </>
-      )}
+        </Grid>
+      </MainContent>
     </>
   );
 };

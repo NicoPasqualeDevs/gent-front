@@ -2,6 +2,8 @@ import {
   NewGreetingData,
   PromptTemplateData,
   PromptTemplatePost,
+  ToolData,
+  ToolRelationshipData,
 } from "./../types/Bots";
 import useApi from "@/hooks/useApi.ts";
 import {
@@ -14,6 +16,7 @@ import {
   GetCustomGreetingData,
   CustomGreetingData,
 } from "@/types/Bots";
+import { ApiResponseList, ApiResponse } from "@/types/Api";
 
 type MessageUp = {
   message: string;
@@ -23,13 +26,16 @@ type UseBotsApiHook = {
   // Gets
   getKnowledgeTags: (clientId: string) => Promise<Ktag[]>;
   getChatHistory: (botId: string) => Promise<ChatHistory>;
-  getBotData: (botId: string) => Promise<BotData>;
+  getBotData: (botId: string) => Promise<ApiResponse<BotData>>;
   getNoAuthBotData: (botId: string) => Promise<BotData>;
-  getBotsList: (clientId: string) => Promise<BotData[]>;
+  getBotsList: (clientId: string, filterParams: string) => Promise<ApiResponseList<BotData>>;
   getKtags: (botId: string) => Promise<Ktag[]>;
   getWidget: (botId: string) => Promise<WidgetData>;
   getCustomMessages: (botId: string) => Promise<GetCustomGreetingData>;
   getPromptTemplate: (botId: string) => Promise<PromptTemplateData>;
+  getAllTools: () => Promise<ToolData[]>;
+  getBotTools: (botId: string) => Promise<ToolData[]>;
+  getTool: (toolId: string) => Promise<ToolData>;
 
   //Post
   createBot: (clientId: string, data: BotMetaData) => Promise<BotData>;
@@ -41,6 +47,15 @@ type UseBotsApiHook = {
     botId: string,
     data: PromptTemplatePost
   ) => Promise<PromptTemplateData>;
+  postTool: (data: FormData) => Promise<ToolData>;
+  setToolRelationship: (
+    botId: string,
+    data: ToolRelationshipData
+  ) => Promise<unknown>;
+  removeToolRelationship: (
+    botId: string,
+    data: ToolRelationshipData
+  ) => Promise<unknown>;
 
   //Puts
   updateBot: (botId: string, data: BotMetaData) => Promise<BotData>;
@@ -53,24 +68,26 @@ type UseBotsApiHook = {
 
   //patchs
   patchWidget: (widgetId: string, data: WidgetData) => Promise<WidgetData>;
+  patchTool: (toolId: string, data: FormData) => Promise<ToolData>;
 
   //Deletes
   deleteBot: (botId: string) => Promise<Response>;
   deleteKtag: (KtagId: string) => Promise<Response>;
   deleteCustomMessage: (messageId: string) => Promise<Response>;
+  deleteTool: (toolId: string) => Promise<Response>;
 };
 
 const useBotsApi = (): UseBotsApiHook => {
   const { apiPut, apiPost, apiGet, noAuthGet, apiDelete, apiPatch } = useApi();
 
   // GETS
-  const getBotsList = (clientId: string): Promise<BotData[]> => {
-    const path = `api/client/bots/${clientId}`;
-    return apiGet<BotData[]>(path);
+  const getBotsList = (clientId: string, filterParams: string): Promise<ApiResponseList<BotData>> => {
+    const path = `api/client/bots/${clientId}${filterParams}`;
+    return apiGet<ApiResponseList<BotData>>(path);
   };
-  const getBotData = (botId: string): Promise<BotData> => {
+  const getBotData = (botId: string): Promise<ApiResponse<BotData>> => {
     const path = `api/bot/modify/${botId}`;
-    return apiGet<BotData>(path);
+    return apiGet<ApiResponse<BotData>>(path);
   };
   const getNoAuthBotData = (botId: string): Promise<BotData> => {
     const path = `api/bot/modify/${botId}`;
@@ -99,6 +116,18 @@ const useBotsApi = (): UseBotsApiHook => {
   const getPromptTemplate = (botId: string): Promise<PromptTemplateData> => {
     const path = `api/bot/prompt/${botId}`;
     return apiGet<PromptTemplateData>(path);
+  };
+  const getAllTools = (): Promise<ToolData[]> => {
+    const path = `api/tool/all`;
+    return apiGet<ToolData[]>(path);
+  };
+  const getBotTools = (botId: string): Promise<ToolData[]> => {
+    const path = `api/tool/list/${botId}`;
+    return apiGet<ToolData[]>(path);
+  };
+  const getTool = (toolId: string): Promise<ToolData> => {
+    const path = `api/tool/modify/${toolId}`;
+    return apiGet<ToolData>(path);
   };
 
   // POST
@@ -134,6 +163,24 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/bot/prompt/${botId}`;
     return apiPost(path, data);
   };
+  const postTool = (data: FormData): Promise<ToolData> => {
+    const path = `api/tool/create`;
+    return apiPost(path, data, { "Content-Type": "multipart/form-data" });
+  };
+  const setToolRelationship = (
+    botId: string,
+    data: ToolRelationshipData
+  ): Promise<unknown> => {
+    const path = `api/bot/tools/${botId}`;
+    return apiPost(path, data);
+  };
+  const removeToolRelationship = (
+    botId: string,
+    data: ToolRelationshipData
+  ): Promise<unknown> => {
+    const path = `api/bot/remove-tools/${botId}`;
+    return apiPost(path, data);
+  };
 
   // PUT
   const updateBot = (botId: string, data: BotMetaData): Promise<BotData> => {
@@ -164,6 +211,10 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/widget/modify/${widgetId}`;
     return apiPatch(path, data);
   };
+  const patchTool = (toolId: string, data: FormData): Promise<ToolData> => {
+    const path = `api/tool/modify/${toolId}`;
+    return apiPatch(path, data, { "Content-Type": "multipart/form-data" });
+  };
 
   // DELETE
   const deleteBot = (botId: string): Promise<Response> => {
@@ -178,6 +229,10 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/greetings/${messageId}`;
     return apiDelete(path);
   };
+  const deleteTool = (toolId: string): Promise<Response> => {
+    const path = `api/tool/modify/${toolId}`;
+    return apiDelete(path);
+  };
 
   return {
     // Gets
@@ -190,6 +245,9 @@ const useBotsApi = (): UseBotsApiHook => {
     getWidget,
     getCustomMessages,
     getPromptTemplate,
+    getAllTools,
+    getBotTools,
+    getTool,
 
     //Post
     createBot,
@@ -198,6 +256,9 @@ const useBotsApi = (): UseBotsApiHook => {
     postWidget,
     postCustomMessages,
     postPromptTemplate,
+    postTool,
+    setToolRelationship,
+    removeToolRelationship,
 
     //Put
     updateBot,
@@ -207,11 +268,13 @@ const useBotsApi = (): UseBotsApiHook => {
 
     //patch
     patchWidget,
+    patchTool,
 
     //Delete
     deleteBot,
     deleteKtag,
     deleteCustomMessage,
+    deleteTool,
   };
 };
 

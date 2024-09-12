@@ -10,6 +10,7 @@ export interface TextInputProps extends InputProps {
   helperText?: string;
   placeholder?: string;
   value?: string;
+  disabled?: boolean;
 }
 
 export interface MultilineInputProps extends TextInputProps {
@@ -27,6 +28,14 @@ export interface ImageInputProps {
   label: string;
   onChange: (event: { target: { name: string; value: string } }) => void;
   value?: boolean;
+}
+
+export interface FileInputProps {
+  name: string;
+  label: string;
+  onChange: (event: { target: { name: string; value: File } }) => void;
+  value?: string | File;
+  helperText?: string | File;
 }
 
 export interface CheckboxInputProps extends InputProps {

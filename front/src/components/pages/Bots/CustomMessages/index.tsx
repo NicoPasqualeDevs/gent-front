@@ -9,17 +9,18 @@ import {
 } from "@/components/styledComponents/Typography";
 import useBotsApi from "@/hooks/useBots";
 import { CustomGreetingData, NewGreetingData } from "@/types/Bots";
-import { MainComponentContainer } from "@/utils/ContainerUtil";
-import { Box, Grid } from "@mui/material";
+import { Box } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ShortInput } from "./Inputs";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
+import { useAppContext } from "@/context/app";
 
 type MessagesData = CustomGreetingData[];
 let emptyMessagesTemplate: MessagesData = [];
 
 export const CustomMessages = () => {
+  const { replacePath, appNavigation } = useAppContext();
   const {
     getCustomMessages,
     postCustomMessages,
@@ -48,6 +49,14 @@ export const CustomMessages = () => {
 
   useEffect(() => {
     if (botId) {
+      replacePath([
+        ...appNavigation.slice(0, 2),
+        {
+          label: "Saludos",
+          current_path: `bots/customMessages/${botId}`,
+          preview_path: "",
+        },
+      ]);
       getCustomMessagesData(botId);
       setNewMessage({ ...newMessage, bot: botId });
     }
@@ -129,67 +138,51 @@ export const CustomMessages = () => {
   };
 
   return (
-    <MainComponentContainer container marginTop={{ xs: "100px", lg: "40px" }}>
-      <Grid
-        item
-        xs={10}
-        md={8}
-        xl={6}
-        textAlign={"center"}
-        sx={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          paddingTop: "13%",
-          paddingBottom: "5%",
-        }}
-      >
-        {isLoaded ? (
-          <Box sx={{}}>
-            <StyledPageTitle>Saludos Personalizados</StyledPageTitle>
-            <StyledPageSubTitle marginTop={"20px"}>
-              Saludos Existentes
-            </StyledPageSubTitle>
-            {messages.map((item, index) => {
-              return (
-                <Box
-                  display={"flex"}
-                  gap={1}
-                  marginTop={"10px"}
-                  key={`greeting-${index}`}
-                >
-                  <ShortInput
-                    propKey="text"
-                    emptyTemplate={emptyMessagesTemplate[index]}
-                    baseDetails={item}
-                  />
-                  <StyledDefaultButton onClick={() => handleUpdate(index)}>
-                    Actualizar
-                  </StyledDefaultButton>
-                  <StyledDangerButton onClick={() => handleDelete(index)}>
-                    Borrar
-                  </StyledDangerButton>
-                </Box>
-              );
-            })}
-            <StyledPageSubTitle marginTop={"20px"}>
-              Crear nuevo mensaje
-            </StyledPageSubTitle>
-            <Box display={"flex"} gap={1} marginTop={"10px"}>
-              <ShortInput
-                propKey="text"
-                emptyTemplate={newMessage}
-                baseDetails={newMessage}
-              />
-              <StyledDefaultButton onClick={handleNew}>
-                Crear
-              </StyledDefaultButton>
-            </Box>
+    <>
+      {isLoaded ? (
+        <Box sx={{}}>
+          <StyledPageTitle>Saludos Personalizados</StyledPageTitle>
+          <StyledPageSubTitle marginTop={"20px"}>
+            Saludos Existentes
+          </StyledPageSubTitle>
+          {messages.map((item, index) => {
+            return (
+              <Box
+                display={"flex"}
+                gap={1}
+                marginTop={"10px"}
+                key={`greeting-${index}`}
+              >
+                <ShortInput
+                  propKey="text"
+                  emptyTemplate={emptyMessagesTemplate[index]}
+                  baseDetails={item}
+                />
+                <StyledDefaultButton onClick={() => handleUpdate(index)}>
+                  Actualizar
+                </StyledDefaultButton>
+                <StyledDangerButton onClick={() => handleDelete(index)}>
+                  Borrar
+                </StyledDangerButton>
+              </Box>
+            );
+          })}
+          <StyledPageSubTitle marginTop={"20px"}>
+            Crear nuevo mensaje
+          </StyledPageSubTitle>
+          <Box display={"flex"} gap={1} marginTop={"10px"}>
+            <ShortInput
+              propKey="text"
+              emptyTemplate={newMessage}
+              baseDetails={newMessage}
+            />
+            <StyledDefaultButton onClick={handleNew}>Crear</StyledDefaultButton>
           </Box>
-        ) : (
-          <PageCircularProgress />
-        )}
-      </Grid>
-    </MainComponentContainer>
+        </Box>
+      ) : (
+        <PageCircularProgress />
+      )}
+    </>
   );
 };
 

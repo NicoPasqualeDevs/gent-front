@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Box, Button, Grid, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { MainGridContainer } from "@/utils/ContainerUtil";
 import { ClientDetails } from "@/types/Clients";
 import { useNavigate } from "react-router-dom";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
@@ -14,8 +13,8 @@ import { useAppContext } from "@/context/app";
 
 const ClientForm: React.FC = () => {
   const navigate = useNavigate();
-  const { clientId } = useParams();
-  const { setNavElevation } = useAppContext();
+  const { clientName, clientId } = useParams();
+  const { setNavElevation, appNavigation, replacePath } = useAppContext();
   const { getClientDetails, postClientDetails, putClientDetails } =
     useCustomersApi();
 
@@ -73,16 +72,16 @@ const ClientForm: React.FC = () => {
     getClientDetails(clientId)
       .then((response) => {
         setValues({
-          name: response.name,
-          address: response.address,
-          description: response.description,
-          model_ia: response.model_ia,
+          name: response.data.name,
+          address: response.data.address,
+          description: response.data.description,
+          model_ia: response.data.model_ia,
         });
         setInitialValues({
-          name: response.name,
-          address: response.address,
-          description: response.description,
-          model_ia: response.model_ia,
+          name: response.data.name,
+          address: response.data.address,
+          description: response.data.description,
+          model_ia: response.data.model_ia,
         });
         setLoaded(true);
       })
@@ -148,78 +147,96 @@ const ClientForm: React.FC = () => {
       description: "",
       model_ia: "",
     });
-    if (clientId) {
+    if (clientId && clientName) {
+      replacePath([
+        ...appNavigation.slice(0, 2),
+        {
+          label: clientName,
+          current_path: "/clients",
+          preview_path: "",
+        },
+        {
+          label: "Editar",
+          current_path: `bots/clients/form/${clientId}`,
+          preview_path: "",
+        },
+      ]);
       setNavElevation("clients");
       getClientData(clientId);
     } else {
+      replacePath([
+        {
+          label: "Registrar Cliente",
+          current_path: `bots/clients/form`,
+          preview_path: "",
+        },
+      ]);
       setLoaded(true);
     }
   }, [clientId]);
 
   return (
-    <MainGridContainer container>
-      <Grid item xs={10} md={7} lg={5} component={"form"} onSubmit={formSubmit}>
-        {!loaded ? (
-          <PageCircularProgress />
-        ) : (
-          <>
-            <Typography variant="h4" paddingTop={"70px"}>
-              {clientId ? "Editar Cliente" : "Registrar Nuevo Cliente"}
-            </Typography>
-            <Box marginTop={"20px"}>
-              <TextInput
-                name="name"
-                label="Nombre del Cliente"
-                value={values.name}
-                helperText={inputError.name}
-                onChange={handleChange}
-              />
-            </Box>
-            <Box marginTop={"20px"}>
-              <TextInput
-                name="address"
-                label="Dirección"
-                value={values.address}
-                helperText={inputError.address}
-                onChange={handleChange}
-              />
-            </Box>
-            <Box marginTop={"20px"}>
-              <TextInput
-                name="model_ia"
-                label="Modelo de IA"
-                value={values.model_ia}
-                helperText={inputError.model_ia}
-                placeholder="Modelos: gpt-3.5-turbo-1106, gpt-4-1106-preview, gpt-4o"
-                onChange={handleChange}
-              />
-            </Box>
-            <Typography>
-              Modelos: gpt-3.5-turbo-1106, gpt-4-1106-preview, gpt-4o
-            </Typography>
-            <Box marginTop={"30px"}>
-              <MultilineInput
-                name="description"
-                label="Descripción"
-                value={values.description}
-                rows={6}
-                helperText={inputError.description}
-                onChange={handleChange}
-              />
-            </Box>
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{
-                marginTop: "10px",
-              }}
-            >
-              {clientId ? "Editar" : "Registrar"}
-            </Button>
-          </>
-        )}
-      </Grid>
-    </MainGridContainer>
+    <Box component={"form"} onSubmit={formSubmit} width={"100%"}>
+      {!loaded ? (
+        <PageCircularProgress />
+      ) : (
+        <>
+          <Typography variant="h4">
+            {clientId ? "Editar Cliente" : "Registrar Nuevo Cliente"}
+          </Typography>
+          <Box marginTop={"20px"}>
+            <TextInput
+              name="name"
+              label="Nombre del Cliente"
+              value={values.name}
+              helperText={inputError.name}
+              onChange={handleChange}
+            />
+          </Box>
+          <Box marginTop={"20px"}>
+            <TextInput
+              name="address"
+              label="Dirección"
+              value={values.address}
+              helperText={inputError.address}
+              onChange={handleChange}
+            />
+          </Box>
+          <Box marginTop={"20px"}>
+            <TextInput
+              name="model_ia"
+              label="Modelo de IA"
+              value={values.model_ia}
+              helperText={inputError.model_ia}
+              placeholder="Modelos: gpt-3.5-turbo-1106, gpt-4-1106-preview, gpt-4o"
+              onChange={handleChange}
+            />
+          </Box>
+          <Typography>
+            Modelos: gpt-3.5-turbo-1106, gpt-4-1106-preview, gpt-4o
+          </Typography>
+          <Box marginTop={"30px"}>
+            <MultilineInput
+              name="description"
+              label="Descripción"
+              value={values.description}
+              rows={6}
+              helperText={inputError.description}
+              onChange={handleChange}
+            />
+          </Box>
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              marginTop: "10px",
+            }}
+          >
+            {clientId ? "Editar" : "Registrar"}
+          </Button>
+        </>
+      )}
+    </Box>
   );
 };
 

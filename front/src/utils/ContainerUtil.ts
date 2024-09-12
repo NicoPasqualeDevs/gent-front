@@ -46,11 +46,12 @@ export const CardDivider = styled(Box)(() => ({
 
 export const ActionAllowerContainer = styled(Box)(() => ({
   backdropFilter: "blur(2px)",
-  width: "100vw",
-  height: "100vh",
-  zIndex: "100",
+  width: "100%",
+  height: "100%",
+  zIndex: "500",
   position: "fixed",
   top: "0px",
+  left: "0px",
   display: "flex",
   justifyContent: "center",
   alignItems: "center",

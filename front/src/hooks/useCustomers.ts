@@ -1,9 +1,10 @@
 import useApi from "@/hooks/useApi.ts";
 import { ClientDetails } from "@/types/Clients";
+import { ApiResponseList, ApiResponse } from "@/types/Api";
 
 type UseCustomersApiHook = {
-  getCustomerList: () => Promise<ClientDetails[]>;
-  getClientDetails: (clientId: string) => Promise<ClientDetails>;
+  getCustomerList: (filterParams: string) => Promise<ApiResponseList<ClientDetails>>;
+  getClientDetails: (clientId: string) => Promise<ApiResponse<ClientDetails>>;
   postClientDetails: (data: ClientDetails) => Promise<ClientDetails>;
   putClientDetails: (
     data: ClientDetails,
@@ -16,14 +17,14 @@ const useCustomersApi = (): UseCustomersApiHook => {
   const { apiPut, apiPost, apiGet, apiDelete } = useApi();
 
   // GETS
-  const getCustomerList = (): Promise<ClientDetails[]> => {
-    const path = "api/client/actions/";
-    return apiGet<ClientDetails[]>(path);
+  const getCustomerList = (filterParams: string): Promise<ApiResponseList<ClientDetails>> => {
+    const path = `api/client/actions/${filterParams}`;
+    return apiGet<ApiResponseList<ClientDetails>>(path);
   };
 
-  const getClientDetails = (clientId: string): Promise<ClientDetails> => {
+  const getClientDetails = (clientId: string): Promise<ApiResponse<ClientDetails>> => {
     const path = `api/client/actions/${clientId}/`;
-    return apiGet<ClientDetails>(path);
+    return apiGet<ApiResponse<ClientDetails>>(path);
   };
 
   // POST
