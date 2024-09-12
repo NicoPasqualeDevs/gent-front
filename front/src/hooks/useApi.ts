@@ -46,7 +46,7 @@ const useApi = (): UseApiHook => {
     auth: { user },
   } = useAppContext();
   const token = user?.token; // || sessionStorage.getItem("user_token");
-  const apiBase = "https://helpiabot.com/"
+  const apiBase =  "https://helpiamakerdevelop.com/";
 
   const buildUri = <Q = Record<string, string>>(
     path: string,
