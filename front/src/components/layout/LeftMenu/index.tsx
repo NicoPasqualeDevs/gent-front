@@ -3,6 +3,7 @@ import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import theme from "@/styles/theme";
 import { LeftMenuContainer } from "@/components/styledComponents/Layout";
+import { SuccessToast } from "@/components/Toast";
 
 const options = [
   {
@@ -24,8 +25,7 @@ const options = [
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, navElevation, setNavElevation, setAuthUser } =
-    useAppContext();
+  const { menu, navElevation, setNavElevation, setAuthUser } = useAppContext();
   return (
     <>
       <LeftMenuContainer
@@ -76,7 +76,7 @@ const LeftMenu: React.FC = () => {
             sx={{
               height: "100%",
               display: "flex",
-              alignItems: "end",
+              alignItems: "flex-end",
             }}
           >
             <Typography
@@ -95,6 +95,7 @@ const LeftMenu: React.FC = () => {
                 sessionStorage.setItem("user_email", "");
                 sessionStorage.setItem("user_token", "");
                 navigate("/auth/admLogin", { replace: true });
+                SuccessToast("Has cerrado sesión correctamente");
               }}
             >
               Cerrar Sesión
