@@ -13,7 +13,7 @@ const Pathbar: React.FC = () => {
       sx={{
         position: "fixed",
         top: "70px",
-        width: "80%",
+        width: "98%",
         backgroundColor: "#0C0C22",
         height: "50px",
         zIndex: "101",
