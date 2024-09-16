@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import theme from "@/styles/theme";
 import { LeftMenuContainer } from "@/components/styledComponents/Layout";
 import { SuccessToast } from "@/components/Toast";
+import { LogoutSharp } from "@mui/icons-material";
 
 const options = [
   {
@@ -30,7 +31,8 @@ const LeftMenu: React.FC = () => {
     <>
       <LeftMenuContainer
         sx={{
-          width: `${menu ? "220px" : "0px"}`,
+          flexShrink: "0",
+          width: `${menu ? "170px" : "0px"}`,
           borderRight: `1px solid ${
             menu ? theme.palette.primary.main : "transparent"
           }`,
@@ -40,7 +42,7 @@ const LeftMenu: React.FC = () => {
           direction={"column"}
           sx={{
             paddingTop: "100px",
-            paddingRight: `${menu ? "30px" : "0px"}`,
+            paddingRight: `${menu ? "20px" : "0px"}`,
             paddingLeft: `${menu ? "10px" : "0px"}`,
             height: "100%",
           }}
@@ -53,7 +55,7 @@ const LeftMenu: React.FC = () => {
                   cursor: "pointer",
                   marginBottom: "10px",
                   opacity: `${menu ? "1" : "0"}`,
-                  fontSize: `${menu ? "130%" : "0px"}`,
+                  fontSize: `${menu ? "110%" : "0px"}`,
                   transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
                   color:
                     navElevation === option.navElevation
@@ -82,8 +84,10 @@ const LeftMenu: React.FC = () => {
             <Typography
               sx={{
                 opacity: `${menu ? "1" : "0"}`,
-                fontSize: `${menu ? "130%" : "0px"}`,
-                transition: `font-size ${theme.transitions.duration.standard}ms`,
+                fontSize: `${menu ? "100%" : "0px"}`,
+                transition: `font-size ${theme.transitions.duration.complex}ms, color ${theme.transitions.duration.standard}ms`,
+                display: "flex",
+                alignItems: "center",
                 paddingBottom: "20px",
                 cursor: "pointer",
                 ":hover": {
@@ -98,6 +102,13 @@ const LeftMenu: React.FC = () => {
                 SuccessToast("Has cerrado sesión correctamente");
               }}
             >
+              <LogoutSharp
+                sx={{
+                  opacity: `${menu ? "1" : "0"}`,
+                  marginRight: "5px",
+                  transform: "scaleX(-1)",
+                }}
+              />
               Cerrar Sesión
             </Typography>
           </Box>

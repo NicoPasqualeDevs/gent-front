@@ -15,8 +15,6 @@ import {
   Button,
   Divider,
   Tooltip,
-  FormControl,
-  InputLabel,
   Select,
   SelectChangeEvent,
   MenuItem,
@@ -29,6 +27,7 @@ import ActionAllower from "@/components/ActionAllower";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import useApi from "@/hooks/useApi";
 import { useAppContext } from "@/context/app";
+import theme from "@/styles/theme";
 
 const Search = styled("div")(({ theme }) => ({
   position: "absolute",
@@ -106,7 +105,9 @@ const IaPanel: React.FC = () => {
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
-    getBotsData(`?name__icontains=${value}`);
+    if (value.trim() !== "") {
+      getBotsData(`?name__icontains=${value}`);
+    }
   };
 
   const deleteAction = (botId: string) => {
@@ -354,8 +355,8 @@ const IaPanel: React.FC = () => {
         <Grid container marginBottom={"20px"}>
           <Grid
             item
-            xs={12}
-            sm={9}
+            xs={6}
+            sm={4}
             sx={{
               display: "flex",
               alignItems: "center",
@@ -365,13 +366,29 @@ const IaPanel: React.FC = () => {
               count={paginationData?.total_pages}
               page={page}
               onChange={handlePagination}
-              size="large"
+              size="small"
               color="primary"
             />
+          </Grid>
+          <Grid
+            item
+            xs={6}
+            sm={3}
+            justifyContent={{ xs: "flex-end", sm: "center" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
             {paginationData &&
             paginationData.page_size &&
             paginationData.total_items ? (
-              <Typography>
+              <Typography
+                sx={{
+                  fontSize: "80%",
+                  padding: "5px 0px",
+                }}
+              >
                 {`${(page - 1) * paginationData.page_size + 1} - ${Math.min(
                   page * paginationData.page_size,
                   paginationData.total_items
@@ -381,35 +398,50 @@ const IaPanel: React.FC = () => {
           </Grid>
           <Grid
             item
-            xs={6}
-            sm={3}
-            marginTop={{ xs: "10px", sm: "0px" }}
+            xs={12}
+            sm={5}
+            justifyContent={{ xs: "flex-start", sm: "flex-end" }}
             sx={{
               display: "flex",
-              justifyContent: "end",
+              alignItems: "center",
             }}
           >
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">
-                Agentes por página
-              </InputLabel>
-              <Select
-                value={contentPerPage}
-                label="Elementos por página"
-                onChange={(e: SelectChangeEvent) => {
-                  setContentPerPage(e.target.value);
-                  setLoaded(false);
-                  getBotsData(`?page_size=${e.target.value}`);
-                }}
-                sx={{
+            <Typography
+              sx={{
+                fontSize: "80%",
+                marginRight: "5px",
+              }}
+            >
+              Elementos por página
+            </Typography>
+            <Select
+              value={contentPerPage}
+              label="Elementos por página"
+              onChange={(e: SelectChangeEvent) => {
+                setContentPerPage(e.target.value);
+                setLoaded(false);
+                getBotsData(`?page_size=${e.target.value}`);
+              }}
+              sx={{
+                "& .MuiSelect-select": {
                   color: "white",
-                }}
-              >
-                <MenuItem value="5">5</MenuItem>
-                <MenuItem value="10">10</MenuItem>
-                <MenuItem value="20">20</MenuItem>
-              </Select>
-            </FormControl>
+                  padding: "5px 5px 5px 5px",
+                },
+                "& .MuiSelect-icon": {
+                  color: "white",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "transparent",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.primary.main,
+                },
+              }}
+            >
+              <MenuItem value="5">5</MenuItem>
+              <MenuItem value="10">10</MenuItem>
+              <MenuItem value="20">20</MenuItem>
+            </Select>
           </Grid>
         </Grid>
       )}

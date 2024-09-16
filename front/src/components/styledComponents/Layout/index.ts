@@ -47,9 +47,6 @@ export const UserBubble = styled(Box)(({ theme }) => ({
 }));
 
 export const LeftMenuContainer = styled(Box)(({ theme }) => ({
-  position: "fixed",
-  top: "70px",
-  width: "220px",
   height: `calc(100vh - 70px)`,
   backgroundColor: theme.palette.secondary.dark,
   transition: `width ${theme.transitions.duration.standard}ms`,

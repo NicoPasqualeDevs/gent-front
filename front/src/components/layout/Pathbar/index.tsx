@@ -13,7 +13,7 @@ const Pathbar: React.FC = () => {
       sx={{
         position: "fixed",
         top: "70px",
-        width: "98%",
+        width: "80%",
         backgroundColor: "#0C0C22",
         height: "50px",
         zIndex: "101",
@@ -25,7 +25,7 @@ const Pathbar: React.FC = () => {
       <Breadcrumbs
         separator={<Typography>/</Typography>}
         sx={{
-          paddingLeft: `${menu ? "220px" : "0px"}`,
+          paddingLeft: `${menu ? "190px" : "0px"}`,
           transition: `padding-left ${theme.transitions.duration.standard}ms`,
           color: "white",
           width: "100%",
