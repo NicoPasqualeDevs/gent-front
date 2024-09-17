@@ -26,7 +26,7 @@ const Login: React.FC = () => {
 
   const validationSchema = Yup.object({
     email: Yup.string()
-      .email("correo no valido")
+      .email("Correo no válido")
       .required("Este campo es requerido"),
     code: Yup.string().required("Este campo es requerido"),
   });
@@ -41,14 +41,21 @@ const Login: React.FC = () => {
         navigate("/clients");
       })
       .catch((error) => {
+        console.log(error);
         if (error instanceof Error) {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
+          ErrorToast(error.data.message);
+          setInputError({
+            email:
+              error.data.message === "Correo no válido"
+                ? "Correo no válido"
+                : "",
+            code:
+              error.data.message === "Credenciales incorrectas"
+                ? "Credenciales incorrectas"
+                : "",
+          });
         }
       });
   };
@@ -96,6 +103,9 @@ const Login: React.FC = () => {
             label="Email"
             value={values.email}
             helperText={inputError.email}
+            error={
+              inputError.email && inputError.email.trim() !== "" ? true : false
+            }
             onChange={handleChange}
           />
         </Grid>
@@ -105,6 +115,9 @@ const Login: React.FC = () => {
             label="Código"
             value={values.code}
             helperText={inputError.code}
+            error={
+              inputError.code && inputError.code.trim() !== "" ? true : false
+            }
             onChange={handleChange}
           />
         </Grid>

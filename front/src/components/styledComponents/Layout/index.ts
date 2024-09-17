@@ -30,7 +30,8 @@ export const BrandMenuBtn = styled(Menu)(({ theme }) => ({
 
 export const UserBubbleContainer = styled(Grid)(() => ({
   display: "flex",
-  justifyContent: "end",
+  justifyContent: "flex-end",
+  flexDirection: "row",
 }));
 
 export const UserBubble = styled(Box)(({ theme }) => ({
@@ -42,12 +43,10 @@ export const UserBubble = styled(Box)(({ theme }) => ({
   alignItems: "center",
   borderRadius: "20px",
   backgroundColor: theme.palette.primary.main,
+  width: "auto",
 }));
 
 export const LeftMenuContainer = styled(Box)(({ theme }) => ({
-  position: "fixed",
-  top: "70px",
-  width: "220px",
   height: `calc(100vh - 70px)`,
   backgroundColor: theme.palette.secondary.dark,
   transition: `width ${theme.transitions.duration.standard}ms`,

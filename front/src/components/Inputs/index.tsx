@@ -152,7 +152,8 @@ export const TextInput: React.FC<TextInputProps> = ({
   placeholder,
   value,
   onChange,
-  disabled
+  disabled,
+  error,
 }) => {
   return (
     <StyledTextField
@@ -164,6 +165,7 @@ export const TextInput: React.FC<TextInputProps> = ({
       fullWidth
       value={value || ""}
       disabled={disabled || false}
+      error={error || false}
     />
   );
 };
@@ -201,6 +203,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
   helperText,
   onChange,
   adornmentPosition,
+  error,
 }) => {
   const [visibility, setVisibility] = useState<boolean>(false);
   return (
@@ -211,6 +214,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       helperText={helperText ? helperText : " "}
       fullWidth
       type={visibility ? "text" : "password"}
+      error={error || false}
       InputProps={{
         endAdornment: (
           <InputAdornment

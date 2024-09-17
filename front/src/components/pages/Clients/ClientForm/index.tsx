@@ -72,16 +72,16 @@ const ClientForm: React.FC = () => {
     getClientDetails(clientId)
       .then((response) => {
         setValues({
-          name: response.data.name,
-          address: response.data.address,
-          description: response.data.description,
-          model_ia: response.data.model_ia,
+          name: response.name,
+          address: response.address,
+          description: response.description,
+          model_ia: response.model_ia,
         });
         setInitialValues({
-          name: response.data.name,
-          address: response.data.address,
-          description: response.data.description,
-          model_ia: response.data.model_ia,
+          name: response.name,
+          address: response.address,
+          description: response.description,
+          model_ia: response.model_ia,
         });
         setLoaded(true);
       })
@@ -118,7 +118,7 @@ const ClientForm: React.FC = () => {
     postClientDetails(values)
       .then((response) => {
         SuccessToast("Cliente creado satisfactoriamente");
-        navigate(`/clients/form/${response.id}`);
+        navigate(`/clients/form/${response.name}/${response.id}`);
       })
       .catch((error) => {
         if (error instanceof Error) {
