@@ -11,6 +11,7 @@ export interface TextInputProps extends InputProps {
   placeholder?: string;
   value?: string;
   disabled?: boolean;
+  error?: boolean;
 }
 
 export interface MultilineInputProps extends TextInputProps {

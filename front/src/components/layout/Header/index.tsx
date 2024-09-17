@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, Avatar } from "@mui/material";
+import { Typography, Avatar, Tooltip } from "@mui/material";
 import { useAppContext } from "@/context/app";
 import theme from "@/styles/theme";
 import {
@@ -21,11 +21,13 @@ const Header: React.FC = () => {
   return (
     <HeaderContainer container>
       <BrandContainer item xs={8} md={3}>
-        <BrandMenuBtn
-          onClick={() => {
-            setMenu(!menu);
-          }}
-        />
+        <Tooltip title={menu ? "Contraer menú" : " Expandir menú"} arrow>
+          <BrandMenuBtn
+            onClick={() => {
+              setMenu(!menu);
+            }}
+          />
+        </Tooltip>
         <Typography variant="h4" marginLeft={"10px"}>
           IA-Maker
         </Typography>
