@@ -17,6 +17,9 @@ export interface AppContextState {
   clientsList: ClientDetails[] | undefined;
   navElevation: string;
   appNavigation: PathData[];
+  clientPage: number;
+  toolsPage: number;
+  agentsPage: number;
 
   setCustomersList: (value: ClientDetails[]) => void;
   setLogin: (value: AuthUser) => void;
@@ -27,6 +30,9 @@ export interface AppContextState {
   cleanState: () => void;
   setAppNavigation: (value: PathData) => void;
   replacePath: (value: PathData[]) => void;
+  setClientPage: (value: number) => void;
+  setToolsPage: (value: number) => void;
+  setAgentsPage: (value: number) => void;
 }
 
 export const INITIAL_STATE: AppContextState = {
@@ -40,6 +46,9 @@ export const INITIAL_STATE: AppContextState = {
   loaded: false,
   clientsList: undefined,
   appNavigation: [] as PathData[],
+  clientPage: 1,
+  toolsPage: 1,
+  agentsPage: 1,
 } as AppContextState;
 
 export const AppContext = createContext(INITIAL_STATE);
