@@ -13,7 +13,18 @@ interface AppProviderProps {
 
 export const AppProvider = ({ children }: AppProviderProps) => {
   const [
-    { menu, layout, loaded, clientsList, auth, navElevation, appNavigation },
+    {
+      menu,
+      layout,
+      loaded,
+      clientsList,
+      auth,
+      navElevation,
+      appNavigation,
+      clientPage,
+      toolsPage,
+      agentsPage,
+    },
     dispatch,
   ] = useReducer(AppReducer, INITIAL_STATE);
 
@@ -65,6 +76,18 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     dispatch({ type: "cleanState" });
   };
 
+  const setClientPage = (value: number) => {
+    dispatch({ type: "setClientPage", payload: value });
+  };
+
+  const setToolsPage = (value: number) => {
+    dispatch({ type: "setToolsPage", payload: value });
+  };
+
+  const setAgentsPage = (value: number) => {
+    dispatch({ type: "setAgentsPage", payload: value });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -75,6 +98,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         auth,
         navElevation,
         appNavigation,
+        clientPage,
+        toolsPage,
+        agentsPage,
         setCustomersList,
         setLogin,
         setLoaded,
@@ -84,6 +110,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         setAppNavigation,
         replacePath,
         cleanState,
+        setClientPage,
+        setToolsPage,
+        setAgentsPage,
       }}
     >
       {children}

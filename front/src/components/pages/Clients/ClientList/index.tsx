@@ -78,12 +78,17 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const ClientList: React.FC = () => {
   const navigate = useNavigate();
-  const { setNavElevation, replacePath } = useAppContext();
+  const {
+    setNavElevation,
+    replacePath,
+    clientPage,
+    setClientPage,
+    setAgentsPage,
+  } = useAppContext();
   const { getCustomerList, deleteClientDetails } = useCustomersApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
   const [pageContent, setPageContent] = useState<ClientDetails[]>([]);
   const [paginationData, setPaginationData] = useState<Metadata>();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -94,7 +99,7 @@ const ClientList: React.FC = () => {
     value: number
   ) => {
     event.preventDefault();
-    setPage(value);
+    setClientPage(value);
     setLoaded(false);
     getClientsData(`?page_size=${contentPerPage}&page=${value}`);
   };
@@ -111,7 +116,6 @@ const ClientList: React.FC = () => {
       .then(() => {
         let temp = pageContent;
         temp = temp.filter((item) => item.id !== clientId);
-        setPage(1);
         setPageContent(temp);
         setAllowerState(false);
         setClientToDelete("");
@@ -131,12 +135,11 @@ const ClientList: React.FC = () => {
   };
 
   const getClientsData = useCallback((filterParams: string) => {
-    //setLoaded(false);
     getCustomerList(filterParams)
       .then((response) => {
         const data: ClientDetails[] = response.data;
         const paginationData: Metadata = response.metadata;
-        setPage(paginationData.current_page || 1);
+        setClientPage(paginationData.current_page || 1);
         setPageContent(data);
         setPaginationData(paginationData);
         setLoaded(true);
@@ -162,9 +165,10 @@ const ClientList: React.FC = () => {
         preview_path: "/clients",
       },
     ]);
+    setAgentsPage(1);
     setNavElevation("clients");
     if (!loaded) {
-      getClientsData(`?page_size=${contentPerPage}`);
+      getClientsData(`?page_size=${contentPerPage}&page=${clientPage}`);
     }
   }, []);
 
@@ -288,7 +292,7 @@ const ClientList: React.FC = () => {
           >
             <Pagination
               count={paginationData?.total_pages}
-              page={page}
+              page={clientPage}
               onChange={handlePagination}
               size="small"
               color="primary"
@@ -313,8 +317,10 @@ const ClientList: React.FC = () => {
                   padding: "5px 0px",
                 }}
               >
-                {`${(page - 1) * paginationData.page_size + 1} - ${Math.min(
-                  page * paginationData.page_size,
+                {`${
+                  (clientPage - 1) * paginationData.page_size + 1
+                } - ${Math.min(
+                  clientPage * paginationData.page_size,
                   paginationData.total_items
                 )} de ${paginationData.total_items} Clientes`}
               </Typography>
