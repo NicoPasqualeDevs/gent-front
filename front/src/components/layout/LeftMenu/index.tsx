@@ -29,10 +29,24 @@ const LeftMenu: React.FC = () => {
   const { menu, navElevation, setNavElevation, setAuthUser } = useAppContext();
   return (
     <>
+      {menu && (
+        <Box
+          display={{ xs: "block", sm: "none" }}
+          sx={{
+            position: "fixed",
+            backdropFilter: "blur(2px)",
+            width: "100%",
+            height: "100%",
+            zIndex: "101",
+          }}
+        />
+      )}
       <LeftMenuContainer
+        position={{ xs: "fixed", sm: "relative" }}
+        top={{ xs: "70px", sm: "0px" }}
         sx={{
           flexShrink: "0",
-          width: `${menu ? "170px" : "0px"}`,
+          width: `${menu ? "155px" : "0px"}`,
           borderRight: `1px solid ${
             menu ? theme.palette.primary.main : "transparent"
           }`,
@@ -41,7 +55,7 @@ const LeftMenu: React.FC = () => {
         <Stack
           direction={"column"}
           sx={{
-            paddingTop: "100px",
+            paddingTop: "20px",
             paddingRight: `${menu ? "20px" : "0px"}`,
             paddingLeft: `${menu ? "10px" : "0px"}`,
             height: "100%",

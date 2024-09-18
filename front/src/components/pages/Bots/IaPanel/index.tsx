@@ -252,7 +252,7 @@ const IaPanel: React.FC = () => {
                   <Divider />
                   <CardActions>
                     <Grid container>
-                      <Grid item xs={9}>
+                      <Grid item xs={11}>
                         <Tooltip title="Editar Agente" arrow>
                           <Button
                             size="small"
@@ -314,7 +314,7 @@ const IaPanel: React.FC = () => {
                           </Button>
                         </Tooltip>
                       </Grid>
-                      <Grid item xs={3} textAlign={"end"}>
+                      <Grid item xs={1} textAlign={"end"}>
                         <Tooltip title="Eliminar Agente" arrow>
                           <Button
                             size="small"

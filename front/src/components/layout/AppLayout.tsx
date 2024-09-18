@@ -17,7 +17,15 @@ const AppLayout: React.FC<ComponentProps> = ({ children }) => {
       <Stack direction={"row"} position={"relative"}>
         <LeftMenu />
         <MainContent container>
-          <Grid item xs={11} md={9} lg={7}>
+          <Grid
+            item
+            xs={11}
+            md={9}
+            lg={7}
+            sx={{
+              paddingBottom: "20px",
+            }}
+          >
             {children}
           </Grid>
         </MainContent>

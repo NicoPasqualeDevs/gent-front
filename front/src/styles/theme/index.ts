@@ -1,48 +1,39 @@
-import { createTheme } from "@mui/material";
+import { createTheme, responsiveFontSizes } from "@mui/material";
 
-const theme = createTheme({
+let theme = createTheme({
   typography: {
     fontFamily: "Nunito",
+    fontSize: 13,
     h1: {
-      fontSize: "280%",
       color: "#8BE067", //primary.main.
     },
     h2: {
-      fontSize: "240%",
       color: "#8BE067", //primary.main.
     },
     h3: {
-      fontSize: "220%",
       color: "#8BE067", //primary.main.
     },
     h4: {
-      fontSize: "190%",
       color: "#8BE067", //primary.main.
     },
     h5: {
-      fontSize: "160%",
       color: "#8BE067", //primary.main.
     },
     h6: {
-      fontSize: "130%",
       color: "#8BE067", //primary.main.
     },
     body1: {
-      fontSize: "100%",
       color: "#FFFFFF",
       textAlign: "justify",
     },
     body2: {
-      fontSize: "100%",
       color: "#8BE067", //primary.main
       textAlign: "justify",
     },
     subtitle1: {
-      fontSize: "130%",
       color: "#8BE067", //primary.main.
     },
     subtitle2: {
-      fontSize: "120%",
       color: "#FFFFFF",
     },
   },
@@ -95,7 +86,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          fontSize: "100%",
+          fontSize: "1rem",
           borderRadius: "5px",
           width: "100%",
           height: "100%",
@@ -103,6 +94,7 @@ const theme = createTheme({
           textTransform: "none",
         },
         sizeSmall: {
+          fontSize: "0.8rem",
           width: "auto",
           minWidth: "0px",
           padding: "0px 5px",
@@ -115,7 +107,6 @@ const theme = createTheme({
     MuiLink: {
       styleOverrides: {
         root: {
-          fontSize: "110%",
           cursor: "pointer",
         },
       },
@@ -195,4 +186,7 @@ const theme = createTheme({
     },
   },
 });
+
+theme = responsiveFontSizes(theme);
+
 export default theme;

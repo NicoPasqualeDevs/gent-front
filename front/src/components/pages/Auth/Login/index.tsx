@@ -9,6 +9,7 @@ import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { PasswordInput, TextInput } from "@/components/Inputs";
+import theme from "@/styles/theme";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -75,7 +76,13 @@ const Login: React.FC = () => {
   });
 
   return (
-    <MainGridContainer container alignItems={"center"}>
+    <MainGridContainer
+      container
+      alignItems={"center"}
+      sx={{
+        overflow: "hidden",
+      }}
+    >
       <Grid
         container
         item
@@ -130,7 +137,17 @@ const Login: React.FC = () => {
             alignItems: "center",
           }}
         >
-          <Button variant="contained" type="submit">
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              paddingTop: "10px",
+              paddingBottom: "10px",
+              [theme.breakpoints.between("xs", "sm")]: {
+                maxWidth: "100%",
+              },
+            }}
+          >
             Log In
           </Button>
         </Grid>
