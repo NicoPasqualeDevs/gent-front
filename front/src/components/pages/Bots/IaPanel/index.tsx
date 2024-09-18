@@ -81,13 +81,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
   const navigate = useNavigate();
-  const { replacePath, appNavigation } = useAppContext();
+  const { replacePath, appNavigation, agentsPage, setAgentsPage } =
+    useAppContext();
   const { apiBase } = useApi();
   const { getBotsList, deleteBot } = useBotsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [botToDelete, setbotToDelete] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
   const [pageContent, setPageContent] = useState<BotData[]>([]);
   const [paginationData, setPaginationData] = useState<Metadata>();
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -98,7 +98,7 @@ const IaPanel: React.FC = () => {
     value: number
   ) => {
     event.preventDefault();
-    setPage(value);
+    setAgentsPage(value);
     setLoaded(false);
     getBotsData(`?page_size=${contentPerPage}&page=${value}`);
   };
@@ -116,7 +116,6 @@ const IaPanel: React.FC = () => {
         .then(() => {
           let temp = pageContent;
           temp = temp.filter((item) => item.id !== botId);
-          setPage(1);
           setPageContent(temp);
           setAllowerState(false);
           setbotToDelete("");
@@ -144,10 +143,9 @@ const IaPanel: React.FC = () => {
           .then((response) => {
             const data: BotData[] = response.data;
             const paginationData: Metadata = response.metadata;
-            setPage(paginationData.current_page || 1);
+            setAgentsPage(paginationData.current_page || 1);
             setPageContent(data);
             setPaginationData(paginationData);
-            console.log(response);
             setLoaded(true);
           })
           .catch((error) => {
@@ -177,7 +175,7 @@ const IaPanel: React.FC = () => {
         },
       ]);
       if (!loaded) {
-        getBotsData(`?page_size=${contentPerPage}`);
+        getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
       }
     } else {
       ErrorToast("Error al cargar clientId en esta vista");
@@ -364,7 +362,7 @@ const IaPanel: React.FC = () => {
           >
             <Pagination
               count={paginationData?.total_pages}
-              page={page}
+              page={agentsPage}
               onChange={handlePagination}
               size="small"
               color="primary"
@@ -389,8 +387,10 @@ const IaPanel: React.FC = () => {
                   padding: "5px 0px",
                 }}
               >
-                {`${(page - 1) * paginationData.page_size + 1} - ${Math.min(
-                  page * paginationData.page_size,
+                {`${
+                  (agentsPage - 1) * paginationData.page_size + 1
+                } - ${Math.min(
+                  agentsPage * paginationData.page_size,
                   paginationData.total_items
                 )} de ${paginationData.total_items} Agentes`}
               </Typography>

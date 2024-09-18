@@ -26,7 +26,7 @@ import { useAppContext } from "@/context/app";
 const Tools: React.FC = () => {
   const navigate = useNavigate();
   const { botName, botId } = useParams();
-  const { replacePath, appNavigation } = useAppContext();
+  const { replacePath, appNavigation, setAgentsPage } = useAppContext();
   const { getAllTools, getBotTools, deleteTool } = useBotsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
@@ -128,6 +128,7 @@ const Tools: React.FC = () => {
           preview_path: "",
         },
       ]);
+      setAgentsPage(1);
       getToolsData();
     }
   }, [botId]);

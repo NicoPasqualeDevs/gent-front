@@ -14,7 +14,8 @@ import { useAppContext } from "@/context/app";
 const ClientForm: React.FC = () => {
   const navigate = useNavigate();
   const { clientName, clientId } = useParams();
-  const { setNavElevation, appNavigation, replacePath } = useAppContext();
+  const { setNavElevation, appNavigation, replacePath, setAgentsPage } =
+    useAppContext();
   const { getClientDetails, postClientDetails, putClientDetails } =
     useCustomersApi();
 
@@ -164,6 +165,7 @@ const ClientForm: React.FC = () => {
       setNavElevation("clients");
       getClientData(clientId);
     } else {
+      setAgentsPage(1);
       replacePath([
         {
           label: "Registrar Cliente",

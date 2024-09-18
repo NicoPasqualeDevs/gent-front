@@ -14,6 +14,9 @@ type AppContextActions =
   | { type: "setNavElevation"; payload: string }
   | { type: "setAppNavigation"; payload: PathData }
   | { type: "replacePath"; payload: PathData[] }
+  | { type: "setClientPage"; payload: number }
+  | { type: "setToolsPage"; payload: number }
+  | { type: "setAgentsPage"; payload: number }
   | { type: "cleanState" };
 
 export const AppReducer = (
@@ -90,6 +93,24 @@ export const AppReducer = (
       return {
         ...state,
         appNavigation: action.payload,
+      };
+    }
+    case "setClientPage": {
+      return {
+        ...state,
+        clientPage: action.payload,
+      };
+    }
+    case "setToolsPage": {
+      return {
+        ...state,
+        toolsPage: action.payload,
+      };
+    }
+    case "setAgentsPage": {
+      return {
+        ...state,
+        agentsPage: action.payload,
       };
     }
     default:
