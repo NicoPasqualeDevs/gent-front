@@ -9,6 +9,7 @@ import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { PasswordInput, TextInput } from "@/components/Inputs";
+import theme from "@/styles/theme";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const Login: React.FC = () => {
 
   const validationSchema = Yup.object({
     email: Yup.string()
-      .email("correo no valido")
+      .email("Correo no válido")
       .required("Este campo es requerido"),
     code: Yup.string().required("Este campo es requerido"),
   });
@@ -34,21 +35,28 @@ const Login: React.FC = () => {
   const onSubmit = (values: AuthLoginData) => {
     loginUser(values)
       .then((response) => {
-        setAuthUser(response);
-        sessionStorage.setItem("user_email", response.email);
-        sessionStorage.setItem("user_token", response.token);
+        setAuthUser(response.data);
+        sessionStorage.setItem("user_email", response.data.email);
+        sessionStorage.setItem("user_token", response.data.token);
         setNavElevation("clients");
         navigate("/clients");
       })
       .catch((error) => {
+        console.log(error);
         if (error instanceof Error) {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
+          ErrorToast(error.data.message);
+          setInputError({
+            email:
+              error.data.message === "Correo no válido"
+                ? "Correo no válido"
+                : "",
+            code:
+              error.data.message === "Credenciales incorrectas"
+                ? "Credenciales incorrectas"
+                : "",
+          });
         }
       });
   };
@@ -68,7 +76,13 @@ const Login: React.FC = () => {
   });
 
   return (
-    <MainGridContainer container alignItems={"center"}>
+    <MainGridContainer
+      container
+      alignItems={"center"}
+      sx={{
+        overflow: "hidden",
+      }}
+    >
       <Grid
         container
         item
@@ -96,6 +110,9 @@ const Login: React.FC = () => {
             label="Email"
             value={values.email}
             helperText={inputError.email}
+            error={
+              inputError.email && inputError.email.trim() !== "" ? true : false
+            }
             onChange={handleChange}
           />
         </Grid>
@@ -105,6 +122,9 @@ const Login: React.FC = () => {
             label="Código"
             value={values.code}
             helperText={inputError.code}
+            error={
+              inputError.code && inputError.code.trim() !== "" ? true : false
+            }
             onChange={handleChange}
           />
         </Grid>
@@ -117,7 +137,17 @@ const Login: React.FC = () => {
             alignItems: "center",
           }}
         >
-          <Button variant="contained" type="submit">
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              paddingTop: "10px",
+              paddingBottom: "10px",
+              [theme.breakpoints.between("xs", "sm")]: {
+                maxWidth: "100%",
+              },
+            }}
+          >
             Log In
           </Button>
         </Grid>

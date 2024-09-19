@@ -14,6 +14,7 @@ import { useState } from "react";
 import { ErrorToast } from "../Toast";
 import {
   CheckboxInputProps,
+  FileInputProps,
   ImageInputProps,
   MultilineInputProps,
   PasswordInputProps,
@@ -151,6 +152,8 @@ export const TextInput: React.FC<TextInputProps> = ({
   placeholder,
   value,
   onChange,
+  disabled,
+  error,
 }) => {
   return (
     <StyledTextField
@@ -161,6 +164,8 @@ export const TextInput: React.FC<TextInputProps> = ({
       placeholder={placeholder ? placeholder : ""}
       fullWidth
       value={value || ""}
+      disabled={disabled || false}
+      error={error || false}
     />
   );
 };
@@ -198,6 +203,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
   helperText,
   onChange,
   adornmentPosition,
+  error,
 }) => {
   const [visibility, setVisibility] = useState<boolean>(false);
   return (
@@ -208,6 +214,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       helperText={helperText ? helperText : " "}
       fullWidth
       type={visibility ? "text" : "password"}
+      error={error || false}
       InputProps={{
         endAdornment: (
           <InputAdornment
@@ -315,6 +322,86 @@ export const ImageInput: React.FC<ImageInputProps> = ({
         </Button>
       </Box>
     </Box>
+  );
+};
+
+export const FileInput: React.FC<FileInputProps> = ({
+  name,
+  label,
+  onChange,
+  value,
+}) => {
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const allowedFileTypes = ["text/x-python"];
+    const files = (e.target as HTMLInputElement).files;
+    if (files && files.length > 0) {
+      if (allowedFileTypes.includes(files[0].type)) {
+        onChange({
+          target: {
+            name,
+            value: files[0],
+          },
+        });
+      } else {
+        ErrorToast("El archivo es de un formato no compatible!");
+      }
+    } else {
+      ErrorToast("Hubo problemas al cargar el archivo");
+    }
+  };
+
+  return (
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          padding: "2.2%",
+          backgroundColor: "#0C0C22",
+          borderRadius: "5px",
+          border: "1px solid #DDDDDD",
+          "&:hover": {
+            borderColor: theme.palette.primary.main,
+          },
+        }}
+      >
+        <Box textAlign={"left"} width={"50%"}>
+          <Typography
+            sx={{
+              fontSize: "100%",
+              color: theme.palette.primary.main,
+            }}
+          >
+            {label}
+          </Typography>
+        </Box>
+        <Box textAlign={"center"} width={"50%"}>
+          <Button
+            onClick={() => {
+              document.getElementById(`${name}-input-file`)?.click();
+            }}
+            sx={{
+              backgroundColor: theme.palette.secondary.dark,
+              color: theme.palette.primary.main,
+              "&:hover": {
+                backgroundColor: theme.palette.primary.main,
+                color: theme.palette.secondary.dark,
+              },
+            }}
+          >
+            <Input
+              id={`${name}-input-file`}
+              name={name}
+              type="file"
+              sx={{ display: "none" }}
+              onChange={handleFileInputChange}
+            />
+            {value ? "cambiar archivo" : "seleccionar archivo"}
+          </Button>
+        </Box>
+      </Box>
+    </>
   );
 };
 

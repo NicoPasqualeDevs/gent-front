@@ -2,15 +2,21 @@ import { AppContextState, INITIAL_STATE, AppDevice } from "./AppContext.ts";
 import { Breakpoint } from "@mui/material";
 import { AuthUser } from "@/types/Auth.ts";
 import { ClientDetails } from "@/types/Clients.ts";
+import { PathData } from "@/types/Pathbar.ts";
 
 type AppContextActions =
-  | { type: "setAuthUser"; payload: AuthUser }
+  | { type: "setAuthUser"; payload: AuthUser | null }
   | { type: "setLoaded"; payload: boolean }
   | { type: "setCustomersList"; payload: ClientDetails[] }
-  | { type: "setMenuOpen"; payload: boolean }
+  | { type: "setMenu"; payload: boolean }
   | { type: "setBreakPoint"; payload: Breakpoint }
   | { type: "setDevice"; payload: AppDevice }
   | { type: "setNavElevation"; payload: string }
+  | { type: "setAppNavigation"; payload: PathData }
+  | { type: "replacePath"; payload: PathData[] }
+  | { type: "setClientPage"; payload: number }
+  | { type: "setToolsPage"; payload: number }
+  | { type: "setAgentsPage"; payload: number }
   | { type: "cleanState" };
 
 export const AppReducer = (
@@ -44,10 +50,10 @@ export const AppReducer = (
       };
     }
 
-    case "setMenuOpen":
+    case "setMenu":
       return {
         ...state,
-        menu: { ...state.menu, open: action.payload },
+        menu: action.payload,
       };
 
     case "setBreakPoint":
@@ -67,7 +73,46 @@ export const AppReducer = (
         ...state,
         layout: { ...state.layout, device: action.payload },
       };
-
+    case "setAppNavigation": {
+      let exist_element = false;
+      state.appNavigation.forEach((item) => {
+        if (item.label === action.payload.label) {
+          exist_element = true;
+        }
+      });
+      if (!exist_element) {
+        return {
+          ...state,
+          appNavigation: [...state.appNavigation, action.payload],
+        };
+      } else {
+        return state;
+      }
+    }
+    case "replacePath": {
+      return {
+        ...state,
+        appNavigation: action.payload,
+      };
+    }
+    case "setClientPage": {
+      return {
+        ...state,
+        clientPage: action.payload,
+      };
+    }
+    case "setToolsPage": {
+      return {
+        ...state,
+        toolsPage: action.payload,
+      };
+    }
+    case "setAgentsPage": {
+      return {
+        ...state,
+        agentsPage: action.payload,
+      };
+    }
     default:
       return state;
   }

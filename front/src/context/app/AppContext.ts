@@ -2,6 +2,7 @@ import { createContext } from "react";
 import { Breakpoint } from "@mui/material";
 import { AuthTempInfo, AuthUser } from "@/types/Auth.ts";
 import { ClientDetails } from "@/types/Clients";
+import { PathData } from "@/types/Pathbar";
 
 export type AppDevice = "mobile" | "tablet" | "pc";
 
@@ -11,20 +12,27 @@ export interface AppContextState {
     breakpoint: Breakpoint;
     device: "mobile" | "tablet" | "pc";
   };
-  menu: {
-    open: boolean;
-  };
+  menu: boolean;
   loaded: boolean;
   clientsList: ClientDetails[] | undefined;
   navElevation: string;
+  appNavigation: PathData[];
+  clientPage: number;
+  toolsPage: number;
+  agentsPage: number;
 
   setCustomersList: (value: ClientDetails[]) => void;
   setLogin: (value: AuthUser) => void;
-  setAuthUser: (value: AuthUser) => void;
-  setMenuOpen: (value: boolean) => void;
+  setAuthUser: (value: AuthUser | null) => void;
+  setMenu: (value: boolean) => void;
   setLoaded: (value: boolean) => void;
   setNavElevation: (value: string) => void;
   cleanState: () => void;
+  setAppNavigation: (value: PathData) => void;
+  replacePath: (value: PathData[]) => void;
+  setClientPage: (value: number) => void;
+  setToolsPage: (value: number) => void;
+  setAgentsPage: (value: number) => void;
 }
 
 export const INITIAL_STATE: AppContextState = {
@@ -33,12 +41,14 @@ export const INITIAL_STATE: AppContextState = {
     breakpoint: "lg",
     device: "pc",
   },
-  menu: {
-    open: true,
-  },
+  menu: true,
   navElevation: "",
   loaded: false,
   clientsList: undefined,
+  appNavigation: [] as PathData[],
+  clientPage: 1,
+  toolsPage: 1,
+  agentsPage: 1,
 } as AppContextState;
 
 export const AppContext = createContext(INITIAL_STATE);

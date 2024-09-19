@@ -7,6 +7,11 @@ import IaPanel from "@/components/pages/Bots/IaPanel";
 import { WidgetCustomizer } from "@/components/pages/Bots/WidgetCustomizer";
 import CustomMessages from "@/components/pages/Bots/CustomMessages";
 import ContextEntry from "@/components/pages/Bots/ContextEntry";
+import Tools from "@/components/pages/Bots/Tools";
+import ToolsForm from "@/components/pages/Bots/ToolsForm";
+import ToolsRelationship from "@/components/pages/Bots/ToolsRelationship";
+
+
 
 const Layout = (
   <AppLayout>
@@ -30,6 +35,12 @@ const BotsDetailsModule: React.FC = () => {
             element={<WidgetCustomizer />}
           />
           <Route path="customMessages/:botId?" element={<CustomMessages />} />
+          <Route path="tools/:botName?/:botId?" element={<Tools />} />
+          <Route
+            path="tools-form/:toolName?/:toolId?"
+            element={<ToolsForm />}
+          />
+          <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship/>}/>
         </Route>
       </Routes>
     </AuthChecker>

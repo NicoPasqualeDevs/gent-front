@@ -17,7 +17,7 @@ const ClientsModule: React.FC = () => {
       <Routes>
         <Route path="/" element={Layout}>
           <Route index element={<ClientList />} />
-          <Route path="form/:clientId?" element={<ClientForm />} />
+          <Route path="form/:clientName?/:clientId?" element={<ClientForm />} />
         </Route>
       </Routes>
     </AuthChecker>

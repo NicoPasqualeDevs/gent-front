@@ -5,14 +5,28 @@ import { useWidth } from "@/hooks/useWidth.ts";
 import { isWidthDown } from "@mui/material/Hidden/withWidth";
 import { AuthUser } from "@/types/Auth.ts";
 import { ClientDetails } from "@/types/Clients.ts";
+import { PathData } from "@/types/Pathbar.ts";
 
 interface AppProviderProps {
   children: React.ReactNode | Array<React.ReactNode>;
 }
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const [{ menu, layout, loaded, clientsList, auth, navElevation }, dispatch] =
-    useReducer(AppReducer, INITIAL_STATE);
+  const [
+    {
+      menu,
+      layout,
+      loaded,
+      clientsList,
+      auth,
+      navElevation,
+      appNavigation,
+      clientPage,
+      toolsPage,
+      agentsPage,
+    },
+    dispatch,
+  ] = useReducer(AppReducer, INITIAL_STATE);
 
   const width = useWidth();
   React.useEffect(() => {
@@ -27,7 +41,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
   }, [width]);
 
-  const setAuthUser = (value: AuthUser) => {
+  const setAuthUser = (value: AuthUser | null) => {
     dispatch({ type: "setAuthUser", payload: value });
   };
   const setLogin = (value: AuthUser) => {
@@ -42,16 +56,36 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     dispatch({ type: "setCustomersList", payload: value });
   };
 
-  const setMenuOpen = (value: boolean) => {
-    dispatch({ type: "setMenuOpen", payload: value });
+  const setMenu = (value: boolean) => {
+    dispatch({ type: "setMenu", payload: value });
   };
 
   const setNavElevation = (value: string) => {
     dispatch({ type: "setNavElevation", payload: value });
   };
 
+  const setAppNavigation = (value: PathData) => {
+    dispatch({ type: "setAppNavigation", payload: value });
+  };
+
+  const replacePath = (value: PathData[]) => {
+    dispatch({ type: "replacePath", payload: value });
+  };
+
   const cleanState = () => {
     dispatch({ type: "cleanState" });
+  };
+
+  const setClientPage = (value: number) => {
+    dispatch({ type: "setClientPage", payload: value });
+  };
+
+  const setToolsPage = (value: number) => {
+    dispatch({ type: "setToolsPage", payload: value });
+  };
+
+  const setAgentsPage = (value: number) => {
+    dispatch({ type: "setAgentsPage", payload: value });
   };
 
   return (
@@ -63,13 +97,22 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         clientsList,
         auth,
         navElevation,
+        appNavigation,
+        clientPage,
+        toolsPage,
+        agentsPage,
         setCustomersList,
         setLogin,
         setLoaded,
-        setMenuOpen,
+        setMenu,
         setAuthUser,
         setNavElevation,
+        setAppNavigation,
+        replacePath,
         cleanState,
+        setClientPage,
+        setToolsPage,
+        setAgentsPage,
       }}
     >
       {children}

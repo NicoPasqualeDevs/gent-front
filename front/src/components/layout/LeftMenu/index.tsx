@@ -1,84 +1,134 @@
-import { Box, styled, Stack, Grid, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
-import BackButton from "../BackButton";
 import theme from "@/styles/theme";
+import { LeftMenuContainer } from "@/components/styledComponents/Layout";
+import { SuccessToast } from "@/components/Toast";
+import { LogoutSharp } from "@mui/icons-material";
 
-const LeftMenuContainer = styled(Box)(() => ({
-  "&.MuiBox-root": {
-    background: "transparent",
-    borderRadius: "64px",
-    padding: "16px",
-    marginTop: "180px",
-    position: "fixed",
-    zIndex: 2,
+const options = [
+  {
+    navElevation: "clients",
+    label: "Clientes",
+    path: "/clients",
   },
-}));
-
-const NavButtons = styled(Typography)(({ theme }) => ({
-  "&.MuiTypography-root": {
-    fontSize: "18px",
-    width: "auto",
-    padding: "2px 0px",
-    margin: "7px 0px",
-    cursor: "pointer",
-    transition: "color 0.2s ease-in-out",
-    ":hover": {
-      color: theme.palette.primary.main,
-    },
+  {
+    navElevation: "Register",
+    label: "Registrar Cliente",
+    path: "/clients/form",
   },
-}));
+  {
+    navElevation: "Tools",
+    label: "Tools",
+    path: "/bots/tools",
+  },
+];
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { navElevation, setNavElevation } = useAppContext();
-
+  const { menu, navElevation, setNavElevation, setAuthUser } = useAppContext();
   return (
-    <LeftMenuContainer>
-      <Grid>
-        <Stack sx={{ position: "relative !important" }}>
-          {window.location.pathname === "/" ? <></> : <BackButton />}
-          <NavButtons
+    <>
+      {menu && (
+        <Box
+          display={{ xs: "block", sm: "none" }}
+          sx={{
+            position: "fixed",
+            backdropFilter: "blur(2px)",
+            width: "100%",
+            height: "100%",
+            zIndex: "101",
+          }}
+        />
+      )}
+      <LeftMenuContainer
+        position={{ xs: "fixed", sm: "relative" }}
+        top={{ xs: "70px", sm: "0px" }}
+        sx={{
+          flexShrink: "0",
+          width: `${menu ? "155px" : "0px"}`,
+          borderRight: `1px solid ${
+            menu ? theme.palette.primary.main : "transparent"
+          }`,
+        }}
+      >
+        <Stack
+          direction={"column"}
+          sx={{
+            paddingTop: "20px",
+            paddingRight: `${menu ? "20px" : "0px"}`,
+            paddingLeft: `${menu ? "10px" : "0px"}`,
+            height: "100%",
+          }}
+        >
+          {options.map((option, index) => {
+            return (
+              <Typography
+                key={`menu-option-${index}`}
+                sx={{
+                  cursor: "pointer",
+                  marginBottom: "10px",
+                  opacity: `${menu ? "1" : "0"}`,
+                  fontSize: `${menu ? "110%" : "0px"}`,
+                  transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
+                  color:
+                    navElevation === option.navElevation
+                      ? theme.palette.primary.main
+                      : "white",
+                  ":hover": {
+                    color: theme.palette.primary.main,
+                  },
+                }}
+                onClick={() => {
+                  setNavElevation(option.navElevation);
+                  navigate(option.path);
+                }}
+              >
+                {option.label}
+              </Typography>
+            );
+          })}
+          <Box
             sx={{
-              color:
-                navElevation === "clients"
-                  ? theme.palette.primary.main
-                  : "white",
-              borderBottom: `1px solid ${
-                navElevation === "clients"
-                  ? theme.palette.primary.main
-                  : "transparent"
-              }`,
-            }}
-            onClick={() => {
-              navigate("/clients");
-              setNavElevation("clients");
+              height: "100%",
+              display: "flex",
+              alignItems: "flex-end",
             }}
           >
-            Clientes
-          </NavButtons>
-          <NavButtons
-            sx={{
-              color:
-                navElevation === "Register"
-                  ? theme.palette.primary.main
-                  : "white",
-              borderBottom: `1px solid ${
-                navElevation === "Register"
-                  ? theme.palette.primary.main
-                  : "transparent"
-              }`,
-            }}
-            onClick={() => {
-              navigate("/clients/form");
-              setNavElevation("Register");
-            }}
-          >
-            Registrar nuevo cliente
-          </NavButtons>
+            <Typography
+              sx={{
+                opacity: `${menu ? "1" : "0"}`,
+                fontSize: `${menu ? "100%" : "0px"}`,
+                transition: `font-size ${theme.transitions.duration.complex}ms, color ${theme.transitions.duration.standard}ms`,
+                display: "flex",
+                alignItems: "center",
+                paddingBottom: "20px",
+                cursor: "pointer",
+                ":hover": {
+                  color: theme.palette.primary.main,
+                },
+              }}
+              onClick={() => {
+                setAuthUser(null);
+                sessionStorage.setItem("user_email", "");
+                sessionStorage.setItem("user_token", "");
+                navigate("/auth/admLogin", { replace: true });
+                SuccessToast("Has cerrado sesión correctamente");
+              }}
+            >
+              <LogoutSharp
+                sx={{
+                  opacity: `${menu ? "1" : "0"}`,
+                  marginRight: "5px",
+                  transform: "scaleX(-1)",
+                }}
+              />
+              Cerrar Sesión
+            </Typography>
+          </Box>
         </Stack>
-      </Grid>
-    </LeftMenuContainer>
+      </LeftMenuContainer>
+    </>
   );
 };
 

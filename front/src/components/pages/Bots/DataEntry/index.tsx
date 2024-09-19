@@ -3,7 +3,6 @@ import { LongInput, ShortInput } from "./Inputs";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { useParams, useNavigate } from "react-router-dom";
 import { Ktag } from "@/types/Bots";
-import { MainComponentContainer } from "@/utils/ContainerUtil";
 import {
   StyledDefaultButton,
   StyledLinkButton,
@@ -21,6 +20,7 @@ import {
   BasicCardDivider,
 } from "@/components/styledComponents/Cards";
 import { useEffect, useState, useCallback } from "react";
+import { useAppContext } from "@/context/app";
 
 const KTagContent = styled(Typography)(({ theme }) => ({
   "&.MuiTypography-root": {
@@ -38,6 +38,7 @@ let emptyKtagsList: Ktag[] = [];
 const DataEntryComponent: React.FC = () => {
   const { botId } = useParams();
   const navigate = useNavigate();
+  const { replacePath, appNavigation } = useAppContext();
   const [loading, setLoading] = useState<boolean>(false);
   const [customTags, setCustomTags] = useState<Ktag[]>(emptyKtagsList);
   const [enableAdd, setEnableAdd] = useState<boolean>(false);
@@ -58,7 +59,17 @@ const DataEntryComponent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (botId) Ktags(botId);
+    if (botId) {
+      replacePath([
+        ...appNavigation.slice(0, 2),
+        {
+          label: "ktags",
+          current_path: `bots/dataEntry/${botId}`,
+          preview_path: "",
+        },
+      ]);
+      Ktags(botId);
+    }
   }, [botId]);
 
   const handleAddKTag = () => {
@@ -149,110 +160,24 @@ const DataEntryComponent: React.FC = () => {
   };
 
   return (
-    <MainComponentContainer container paddingTop={"70px"}>
-      <Grid item xs={10} md={7} xl={5}>
-        {loading ? (
-          <>
-            <StyledPageTitle
-              fontSize={"24px"}
-              color="primary.main"
-              variant="h4"
-              textAlign="left"
-              gap={2}
-            >
-              Actualizar etiquetas de conocimientos {"(KTags)"}
-            </StyledPageTitle>
-            <Stack id="ktag-wrapper">
-              {customTags &&
-                customTags.map((item, index) =>
-                  item.id ? (
-                    //KTAG TO EDIT
-                    item.id === KTagToEdit ? (
-                      <Grid
-                        container
-                        gap={2}
-                        sx={{ marginBottom: "24px" }}
-                        key={`${item.field_name}-${index}-tagBox`}
-                      >
-                        <Grid xs={12} item display={"flex"}>
-                          <ShortInput
-                            emptyData={emptyKtagsList[index]}
-                            data={item}
-                            propKey="name"
-                          />
-                        </Grid>
-                        {/*                         <Grid xs={12} item display={"flex"}>
-                          <ShortInput
-                            emptyData={emptyKtagsList[index]}
-                            data={item}
-                            propKey="description"
-                          />
-                        </Grid> */}
-                        <Grid xs={12} item display={"flex"}>
-                          <LongInput
-                            emptyData={emptyKtagsList[index]}
-                            data={item}
-                            propKey="value"
-                          />
-                        </Grid>
-                        <Grid container justifyContent={"right"}>
-                          <Box display={"flex"}>
-                            <StyledDefaultButton
-                              onClick={() => handleSaveEditKtag(item.id, index)}
-                            >
-                              Save Edit
-                            </StyledDefaultButton>
-                          </Box>
-                        </Grid>
-                        <Divider
-                          sx={{
-                            border: "1px solid rgba(50,50,50, 0.1)",
-                            width: "100%",
-                          }}
-                        />
-                      </Grid>
-                    ) : (
-                      // KTAG VIEW
-                      <BasicCard key={`${item.field_name}-${index}-tagBox`}>
-                        <BasicCardContent>
-                          <Box display={"flex"} justifyContent={"right"}>
-                            <Typography
-                              position={"absolute"}
-                              fontSize={10}
-                              color="primary.main"
-                              textAlign={"center"}
-                              maxWidth={"72px"}
-                            >{`N° : ${index + 1}`}</Typography>
-                          </Box>
-                          <CardSubTitle>Palabras Clave :</CardSubTitle>
-                          <KTagContent>{`${item.name}`}</KTagContent>
-
-                          {/* <CardSubTitle>{`Instrucción: ${item.description}`}</CardSubTitle> */}
-                          <CardSubTitle>Conocimiento Agregado :</CardSubTitle>
-                          <KTagContent>{`${item.value}`}</KTagContent>
-                        </BasicCardContent>
-                        <BasicCardDivider />
-                        <BasicCardAction>
-                          <Box display={"flex"}>
-                            <StyledLinkButton
-                              onClick={() => handleEditKtag(item)}
-                            >
-                              Edit
-                            </StyledLinkButton>
-                            <StyledLinkButton
-                              style={{ marginLeft: "12px" }}
-                              onClick={() =>
-                                handleDeleteKtag(item.id, index + 1)
-                              }
-                            >
-                              Delete
-                            </StyledLinkButton>
-                          </Box>
-                        </BasicCardAction>
-                      </BasicCard>
-                    )
-                  ) : (
-                    // KTAG INPUT
+    <>
+      {loading ? (
+        <>
+          <StyledPageTitle
+            fontSize={"24px"}
+            color="primary.main"
+            variant="h4"
+            textAlign="left"
+            gap={2}
+          >
+            Actualizar etiquetas de conocimientos {"(KTags)"}
+          </StyledPageTitle>
+          <Stack id="ktag-wrapper">
+            {customTags &&
+              customTags.map((item, index) =>
+                item.id ? (
+                  //KTAG TO EDIT
+                  item.id === KTagToEdit ? (
                     <Grid
                       container
                       gap={2}
@@ -266,6 +191,13 @@ const DataEntryComponent: React.FC = () => {
                           propKey="name"
                         />
                       </Grid>
+                      {/*                         <Grid xs={12} item display={"flex"}>
+                          <ShortInput
+                            emptyData={emptyKtagsList[index]}
+                            data={item}
+                            propKey="description"
+                          />
+                        </Grid> */}
                       <Grid xs={12} item display={"flex"}>
                         <LongInput
                           emptyData={emptyKtagsList[index]}
@@ -275,14 +207,10 @@ const DataEntryComponent: React.FC = () => {
                       </Grid>
                       <Grid container justifyContent={"right"}>
                         <Box display={"flex"}>
-                          <StyledDefaultButton onClick={() => handleSaveKTag()}>
-                            Save Tag
-                          </StyledDefaultButton>
                           <StyledDefaultButton
-                            sx={{ marginLeft: "15px" }}
-                            onClick={() => closeTag()}
+                            onClick={() => handleSaveEditKtag(item.id, index)}
                           >
-                            Close Tag
+                            Save Edit
                           </StyledDefaultButton>
                         </Box>
                       </Grid>
@@ -293,46 +221,123 @@ const DataEntryComponent: React.FC = () => {
                         }}
                       />
                     </Grid>
+                  ) : (
+                    // KTAG VIEW
+                    <BasicCard key={`${item.field_name}-${index}-tagBox`}>
+                      <BasicCardContent>
+                        <Box display={"flex"} justifyContent={"right"}>
+                          <Typography
+                            //position={"fixed"}
+                            fontSize={10}
+                            color="primary.main"
+                            textAlign={"center"}
+                            maxWidth={"72px"}
+                          >{`N° : ${index + 1}`}</Typography>
+                        </Box>
+                        <CardSubTitle>Palabras Clave :</CardSubTitle>
+                        <KTagContent>{`${item.name}`}</KTagContent>
+
+                        {/* <CardSubTitle>{`Instrucción: ${item.description}`}</CardSubTitle> */}
+                        <CardSubTitle>Conocimiento Agregado :</CardSubTitle>
+                        <KTagContent>{`${item.value}`}</KTagContent>
+                      </BasicCardContent>
+                      <BasicCardDivider />
+                      <BasicCardAction>
+                        <Box display={"flex"}>
+                          <StyledLinkButton
+                            onClick={() => handleEditKtag(item)}
+                          >
+                            Edit
+                          </StyledLinkButton>
+                          <StyledLinkButton
+                            style={{ marginLeft: "12px" }}
+                            onClick={() => handleDeleteKtag(item.id, index + 1)}
+                          >
+                            Delete
+                          </StyledLinkButton>
+                        </Box>
+                      </BasicCardAction>
+                    </BasicCard>
                   )
-                )}
-            </Stack>
-
-            <Box textAlign={"right"}>
-              <>
-                {customTags.length !== 300 ? (
-                  <StyledDefaultButton
-                    disabled={enableAdd}
-                    sx={{
-                      background: enableAdd
-                        ? "rgb(155,155,155) !important"
-                        : "",
-                      width: "150px",
-                    }}
-                    onClick={() => handleAddKTag()}
-                  >
-                    Nueva etiqueta
-                  </StyledDefaultButton>
                 ) : (
-                  <></>
-                )}
+                  // KTAG INPUT
+                  <Grid
+                    container
+                    gap={2}
+                    sx={{ marginBottom: "24px" }}
+                    key={`${item.field_name}-${index}-tagBox`}
+                  >
+                    <Grid xs={12} item display={"flex"}>
+                      <ShortInput
+                        emptyData={emptyKtagsList[index]}
+                        data={item}
+                        propKey="name"
+                      />
+                    </Grid>
+                    <Grid xs={12} item display={"flex"}>
+                      <LongInput
+                        emptyData={emptyKtagsList[index]}
+                        data={item}
+                        propKey="value"
+                      />
+                    </Grid>
+                    <Grid container justifyContent={"right"}>
+                      <Box display={"flex"}>
+                        <StyledDefaultButton onClick={() => handleSaveKTag()}>
+                          Save Tag
+                        </StyledDefaultButton>
+                        <StyledDefaultButton
+                          sx={{ marginLeft: "15px" }}
+                          onClick={() => closeTag()}
+                        >
+                          Close Tag
+                        </StyledDefaultButton>
+                      </Box>
+                    </Grid>
+                    <Divider
+                      sx={{
+                        border: "1px solid rgba(50,50,50, 0.1)",
+                        width: "100%",
+                      }}
+                    />
+                  </Grid>
+                )
+              )}
+          </Stack>
 
+          <Box textAlign={"right"} marginBottom={"20px"}>
+            <>
+              {customTags.length !== 300 ? (
                 <StyledDefaultButton
+                  disabled={enableAdd}
                   sx={{
-                    marginLeft: "16px",
+                    background: enableAdd ? "rgb(155,155,155) !important" : "",
                     width: "150px",
                   }}
-                  onClick={() => navigate(`/bots/chat/${botId}`)}
+                  onClick={() => handleAddKTag()}
                 >
-                  Probar Bot
+                  Nueva etiqueta
                 </StyledDefaultButton>
-              </>
-            </Box>
-          </>
-        ) : (
-          <PageCircularProgress />
-        )}
-      </Grid>
-    </MainComponentContainer>
+              ) : (
+                <></>
+              )}
+
+              <StyledDefaultButton
+                sx={{
+                  marginLeft: "16px",
+                  width: "150px",
+                }}
+                onClick={() => navigate(`/bots/chat/${botId}`)}
+              >
+                Probar Bot
+              </StyledDefaultButton>
+            </>
+          </Box>
+        </>
+      ) : (
+        <PageCircularProgress />
+      )}
+    </>
   );
 };
 
