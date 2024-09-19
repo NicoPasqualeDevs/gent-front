@@ -35,6 +35,7 @@ const Login: React.FC = () => {
   const onSubmit = (values: AuthLoginData) => {
     loginUser(values)
       .then((response) => {
+        console.log(response)
         setAuthUser(response.data);
         sessionStorage.setItem("user_email", response.data.email);
         sessionStorage.setItem("user_token", response.data.token);
