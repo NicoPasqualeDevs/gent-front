@@ -1,6 +1,5 @@
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import chuckArray from "@/helpers/chunkArray";
 import useBotsApi from "@/hooks/useBots";
 import theme from "@/styles/theme";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -12,44 +11,126 @@ import {
   CardContent,
   Divider,
   Grid,
+  InputBase,
   Link,
+  MenuItem,
   Pagination,
+  Select,
+  SelectChangeEvent,
   Stack,
   Typography,
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import concatArrays from "@/helpers/concatArrays";
 import ActionAllower from "@/components/ActionAllower";
 import { useAppContext } from "@/context/app";
+import { Metadata } from "@/types/Api";
+import { styled, alpha } from "@mui/material/styles";
+
+const Search = styled("div")(({ theme }) => ({
+  position: "absolute",
+  right: -16,
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: "100%",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(3),
+    width: "auto",
+  },
+}));
+
+const SearchWrapper = styled(Grid)(() => ({
+  position: "relative",
+  width: "100%",
+  height: "48px",
+  marginBottom: 8,
+}));
+
+const SearchIconWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: "100%",
+  position: "absolute",
+  right: -8,
+  pointerEvents: "none",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "inherit",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1, 1, 1, 0),
+    // vertical padding + font size from searchIcon
+    paddingLeft: `calc(1em + ${theme.spacing(0)})`,
+    transition: theme.transitions.create("width"),
+    width: "100%",
+    [theme.breakpoints.up("md")]: {
+      width: "20ch",
+    },
+  },
+}));
 
 const Tools: React.FC = () => {
   const navigate = useNavigate();
   const { botName, botId } = useParams();
-  const { replacePath, appNavigation, setAgentsPage } = useAppContext();
+  const {
+    replacePath,
+    appNavigation,
+    setAgentsPage,
+    toolsPage,
+    setToolsPage,
+    botToolsPage,
+    setBotToolsPage,
+  } = useAppContext();
   const { getAllTools, getBotTools, deleteTool } = useBotsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [toolToDelete, setToolToDelete] = useState<string>("");
-  const [page, setPage] = useState<number>(1);
-  const [pageContent, setPageContent] = useState<Array<ToolData[]>>([]);
+  const [pageContent, setPageContent] = useState<ToolData[]>([]);
+  const [paginationData, setPaginationData] = useState<Metadata>();
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [contentPerPage, setContentPerPage] = useState<string>("5");
 
   const handlePagination = (
     event: React.ChangeEvent<unknown>,
     value: number
   ) => {
     event.preventDefault();
-    setPage(value);
+    setLoaded(false);
+    if (!botId) {
+      setToolsPage(value);
+      getToolsData(`?page_size=${contentPerPage}&page=${value}`);
+    } else {
+      setBotToolsPage(value);
+      getBotToolsData(botId, `?page_size=${contentPerPage}&page=${value}`);
+    }
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+    if (value.trim() !== "") {
+      if (!botId) {
+        getToolsData(`?name__icontains=${value}`);
+      } else {
+        getBotToolsData(botId, `?name__icontains=${value}`);
+      }
+    }
   };
 
   const deleteAction = (toolId: string) => {
     if (toolId && toolId !== "") {
       deleteTool(toolId)
         .then(() => {
-          let temp = concatArrays(pageContent);
+          let temp = pageContent;
           temp = temp.filter((item) => item.id !== toolId);
-          setPage(1);
-          setPageContent(chuckArray(temp));
+          setPageContent(temp);
           setAllowerState(false);
           setToolToDelete("");
           SuccessToast("Tool eliminada satisfactoriamente");
@@ -70,40 +151,40 @@ const Tools: React.FC = () => {
     }
   };
 
-  const getToolsData = useCallback(() => {
-    getAllTools()
+  const getToolsData = useCallback((filterParams: string) => {
+    getAllTools(filterParams)
       .then((response) => {
-        setPageContent(chuckArray(response));
+        const data: ToolData[] = response.data;
+        const paginationData: Metadata = response.metadata;
+        setToolsPage(paginationData.current_page || 1);
+        setPageContent(data);
+        setPaginationData(paginationData);
         setLoaded(true);
       })
       .catch((error) => {
         if (error instanceof Error) {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
+          ErrorToast(error.message);
         }
       });
   }, []);
 
-  const getBotToolsData = useCallback((botId: string) => {
-    getBotTools(botId)
+  const getBotToolsData = useCallback((botId: string, filterParams: string) => {
+    getBotTools(botId, filterParams)
       .then((response) => {
-        setPageContent(chuckArray(response));
+        const data: ToolData[] = response.data;
+        const paginationData: Metadata = response.metadata;
+        setBotToolsPage(paginationData.current_page || 1);
+        setPageContent(data);
+        setPaginationData(paginationData);
         setLoaded(true);
       })
       .catch((error) => {
         if (error instanceof Error) {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
+          ErrorToast(error.message);
         }
       });
   }, []);
@@ -119,7 +200,12 @@ const Tools: React.FC = () => {
           preview_path: "",
         },
       ]);
-      getBotToolsData(botId);
+      if (!loaded) {
+        getBotToolsData(
+          botId,
+          `?page_size=${contentPerPage}&page=${toolsPage}`
+        );
+      }
     } else {
       replacePath([
         {
@@ -129,7 +215,9 @@ const Tools: React.FC = () => {
         },
       ]);
       setAgentsPage(1);
-      getToolsData();
+      if (!loaded) {
+        getToolsData(`?page_size=${contentPerPage}&page=${toolsPage}`);
+      }
     }
   }, [botId]);
 
@@ -142,15 +230,43 @@ const Tools: React.FC = () => {
           <Typography variant="h4">
             {botName ? " Tools de " + botName : "Listado de Tools"}
           </Typography>
-          <Pagination
-            count={pageContent.length}
-            page={page}
-            onChange={handlePagination}
-            size="large"
-            color="primary"
-          />
+          {botId ? (
+            <Button
+              variant="contained"
+              sx={{
+                marginBottom: "20px",
+              }}
+              onClick={() =>
+                console.log("asiganar tools")
+                //navigate(`/bots/tools-relationship/${botName}/${botId}`)
+              }
+            >
+              Asignar Tools
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              sx={{ marginBottom: "20px" }}
+              onClick={() => navigate("/bots/tools-form/")}
+            >
+              Crear Tool
+            </Button>
+          )}
+          <SearchWrapper>
+            <Search>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder="Buscar"
+                value={searchQuery}
+                inputProps={{ "aria-label": "search" }}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </Search>
+          </SearchWrapper>
           {pageContent.length > 0 ? (
-            pageContent[page - 1].map((tool, index) => {
+            pageContent.map((tool, index) => {
               return (
                 <Card key={`bot-${index}`}>
                   <CardContent>
@@ -295,29 +411,11 @@ const Tools: React.FC = () => {
               marginTop={"10px"}
               marginBottom={"20px"}
             >
+              {searchQuery && searchQuery.trim() !== ""
+                ? "No se encontraron tools con ese nombre"
+                : "No hay tools para mostrar"}
               No hay Tools para mostrar
             </Typography>
-          )}
-          {botId ? (
-            <Button
-              variant="contained"
-              sx={{
-                marginBottom: "20px",
-              }}
-              onClick={() =>
-                navigate(`/bots/tools-relationship/${botName}/${botId}`)
-              }
-            >
-              Asignar Tools
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              sx={{ marginBottom: "20px" }}
-              onClick={() => navigate("/bots/tools-form/")}
-            >
-              Crear Tool
-            </Button>
           )}
         </>
       )}
@@ -327,6 +425,108 @@ const Tools: React.FC = () => {
           actionToDo={deleteAction}
           actionParams={toolToDelete}
         />
+      )}
+      {loaded && pageContent.length > 0 && (
+        <Grid container marginBottom={"20px"}>
+          <Grid
+            item
+            xs={6}
+            sm={4}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Pagination
+              count={paginationData?.total_pages}
+              page={botId ? botToolsPage : toolsPage}
+              onChange={handlePagination}
+              size="small"
+              color="primary"
+            />
+          </Grid>
+          <Grid
+            item
+            xs={6}
+            sm={3}
+            justifyContent={{ xs: "flex-end", sm: "center" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {paginationData &&
+            paginationData.page_size &&
+            paginationData.total_items ? (
+              <Typography
+                sx={{
+                  fontSize: "80%",
+                  padding: "5px 0px",
+                }}
+              >
+                {`${
+                  ((botId ? botToolsPage : toolsPage) - 1) *
+                    paginationData.page_size +
+                  1
+                } - ${Math.min(
+                  (botId ? botToolsPage : toolsPage) * paginationData.page_size,
+                  paginationData.total_items
+                )} de ${paginationData.total_items} Agentes`}
+              </Typography>
+            ) : null}
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={5}
+            justifyContent={{ xs: "flex-start", sm: "flex-end" }}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "80%",
+                marginRight: "5px",
+              }}
+            >
+              Elementos por página
+            </Typography>
+            <Select
+              value={contentPerPage}
+              label="Elementos por página"
+              onChange={(e: SelectChangeEvent) => {
+                setContentPerPage(e.target.value);
+                setLoaded(false);
+                if (botId) {
+                  getBotToolsData(botId, `?page_size=${e.target.value}`);
+                } else {
+                  getToolsData(`?page_size=${e.target.value}`);
+                }
+              }}
+              sx={{
+                "& .MuiSelect-select": {
+                  color: "white",
+                  padding: "5px 5px 5px 5px",
+                },
+                "& .MuiSelect-icon": {
+                  color: "white",
+                },
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "transparent",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: theme.palette.primary.main,
+                },
+              }}
+            >
+              <MenuItem value="5">5</MenuItem>
+              <MenuItem value="10">10</MenuItem>
+              <MenuItem value="20">20</MenuItem>
+            </Select>
+          </Grid>
+        </Grid>
       )}
     </>
   );

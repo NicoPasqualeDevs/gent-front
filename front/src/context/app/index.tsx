@@ -23,6 +23,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       appNavigation,
       clientPage,
       toolsPage,
+      botToolsPage,
       agentsPage,
     },
     dispatch,
@@ -84,6 +85,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     dispatch({ type: "setToolsPage", payload: value });
   };
 
+  const setBotToolsPage = (value: number) => {
+    dispatch({ type: "setBotToolsPage", payload: value });
+  };
+
   const setAgentsPage = (value: number) => {
     dispatch({ type: "setAgentsPage", payload: value });
   };
@@ -100,6 +105,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         appNavigation,
         clientPage,
         toolsPage,
+        botToolsPage,
         agentsPage,
         setCustomersList,
         setLogin,
@@ -112,6 +118,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         cleanState,
         setClientPage,
         setToolsPage,
+        setBotToolsPage,
         setAgentsPage,
       }}
     >

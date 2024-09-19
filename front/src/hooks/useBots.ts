@@ -33,8 +33,8 @@ type UseBotsApiHook = {
   getWidget: (botId: string) => Promise<WidgetData>;
   getCustomMessages: (botId: string) => Promise<GetCustomGreetingData>;
   getPromptTemplate: (botId: string) => Promise<PromptTemplateData>;
-  getAllTools: () => Promise<ToolData[]>;
-  getBotTools: (botId: string) => Promise<ToolData[]>;
+  getAllTools: (filterParams: string) => Promise<ApiResponseList<ToolData>>;
+  getBotTools: (botId: string, filterParams: string) => Promise<ApiResponseList<ToolData>>;
   getTool: (toolId: string) => Promise<ToolData>;
 
   //Post
@@ -117,13 +117,13 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/bot/prompt/${botId}`;
     return apiGet<PromptTemplateData>(path);
   };
-  const getAllTools = (): Promise<ToolData[]> => {
-    const path = `api/tool/all`;
-    return apiGet<ToolData[]>(path);
+  const getAllTools = (filterParams: string): Promise<ApiResponseList<ToolData>> => {
+    const path = `api/tool/all/${filterParams}`;
+    return apiGet<ApiResponseList<ToolData>>(path);
   };
-  const getBotTools = (botId: string): Promise<ToolData[]> => {
-    const path = `api/tool/list/${botId}`;
-    return apiGet<ToolData[]>(path);
+  const getBotTools = (botId: string, filterParams: string): Promise<ApiResponseList<ToolData>> => {
+    const path = `api/tool/list/${botId}/${filterParams}`;
+    return apiGet<ApiResponseList<ToolData>>(path);
   };
   const getTool = (toolId: string): Promise<ToolData> => {
     const path = `api/tool/modify/${toolId}`;

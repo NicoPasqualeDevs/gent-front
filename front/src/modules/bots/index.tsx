@@ -9,7 +9,7 @@ import CustomMessages from "@/components/pages/Bots/CustomMessages";
 import ContextEntry from "@/components/pages/Bots/ContextEntry";
 import Tools from "@/components/pages/Bots/Tools";
 import ToolsForm from "@/components/pages/Bots/ToolsForm";
-import ToolsRelationship from "@/components/pages/Bots/ToolsRelationship";
+//npmimport ToolsRelationship from "@/components/pages/Bots/ToolsRelationship";
 
 
 
@@ -40,7 +40,6 @@ const BotsDetailsModule: React.FC = () => {
             path="tools-form/:toolName?/:toolId?"
             element={<ToolsForm />}
           />
-          <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship/>}/>
         </Route>
       </Routes>
     </AuthChecker>
@@ -48,3 +47,4 @@ const BotsDetailsModule: React.FC = () => {
 };
 
 export default BotsDetailsModule;
+//<Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship/>}/>

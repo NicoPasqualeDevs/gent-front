@@ -1,4 +1,4 @@
-import { PageCircularProgress } from "@/components/CircularProgress";
+/*import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
 import useBotsApi from "@/hooks/useBots";
@@ -321,4 +321,4 @@ const ToolsRelationship: React.FC = () => {
   );
 };
 
-export default ToolsRelationship;
+export default ToolsRelationship;*/

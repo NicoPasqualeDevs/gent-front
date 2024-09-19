@@ -16,6 +16,7 @@ type AppContextActions =
   | { type: "replacePath"; payload: PathData[] }
   | { type: "setClientPage"; payload: number }
   | { type: "setToolsPage"; payload: number }
+  | { type: "setBotToolsPage"; payload: number}
   | { type: "setAgentsPage"; payload: number }
   | { type: "cleanState" };
 
@@ -106,6 +107,12 @@ export const AppReducer = (
         ...state,
         toolsPage: action.payload,
       };
+    }
+    case "setBotToolsPage": {
+      return {
+        ...state,
+        botToolsPage: action.payload,
+      }
     }
     case "setAgentsPage": {
       return {

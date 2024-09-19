@@ -19,6 +19,7 @@ export interface AppContextState {
   appNavigation: PathData[];
   clientPage: number;
   toolsPage: number;
+  botToolsPage: number;
   agentsPage: number;
 
   setCustomersList: (value: ClientDetails[]) => void;
@@ -32,6 +33,7 @@ export interface AppContextState {
   replacePath: (value: PathData[]) => void;
   setClientPage: (value: number) => void;
   setToolsPage: (value: number) => void;
+  setBotToolsPage: (value: number) => void;
   setAgentsPage: (value: number) => void;
 }
 
@@ -48,6 +50,7 @@ export const INITIAL_STATE: AppContextState = {
   appNavigation: [] as PathData[],
   clientPage: 1,
   toolsPage: 1,
+  botToolsPage: 1,
   agentsPage: 1,
 } as AppContextState;
 

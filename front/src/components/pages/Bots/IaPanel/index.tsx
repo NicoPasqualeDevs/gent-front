@@ -191,6 +191,16 @@ const IaPanel: React.FC = () => {
           <Typography variant="h4" marginBottom={"20px"}>
             Agentes de {clientName}
           </Typography>
+          <Button
+            variant="contained"
+            sx={{
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+            onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
+          >
+            Crear Agente
+          </Button>
           <SearchWrapper>
             <Search>
               <SearchIconWrapper>
@@ -204,16 +214,6 @@ const IaPanel: React.FC = () => {
               />
             </Search>
           </SearchWrapper>
-          <Button
-            variant="contained"
-            sx={{
-              marginTop: "20px",
-              marginBottom: "20px",
-            }}
-            onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
-          >
-            Crear Agente
-          </Button>
           {pageContent.length > 0 ? (
             pageContent.map((bot, index) => {
               return (

@@ -148,11 +148,7 @@ const ClientList: React.FC = () => {
         if (error instanceof Error) {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
+          ErrorToast(error.message);
         }
       });
   }, []);
