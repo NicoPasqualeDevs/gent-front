@@ -50,7 +50,7 @@ export const LeftMenuContainer = styled(Box)(({ theme }) => ({
   height: `calc(100vh - 70px)`,
   backgroundColor: theme.palette.secondary.dark,
   transition: `width ${theme.transitions.duration.standard}ms`,
-  zIndex: "102",
+  zIndex: "103",
 }));
 
 export const MainContent = styled(Grid)(({ theme }) => ({
