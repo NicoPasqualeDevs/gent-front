@@ -117,9 +117,9 @@ const Tools: React.FC = () => {
     setSearchQuery(value);
     if (value.trim() !== "") {
       if (!botId) {
-        getToolsData(`?name__icontains=${value}`);
+        getToolsData(`?tool_name__icontains=${value}`);
       } else {
-        getBotToolsData(botId, `?name__icontains=${value}`);
+        getBotToolsData(botId, `?tool_name__icontains=${value}`);
       }
     }
   };

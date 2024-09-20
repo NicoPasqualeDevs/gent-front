@@ -122,7 +122,7 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiGet<ApiResponseList<ToolData>>(path);
   };
   const getBotTools = (botId: string, filterParams: string): Promise<ApiResponseList<ToolData>> => {
-    const path = `api/tool/list/${botId}/${filterParams}`;
+    const path = `api/tool/list/${botId}${filterParams}`;
     return apiGet<ApiResponseList<ToolData>>(path);
   };
   const getTool = (toolId: string): Promise<ToolData> => {
