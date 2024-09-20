@@ -118,7 +118,7 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiGet<PromptTemplateData>(path);
   };
   const getAllTools = (filterParams: string): Promise<ApiResponseList<ToolData>> => {
-    const path = `api/tool/all/${filterParams}`;
+    const path = `api/tool/all${filterParams}`;
     return apiGet<ApiResponseList<ToolData>>(path);
   };
   const getBotTools = (botId: string, filterParams: string): Promise<ApiResponseList<ToolData>> => {
