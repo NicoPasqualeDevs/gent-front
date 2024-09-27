@@ -1,67 +1,130 @@
-import React, { useEffect } from "react";
-import { useAppContext } from "@/context/app";
-import { Grid, Typography, Paper } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Grid, Typography, Paper, Button, Box, Divider } from "@mui/material";
 import { CenterComponentContainer } from "@/utils/ContainerUtil";
 import theme from "@/styles/theme";
+import BackgroundLines from "../../../styles/components/BackgroundLines";
+import { useNavigate } from "react-router-dom";
 
 const HomeComponent: React.FC = () => {
-  const {
-    loaded,
-    layout: { breakpoint },
-  } = useAppContext();
+  const [userName, setUserName] = useState<string>("");
+
+  const getRandomName = (): string => {
+    const names = ["María", "Juan", "Carlos"];
+    return names[Math.floor(Math.random() * names.length)];
+  };
+
+  const [isGlowing, setIsGlowing] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (loaded) {
-      console.log(breakpoint, "<-- BreakPoint");
-    }
-  }, [loaded, breakpoint]);
+    setUserName(getRandomName());
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsGlowing(true);
+      setTimeout(() => setIsGlowing(false), 500); // Duración del brillo
+    }, 5000); // Intervalo de 5 segundos
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
+    <>
       <CenterComponentContainer container>
-        <Grid
-          item
-          xs={10}
-          md={8}
-          lg={6}
-          textAlign={"center"}
-          sx={{ margin: "20px auto"}}
-        >
-          <Paper sx={{ 
-            padding: "8% 12%",
-            borderRadius: "10px",
-            backgroundColor: theme.palette.info.light 
-          }}>
+        <Grid item xs={12} md={10} lg={8}>
+          <Paper
+            elevation={3}
+            sx={{
+              padding: "5%",
+              borderRadius: "15px",
+              backgroundColor: theme.palette.background.paper,
+              border: `2px solid ${theme.palette.primary.main}`,
+            }}
+          >
             <Typography
-              textAlign={"left"}
-              variant="h4"
-              color={theme.palette.secondary.dark}
-              padding={"12px 0"}
+              variant="h3"
+              color={theme.palette.primary.main}
+              gutterBottom
+              sx={{ borderBottom: `2px solid ${theme.palette.primary.main}`, paddingBottom: 2 }}
             >
-              Bienvenido
+              Hola, {userName}
             </Typography>
-            <Typography textAlign={"justify"} padding={"12px 0"}>
-              Esta herramienta le permitirá ingresar sus datos de manera
-              sencilla y rápida los cuales serán procesados por nuestro motor de
-              inteligencia artificial, o como lo llamamos nosotros
-              <span style={{ color: theme.palette.primary.dark }}> Helpi</span>
-              .
-              <br /> <br />
-              <span style={{ color: theme.palette.primary.dark }}> Helpi</span>
-              . está desarrollado con la última tecnología en materia de
-              inteligencia artificial, y la amplia experiencia de Agents en
-              atención al cliente, generando una potente herramienta de fácil
-              acceso y rápida implementación.
-            </Typography>
-            <Grid
-              item
-              justifyContent={"rigth"}
-              sx={{ marginTop: "24px" }}
-              display={"flex"}
-            >
-            </Grid>
+            
+            <Box sx={{ marginY: 4 }}>
+              <Typography variant="h5" color={theme.palette.secondary.main} gutterBottom>
+                Bienvenido/a a Gents
+              </Typography>
+              <Typography variant="body1" paragraph>
+                Nuestra herramienta de inteligencia artificial está diseñada para procesar sus datos de manera sencilla y rápida.
+              </Typography>
+            </Box>
+
+            <Divider 
+              sx={{ 
+                marginY: 3, 
+                backgroundColor: theme.palette.primary.main,
+                height: '2px',  // Aumentamos el grosor
+                opacity: 0.7    // Ajustamos la opacidad para que sea más visible
+              }} 
+            />
+
+            <Box sx={{ marginY: 4 }}>
+              <Typography variant="h6" color={theme.palette.secondary.main} gutterBottom>
+                ¿Qué es Gents?
+              </Typography>
+              <Typography variant="body1" paragraph>
+                Gents es nuestra potente herramienta que le permitirá crear su propio equipo de asistentes IA.
+              </Typography>
+            </Box>
+
+            <Divider 
+              sx={{ 
+                marginY: 3, 
+                backgroundColor: theme.palette.primary.main,
+                height: '2px',  // Aumentamos el grosor
+                opacity: 0.7    // Ajustamos la opacidad para que sea más visible
+              }} 
+            />
+
+            <Box sx={{ marginY: 4 }}>
+              <Typography variant="h6" color={theme.palette.secondary.main} gutterBottom>
+                Beneficios
+              </Typography>
+              <Typography variant="body1" component="ul" sx={{ paddingLeft: 2 }}>
+                <li>Fácil acceso</li>
+                <li>Rápida implementación</li>
+                <li>Procesamiento eficiente de datos</li>
+              </Typography>
+            </Box>
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+              <Button variant="outlined" color="secondary">
+                Más información
+              </Button>
+              <Button 
+                variant="contained" 
+                color="primary"
+                className={isGlowing ? 'glow-effect' : ''}
+                onClick={() => navigate('/clients')}
+                sx={{
+                  '@keyframes glow': {
+                    '0%': { boxShadow: `0 0 5px ${theme.palette.primary.main}` },
+                    '50%': { boxShadow: `0 0 20px ${theme.palette.primary.main}` },
+                    '100%': { boxShadow: `0 0 5px ${theme.palette.primary.main}` },
+                  },
+                  '&.glow-effect': {
+                    animation: 'glow 0.5s ease-in-out',
+                  },
+                }}
+              >
+                Comenzar ahora
+              </Button>
+            </Box>
           </Paper>
         </Grid>
       </CenterComponentContainer>
+    </>
   );
 };
 

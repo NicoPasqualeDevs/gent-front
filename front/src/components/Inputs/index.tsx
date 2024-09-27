@@ -61,7 +61,7 @@ const StyledMultilineTextField = styled(TextField)(({ theme }) => ({
     color: theme.palette.primary.main,
     fontSize: "100%",
     paddingRight: "1%",
-    backgroundColor: "#0c0c22",
+    backgroundColor: "transparent",
   },
   "& label.Mui-focused": {
     color: theme.palette.primary.main,

@@ -5,11 +5,11 @@ let theme = createTheme({
     fontFamily: "Nunito",
     fontSize: 13,
     h1: {
-      color: "#FFFFFF", // Magenta pastel ligeramente más brillante
+      color: "#EACBDF", // Magenta pastel con toque de lila y más brillo
     },
     // ... aplicar el mismo color magenta pastel a h2-h6 ...
     body1: {
-      color: "#A0E6E1", // Turquesa pastel claro
+      color: "#8CCBC8", // Mantenemos el turquesa como está
       textAlign: "justify",
     },
     body2: {
@@ -17,7 +17,7 @@ let theme = createTheme({
       textAlign: "justify",
     },
     subtitle1: {
-      color: "#FF69B4", // Magenta claro
+      color: "#E2BFD3", // Magenta pastel con toque de lila y más brillo
     },
     subtitle2: {
       color: "#FFFFFF",
@@ -26,16 +26,16 @@ let theme = createTheme({
   palette: {
     mode: "dark", // Cambiamos el modo a oscuro
     primary: {
-      main: "#FF9EB5", // Magenta pastel ligeramente más brillante
-      light: "#FFBECF", // Magenta claro pastel
-      dark: "#FF7E9D", // Magenta oscuro pastel
+      main: "#E2BFD3", // Magenta pastel principal con toque de lila y más brillo
+      light: "#EACBDF", // Magenta claro pastel con toque de lila y más brillo
+      dark: "#DAB3C7", // Magenta oscuro pastel con toque de lila y más brillo
       contrastText: "#000000", // Negro
     },
     secondary: {
-      main: "#1A1A1A", // Gris muy oscuro
-      light: "#252525", // Gris oscuro
-      dark: "#121212", // Gris casi negro
-      contrastText: "#A0E6E1", // Turquesa pastel claro
+      main: "#F5F5F5", // Blanco ahumado
+      light: "#A0E6EC", // Turquesa más claro y brillante
+      dark: "#4A9396", // Turquesa más oscuro y pastel
+      contrastText: "#1A1A1A", // Gris muy oscuro para contraste (sin cambios)
     },
     background: {
       default: "#101010", // Gris muy oscuro (fondo principal)
@@ -43,7 +43,7 @@ let theme = createTheme({
     },
     text: {
       primary: "#FFFFFF", // Blanco
-      secondary: "#A0E6E1", // Turquesa pastel claro
+      secondary: "#8CCBC8", // Mantenemos el turquesa como está
     },
     error: {
       main: "#F44336",
@@ -112,8 +112,8 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: "#1A1A1A", // Gris muy oscuro para las tarjetas
-          border: "1px solid #FF9EB5", // Borde magenta pastel
-          boxShadow: "0 4px 8px rgba(255, 158, 181, 0.15)", // Sombra magenta suave
+          border: "1px solid #E2BFD3", // Borde magenta pastel con toque de lila y más brillo
+          boxShadow: "0 4px 8px rgba(226, 191, 211, 0.2)", // Sombra magenta pastel con toque de lila y más brillo
           marginTop: "0px",
           marginBottom: "20px",
           marginRight: "0px,",
@@ -148,7 +148,7 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           marginRight: "10px",
-          backgroundColor: "#FF9EB5", // Fondo magenta pastel
+          backgroundColor: "#E2BFD3", // Fondo magenta pastel con toque de lila y más brillo
           color: "#000000", // Texto negro
         },
       },
@@ -171,7 +171,7 @@ let theme = createTheme({
         select:-webkit-autofill,
         select:-webkit-autofill:hover,
         select:-webkit-autofill:focus {
-          -webkit-text-fill-color: #A0E6E1;
+          -webkit-text-fill-color: #8CCBC8;
           -webkit-box-shadow: 0 0 0px 1000px rgba(16, 16, 16, 0.01) inset;
           transition: background-color 5000s ease-in-out 0s;
         }
@@ -182,7 +182,7 @@ let theme = createTheme({
         input: {
           '&:-webkit-autofill': {
             WebkitBoxShadow: '0 0 0px 1000px rgba(16, 16, 16, 0.01) inset',
-            WebkitTextFillColor: '#A0E6E1',
+            WebkitTextFillColor: '#8CCBC8',
           },
         },
       },
@@ -198,21 +198,7 @@ let theme = createTheme({
         },
       },
     },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& .MuiInputBase-root': {
-            backgroundColor: 'transparent',
-          },
-          '& .MuiInputBase-input': {
-            backgroundColor: 'transparent',
-          },
-          '& .MuiInputBase-input::placeholder': {
-            color: 'rgba(255, 255, 255, 0.7)', // Ajusta el color y la opacidad según tus preferencias
-          },
-        },
-      },
-    },
+  
   },
   transitions: {
     duration: {

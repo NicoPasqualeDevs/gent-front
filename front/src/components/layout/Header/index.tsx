@@ -9,14 +9,28 @@ import {
   UserBubble,
   UserBubbleContainer,
 } from "@/components/styledComponents/Layout";
+import { useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
   const {
     auth,
     layout: { breakpoint },
     menu,
+    replacePath,
     setMenu,
   } = useAppContext();
+
+  const handleProfileClick = () => {
+    replacePath([
+      {
+        label: "Perfil",
+        current_path: "/profile",
+        preview_path: "/",
+      },
+    ]);
+    navigate('/profile');
+  };
 
   return (
     <HeaderContainer container>
@@ -29,7 +43,7 @@ const Header: React.FC = () => {
           />
         </Tooltip>
         <Typography variant="h4" marginLeft={"10px"}>
-          Gents
+          Gent
         </Typography>
       </BrandContainer>
       <UserBubbleContainer item xs={4} md={9}>
@@ -43,7 +57,10 @@ const Header: React.FC = () => {
             </Typography>
           </UserBubble>
         ) : (
-          <Avatar sx={{ marginRight: "5px", cursor:"pointer" }}>
+          <Avatar 
+            sx={{ marginRight: "5px", cursor:"pointer" }}
+            onClick={handleProfileClick}
+          >
             {auth.user && auth.user.email.trim() !== ""
               ? auth.user.email[0].toUpperCase()
               : null}

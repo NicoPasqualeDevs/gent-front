@@ -59,8 +59,8 @@ const useApi = (): UseApiHook => {
       try {
         const response = await fetch(buildUri(path), requestOptions);
         return await handleResponse<R>(response);
-      } catch (error) {
-        throw error;
+      } catch (err) {
+        throw err ? console.log(err) : console.log("unknown error");
       }
     },
     [token]
@@ -71,7 +71,7 @@ const useApi = (): UseApiHook => {
   const apiPut = React.useCallback(<B, R>(path: string, body: B): Promise<R> => apiCall<R>("PUT", path, body), [apiCall]);
   const apiPatch = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => apiCall<R>("PATCH", path, body, headers), [apiCall]);
   const apiGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => apiCall<R>("GET", buildUri(path, query)), [apiCall]);
-  const noAuthGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => 
+  const noAuthGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> =>
     apiCall<R>("GET", buildUri(path, query), undefined, { "Content-Type": "application/json" }), [apiCall]);
   const apiDelete = React.useCallback((path: string): Promise<Response> => apiCall("DELETE", path), [apiCall]);
 

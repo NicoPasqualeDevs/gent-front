@@ -7,7 +7,7 @@ export const HeaderContainer = styled(Grid)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   zIndex: "103",
-  backgroundColor: theme.palette.secondary.dark,
+  backgroundColor: theme.palette.background.default,
   borderBottom: `1px solid ${theme.palette.primary.main}`,
 }));
 
@@ -48,7 +48,7 @@ export const UserBubble = styled(Box)(({ theme }) => ({
 
 export const LeftMenuContainer = styled(Box)(({ theme }) => ({
   height: `calc(100vh - 70px)`,
-  backgroundColor: theme.palette.secondary.dark,
+  backgroundColor: theme.palette.background.default,
   transition: `width ${theme.transitions.duration.standard}ms`,
   zIndex: "103",
 }));
@@ -67,7 +67,7 @@ export const MainContent = styled(Grid)(({ theme }) => ({
 
 export const PathButton = styled(Button)(({ theme }) => ({
   margin: "0px",
-  padding: "0px",
+  padding: "-5px",
   color: "secondary.contrastText",
   ":hover": {
     color: theme.palette.primary.main,
