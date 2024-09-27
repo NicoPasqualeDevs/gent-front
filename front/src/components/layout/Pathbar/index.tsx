@@ -40,7 +40,7 @@ const Pathbar: React.FC = () => {
       >
         {appNavigation.map((item, index) => {
           if (appNavigation.length - 1 === index) {
-            return <Typography sx={{color:"secondary.contrastText", paddingLeft:"5px"}} variant="body2">{item.label}</Typography>;
+            return <Typography sx={{color:"secondary.light", paddingLeft:"5px"}} variant="body2">{item.label}</Typography>;
           }
           return (
             <PathButton

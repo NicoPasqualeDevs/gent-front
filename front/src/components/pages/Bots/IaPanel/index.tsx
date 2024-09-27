@@ -189,7 +189,7 @@ const IaPanel: React.FC = () => {
       ) : (
         <>
           <Typography variant="h4" marginBottom={"20px"}>
-            Agentes de {clientName}
+            Equipos IA de {clientName}
           </Typography>
           <SearchWrapper>
             <Search>
@@ -336,8 +336,8 @@ const IaPanel: React.FC = () => {
           ) : (
             <Typography variant="subtitle2" marginTop={"10px"}>
               {searchQuery && searchQuery.trim() !== ""
-                ? "No se encontraron agentes con ese nombre"
-                : "No hay agentes para mostrar"}
+                ? "No se encontraron Equipos IA con ese nombre"
+                : "No hay Equipos IA para mostrar"}
             </Typography>
           )}
         </>
@@ -392,7 +392,7 @@ const IaPanel: React.FC = () => {
                 } - ${Math.min(
                   agentsPage * paginationData.page_size,
                   paginationData.total_items
-                )} de ${paginationData.total_items} Agentes`}
+                )} de ${paginationData.total_items} Equipos IA`}
               </Typography>
             ) : null}
           </Grid>

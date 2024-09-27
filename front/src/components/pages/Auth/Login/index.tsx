@@ -12,7 +12,6 @@ import { PasswordInput, TextInput } from "@/components/Inputs";
 import { motion } from "framer-motion"; // Asegúrate de instalar framer-motion
 import Snowfall from 'react-snowfall';
 import { useTheme } from '@mui/material/styles';
-import BackgroundLines from '@/styles/components/BackgroundLines'; // Importa el nuevo componente
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -173,7 +172,7 @@ const Login: React.FC = () => {
                 textShadow: '0 0 5px rgba(0,0,0,0.3)',
               }}
             >
-              Crea tu equipo de Agentes con Inteligencia Artificial
+              Crea tu equipo de Equipos IA con Inteligencia Artificial
             </Typography>
           )}
         </Grid>

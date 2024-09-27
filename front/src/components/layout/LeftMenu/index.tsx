@@ -9,7 +9,7 @@ import { LogoutSharp } from "@mui/icons-material";
 const options = [
   {
     navElevation: "clients",
-    label: "Agentes",
+    label: "Equipos IA",
     path: "/clients",
   },
   {
@@ -48,6 +48,7 @@ const LeftMenu: React.FC = () => {
           paddingLeft: "5px",
           flexShrink: "0",
           width: `${menu ? "160px" : "0px"}`,
+          background:"transparent",
           borderRight: `1px solid ${
             menu ? theme.palette.primary.main : "transparent"
           }`,

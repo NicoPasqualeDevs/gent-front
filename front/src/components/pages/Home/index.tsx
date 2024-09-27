@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Grid, Typography, Paper, Button, Box, Divider } from "@mui/material";
 import { CenterComponentContainer } from "@/utils/ContainerUtil";
 import theme from "@/styles/theme";
-import BackgroundLines from "../../../styles/components/BackgroundLines";
 import { useNavigate } from "react-router-dom";
 
 const HomeComponent: React.FC = () => {

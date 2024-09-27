@@ -81,7 +81,7 @@ const ShortHeader: React.FC = () => {
               setNavElevation("clients");
             }}
           >
-            Agentes
+            Equipos IA
           </NavButton>
         </AccordionDetails>
         <AccordionDetails>

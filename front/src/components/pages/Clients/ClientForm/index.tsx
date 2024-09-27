@@ -184,7 +184,7 @@ const ClientForm: React.FC = () => {
       ) : (
         <>
           <Typography variant="h4">
-            {clientId ? "Editar equipo de agentes" : "Registrar nuevo equipo de agentes"}
+            {clientId ? "Editar equipo de Equipos IA" : "Registrar nuevo equipo de Equipos IA"}
           </Typography>
           <Box marginTop={"20px"}>
             <TextInput

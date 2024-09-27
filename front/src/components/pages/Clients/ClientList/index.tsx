@@ -160,7 +160,7 @@ const ClientList: React.FC = () => {
   useEffect(() => {
     replacePath([
       {
-        label: "Agentes",
+        label: "Equipos IA",
         current_path: "/clients",
         preview_path: "/clients",
       },
@@ -179,7 +179,7 @@ const ClientList: React.FC = () => {
       ) : (
         <>
           <Typography variant="h2" marginBottom={"20px"}>
-            Agentes
+            Equipos IA
           </Typography>
           <SearchWrapper>
             <Search>
@@ -216,7 +216,7 @@ const ClientList: React.FC = () => {
                   <CardActions>
                     <Grid container>
                       <Grid item xs={11}>
-                        <Tooltip title="Acceder a Agentes" arrow>
+                        <Tooltip title="Acceder a Equipos IA" arrow>
                           <Button
                             size="small"
                             sx={{
@@ -228,7 +228,7 @@ const ClientList: React.FC = () => {
                               );
                             }}
                           >
-                            Agentes
+                            Equipos IA
                           </Button>
                         </Tooltip>
                         <Tooltip title="Editar Cliente" arrow>
@@ -266,8 +266,8 @@ const ClientList: React.FC = () => {
           ) : (
             <Typography variant="subtitle2" marginTop={"10px"}>
               {searchQuery && searchQuery.trim() !== ""
-                ? "No se encontraron agentes con ese nombre"
-                : "No hay agentes para mostrar"}
+                ? "No se encontraron Equipos IA con ese nombre"
+                : "No hay Equipos IA para mostrar"}
             </Typography>
           )}
         </>
@@ -322,7 +322,7 @@ const ClientList: React.FC = () => {
                 } - ${Math.min(
                   clientPage * paginationData.page_size,
                   paginationData.total_items
-                )} de ${paginationData.total_items} Agentes`}
+                )} de ${paginationData.total_items} Equipos IA`}
               </Typography>
             ) : null}
           </Grid>
