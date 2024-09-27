@@ -68,7 +68,7 @@ export const MainContent = styled(Grid)(({ theme }) => ({
 export const PathButton = styled(Button)(({ theme }) => ({
   margin: "0px",
   padding: "0px",
-  color: "white",
+  color: "secondary.contrastText",
   ":hover": {
     color: theme.palette.primary.main,
   },

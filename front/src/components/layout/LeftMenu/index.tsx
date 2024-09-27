@@ -9,19 +9,19 @@ import { LogoutSharp } from "@mui/icons-material";
 const options = [
   {
     navElevation: "clients",
-    label: "Clientes",
+    label: "Agentes",
     path: "/clients",
   },
   {
     navElevation: "Register",
-    label: "Registrar Cliente",
+    label: "Registrar Equipo",
     path: "/clients/form",
   },
-  {
+/*   {
     navElevation: "Tools",
     label: "Tools",
     path: "/bots/tools",
-  },
+  }, */
 ];
 
 const LeftMenu: React.FC = () => {
@@ -45,8 +45,9 @@ const LeftMenu: React.FC = () => {
         position={{ xs: "fixed", sm: "relative" }}
         top={{ xs: "70px", sm: "0px" }}
         sx={{
+          paddingLeft: "5px",
           flexShrink: "0",
-          width: `${menu ? "155px" : "0px"}`,
+          width: `${menu ? "160px" : "0px"}`,
           borderRight: `1px solid ${
             menu ? theme.palette.primary.main : "transparent"
           }`,

@@ -48,7 +48,7 @@ const HomeComponent: React.FC = () => {
               <br /> <br />
               <span style={{ color: theme.palette.primary.dark }}> Helpi</span>
               . está desarrollado con la última tecnología en materia de
-              inteligencia artificial, y la amplia experiencia de Helpia en
+              inteligencia artificial, y la amplia experiencia de Agents en
               atención al cliente, generando una potente herramienta de fácil
               acceso y rápida implementación.
             </Typography>

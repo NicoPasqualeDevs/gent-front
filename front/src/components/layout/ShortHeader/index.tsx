@@ -71,39 +71,37 @@ const ShortHeader: React.FC = () => {
         <AccordionDetails>
           <NavButton
             sx={{
-              color: `${
-                navElevation === "clients"
+              color: `${navElevation === "clients"
                   ? theme.palette.primary.main
                   : "white"
-              }`,
+                }`,
             }}
             onClick={() => {
               navigate("/clients");
               setNavElevation("clients");
             }}
           >
-            Clientes
+            Agentes
           </NavButton>
         </AccordionDetails>
         <AccordionDetails>
           <NavButton
             sx={{
-              color: `${
-                navElevation === "Register"
+              color: `${navElevation === "Register"
                   ? theme.palette.primary.main
                   : "white"
-              }`,
+                }`,
             }}
             onClick={() => {
               navigate("/clients/form");
               setNavElevation("Register");
             }}
           >
-            Registrar nuevo cliente
+            Registrar nuevo equipo
           </NavButton>
         </AccordionDetails>
         <AccordionDetails>
-          <NavButton
+          {/*           <NavButton
             sx={{
               color: `${
                 navElevation === "Tools" ? theme.palette.primary.main : "white"
@@ -115,7 +113,7 @@ const ShortHeader: React.FC = () => {
             }}
           >
             Tools
-          </NavButton>
+          </NavButton> */}
         </AccordionDetails>
       </Accordion>
     </Box>

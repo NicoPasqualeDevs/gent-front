@@ -18,7 +18,7 @@ export const default_theme = {
     },
     brandLogo: {
       url: "",
-      alt: "Helpia ChatBot",
+      alt: "Agents ChatBot",
     },
     FAQ: {
       questions: [

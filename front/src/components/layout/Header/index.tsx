@@ -20,7 +20,7 @@ const Header: React.FC = () => {
 
   return (
     <HeaderContainer container>
-      <BrandContainer item xs={8} md={3}>
+      <BrandContainer item xs={8} md={3} sx={{paddingLeft: "5px"}}>
         <Tooltip title={menu ? "Contraer menú" : " Expandir menú"} arrow>
           <BrandMenuBtn
             onClick={() => {
@@ -29,7 +29,7 @@ const Header: React.FC = () => {
           />
         </Tooltip>
         <Typography variant="h4" marginLeft={"10px"}>
-          IA-Maker
+          Gents
         </Typography>
       </BrandContainer>
       <UserBubbleContainer item xs={4} md={9}>
@@ -43,7 +43,7 @@ const Header: React.FC = () => {
             </Typography>
           </UserBubble>
         ) : (
-          <Avatar sx={{ marginRight: "20px" }}>
+          <Avatar sx={{ marginRight: "5px", cursor:"pointer" }}>
             {auth.user && auth.user.email.trim() !== ""
               ? auth.user.email[0].toUpperCase()
               : null}

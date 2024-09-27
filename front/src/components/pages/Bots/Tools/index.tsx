@@ -123,7 +123,7 @@ const Tools: React.FC = () => {
     } else {
       replacePath([
         {
-          label: "tools",
+          label: "Tools",
           current_path: `/bots/tools`,
           preview_path: "",
         },

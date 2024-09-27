@@ -95,13 +95,13 @@ const Login: React.FC = () => {
       >
         <Grid item xs={12}>
           <Typography variant="h1" textAlign={"center"}>
-            IA Maker
+            Gents
           </Typography>
           <Typography textAlign={"center"} marginTop={"-8px"}>
-            by Helpia
+            AI based project by Nicolas Pasquale
           </Typography>
-          <Typography fontSize={"75%"} textAlign={"center"} marginTop={"-5px"}>
-            v 0.1.2
+          <Typography fontSize={"75%"} textAlign={"center"} marginTop={"-3px"}>
+            v 0.1
           </Typography>
         </Grid>
         <Grid item xs={12}>

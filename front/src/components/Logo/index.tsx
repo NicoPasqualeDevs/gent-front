@@ -6,7 +6,7 @@ const Logo = React.forwardRef<HTMLImageElement, LogoProps>(
   ({ ...props }, ref) => {
     return (
       <img
-        alt="Helpia-Index"
+        alt="Agents-Index"
         ref={ref}
         src={
           "https://w7.pngwing.com/pngs/328/599/png-transparent-male-avatar-user-profile-profile-heroes-necktie-recruiter.png"

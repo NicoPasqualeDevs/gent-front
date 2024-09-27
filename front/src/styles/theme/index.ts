@@ -5,56 +5,45 @@ let theme = createTheme({
     fontFamily: "Nunito",
     fontSize: 13,
     h1: {
-      color: "#8BE067", //primary.main.
+      color: "#FFFFFF", // Magenta pastel ligeramente más brillante
     },
-    h2: {
-      color: "#8BE067", //primary.main.
-    },
-    h3: {
-      color: "#8BE067", //primary.main.
-    },
-    h4: {
-      color: "#8BE067", //primary.main.
-    },
-    h5: {
-      color: "#8BE067", //primary.main.
-    },
-    h6: {
-      color: "#8BE067", //primary.main.
-    },
+    // ... aplicar el mismo color magenta pastel a h2-h6 ...
     body1: {
-      color: "#FFFFFF",
+      color: "#A0E6E1", // Turquesa pastel claro
       textAlign: "justify",
     },
     body2: {
-      color: "#8BE067", //primary.main
+      color: "#FFFFFF", // Gris medio-oscuro
       textAlign: "justify",
     },
     subtitle1: {
-      color: "#8BE067", //primary.main.
+      color: "#FF69B4", // Magenta claro
     },
     subtitle2: {
       color: "#FFFFFF",
     },
   },
   palette: {
+    mode: "dark", // Cambiamos el modo a oscuro
     primary: {
-      main: "#8BE067",
-      light: "#A2E685",
-      dark: "#619C48",
-      contrastText: "#15163B", //secondary.dark.
+      main: "#FF9EB5", // Magenta pastel ligeramente más brillante
+      light: "#FFBECF", // Magenta claro pastel
+      dark: "#FF7E9D", // Magenta oscuro pastel
+      contrastText: "#000000", // Negro
     },
     secondary: {
-      main: "#303287",
-      light: "#546A83",
-      dark: "#15163B",
-      contrastText: "#8BE067", //primary.main.
+      main: "#1A1A1A", // Gris muy oscuro
+      light: "#252525", // Gris oscuro
+      dark: "#121212", // Gris casi negro
+      contrastText: "#A0E6E1", // Turquesa pastel claro
     },
-    info: {
-      main: "#FFFFFF",
-      light: "#F2F4F4",
-      dark: "#F2FAFA",
-      contrastText: "#000000",
+    background: {
+      default: "#101010", // Gris muy oscuro (fondo principal)
+      paper: "#151515", // Gris muy oscuro (elementos de papel)
+    },
+    text: {
+      primary: "#FFFFFF", // Blanco
+      secondary: "#A0E6E1", // Turquesa pastel claro
     },
     error: {
       main: "#F44336",
@@ -67,10 +56,6 @@ let theme = createTheme({
       light: "#E57373",
       dark: "#D32F2F",
       contrastText: "#FFFFFF",
-    },
-    background: {
-      default: "#0C0C22",
-      paper: "#15163B",
     },
   },
   breakpoints: {
@@ -87,7 +72,7 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           fontSize: "1rem",
-          borderRadius: "5px",
+          borderRadius: "20px", // Botones redondeados
           width: "100%",
           height: "100%",
           maxHeight: "50px",
@@ -126,7 +111,9 @@ let theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          border: "1px solid #8BE067", //primary.main.
+          backgroundColor: "#1A1A1A", // Gris muy oscuro para las tarjetas
+          border: "1px solid #FF9EB5", // Borde magenta pastel
+          boxShadow: "0 4px 8px rgba(255, 158, 181, 0.15)", // Sombra magenta suave
           marginTop: "0px",
           marginBottom: "20px",
           marginRight: "0px,",
@@ -151,7 +138,7 @@ let theme = createTheme({
     MuiDivider: {
       styleOverrides: {
         root: {
-          borderColor: "#8BE067", //primary.color.
+          borderColor: "#252525", // Divisor gris oscuro
           width: "95%",
           margin: "0 auto",
         },
@@ -161,8 +148,8 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           marginRight: "10px",
-          backgroundColor: "#8BE067", //primary.color
-          color: "#15163B", //primary.contrastText
+          backgroundColor: "#FF9EB5", // Fondo magenta pastel
+          color: "#000000", // Texto negro
         },
       },
     },
@@ -170,6 +157,59 @@ let theme = createTheme({
       styleOverrides: {
         tooltip: {
           fontSize: "85%",
+        },
+      },
+    },
+    MuiCssBaseline: {
+      styleOverrides: `
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        textarea:-webkit-autofill:hover,
+        textarea:-webkit-autofill:focus,
+        select:-webkit-autofill,
+        select:-webkit-autofill:hover,
+        select:-webkit-autofill:focus {
+          -webkit-text-fill-color: #A0E6E1;
+          -webkit-box-shadow: 0 0 0px 1000px rgba(16, 16, 16, 0.01) inset;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+      `,
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          '&:-webkit-autofill': {
+            WebkitBoxShadow: '0 0 0px 1000px rgba(16, 16, 16, 0.01) inset',
+            WebkitTextFillColor: '#A0E6E1',
+          },
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          '&:-webkit-autofill': {
+            WebkitBoxShadow: '0 0 0px 1000px rgba(16, 16, 16, 0.01) inset',
+            WebkitTextFillColor: '#ffffff',
+            borderRadius: 'inherit',
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& .MuiInputBase-root': {
+            backgroundColor: 'transparent',
+          },
+          '& .MuiInputBase-input': {
+            backgroundColor: 'transparent',
+          },
+          '& .MuiInputBase-input::placeholder': {
+            color: 'rgba(255, 255, 255, 0.7)', // Ajusta el color y la opacidad según tus preferencias
+          },
         },
       },
     },

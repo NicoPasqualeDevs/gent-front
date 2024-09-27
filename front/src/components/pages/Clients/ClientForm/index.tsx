@@ -168,7 +168,7 @@ const ClientForm: React.FC = () => {
       setAgentsPage(1);
       replacePath([
         {
-          label: "Registrar Cliente",
+          label: "Registrar Equipo",
           current_path: `bots/clients/form`,
           preview_path: "",
         },
@@ -184,12 +184,12 @@ const ClientForm: React.FC = () => {
       ) : (
         <>
           <Typography variant="h4">
-            {clientId ? "Editar Cliente" : "Registrar Nuevo Cliente"}
+            {clientId ? "Editar equipo de agentes" : "Registrar nuevo equipo de agentes"}
           </Typography>
           <Box marginTop={"20px"}>
             <TextInput
               name="name"
-              label="Nombre del Cliente"
+              label="Nombre del Equipo"
               value={values.name}
               helperText={inputError.name}
               onChange={handleChange}
@@ -217,7 +217,7 @@ const ClientForm: React.FC = () => {
           <Typography>
             Modelos: gpt-3.5-turbo-1106, gpt-4-1106-preview, gpt-4o
           </Typography>
-          <Box marginTop={"30px"}>
+          <Box marginTop={"30px"} >
             <MultilineInput
               name="description"
               label="Descripción"

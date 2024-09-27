@@ -160,7 +160,7 @@ const ClientList: React.FC = () => {
   useEffect(() => {
     replacePath([
       {
-        label: "Clientes",
+        label: "Agentes",
         current_path: "/clients",
         preview_path: "/clients",
       },
@@ -179,7 +179,7 @@ const ClientList: React.FC = () => {
       ) : (
         <>
           <Typography variant="h2" marginBottom={"20px"}>
-            Clientes
+            Agentes
           </Typography>
           <SearchWrapper>
             <Search>
@@ -266,8 +266,8 @@ const ClientList: React.FC = () => {
           ) : (
             <Typography variant="subtitle2" marginTop={"10px"}>
               {searchQuery && searchQuery.trim() !== ""
-                ? "No se encontraron clientes con ese nombre"
-                : "No hay clientes para mostrar"}
+                ? "No se encontraron agentes con ese nombre"
+                : "No hay agentes para mostrar"}
             </Typography>
           )}
         </>
@@ -322,7 +322,7 @@ const ClientList: React.FC = () => {
                 } - ${Math.min(
                   clientPage * paginationData.page_size,
                   paginationData.total_items
-                )} de ${paginationData.total_items} Clientes`}
+                )} de ${paginationData.total_items} Agentes`}
               </Typography>
             ) : null}
           </Grid>
