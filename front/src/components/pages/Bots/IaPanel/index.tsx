@@ -175,6 +175,7 @@ const IaPanel: React.FC = () => {
     }
   }, []);
 
+
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       {!loaded ? (
@@ -257,7 +258,7 @@ const IaPanel: React.FC = () => {
             }}>
               <Grid container spacing={3} justifyContent="flex-start">
                 {pageContent.map((bot, index) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={`bot-${index}`}>
+                  <Grid item xs={12} sm={12} md={6} lg={6} xl={6} key={`bot-${index}`}>
                     <Card sx={{
                       height: '100%',
                       display: 'flex',
@@ -266,85 +267,171 @@ const IaPanel: React.FC = () => {
                       border: `1px solid ${theme.palette.divider}`,
                       boxShadow: 'none',
                       width: '100%',
+                      minHeight: '500px',
                     }}>
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography variant="h6" gutterBottom>
-                          {bot.name}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{
-                            height: 80,
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            display: "-webkit-box",
-                            WebkitLineClamp: 3,
-                            WebkitBoxOrient: "vertical",
-                          }}
-                        >
-                          {bot.description}
-                        </Typography>
-                        <Button
-                          size="small"
-                          onClick={() => {
-                            window.open(
-                              apiBase.slice(0, -1) + bot.widget_url,
-                              "_blank"
-                            );
-                          }}
-                          sx={{ mt: 2 }}
-                        >
-                          Descargar Widget
-                        </Button>
-                      </CardContent>
-                      <Divider />
-                      <CardActions>
-                        <Grid container>
-                          <Grid item xs={10}>
-                            {["Editar", "Ktags", "Tools", "Widget", "Saludos", "Probar"].map(
-                              (action) => (
-                                <Tooltip key={action} title={`${action} Agente`} arrow>
-                                  <Button
-                                    size="small"
-                                    onClick={() => {
-                                      // ... (lógica de navegación existente)
-                                    }}
-                                  >
-                                    {action}
-                                  </Button>
-                                </Tooltip>
-                              )
-                            )}
-                          </Grid>
-                          <Grid item xs={2} sx={{
-                            display: 'flex',
-                            justifyContent: 'flex-end',
-                            alignItems: 'center'
-                          }}>
-                            <Tooltip title="Eliminar Agente" arrow>
+                      <CardContent sx={{ flexGrow: 1, px: 3, display: 'flex', flexDirection: 'column' }}>
+                        {/* Sección de Información */}
+                        <Box sx={{ mb: 2 }}>
+                          <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
+                            Información
+                          </Typography>
+                          <Typography variant="subtitle1" gutterBottom sx={{ color: theme.palette.info.main }}>
+                            {bot.name}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: theme.palette.info.main,
+                              height: 60,
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                            }}
+                          >
+                            {bot.description}
+                          </Typography>
+                        </Box>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        {/* Sección de Implementación */}
+                        <Box sx={{ mb: 2 }}>
+                          <Typography variant="h6" gutterBottom>
+                            Implementación
+                          </Typography>
+                          <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: 2 }}>
+                            <Tooltip title="Descargar Widget" arrow>
                               <Button
                                 size="small"
-                                color="error"
                                 onClick={() => {
-                                  setAllowerState(true);
-                                  setbotToDelete(bot.id);
+                                  window.open(
+                                    apiBase.slice(0, -1) + bot.widget_url,
+                                    "_blank"
+                                  );
                                 }}
                                 sx={{
-                                  width: '20px',
-                                  height: '20px',
-                                  padding: 0,
-                                  margin: 0,
-                                  justifyContent: 'center',
-                                  alignItems: 'center'
+                                  color: '#4caf50',
+                                  '&:hover': {
+                                    backgroundColor: 'transparent',
+                                  },
+                                  pl: 0 // Añadido para eliminar el padding izquierdo
                                 }}
                               >
-                                <DeleteIcon sx={{ fontSize: '16px' }} />
+                                Widget
                               </Button>
                             </Tooltip>
+                            <Tooltip title="Probar Agente" arrow>
+                              <Button
+                                size="small"
+                                onClick={() => navigate(`/bots/chat/${bot.id}`)}
+                                sx={{
+                                  color: '#4caf50',
+                                  '&:hover': {
+                                    backgroundColor: 'transparent',
+                                  }
+                                }}
+                              >
+                                Probar
+                              </Button>
+                            </Tooltip>
+                          </Box>
+                        </Box>
+
+                        <Divider sx={{ my: 2 }} />
+
+                        {/* Sección de Configuración */}
+                        <Box sx={{ mb: 1 }}>
+                          <Typography variant="h6" gutterBottom>
+                            Configuración
+                          </Typography>
+                        </Box>
+                        <CardActions sx={{ p: 0 }}>
+                          <Grid container>
+                            <Grid item xs={11}>
+                              <Tooltip title="Editar Agente" arrow>
+                                <Button
+                                  size="small"
+                                  onClick={() =>
+                                    navigate(
+                                      `/bots/contextEntry/${clientId}/${bot.id}`
+                                    )
+                                  }
+                                  sx={{ pl: 0 }}
+                                >
+                                  Editar
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="Editar Ktags" arrow>
+                                <Button
+                                  size="small"
+                                  onClick={() =>
+                                    navigate(`/bots/dataEntry/${bot.id}`)
+                                  }
+                                >
+                                  Ktags
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="Tools de Agente" arrow>
+                                <Button
+                                  size="small"
+                                  onClick={() =>
+                                    navigate(`/bots/tools/${bot.name}/${bot.id}`)
+                                  }
+                                >
+                                  Tools
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="Personalizar Widget" arrow>
+                                <Button
+                                  size="small"
+                                  onClick={() =>
+                                    navigate(`/bots/widgetCustomizer/${bot.id}`)
+                                  }
+                                >
+                                  Widget
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="Personalizar Saludos" arrow>
+                                <Button
+                                  size="small"
+                                  onClick={() =>
+                                    navigate(`/bots/customMessages/${bot.id}`)
+                                  }
+                                >
+                                  Saludos
+                                </Button>
+                              </Tooltip>
+                              <Tooltip title="Probar Chat" arrow>
+                                <Button
+                                  size="small"
+                                  onClick={() => navigate(`/bots/chat/${bot.id}`)}
+                                >
+                                  Probar
+                                </Button>
+                              </Tooltip>
+                            </Grid>
+                            <Grid item xs={1} textAlign={"end"}>
+                              <Tooltip title="Eliminar Agente" arrow>
+                                <Button
+                                  size="small"
+                                  color="error"
+                                  onClick={() => {
+                                    setAllowerState(true);
+                                    setbotToDelete(bot.id);
+                                  }}
+                                >
+                                  <DeleteIcon fontSize="small" />
+                                </Button>
+                              </Tooltip>
+                            </Grid>
                           </Grid>
-                        </Grid>
-                      </CardActions>
+                        </CardActions>
+                      </CardContent>
+
+                      {/* Botón de eliminar */}
+
                     </Card>
                   </Grid>
                 ))}
