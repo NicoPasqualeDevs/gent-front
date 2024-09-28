@@ -316,7 +316,7 @@ const IaPanel: React.FC = () => {
               maxWidth: '100%'
             }}>
               <Typography variant="h4" sx={{ mr: 2 }}>
-                Equipos IA de {clientName}
+                Agentes de {clientName}
               </Typography>
               <Select
                 value={contentPerPage}

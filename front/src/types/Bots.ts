@@ -10,6 +10,7 @@ export interface ChatHistory {
   customer: string;
   customer_bot: string;
   messages: ChatMessage[];
+  conversation: string;
 }
 
 export interface UpdatedChatHistory {

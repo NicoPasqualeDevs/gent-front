@@ -183,7 +183,7 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiPost(path, data);
   };
   const closeChat = (conversation_id: string): Promise<void> => {
-    const path = `api/chat/close`;
+    const path = `api/clean-chat`;
     return apiPost(path, { conversation_id });
   };
 

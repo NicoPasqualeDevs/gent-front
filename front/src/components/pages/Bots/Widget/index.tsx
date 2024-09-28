@@ -2,20 +2,19 @@ import React, { useEffect, useState, useRef } from "react";
 import { Box, Grid, Typography, TextField, Button, Paper, CircularProgress } from "@mui/material";
 import { ErrorToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ChatHistory, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
-import { useAppContext } from "@/context/app";
 
 const Widget: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory | null>(null);
   const [message, setMessage] = useState<string>(""); // Added default value
   const [isSending, setIsSending] = useState<boolean>(false);
-
-  const { getChatHistory, sendMessage } = useBotsApi();
+  const { getChatHistory, sendMessage, closeChat } = useBotsApi();
   const { botId } = useParams<{ botId: string }>();
+  const navigate = useNavigate();
   const chatContainerRef = useRef<HTMLDivElement>(null);
-  const { layout } = useAppContext();
+
 
   useEffect(() => {
     let isMounted = true;
@@ -26,6 +25,7 @@ const Widget: React.FC = () => {
       try {
         const history = await getChatHistory(botId);
         if (isMounted) {
+          console.log(history)
           setChatHistory(history);
         }
       } catch (error) {
@@ -87,6 +87,17 @@ const Widget: React.FC = () => {
     }
   };
 
+  const handleCloseChat = async () => {
+    if (!chatHistory?.conversation) return;
+    try {
+      await closeChat(chatHistory.conversation);
+      navigate(-1); // Redirige a la vista anterior
+    } catch (error) {
+      console.error("Error al cerrar el chat:", error);
+      ErrorToast("No se pudo cerrar el chat");
+    }
+  };
+
   if (isLoading) {
     return (
       <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
@@ -99,6 +110,15 @@ const Widget: React.FC = () => {
     <Grid container justifyContent="center" style={{ height: "100vh", padding: "20px" }}>
       <Grid item xs={12} sm={8} md={6}>
         <Paper elevation={3} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+          <Box p={2} display="flex" justifyContent="flex-end">
+            <Button 
+              variant="outlined" 
+              color="secondary" 
+              onClick={handleCloseChat}
+            >
+              Cerrar chat
+            </Button>
+          </Box>
           <Box p={2} flexGrow={1} overflow="auto" ref={chatContainerRef}>
             {chatHistory?.messages.map((msg, index) => (
               <Box key={index} mb={2} alignSelf={msg.role === "user" ? "flex-end" : "flex-start"}>

@@ -6,6 +6,7 @@ type UseApiHook = {
   apiBase: string;
   buildUri: <Q = Record<string, string>>(path: string, query?: Q) => string;
   apiPost: <B = unknown, R = unknown>(path: string, body: B, headers?: HeadersInit) => Promise<R>;
+  noAuthPost: <B = unknown, R = unknown>(path: string, body: B, headers?: HeadersInit) => Promise<R>;
   noBodyApiPost: <R = unknown>(path: string) => Promise<R>;
   apiPut: <B = unknown, R = unknown>(path: string, body: B) => Promise<R>;
   apiPatch: <B = unknown, R = unknown>(path: string, body: B, headers?: HeadersInit) => Promise<R>;
@@ -68,6 +69,7 @@ const useApi = (): UseApiHook => {
 
   const noBodyApiPost = React.useCallback(<R>(path: string): Promise<R> => apiCall<R>("POST", buildUri(path)), [apiCall]);
   const apiPost = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => apiCall<R>("POST", buildUri(path), body, headers), [apiCall]);
+  const noAuthPost = React.useCallback(<B, R>(path: string, body: B,): Promise<R> => apiCall<R>("POST", buildUri(path), body,{ "Content-Type": "application/json" }), [apiCall]);
   const apiPut = React.useCallback(<B, R>(path: string, body: B): Promise<R> => apiCall<R>("PUT", buildUri(path), body), [apiCall]);
   const apiPatch = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => apiCall<R>("PATCH", buildUri(path), body, headers), [apiCall]);
   const apiGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => apiCall<R>("GET", buildUri(path, query)), [apiCall]);
@@ -81,6 +83,7 @@ const useApi = (): UseApiHook => {
     buildUri,
     apiPost,
     noBodyApiPost,
+    noAuthPost,
     apiPut,
     apiPatch,
     apiGet,
