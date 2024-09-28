@@ -10,7 +10,7 @@ const Widget: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [widgetData, setWidgetData] = useState<string>("");
   const [code, setCode] = useState("");
-  const { getNoAuthBotData } = useBotsApi();
+  const { getNoAuthBotData, getBotData } = useBotsApi();
   const { apiBase } = useApi();
   const { botId } = useParams();
 

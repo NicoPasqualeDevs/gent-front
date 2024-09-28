@@ -17,7 +17,7 @@ type UseApiHook = {
 const useApi = (): UseApiHook => {
   const { auth: { user } } = useAppContext();
   const token = user?.token;
-  const apiBase = "https://localhost:8000/";
+  const apiBase = "http://127.0.0.1:8000/";
 
   const buildUri = <Q = Record<string, string>>(path: string, query?: Q): string => {
     const fullUrl = `${apiBase}${path}`;
@@ -57,7 +57,7 @@ const useApi = (): UseApiHook => {
       };
 
       try {
-        const response = await fetch(buildUri(path), requestOptions);
+        const response = await fetch(path, requestOptions);
         return await handleResponse<R>(response);
       } catch (err) {
         throw err ? console.log(err) : console.log("unknown error");
@@ -66,14 +66,14 @@ const useApi = (): UseApiHook => {
     [token]
   );
 
-  const noBodyApiPost = React.useCallback(<R>(path: string): Promise<R> => apiCall<R>("POST", path), [apiCall]);
-  const apiPost = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => apiCall<R>("POST", path, body, headers), [apiCall]);
-  const apiPut = React.useCallback(<B, R>(path: string, body: B): Promise<R> => apiCall<R>("PUT", path, body), [apiCall]);
-  const apiPatch = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => apiCall<R>("PATCH", path, body, headers), [apiCall]);
+  const noBodyApiPost = React.useCallback(<R>(path: string): Promise<R> => apiCall<R>("POST", buildUri(path)), [apiCall]);
+  const apiPost = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => apiCall<R>("POST", buildUri(path), body, headers), [apiCall]);
+  const apiPut = React.useCallback(<B, R>(path: string, body: B): Promise<R> => apiCall<R>("PUT", buildUri(path), body), [apiCall]);
+  const apiPatch = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => apiCall<R>("PATCH", buildUri(path), body, headers), [apiCall]);
   const apiGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => apiCall<R>("GET", buildUri(path, query)), [apiCall]);
   const noAuthGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> =>
     apiCall<R>("GET", buildUri(path, query), undefined, { "Content-Type": "application/json" }), [apiCall]);
-  const apiDelete = React.useCallback((path: string): Promise<Response> => apiCall("DELETE", path), [apiCall]);
+  const apiDelete = React.useCallback((path: string): Promise<Response> => apiCall("DELETE", buildUri(path)), [apiCall]);
 
   return {
     token,
