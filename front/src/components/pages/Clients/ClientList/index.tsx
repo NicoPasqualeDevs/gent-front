@@ -59,7 +59,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
   height: "100%",
   position: "absolute",
-  right: '8px', // Posicionamos el icono a 8px del margen derecho
+  right: '16px', // Cambiado de 8px a 16px
   pointerEvents: "none",
   display: "flex",
   alignItems: "center",
@@ -204,15 +204,15 @@ const ClientList: React.FC = () => {
               </Button>
               <Search sx={{ 
                 position: 'relative',
-                right: '-16px', // Mantenemos el desplazamiento hacia la derecha
-                width: 'calc(100% + 16px)', // Aumentamos el ancho en 16px
-                maxWidth: 'calc(300px + 16px)', // Ajustamos el maxWidth también
+                right: '-16px',
+                width: 'calc(100% + 16px)',
+                maxWidth: 'calc(300px + 16px)',
                 marginLeft: 'auto',
                 padding: 0,
               }}>
                 <SearchIconWrapper sx={{
                   padding: 0,
-                  right: '8px', // Posicionamos el icono a 8px del margen derecho
+                  right: '16px', // Cambiado de 8px a 16px
                 }}>
                   <SearchIcon />
                 </SearchIconWrapper>
@@ -221,7 +221,7 @@ const ClientList: React.FC = () => {
                   value={searchQuery}
                   inputProps={{ 
                     "aria-label": "search",
-                    style: { padding: '8px 24px 8px 16px' } // Ajustamos el padding derecho para dar espacio al icono
+                    style: { padding: '8px 40px 8px 16px' } // Aumentado el padding derecho de 24px a 40px
                   }}
                   onChange={(e) => handleSearch(e.target.value)}
                 />
@@ -289,7 +289,7 @@ const ClientList: React.FC = () => {
                       <Divider />
                       <CardActions>
                         <Grid container>
-                          <Grid item xs={11}>
+                          <Grid item xs={10}>
                             <Tooltip title="Acceder a Equipos IA" arrow>
                               <Button
                                 size="small"
@@ -318,7 +318,11 @@ const ClientList: React.FC = () => {
                               </Button>
                             </Tooltip>
                           </Grid>
-                          <Grid item xs={1} textAlign={"end"}>
+                          <Grid item xs={2} sx={{ 
+                            display: 'flex', 
+                            justifyContent: 'flex-end', 
+                            alignItems: 'center' 
+                          }}>
                             <Tooltip title="Eliminar Cliente" arrow>
                               <Button
                                 size="small"
@@ -327,8 +331,16 @@ const ClientList: React.FC = () => {
                                   setAllowerState(true);
                                   setClientToDelete(client.id);
                                 }}
+                                sx={{ 
+                                  width: '20px',
+                                  height: '20px',
+                                  padding: 0,
+                                  margin: 0,
+                                  justifyContent: 'center',
+                                  alignItems: 'center'
+                                }}
                               >
-                                <DeleteIcon fontSize="small" />
+                                <DeleteIcon sx={{ fontSize: '16px' }} />
                               </Button>
                             </Tooltip>
                           </Grid>
