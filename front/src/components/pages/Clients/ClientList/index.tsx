@@ -97,6 +97,7 @@ const ClientList: React.FC = () => {
   const [paginationData, setPaginationData] = useState<Metadata>();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [contentPerPage, setContentPerPage] = useState<string>("5");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handlePagination = (
     event: React.ChangeEvent<unknown>,
@@ -139,6 +140,7 @@ const ClientList: React.FC = () => {
   };
 
   const getClientsData = useCallback((filterParams: string) => {
+    setIsLoading(true);
     getCustomerList(filterParams)
       .then((response) => {
         const data: ClientDetails[] = response.data;
@@ -158,6 +160,9 @@ const ClientList: React.FC = () => {
             }`
           );
         }
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   }, []);
 
@@ -178,7 +183,7 @@ const ClientList: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
-      {!loaded ? (
+      {isLoading ? (
         <PageCircularProgress />
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
