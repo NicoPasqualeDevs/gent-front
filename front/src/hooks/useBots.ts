@@ -56,6 +56,7 @@ type UseBotsApiHook = {
     botId: string,
     data: ToolRelationshipData
   ) => Promise<unknown>;
+  closeChat: (conversation_id: string) => Promise<void>;
 
   //Puts
   updateBot: (botId: string, data: BotMetaData) => Promise<BotData>;
@@ -181,6 +182,10 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/bot/remove-tools/${botId}`;
     return apiPost(path, data);
   };
+  const closeChat = (conversation_id: string): Promise<void> => {
+    const path = `api/chat/close`;
+    return apiPost(path, { conversation_id });
+  };
 
   // PUT
   const updateBot = (botId: string, data: BotMetaData): Promise<BotData> => {
@@ -259,6 +264,7 @@ const useBotsApi = (): UseBotsApiHook => {
     postTool,
     setToolRelationship,
     removeToolRelationship,
+    closeChat,
 
     //Put
     updateBot,
