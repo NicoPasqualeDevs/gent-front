@@ -43,7 +43,7 @@ const Header: React.FC = () => {
           />
         </Tooltip>
         <Typography variant="h4" marginLeft={"10px"}>
-          Gent
+          Gents
         </Typography>
       </BrandContainer>
       <UserBubbleContainer item xs={4} md={9}>
