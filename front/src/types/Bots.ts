@@ -62,6 +62,7 @@ export interface BotMetaData {
   id?: string;
   name: string;
   description: string;
+  model_ai: string 
 }
 
 export interface WidgetData {

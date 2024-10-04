@@ -124,6 +124,7 @@ const IaPanel: React.FC = () => {
     getBotsList(clientId, filterParams)
       .then(response => {
         setAgentsPage(response.metadata.current_page || 1);
+        console.log(response.data, "<-- data")
         setPageContent(response.data);
         setPaginationData(response.metadata);
         setLoaded(true);

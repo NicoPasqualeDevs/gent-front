@@ -27,7 +27,7 @@ const ContextEntry: React.FC = () => {
     name: "",
     description: "",
     prompt_template: "",
-    model_ai: "", // Añade esta línea
+    model_ai: "",
   });
 
   const [initialValues, setInitialValues] = useState<ContextEntryData>({
@@ -139,6 +139,7 @@ const ContextEntry: React.FC = () => {
       createBot(clientId, {
         name: values.name,
         description: values.description,
+        model_ai: values.model_ai 
       })
         .then((response) => {
           SuccessToast("Bot creado satisfactoriamente");
@@ -168,7 +169,7 @@ const ContextEntry: React.FC = () => {
 
   const updateBotData = (values: ContextEntryData) => {
     if (clientId && botId) {
-      updateBot(botId, { name: values.name, description: values.description })
+      updateBot(botId, { name: values.name, description: values.description, model_ai: values.model_ai })
         .then(() => {
           updatePromptTemplateData(values.prompt_template);
         })
@@ -231,7 +232,7 @@ const ContextEntry: React.FC = () => {
   const modelAIOptions = [
     { label: "Claude 3.5", value: "claude-3-5-sonnet-20240620" },
     { label: "Claude 3 Opus", value: "claude-3-opus-20240229" },
-    { label: "GPT-4", value: "gpt4-o" },
+    { label: "GPT-4", value: "gpt-4o" },
     { label: "GPT-3.5", value: "gpt-3.5-turbo-1106" },
   ];
 
