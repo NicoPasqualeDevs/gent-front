@@ -25,6 +25,7 @@ export interface ContextEntryData {
   name: string;
   description: string;
   prompt_template: string;
+  model_ai: string; // Añadimos este campo
 }
 
 export interface PromptTemplateData {

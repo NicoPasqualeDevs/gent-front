@@ -9,6 +9,8 @@ import {
   styled,
   TextField,
   Typography,
+  Select,
+  SelectProps,
 } from "@mui/material";
 import { useState } from "react";
 import { ErrorToast } from "../Toast";
@@ -19,6 +21,7 @@ import {
   MultilineInputProps,
   PasswordInputProps,
   TextInputProps,
+  SelectInputProps,
 } from "@/types/Inputs";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -143,6 +146,22 @@ const StyledPasswordIconButton = styled(Button)(({ theme }) => ({
 
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
   color: theme.palette.primary.main,
+}));
+
+const StyledSelect = styled(Select)(({ theme }) => ({
+  color: "white",
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "white",
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: theme.palette.primary.main,
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: theme.palette.primary.main,
+  },
+  "& .MuiSelect-icon": {
+    color: theme.palette.primary.main,
+  },
 }));
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -427,6 +446,49 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
         <StyledCheckbox name={name} onChange={onChange} defaultChecked />
       ) : (
         <StyledCheckbox name={name} onChange={onChange} />
+      )}
+    </Box>
+  );
+};
+
+export const SelectInput: React.FC<SelectInputProps> = ({
+  name,
+  label,
+  value,
+  onChange,
+  children,
+  helperText,
+}) => {
+  return (
+    <Box>
+      <Typography
+        sx={{
+          color: theme.palette.primary.main,
+          marginBottom: "8px",
+          fontSize: "16px",
+        }}
+      >
+        {label}
+      </Typography>
+      <StyledSelect
+        name={name}
+        value={value}
+        onChange={onChange}
+        fullWidth
+        displayEmpty
+      >
+        {children}
+      </StyledSelect>
+      {helperText && (
+        <Typography
+          sx={{
+            color: theme.palette.error.main,
+            fontSize: "12px",
+            marginTop: "4px",
+          }}
+        >
+          {helperText}
+        </Typography>
       )}
     </Box>
   );

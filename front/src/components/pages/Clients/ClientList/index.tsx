@@ -274,7 +274,7 @@ const ClientList: React.FC = () => {
                       backgroundColor: 'transparent',
                       border: `1px solid ${theme.palette.divider}`,
                       boxShadow: 'none',
-                      width: '100%', // Asegura que la tarjeta ocupe todo el ancho del Grid item
+                      width: '100%',
                     }}>
                       <CardContent sx={{ flexGrow: 1 }}>
                         <Typography variant="h6" component="div" gutterBottom>

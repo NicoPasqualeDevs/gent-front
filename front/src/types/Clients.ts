@@ -3,5 +3,4 @@ export interface ClientDetails {
   address: string;
   description: string;
   name: string;
-  model_ia: string;
 }

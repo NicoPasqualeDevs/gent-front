@@ -24,25 +24,21 @@ const ClientForm: React.FC = () => {
     name: "",
     address: "",
     description: "",
-    model_ia: "",
+    // Se eliminó model_ia
   });
+  
   const [inputError, setInputError] = useState<ClientDetails>({
     name: "",
     address: "",
     description: "",
-    model_ia: "",
+    // Se eliminó model_ia
   });
 
   const validationSchema = Yup.object({
     name: Yup.string().required("Este es un campo requerido"),
     address: Yup.string().required("Este es un campo requerido"),
     description: Yup.string().required("Este es un campo requerido"),
-    model_ia: Yup.string()
-      .oneOf(
-        ["gpt-3.5-turbo-1106", "gpt-4-1106-preview", "gpt-4o"],
-        "no es un modelo válido"
-      )
-      .required("Este campo es requerido"),
+    // Se eliminó la validación de model_ia
   });
 
   const onSubmit = (values: ClientDetails) => {
@@ -64,7 +60,7 @@ const ClientForm: React.FC = () => {
       name: errors.name || " ",
       address: errors.address || " ",
       description: errors.description || " ",
-      model_ia: errors.model_ia || " ",
+      // Se eliminó model_ia
     });
     handleSubmit(e);
   };
@@ -76,13 +72,13 @@ const ClientForm: React.FC = () => {
           name: response.name,
           address: response.address,
           description: response.description,
-          model_ia: response.model_ia,
+          // Se eliminó model_ia
         });
         setInitialValues({
           name: response.name,
           address: response.address,
           description: response.description,
-          model_ia: response.model_ia,
+          // Se eliminó model_ia
         });
         setLoaded(true);
       })
@@ -140,13 +136,11 @@ const ClientForm: React.FC = () => {
       name: "",
       address: "",
       description: "",
-      model_ia: "",
     });
     setInitialValues({
       name: "",
       address: "",
       description: "",
-      model_ia: "",
     });
     if (clientId && clientName) {
       replacePath([
@@ -204,19 +198,6 @@ const ClientForm: React.FC = () => {
               onChange={handleChange}
             />
           </Box>
-          <Box marginTop={"20px"}>
-            <TextInput
-              name="model_ia"
-              label="Modelo de IA"
-              value={values.model_ia}
-              helperText={inputError.model_ia}
-              placeholder="Modelos: gpt-3.5-turbo-1106, gpt-4-1106-preview, gpt-4o"
-              onChange={handleChange}
-            />
-          </Box>
-          <Typography>
-            Modelos: gpt-3.5-turbo-1106, gpt-4-1106-preview, gpt-4o
-          </Typography>
           <Box marginTop={"30px"} >
             <MultilineInput
               name="description"

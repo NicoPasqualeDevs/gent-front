@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, MenuItem } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { ContextEntryData } from "@/types/Bots";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { MultilineInput, TextInput } from "@/components/Inputs";
+import { MultilineInput, TextInput, SelectInput } from "@/components/Inputs";
 import { useAppContext } from "@/context/app";
 
 const ContextEntry: React.FC = () => {
@@ -27,12 +27,14 @@ const ContextEntry: React.FC = () => {
     name: "",
     description: "",
     prompt_template: "",
+    model_ai: "", // Añade esta línea
   });
 
   const [initialValues, setInitialValues] = useState<ContextEntryData>({
     description: "",
     name: "",
     prompt_template: "",
+    model_ai: "claude-3-5-sonnet-20240620", // Valor por defecto
   });
 
   const validationSchema = Yup.object({
@@ -41,6 +43,7 @@ const ContextEntry: React.FC = () => {
     prompt_template: botId
       ? Yup.string().required("Prompt Template es un campo requerido")
       : Yup.string().optional(),
+    model_ai: Yup.string().required("Modelo AI es un campo requerido"),
   });
 
   const onSubmit = (values: ContextEntryData) => {
@@ -58,7 +61,7 @@ const ContextEntry: React.FC = () => {
   });
 
   const loadPromptTemplateData = useCallback(
-    (name: string, description: string) => {
+    (name: string, description: string, model_ai: string) => {
       if (botId) {
         getPromptTemplate(botId)
           .then((response) => {
@@ -66,11 +69,13 @@ const ContextEntry: React.FC = () => {
               name: name,
               description: description,
               prompt_template: response.data,
+              model_ai: model_ai || "claude-3-5-sonnet-20240620", // Usar Claude 3.5 si no hay valor
             });
             setValues({
               name: name,
               description: description,
               prompt_template: response.data,
+              model_ai: model_ai || "claude-3-5-sonnet-20240620", // Usar Claude 3.5 si no hay valor
             });
             setLoaded(true);
           })
@@ -110,7 +115,11 @@ const ContextEntry: React.FC = () => {
     if (botId) {
       getBotData(botId)
         .then((response) => {
-          loadPromptTemplateData(response.data.name, response.data.description);
+          loadPromptTemplateData(
+            response.data.name ?? '',
+            response.data.description ?? '',
+            Array.isArray(response.data.model_ai) ? response.data.model_ai.join(', ') : (response.data.model_ai ?? '')
+          );
         })
         .catch((error) => {
           ErrorToast(
@@ -219,6 +228,13 @@ const ContextEntry: React.FC = () => {
     }
   }, []);
 
+  const modelAIOptions = [
+    { label: "Claude 3.5", value: "claude-3-5-sonnet-20240620" },
+    { label: "Claude 3 Opus", value: "claude-3-opus-20240229" },
+    { label: "GPT-4", value: "gpt4-o" },
+    { label: "GPT-3.5", value: "gpt-3.5-turbo-1106" },
+  ];
+
   return (
     <>
       {!loaded ? (
@@ -232,10 +248,11 @@ const ContextEntry: React.FC = () => {
               name: errors.name || "",
               description: errors.description || "",
               prompt_template: errors.prompt_template || "",
+              model_ai: errors.model_ai || "",
             });
             handleSubmit(e);
           }}
-          gap={1}
+          gap={2}
         >
           <Grid item xs={12}>
             <Typography variant="h4">
@@ -261,6 +278,22 @@ const ContextEntry: React.FC = () => {
               onChange={handleChange}
             />
           </Grid>
+          <Grid item xs={12}>
+            <SelectInput
+              name="model_ai"
+              label="Modelo AI"
+              value={values.model_ai}
+              onChange={handleChange}
+              helperText={inputError.model_ai}
+              required
+            >
+              {modelAIOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </SelectInput>
+          </Grid>
           {botId ? (
             <Grid item xs={12}>
               <MultilineInput
@@ -273,7 +306,7 @@ const ContextEntry: React.FC = () => {
               />
             </Grid>
           ) : null}
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ mt: 2 }}>
             <Button variant="contained" type="submit">
               Guardar
             </Button>
