@@ -1,13 +1,13 @@
 import { AppContextState, INITIAL_STATE, AppDevice } from "./AppContext.ts";
 import { Breakpoint } from "@mui/material";
 import { AuthUser } from "@/types/Auth.ts";
-import { ClientDetails } from "@/types/Clients.ts";
+import { AiTeamsDetails } from "@/types/AiTeams.ts";
 import { PathData } from "@/types/Pathbar.ts";
 
 type AppContextActions =
   | { type: "setAuthUser"; payload: AuthUser | null }
   | { type: "setLoaded"; payload: boolean }
-  | { type: "setCustomersList"; payload: ClientDetails[] }
+  | { type: "setCustomersList"; payload: AiTeamsDetails[] }
   | { type: "setMenu"; payload: boolean }
   | { type: "setBreakPoint"; payload: Breakpoint }
   | { type: "setDevice"; payload: AppDevice }
@@ -46,7 +46,7 @@ export const AppReducer = (
     case "setCustomersList": {
       return {
         ...state,
-        clientsList: action.payload,
+        aiTeams: action.payload,
       };
     }
 

@@ -105,7 +105,7 @@ const HomeComponent: React.FC = () => {
                 variant="contained" 
                 color="primary"
                 className={isGlowing ? 'glow-effect' : ''}
-                onClick={() => navigate('/clients')}
+                onClick={() => navigate('/builder')}
                 sx={{
                   '@keyframes glow': {
                     '0%': { boxShadow: `0 0 5px ${theme.palette.primary.main}` },

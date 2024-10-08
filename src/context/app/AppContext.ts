@@ -1,7 +1,7 @@
 import { createContext } from "react";
 import { Breakpoint } from "@mui/material";
 import { AuthTempInfo, AuthUser } from "@/types/Auth.ts";
-import { ClientDetails } from "@/types/Clients";
+import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
 
 export type AppDevice = "mobile" | "tablet" | "pc";
@@ -14,14 +14,14 @@ export interface AppContextState {
   };
   menu: boolean;
   loaded: boolean;
-  clientsList: ClientDetails[] | undefined;
+  aiTeams: AiTeamsDetails[] | undefined;
   navElevation: string;
   appNavigation: PathData[];
   clientPage: number;
   toolsPage: number;
   agentsPage: number;
 
-  setCustomersList: (value: ClientDetails[]) => void;
+  setCustomersList: (value: AiTeamsDetails[]) => void;
   setLogin: (value: AuthUser) => void;
   setAuthUser: (value: AuthUser | null) => void;
   setMenu: (value: boolean) => void;
@@ -44,7 +44,7 @@ export const INITIAL_STATE: AppContextState = {
   menu: true,
   navElevation: "",
   loaded: false,
-  clientsList: undefined,
+  aiTeams: undefined,
   appNavigation: [] as PathData[],
   clientPage: 1,
   toolsPage: 1,

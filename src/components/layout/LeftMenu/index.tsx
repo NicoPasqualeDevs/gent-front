@@ -1,23 +1,23 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
-import theme from "@/styles/theme";
 import { LeftMenuContainer } from "@/components/styledComponents/Layout";
 import { SuccessToast } from "@/components/Toast";
 import { LogoutSharp } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
+import { useEffect, useState } from "react"; // Añadimos useState
 
 const options = [
   {
-    navElevation: "clients",
+    navElevation: "builder",
     label: "Equipos IA",
-    path: "/clients",
+    path: "/builder",
   },
   {
     navElevation: "Register",
     label: "Registrar Equipo",
-    path: "/clients/form",
+    path: "/builder/form",
   },
 /*   {
     navElevation: "Tools",
@@ -28,9 +28,17 @@ const options = [
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, navElevation, setNavElevation, setAuthUser } = useAppContext();
+  const { menu, navElevation, setNavElevation, setAuthUser, setMenu } = useAppContext();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
+  const [isInitialRender, setIsInitialRender] = useState(true); // Nuevo estado
+
+  useEffect(() => {
+    if (isInitialRender) {
+      setMenu(false); // Ocultar el menú en el primer renderizado
+      setIsInitialRender(false);
+    }
+  }, [isInitialRender, setMenu]);
 
   return (
     <>

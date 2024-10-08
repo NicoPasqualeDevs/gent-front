@@ -21,6 +21,7 @@ import {
 } from "@/components/styledComponents/Cards";
 import { useEffect, useState, useCallback } from "react";
 import { useAppContext } from "@/context/app";
+import { Button } from "@mui/material";
 
 const KTagContent = styled(Typography)(({ theme }) => ({
   "&.MuiTypography-root": {
@@ -28,6 +29,8 @@ const KTagContent = styled(Typography)(({ theme }) => ({
     fontSize: "14px",
     textAlign: "left",
     lineHeight: "32px",
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
   },
 }));
 
@@ -63,7 +66,7 @@ const DataEntryComponent: React.FC = () => {
       replacePath([
         ...appNavigation.slice(0, 2),
         {
-          label: "ktags",
+          label: "Ktags",
           current_path: `bots/dataEntry/${botId}`,
           preview_path: "",
         },
@@ -224,38 +227,39 @@ const DataEntryComponent: React.FC = () => {
                   ) : (
                     // KTAG VIEW
                     <BasicCard key={`${item.field_name}-${index}-tagBox`}>
-                      <BasicCardContent>
+                      <BasicCardContent sx={{ padding: (theme) => theme.spacing(2) }}>
                         <Box display={"flex"} justifyContent={"right"}>
                           <Typography
-                            //position={"fixed"}
                             fontSize={10}
                             color="primary.main"
                             textAlign={"center"}
                             maxWidth={"72px"}
                           >{`N° : ${index + 1}`}</Typography>
                         </Box>
-                        <CardSubTitle>Palabras Clave :</CardSubTitle>
+                        <CardSubTitle sx={{ paddingLeft: 2, paddingRight: 0 }}>Palabras Clave :</CardSubTitle>
                         <KTagContent>{`${item.name}`}</KTagContent>
 
-                        {/* <CardSubTitle>{`Instrucción: ${item.description}`}</CardSubTitle> */}
-                        <CardSubTitle>Conocimiento Agregado :</CardSubTitle>
+                        <CardSubTitle sx={{ paddingLeft: 2, paddingRight: 2 }}>Conocimiento Agregado :</CardSubTitle>
                         <KTagContent>{`${item.value}`}</KTagContent>
                       </BasicCardContent>
                       <BasicCardDivider />
-                      <BasicCardAction>
-                        <Box display={"flex"}>
+                      <BasicCardAction sx={{ 
+                        padding: (theme) => theme.spacing(2),
+                        paddingTop: (theme) => theme.spacing(1),
+                        paddingBottom: (theme) => theme.spacing(1),
+                        paddingLeft: (theme) => theme.spacing(4)
+                      }}>
                           <StyledLinkButton
                             onClick={() => handleEditKtag(item)}
                           >
-                            Edit
+                            Edit|
                           </StyledLinkButton>
                           <StyledLinkButton
-                            style={{ marginLeft: "12px" }}
+                            sx={{ marginLeft: (theme) => theme.spacing(1.5) }}
                             onClick={() => handleDeleteKtag(item.id, index + 1)}
                           >
                             Delete
                           </StyledLinkButton>
-                        </Box>
                       </BasicCardAction>
                     </BasicCard>
                   )
@@ -322,15 +326,24 @@ const DataEntryComponent: React.FC = () => {
                 <></>
               )}
 
-              <StyledDefaultButton
+              <Button
+                variant="contained"
                 sx={{
                   marginLeft: "16px",
                   width: "150px",
+                  lineHeight: "20px",
+                  fontSize: "14px",
+                  backgroundColor: "secondary.dark",
+                  color: "white",
+                  "&:hover": {
+                    backgroundColor: "secondary.dark",
+                    opacity: 0.9,
+                  },
                 }}
                 onClick={() => navigate(`/bots/chat/${botId}`)}
               >
                 Probar Bot
-              </StyledDefaultButton>
+              </Button>
             </>
           </Box>
         </>

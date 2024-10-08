@@ -4,7 +4,7 @@ import { AppReducer } from "./AppReducer.ts";
 import { useWidth } from "@/hooks/useWidth.ts";
 import { isWidthDown } from "@mui/material/Hidden/withWidth";
 import { AuthUser } from "@/types/Auth.ts";
-import { ClientDetails } from "@/types/Clients.ts";
+import { AiTeamsDetails } from "@/types/AiTeams.ts";
 import { PathData } from "@/types/Pathbar.ts";
 
 interface AppProviderProps {
@@ -17,7 +17,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       menu,
       layout,
       loaded,
-      clientsList,
+      aiTeams,
       auth,
       navElevation,
       appNavigation,
@@ -52,7 +52,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     dispatch({ type: "setLoaded", payload: value });
   };
 
-  const setCustomersList = (value: ClientDetails[]) => {
+  const setCustomersList = (value: AiTeamsDetails[]) => {
     dispatch({ type: "setCustomersList", payload: value });
   };
 
@@ -94,7 +94,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         menu,
         layout,
         loaded,
-        clientsList,
+        aiTeams,
         auth,
         navElevation,
         appNavigation,

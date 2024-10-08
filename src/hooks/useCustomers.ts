@@ -1,17 +1,17 @@
 import useApi from "@/hooks/useApi.ts";
-import { ClientDetails } from "@/types/Clients";
+import { AiTeamsDetails } from "@/types/AiTeams";
 import { ApiResponseList } from "@/types/Api";
 
 type UseCustomersApiHook = {
   getCustomerList: (
     filterParams: string
-  ) => Promise<ApiResponseList<ClientDetails>>;
-  getClientDetails: (clientId: string) => Promise<ClientDetails>;
-  postClientDetails: (data: ClientDetails) => Promise<ClientDetails>;
+  ) => Promise<ApiResponseList<AiTeamsDetails>>;
+  getClientDetails: (clientId: string) => Promise<AiTeamsDetails>;
+  postClientDetails: (data: AiTeamsDetails) => Promise<AiTeamsDetails>;
   putClientDetails: (
-    data: ClientDetails,
+    data: AiTeamsDetails,
     clientId: string
-  ) => Promise<ClientDetails>;
+  ) => Promise<AiTeamsDetails>;
   deleteClientDetails: (clientId: string) => Promise<Response>;
 };
 
@@ -21,27 +21,27 @@ const useCustomersApi = (): UseCustomersApiHook => {
   // GETS
   const getCustomerList = (
     filterParams: string
-  ): Promise<ApiResponseList<ClientDetails>> => {
+  ): Promise<ApiResponseList<AiTeamsDetails>> => {
     const path = `api/client/actions/${filterParams}`;
-    return apiGet<ApiResponseList<ClientDetails>>(path);
+    return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
-  const getClientDetails = (clientId: string): Promise<ClientDetails> => {
+  const getClientDetails = (clientId: string): Promise<AiTeamsDetails> => {
     const path = `api/client/actions/${clientId}/`;
-    return apiGet<ClientDetails>(path);
+    return apiGet<AiTeamsDetails>(path);
   };
 
   // POST
-  const postClientDetails = (data: ClientDetails): Promise<ClientDetails> => {
+  const postClientDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
     const path = "api/client/actions/";
     return apiPost(path, data);
   };
 
   // PUTS
   const putClientDetails = (
-    data: ClientDetails,
+    data: AiTeamsDetails,
     clientId: string
-  ): Promise<ClientDetails> => {
+  ): Promise<AiTeamsDetails> => {
     const path = `api/client/actions/${clientId}/`;
     return apiPut(path, data);
   };

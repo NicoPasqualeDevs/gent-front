@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   Grid, Typography, Pagination, Card, CardActions, Button, Divider, Tooltip,
-  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent
+  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent, IconButton
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
@@ -20,6 +20,7 @@ import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchB
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { replacePath, appNavigation, agentsPage, setAgentsPage } = useAppContext();
   const { apiBase } = useApi();
   const { getBotsList, deleteBot } = useBotsApi();
@@ -106,7 +107,7 @@ const IaPanel: React.FC = () => {
       height: '100%',
       display: 'flex',
       flexDirection: 'column',
-      backgroundColor: 'transparent',
+      backgroundColor: theme.palette.background.paper, // Cambiado a usar el color de fondo del Paper
       border: `1px solid ${theme.palette.divider}`,
       boxShadow: 'none',
       width: '100%',
@@ -312,7 +313,8 @@ const IaPanel: React.FC = () => {
             <Paper elevation={3} sx={{ p: 2 }}>
               <Box sx={{ 
                 display: 'flex', 
-                flexDirection: 'column', 
+                flexDirection: { xs: 'column', sm: 'row' }, 
+                justifyContent: 'space-between', 
                 alignItems: 'center',
                 gap: 2,
               }}>
@@ -320,34 +322,17 @@ const IaPanel: React.FC = () => {
                   count={paginationData?.total_pages}
                   page={agentsPage}
                   onChange={handlePagination}
-                  size="small"
                   color="primary"
+                  size="small"
                 />
-                <Typography variant="body2" textAlign="center">
-                  {paginationData &&
-                    `${(agentsPage - 1) * (paginationData?.page_size ?? 1) + 1} - ${Math.min(
-                      agentsPage * (paginationData?.page_size ?? 1),
+                {paginationData && (
+                  <Typography variant="body2" color="text.secondary">
+                    {`${(agentsPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
+                      agentsPage * (paginationData?.page_size ?? 0),
                       paginationData?.total_items ?? 0
                     )} de ${paginationData?.total_items ?? 0} Equipos IA`}
-                </Typography>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body2">Elementos por página</Typography>
-                  <Select
-                    value={contentPerPage}
-                    onChange={(e: SelectChangeEvent) => {
-                      setContentPerPage(e.target.value);
-                      setLoaded(false);
-                      getBotsData(`?page_size=${e.target.value}`);
-                    }}
-                    size="small"
-                  >
-                    {[5, 10, 20].map((value) => (
-                      <MenuItem key={value} value={value.toString()}>
-                        {value}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </Box>
+                  </Typography>
+                )}
               </Box>
             </Paper>
           )}

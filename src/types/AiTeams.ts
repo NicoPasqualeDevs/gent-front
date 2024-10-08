@@ -1,4 +1,4 @@
-export interface ClientDetails {
+export interface AiTeamsDetails {
   [propKey: string]: string;
   address: string;
   description: string;

@@ -33,6 +33,8 @@ const Header: React.FC = () => {
     navigate('/profile');
   };
 
+  const isLargeScreen = breakpoint === "lg" || breakpoint === "xl";
+
   return (
     <HeaderContainer container>
       <BrandContainer item xs={8} md={3} sx={{paddingLeft: "5px", display: "flex", alignItems: "center"}}>
@@ -46,10 +48,10 @@ const Header: React.FC = () => {
         <Typography variant="h4" marginLeft={"10px"} marginRight={"20px"}>
           Gents
         </Typography>
-        <Pathbar />
+        {isLargeScreen && <Pathbar />}
       </BrandContainer>
-      <UserBubbleContainer item xs={4} md={9}>
-        {auth.user && (breakpoint === "lg" || breakpoint === "xl") ? (
+      <UserBubbleContainer item xs={4} md={9} sx={{ display: "flex", justifyContent: "flex-end", paddingRight: "5px" }}>
+        {auth.user && isLargeScreen ? (
           <UserBubble>
             <Typography
               variant="body1"
@@ -60,7 +62,7 @@ const Header: React.FC = () => {
           </UserBubble>
         ) : (
           <Avatar 
-            sx={{ marginRight: "5px", cursor:"pointer" }}
+            sx={{ cursor:"pointer" }}
             onClick={handleProfileClick}
           >
             {auth.user && auth.user.email.trim() !== ""

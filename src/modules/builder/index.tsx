@@ -1,9 +1,9 @@
 import React from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
-import ClientForm from "@/components/pages/Clients/ClientForm";
-import ClientList from "@/components/pages/Clients/ClientList";
+import AiTeamsList from "@/components/pages/AiTeams/AiTeamsList";
 import AppLayout from "@/components/layout/AppLayout";
+import AiTeamsForm from "@/components/pages/AiTeams/AiTeamsForm";
 
 const Layout = (
   <AppLayout>
@@ -11,17 +11,17 @@ const Layout = (
   </AppLayout>
 );
 
-const ClientsModule: React.FC = () => {
+const AiTeamsModule: React.FC = () => {
   return (
     <AuthChecker>
       <Routes>
         <Route path="/" element={Layout}>
-          <Route index element={<ClientList />} />
-          <Route path="form/:clientName?/:clientId?" element={<ClientForm />} />
+          <Route index element={<AiTeamsList />} />
+          <Route path="form/:clientName?/:clientId?" element={<AiTeamsForm />} />
         </Route>
       </Routes>
     </AuthChecker>
   );
 };
 
-export default ClientsModule;
+export default AiTeamsModule;

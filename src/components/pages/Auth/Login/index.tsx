@@ -43,8 +43,8 @@ const Login: React.FC = () => {
         setAuthUser(response.data);
         sessionStorage.setItem("user_email", response.data.email);
         sessionStorage.setItem("user_token", response.data.token);
-        setNavElevation("clients");
-        navigate("/clients");
+        setNavElevation("builder");
+        navigate("/builder");
       })
       .catch((error) => {
         console.log(error);

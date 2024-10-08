@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import { ClientDetails } from "@/types/Clients";
+import { AiTeamsDetails } from "@/types/AiTeams";
 import { useNavigate } from "react-router-dom";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import useCustomersApi from "@/hooks/useCustomers";
@@ -11,7 +11,7 @@ import { useFormik } from "formik";
 import { MultilineInput, TextInput } from "@/components/Inputs";
 import { useAppContext } from "@/context/app";
 
-const ClientForm: React.FC = () => {
+const AiTeamsForm: React.FC = () => {
   const navigate = useNavigate();
   const { clientName, clientId } = useParams();
   const { setNavElevation, appNavigation, replacePath, setAgentsPage } =
@@ -20,14 +20,14 @@ const ClientForm: React.FC = () => {
     useCustomersApi();
 
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [initialValues, setInitialValues] = useState<ClientDetails>({
+  const [initialValues, setInitialValues] = useState<AiTeamsDetails>({
     name: "",
     address: "",
     description: "",
     // Se eliminó model_ia
   });
   
-  const [inputError, setInputError] = useState<ClientDetails>({
+  const [inputError, setInputError] = useState<AiTeamsDetails>({
     name: "",
     address: "",
     description: "",
@@ -41,7 +41,7 @@ const ClientForm: React.FC = () => {
     // Se eliminó la validación de model_ia
   });
 
-  const onSubmit = (values: ClientDetails) => {
+  const onSubmit = (values: AiTeamsDetails) => {
     if (clientId) {
       updateClient(values, clientId);
     } else {
@@ -95,7 +95,7 @@ const ClientForm: React.FC = () => {
       });
   }, []);
 
-  const updateClient = (values: ClientDetails, clientId: string) => {
+  const updateClient = (values: AiTeamsDetails, clientId: string) => {
     putClientDetails(values, clientId)
       .then(() => SuccessToast("Cliente actualizado satisfactoriamente"))
       .catch((error) => {
@@ -111,11 +111,11 @@ const ClientForm: React.FC = () => {
       });
   };
 
-  const createNewClient = (values: ClientDetails) => {
+  const createNewClient = (values: AiTeamsDetails) => {
     postClientDetails(values)
       .then((response) => {
         SuccessToast("Cliente creado satisfactoriamente");
-        navigate(`/clients/form/${response.name}/${response.id}`);
+        navigate(`/builder/form/${response.name}/${response.id}`);
       })
       .catch((error) => {
         if (error instanceof Error) {
@@ -147,23 +147,23 @@ const ClientForm: React.FC = () => {
         ...appNavigation.slice(0, 2),
         {
           label: clientName,
-          current_path: "/clients",
+          current_path: "/builder",
           preview_path: "",
         },
         {
           label: "Editar",
-          current_path: `bots/clients/form/${clientId}`,
+          current_path: `bots/builder/form/${clientId}`,
           preview_path: "",
         },
       ]);
-      setNavElevation("clients");
+      setNavElevation("builder");
       getClientData(clientId);
     } else {
       setAgentsPage(1);
       replacePath([
         {
           label: "Registrar Equipo",
-          current_path: `bots/clients/form`,
+          current_path: `bots/builder/form`,
           preview_path: "",
         },
       ]);
@@ -223,4 +223,4 @@ const ClientForm: React.FC = () => {
   );
 };
 
-export default ClientForm;
+export default AiTeamsForm;

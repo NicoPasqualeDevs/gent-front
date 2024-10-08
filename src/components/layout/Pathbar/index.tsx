@@ -15,6 +15,8 @@ const Pathbar: React.FC = () => {
         display: "flex",
         alignItems: "center",
         flexGrow: 1,
+        minWidth: "400px", // Añadido ancho mínimo de 400px
+        overflow: "auto", // Añadido para manejar contenido que exceda el ancho mínimo
       }}
     >
       <Breadcrumbs
@@ -28,6 +30,7 @@ const Pathbar: React.FC = () => {
           scrollbarGutter: "none",
           scrollbarWidth: "thin",
           scrollbarColor: `${theme.palette.primary.main} transparent`,
+          width: "100%", // Asegura que el Breadcrumbs ocupe todo el ancho disponible
         }}
       >
         {appNavigation.map((item, index) => {

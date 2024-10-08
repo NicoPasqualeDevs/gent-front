@@ -71,14 +71,14 @@ const ShortHeader: React.FC = () => {
         <AccordionDetails>
           <NavButton
             sx={{
-              color: `${navElevation === "clients"
+              color: `${navElevation === "builder"
                   ? theme.palette.primary.main
                   : "white"
                 }`,
             }}
             onClick={() => {
-              navigate("/clients");
-              setNavElevation("clients");
+              navigate("/builder");
+              setNavElevation("builder");
             }}
           >
             Equipos IA
@@ -93,7 +93,7 @@ const ShortHeader: React.FC = () => {
                 }`,
             }}
             onClick={() => {
-              navigate("/clients/form");
+              navigate("/builder/form");
               setNavElevation("Register");
             }}
           >

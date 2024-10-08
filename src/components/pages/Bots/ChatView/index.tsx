@@ -64,6 +64,7 @@ const ChatView: React.FC = () => {
       const updatedChatHistory: ChatHistory = {
         customer: chatHistory?.customer || "",
         customer_bot: chatHistory?.customer_bot || "",
+        conversation: chatHistory?.conversation || "",
         messages: newChatHistory,
       };
       setChatHistory(updatedChatHistory);
@@ -77,6 +78,7 @@ const ChatView: React.FC = () => {
       const updatedChatHistory: ChatHistory = {
         customer: chatHistory?.customer || "",
         customer_bot: chatHistory?.customer_bot || "",
+        conversation: chatHistory?.conversation || "",
         messages: newChatHistory,
       };
       setChatHistory(updatedChatHistory);

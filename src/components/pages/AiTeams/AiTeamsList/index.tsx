@@ -19,20 +19,20 @@ import {
   Box,
   Paper,
   Container,
+  IconButton
 } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import useCustomersApi from "@/hooks/useCustomers";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
-import { ClientDetails } from "@/types/Clients";
+import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
 import theme from "@/styles/theme";
 import AddIcon from '@mui/icons-material/Add';
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 
-const ClientList: React.FC = () => {
-  const navigate = useNavigate();
-  const {
+const AiTeamsList: React.FC = () => {
+  const navigate = useNavigate();  const {
     setNavElevation,
     replacePath,
     clientPage,
@@ -43,7 +43,7 @@ const ClientList: React.FC = () => {
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
-  const [pageContent, setPageContent] = useState<ClientDetails[]>([]);
+  const [pageContent, setPageContent] = useState<AiTeamsDetails[]>([]);
   const [paginationData, setPaginationData] = useState<Metadata>();
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [contentPerPage, setContentPerPage] = useState<string>("5");
@@ -56,13 +56,13 @@ const ClientList: React.FC = () => {
     event.preventDefault();
     setClientPage(value);
     setLoaded(false);
-    getClientsData(`?page_size=${contentPerPage}&page=${value}`);
+    getAiTeamsData(`?page_size=${contentPerPage}&page=${value}`);
   };
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
     if (value.trim() !== "") {
-      getClientsData(`?name__icontains=${value}`);
+      getAiTeamsData(`?name__icontains=${value}`);
     }
   };
 
@@ -89,11 +89,11 @@ const ClientList: React.FC = () => {
       });
   };
 
-  const getClientsData = useCallback((filterParams: string) => {
+  const getAiTeamsData = useCallback((filterParams: string) => {
     setIsLoading(true);
     getCustomerList(filterParams)
       .then((response) => {
-        const data: ClientDetails[] = response.data;
+        const data: AiTeamsDetails[] = response.data;
         const paginationData: Metadata = response.metadata;
         setClientPage(paginationData.current_page || 1);
         setPageContent(data);
@@ -119,15 +119,15 @@ const ClientList: React.FC = () => {
   useEffect(() => {
     replacePath([
       {
-        label: "Equipos IA",
-        current_path: "/clients",
-        preview_path: "/clients",
+        label: "Mis Equipos",
+        current_path: "/builder",
+        preview_path: "/builder",
       },
     ]);
     setAgentsPage(1);
-    setNavElevation("clients");
+    setNavElevation("builder");
     if (!loaded) {
-      getClientsData(`?page_size=${contentPerPage}&page=${clientPage}`);
+      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
     }
   }, []);
 
@@ -148,7 +148,7 @@ const ClientList: React.FC = () => {
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
-                onClick={() => navigate('/clients/form')}
+                onClick={() => navigate('/builder/form')}
                 fullWidth
                 sx={{ 
                   width: '100%',
@@ -167,19 +167,19 @@ const ClientList: React.FC = () => {
                   width: '100%',
                   maxWidth: { xs: '100%', sm: '300px' },
                 }}>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
                   <StyledInputBase
                     placeholder="Buscar Equipo IA"
                     value={searchQuery}
                     inputProps={{ 
                       "aria-label": "search",
-                      style: { padding: '8px 40px 8px 16px' }
+                      style: { padding: '8px 8px 8px 16px' }
                     }}
                     onChange={(e) => handleSearch(e.target.value)}
                     fullWidth
                   />
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
                 </Search>
               </Box>
             </Box>
@@ -194,14 +194,14 @@ const ClientList: React.FC = () => {
               gap: 2,
             }}>
               <Typography variant="h5" sx={{ mr: 2 }}>
-                Equipos IA
+                Tus equipos de Agentes
               </Typography>
               <Select
                 value={contentPerPage}
                 onChange={(e: SelectChangeEvent) => {
                   setContentPerPage(e.target.value);
                   setLoaded(false);
-                  getClientsData(`?page_size=${e.target.value}`);
+                  getAiTeamsData(`?page_size=${e.target.value}`);
                 }}
                 size="small"
                 sx={{ width: { xs: '100%', sm: 'auto' } }}
@@ -220,9 +220,9 @@ const ClientList: React.FC = () => {
               backgroundColor: 'background.paper',
               minHeight: '33vh'
             }}>
-              <Grid container spacing={2} justifyContent="flex-start">
+              <Grid container spacing={3}>
                 {pageContent.map((client, index) => (
-                  <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={`client-${index}`}>
+                  <Grid item xs={12} sm={6} md={4} key={`client-${index}`}>
                     <Card sx={{ 
                       height: '100%', 
                       display: 'flex', 
@@ -232,75 +232,61 @@ const ClientList: React.FC = () => {
                       boxShadow: 'none',
                       width: '100%',
                     }}>
-                      <CardContent sx={{ flexGrow: 1 }}>
-                        <Typography variant="h6" component="div" gutterBottom>
-                          {client.name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {client.description.length > 200
-                            ? client.description.substring(0, 200) + "..."
-                            : client.description}
-                        </Typography>
+                      <CardContent sx={{ 
+                        flexGrow: 1, 
+                        display: 'flex', 
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        p: 3,
+                        '&:last-child': { pb: 3 },
+                      }}>
+                        <Box>
+                          <Typography variant="h6" component="div" gutterBottom noWrap>
+                            {client.name}
+                          </Typography>
+                          <Typography 
+                            variant="body2" 
+                            color="text.secondary" 
+                            sx={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                              minHeight: '3.6em',
+                              mb: 2,
+                            }}
+                          >
+                            {client.description}
+                          </Typography>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            onClick={() => navigate(`/bots/IaPanel/${client.name}/${client.id}`)}
+                            sx={{ mt: 2 }}
+                          >
+                            Ver Equipo
+                          </Button>
+                        </Box>
                       </CardContent>
                       <Divider />
-                      <CardActions>
-                        <Grid container>
-                          <Grid item xs={10}>
-                            <Tooltip title="Acceder a Equipos IA" arrow>
-                              <Button
-                                size="small"
-                                sx={{
-                                  marginRight: "5%",
-                                }}
-                                onClick={() => {
-                                  navigate(
-                                    `/bots/IaPanel/${client.name}/${client.id}`
-                                  );
-                                }}
-                              >
-                                Equipos IA
-                              </Button>
-                            </Tooltip>
-                            <Tooltip title="Editar Cliente" arrow>
-                              <Button
-                                size="small"
-                                onClick={() =>
-                                  navigate(
-                                    `/clients/form/${client.name}/${client.id}`
-                                  )
-                                }
-                              >
-                                Editar
-                              </Button>
-                            </Tooltip>
-                          </Grid>
-                          <Grid item xs={2} sx={{ 
-                            display: 'flex', 
-                            justifyContent: 'flex-end', 
-                            alignItems: 'center' 
-                          }}>
-                            <Tooltip title="Eliminar Cliente" arrow>
-                              <Button
-                                size="small"
-                                color="error"
-                                onClick={() => {
-                                  setAllowerState(true);
-                                  setClientToDelete(client.id);
-                                }}
-                                sx={{ 
-                                  width: '20px',
-                                  height: '20px',
-                                  padding: 0,
-                                  margin: 0,
-                                  justifyContent: 'center',
-                                  alignItems: 'center'
-                                }}
-                              >
-                                <DeleteIcon sx={{ fontSize: '16px' }} />
-                              </Button>
-                            </Tooltip>
-                          </Grid>
-                        </Grid>
+                      <CardActions sx={{ p: 2, pt: 1, pb: 1, justifyContent: 'space-between' }}>
+                        <Button
+                          size="small"
+                          onClick={() => navigate(`/builder/form/${client.name}/${client.id}`)}
+                        >
+                          Editar
+                        </Button>
+                        <IconButton
+                          size="small"
+                          color="error"
+                          onClick={() => {
+                            setAllowerState(true);
+                            setClientToDelete(client.id);
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </CardActions>
                     </Card>
                   </Grid>
@@ -357,4 +343,4 @@ const ClientList: React.FC = () => {
   );
 };
 
-export default ClientList;
+export default AiTeamsList;
