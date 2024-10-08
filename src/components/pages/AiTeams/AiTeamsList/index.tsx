@@ -1,8 +1,10 @@
 import { useEffect, useCallback, useState } from "react";
 import { useAppContext } from "@/context/app";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useNavigate } from "react-router-dom";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from '@mui/icons-material/Add';
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   Card,
@@ -14,7 +16,6 @@ import {
   Pagination,
   Select,
   SelectChangeEvent,
-  Tooltip,
   Typography,
   Box,
   Paper,
@@ -28,8 +29,9 @@ import ActionAllower from "@/components/ActionAllower";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
 import theme from "@/styles/theme";
-import AddIcon from '@mui/icons-material/Add';
+
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
+
 
 const AiTeamsList: React.FC = () => {
   const navigate = useNavigate(); const {
@@ -192,7 +194,7 @@ const AiTeamsList: React.FC = () => {
               gap: 2,
             }}>
               <Typography variant="h5" sx={{ mr: 2 }}>
-                Tus equipos de Agentes
+                Tus equipos de IA
               </Typography>
               <Select
                 value={contentPerPage}
@@ -239,7 +241,7 @@ const AiTeamsList: React.FC = () => {
                         '&:last-child': { pb: 3 },
                       }}>
                         <Box>
-                          <Typography variant="h6" component="div" gutterBottom noWrap>
+                          <Typography sx={{color: theme.palette.secondary.light}} variant="h6" component="div" gutterBottom noWrap>
                             {client.name}
                           </Typography>
                           <Typography
@@ -257,25 +259,29 @@ const AiTeamsList: React.FC = () => {
                           >
                             {client.description}
                           </Typography>
+                        </Box>
+                        <Box sx={{ mt: 2 }}>
                           <Button
-                            fullWidth
+                            variant="text"
+                            size="small"
                             onClick={() => navigate(`/bots/IaPanel/${client.name}/${client.id}`)}
                             sx={{
-                              backgroundColor: "secondary.dark",
-                              color: "white",
+                              color: "text.secondary",
+                              justifyContent: "flex-start",
+                              pl: 0,
                               "&:hover": {
-                                backgroundColor: "secondary.dark",
-                                opacity: 0.9,
+                                backgroundColor: "transparent",
+                                color: "white",
                               },
-                              mt: 2
                             }}
+                            endIcon={<ArrowForwardIcon />}
                           >
-                            Ver Equipo
+                            Administrar Equipo
                           </Button>
                         </Box>
                       </CardContent>
                       <Divider />
-                      <CardActions sx={{ p: 2, pt: 1, pb: 1, justifyContent: 'space-between' }}>
+                      <CardActions sx={{ pl: 2, pr: 2, pt: 1, pb: 1, justifyContent: 'space-between' }}>
                         <Button
                           size="small"
                           onClick={() => navigate(`/builder/form/${client.name}/${client.id}`)}
@@ -290,7 +296,7 @@ const AiTeamsList: React.FC = () => {
                             setClientToDelete(client.id);
                           }}
                         >
-                          <DeleteIcon />
+                          <DeleteIcon fontSize="small" />
                         </IconButton>
                       </CardActions>
                     </Card>

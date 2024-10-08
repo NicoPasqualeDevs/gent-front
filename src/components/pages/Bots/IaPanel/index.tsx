@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams} from "react-router-dom";
 import {
   Grid, Typography, Pagination, Card, CardActions, Button, Divider, Tooltip,
-  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent
+  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent, IconButton
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
@@ -12,7 +12,6 @@ import { AgentData } from "@/types/Bots";
 import { Metadata } from "@/types/Api";
 import ActionAllower from "@/components/ActionAllower";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import useApi from "@/hooks/useApi";
 import { useAppContext } from "@/context/app";
 import theme from "@/styles/theme";
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
@@ -21,7 +20,6 @@ const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
   const navigate = useNavigate();
   const { replacePath, appNavigation, agentsPage, setAgentsPage } = useAppContext();
-  const { apiBase } = useApi();
   const { getBotsList, deleteBot } = useBotsApi();
   const [loaded, setLoaded] = useState(false);
   const [allowerState, setAllowerState] = useState(false);
@@ -114,26 +112,28 @@ const IaPanel: React.FC = () => {
     }}>
       <CardContent sx={{ flexGrow: 1, px: 2, py: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <Box>
-          <Typography variant="subtitle1" gutterBottom sx={{ color: 'white', fontWeight: 'bold' }}>
+          <Typography variant="subtitle1" gutterBottom sx={{ color: 'white', fontWeight: 'bold', mb: 2 }}>
             Información
           </Typography>
-          <Typography variant="body2" sx={{ color: 'white' }}>
-            <strong>Nombre:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.name}</span>
-          </Typography>
-          <Typography variant="body2" sx={{
-            color: 'white',
-            maxHeight: '3em',
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-          }}>
-            <strong>Descripción:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.description}</span>
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'white' }}>
-            <strong>LLM:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.model_ai || 'No especificado'}</span>
-          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Typography variant="body2" sx={{ color: 'white' }}>
+              <strong>Nombre:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.name}</span>
+            </Typography>
+            <Typography variant="body2" sx={{
+              color: 'white',
+              maxHeight: '3em',
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+            }}>
+              <strong>Descripción:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.description}</span>
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'white' }}>
+              <strong>LLM:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.model_ai || 'No especificado'}</span>
+            </Typography>
+          </Box>
         </Box>
         <Divider sx={{ my: 1 }} />
         <Box>
@@ -193,17 +193,16 @@ const IaPanel: React.FC = () => {
               </Grid>
               <Grid item xs={1} textAlign="end">
                 <Tooltip title="Eliminar Agente" arrow>
-                  <Button
+                  <IconButton
                     size="small"
                     color="error"
                     onClick={() => {
                       setAllowerState(true);
                       setbotToDelete(bot.id);
                     }}
-                    sx={{ p: 0, minWidth: 'auto' }}
                   >
                     <DeleteIcon fontSize="small" />
-                  </Button>
+                  </IconButton>
                 </Tooltip>
               </Grid>
             </Grid>

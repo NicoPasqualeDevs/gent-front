@@ -1,7 +1,6 @@
-import React from "react";
-import { Typography, Avatar, Tooltip } from "@mui/material";
+import React, { useState, useRef, useEffect } from "react";
+import { Typography, Avatar, Tooltip, Box } from "@mui/material";
 import { useAppContext } from "@/context/app";
-import theme from "@/styles/theme";
 import {
   BrandContainer,
   BrandMenuBtn,
@@ -11,6 +10,7 @@ import {
 } from "@/components/styledComponents/Layout";
 import { useNavigate } from "react-router-dom";
 import Pathbar from "../Pathbar";
+import { useTheme } from "@mui/material/styles";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -35,9 +35,40 @@ const Header: React.FC = () => {
 
   const isLargeScreen = breakpoint === "lg" || breakpoint === "xl";
 
+  const [showFullName, setShowFullName] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const theme = useTheme();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    setShowFullName(true);
+    setIsTransitioning(true);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setShowFullName(false);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setIsTransitioning(false);
+    }, 500); // Ajusta este valor para que coincida con la duración de la transición
+  };
+
   return (
     <HeaderContainer container>
-      <BrandContainer item xs={8} md={3} sx={{paddingLeft: "5px", display: "flex", alignItems: "center"}}>
+      <BrandContainer item xs={8} md={3} sx={{ paddingLeft: "5px", display: "flex", alignItems: "center" }}>
         <Tooltip title={menu ? "Contraer menú" : " Expandir menú"} arrow>
           <BrandMenuBtn
             onClick={() => {
@@ -45,9 +76,32 @@ const Header: React.FC = () => {
             }}
           />
         </Tooltip>
-        <Typography variant="h4" marginLeft={"10px"} marginRight={"20px"}>
-          Gents
-        </Typography>
+        <Box
+          width={showFullName ? "120px" : "38px"}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          sx={{
+            transition: "0.5s",
+            marginLeft: "10px",
+            marginRight: "20px",
+          }}
+        >
+          <Typography
+            onClick={() => navigate("/builder")}
+            color={"white"}
+            sx={{
+              fontSize: showFullName || isTransitioning ? "30px" : "28px",
+              padding: "0px 5px",
+              marginLeft: "10px",
+              cursor: "pointer",
+              overflow: "hidden",
+              textShadow: showFullName ? "none" : `0 0 5px ${theme.palette.primary.light}`,
+              transition: "all 0.25s ease-in-out",
+            }}
+          >
+            {showFullName || isTransitioning ? "Gents" : "G"}
+          </Typography>
+        </Box>
         {isLargeScreen && <Pathbar />}
       </BrandContainer>
       <UserBubbleContainer item xs={4} md={9} sx={{ display: "flex", justifyContent: "flex-end", paddingRight: "5px" }}>
@@ -61,8 +115,8 @@ const Header: React.FC = () => {
             </Typography>
           </UserBubble>
         ) : (
-          <Avatar 
-            sx={{ cursor:"pointer" }}
+          <Avatar
+            sx={{ cursor: "pointer" }}
             onClick={handleProfileClick}
           >
             {auth.user && auth.user.email.trim() !== ""
