@@ -2,11 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Grid, Typography, Pagination, Card, CardActions, Button, Divider, Tooltip,
-  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, IconButton, CardContent
+  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
-import { styled, alpha } from "@mui/material/styles";
 import useBotsApi from "@/hooks/useBots";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { BotData } from "@/types/Bots";
@@ -16,56 +15,7 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import useApi from "@/hooks/useApi";
 import { useAppContext } from "@/context/app";
 import theme from "@/styles/theme";
-import { InputBase } from '@mui/material';
-
-const SearchWrapper = styled(Grid)(() => ({
-  position: "relative",
-  width: "100%",
-  height: "48px",
-  marginBottom: 8,
-}));
-
-
-const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  right: '16px',
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  width: "100%",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
+import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
@@ -252,45 +202,41 @@ const IaPanel: React.FC = () => {
   );
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
       {!loaded ? (
         <PageCircularProgress />
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
             <Box sx={{
-              height: 'auto',
-              minHeight: '48px',
               display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
               justifyContent: 'space-between',
               alignItems: 'center',
+              gap: 2,
             }}>
-
-              <SearchWrapper sx={{
-                height: 'auto',
-                minHeight: '48px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+              <Button
+                variant="contained"
+                onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
+                fullWidth
+                sx={{
+                  width: '100%',
+                  maxWidth: { xs: '100%', sm: '200px' }
+                }}
+              >
+                Crear Agente
+              </Button>
+              <Box sx={{ 
+                width: '100%', 
+                display: 'flex', 
+                justifyContent: { xs: 'center', sm: 'flex-end' }
               }}>
-                <Button
-                  variant="contained"
-                  onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
-                >
-                  Crear Agente
-                </Button>
                 <Search sx={{
                   position: 'relative',
-                  right: '-16px',
-                  width: 'calc(100% + 16px)',
-                  maxWidth: 'calc(300px + 16px)',
-                  marginLeft: 'auto',
-                  padding: 0,
+                  width: '100%',
+                  maxWidth: { xs: '100%', sm: '300px' },
                 }}>
-                  <SearchIconWrapper sx={{
-                    padding: 0,
-                    right: '16px', // Cambiado de 8px a 16px
-                  }}>
+                  <SearchIconWrapper>
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
@@ -298,25 +244,25 @@ const IaPanel: React.FC = () => {
                     value={searchQuery}
                     inputProps={{
                       "aria-label": "search",
-                      style: { padding: '8px 40px 8px 16px' } // Aumentado el padding derecho de 24px a 40px
+                      style: { padding: '8px 40px 8px 16px' }
                     }}
                     onChange={(e) => handleSearch(e.target.value)}
+                    fullWidth
                   />
                 </Search>
-              </SearchWrapper>
+              </Box>
             </Box>
           </Paper>
 
-          <Paper elevation={3} sx={{ p: 3 }}>
+          <Paper elevation={3} sx={{ p: 2 }}>
             <Box sx={{
               display: 'flex',
-              flexDirection: 'row',
+              flexDirection: { xs: 'column', sm: 'row' },
               alignItems: 'center',
               justifyContent: 'space-between',
-              minHeight: '64px',
-              maxWidth: '100%'
+              gap: 2,
             }}>
-              <Typography variant="h4" sx={{ mr: 2 }}>
+              <Typography variant="h5" sx={{ mr: 2 }}>
                 Agentes de {clientName}
               </Typography>
               <Select
@@ -327,6 +273,7 @@ const IaPanel: React.FC = () => {
                   getBotsData(`?page_size=${e.target.value}`);
                 }}
                 size="small"
+                sx={{ width: { xs: '100%', sm: 'auto' } }}
               >
                 {[5, 10, 20].map((value) => (
                   <MenuItem key={value} value={value.toString()}>
@@ -339,12 +286,11 @@ const IaPanel: React.FC = () => {
 
           {pageContent.length > 0 ? (
             <Paper elevation={3} sx={{
-              p: 3,
+              p: 2,
               border: `2px solid transparent`,
-              backgroundColor: 'transparent',
               minHeight: '33vh'
             }}>
-              <Grid container spacing={3} justifyContent="flex-start">
+              <Grid container spacing={2} justifyContent="flex-start">
                 {pageContent.map((bot, index) => (
                   <Grid item xs={12} sm={12} md={6} lg={6} xl={6} key={`bot-${index}`}>
                     {renderBotCard(bot)}
@@ -364,46 +310,45 @@ const IaPanel: React.FC = () => {
 
           {loaded && pageContent.length > 0 && (
             <Paper elevation={3} sx={{ p: 2 }}>
-              <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} sm={4}>
-                  <Pagination
-                    count={paginationData?.total_pages}
-                    page={agentsPage}
-                    onChange={handlePagination}
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                gap: 2,
+              }}>
+                <Pagination
+                  count={paginationData?.total_pages}
+                  page={agentsPage}
+                  onChange={handlePagination}
+                  size="small"
+                  color="primary"
+                />
+                <Typography variant="body2" textAlign="center">
+                  {paginationData &&
+                    `${(agentsPage - 1) * (paginationData?.page_size ?? 1) + 1} - ${Math.min(
+                      agentsPage * (paginationData?.page_size ?? 1),
+                      paginationData?.total_items ?? 0
+                    )} de ${paginationData?.total_items ?? 0} Equipos IA`}
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography variant="body2">Elementos por página</Typography>
+                  <Select
+                    value={contentPerPage}
+                    onChange={(e: SelectChangeEvent) => {
+                      setContentPerPage(e.target.value);
+                      setLoaded(false);
+                      getBotsData(`?page_size=${e.target.value}`);
+                    }}
                     size="small"
-                    color="primary"
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Typography variant="body2" textAlign="center">
-                    {paginationData &&
-                      `${(agentsPage - 1) * (paginationData?.page_size ?? 1) + 1} - ${Math.min(
-                        agentsPage * (paginationData?.page_size ?? 1),
-                        paginationData?.total_items ?? 0
-                      )} de ${paginationData?.total_items ?? 0} Equipos IA`}
-                  </Typography>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="body2">Elementos por página</Typography>
-                    <Select
-                      value={contentPerPage}
-                      onChange={(e: SelectChangeEvent) => {
-                        setContentPerPage(e.target.value);
-                        setLoaded(false);
-                        getBotsData(`?page_size=${e.target.value}`);
-                      }}
-                      size="small"
-                    >
-                      {[5, 10, 20].map((value) => (
-                        <MenuItem key={value} value={value.toString()}>
-                          {value}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </Box>
-                </Grid>
-              </Grid>
+                  >
+                    {[5, 10, 20].map((value) => (
+                      <MenuItem key={value} value={value.toString()}>
+                        {value}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Box>
+              </Box>
             </Paper>
           )}
         </Box>

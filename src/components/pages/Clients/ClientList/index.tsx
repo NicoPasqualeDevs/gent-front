@@ -1,10 +1,8 @@
 import { useEffect, useCallback, useState } from "react";
 import { useAppContext } from "@/context/app";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { styled, alpha } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
-import InputBase from "@mui/material/InputBase";
 import {
   Button,
   Card,
@@ -30,55 +28,7 @@ import { ClientDetails } from "@/types/Clients";
 import { Metadata } from "@/types/Api";
 import theme from "@/styles/theme";
 import AddIcon from '@mui/icons-material/Add';
-
-const Search = styled("div")(({ theme }) => ({
-  position: "absolute",
-  right: -16,
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  "&:hover": {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginRight: theme.spacing(2),
-  marginLeft: 0,
-  width: "100%",
-  [theme.breakpoints.up("sm")]: {
-    marginLeft: theme.spacing(3),
-    width: "auto",
-  },
-}));
-
-const SearchWrapper = styled(Grid)(() => ({
-  position: "relative",
-  width: "100%",
-  height: "48px",
-  marginBottom: 8,
-}));
-
-const SearchIconWrapper = styled("div")(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: "100%",
-  position: "absolute",
-  right: '16px', // Cambiado de 8px a 16px
-  pointerEvents: "none",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: "inherit",
-  "& .MuiInputBase-input": {
-    padding: theme.spacing(1, 1, 1, 0),
-    // vertical padding + font size from searchIcon
-    paddingLeft: `calc(1em + ${theme.spacing(0)})`,
-    transition: theme.transitions.create("width"),
-    width: "100%",
-    [theme.breakpoints.up("md")]: {
-      width: "20ch",
-    },
-  },
-}));
+import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 
 const ClientList: React.FC = () => {
   const navigate = useNavigate();
@@ -182,63 +132,68 @@ const ClientList: React.FC = () => {
   }, []);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
+    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
       {isLoading ? (
         <PageCircularProgress />
       ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
-            <SearchWrapper sx={{ 
-              height: 'auto', 
-              minHeight: '48px', 
+            <Box sx={{ 
               display: 'flex', 
+              flexDirection: { xs: 'column', sm: 'row' },
               justifyContent: 'space-between', 
               alignItems: 'center',
+              gap: 2,
             }}>
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
                 onClick={() => navigate('/clients/form')}
+                fullWidth
+                sx={{ 
+                  width: '100%',
+                  maxWidth: { xs: '100%', sm: '200px' }
+                }}
               >
                 Nuevo Equipo IA
               </Button>
-              <Search sx={{ 
-                position: 'relative',
-                right: '-16px',
-                width: 'calc(100% + 16px)',
-                maxWidth: 'calc(300px + 16px)',
-                marginLeft: 'auto',
-                padding: 0,
+              <Box sx={{ 
+                width: '100%', 
+                display: 'flex', 
+                justifyContent: { xs: 'center', sm: 'flex-end' }
               }}>
-                <SearchIconWrapper sx={{
-                  padding: 0,
-                  right: '16px', // Cambiado de 8px a 16px
+                <Search sx={{ 
+                  position: 'relative',
+                  width: '100%',
+                  maxWidth: { xs: '100%', sm: '300px' },
                 }}>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Buscar Equipo IA"
-                  value={searchQuery}
-                  inputProps={{ 
-                    "aria-label": "search",
-                    style: { padding: '8px 40px 8px 16px' } // Aumentado el padding derecho de 24px a 40px
-                  }}
-                  onChange={(e) => handleSearch(e.target.value)}
-                />
-              </Search>
-            </SearchWrapper>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Buscar Equipo IA"
+                    value={searchQuery}
+                    inputProps={{ 
+                      "aria-label": "search",
+                      style: { padding: '8px 40px 8px 16px' }
+                    }}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    fullWidth
+                  />
+                </Search>
+              </Box>
+            </Box>
           </Paper>
 
-          <Paper elevation={3} sx={{ p: 3 }}>
+          <Paper elevation={3} sx={{ p: 2 }}>
             <Box sx={{ 
               display: 'flex', 
-              flexDirection: 'row', 
+              flexDirection: { xs: 'column', sm: 'row' }, 
               alignItems: 'center', 
               justifyContent: 'space-between',
-              minHeight: '64px', 
-              maxWidth: '100%'
+              gap: 2,
             }}>
-              <Typography variant="h4" sx={{ mr: 2 }}>
+              <Typography variant="h5" sx={{ mr: 2 }}>
                 Equipos IA
               </Typography>
               <Select
@@ -249,6 +204,7 @@ const ClientList: React.FC = () => {
                   getClientsData(`?page_size=${e.target.value}`);
                 }}
                 size="small"
+                sx={{ width: { xs: '100%', sm: 'auto' } }}
               >
                 <MenuItem value="5">5 por página</MenuItem>
                 <MenuItem value="10">10 por página</MenuItem>
@@ -259,12 +215,12 @@ const ClientList: React.FC = () => {
 
           {pageContent.length > 0 ? (
             <Paper elevation={3} sx={{ 
-              p: 3, 
+              p: 2, 
               border: `2px solid transparent`,
-              backgroundColor: 'transparent',
+              backgroundColor: 'background.paper',
               minHeight: '33vh'
             }}>
-              <Grid container spacing={3} justifyContent="flex-start">
+              <Grid container spacing={2} justifyContent="flex-start">
                 {pageContent.map((client, index) => (
                   <Grid item xs={12} sm={6} md={4} lg={3} xl={3} key={`client-${index}`}>
                     <Card sx={{ 
@@ -362,21 +318,30 @@ const ClientList: React.FC = () => {
           )}
 
           {pageContent.length > 0 && (
-            <Paper elevation={3} sx={{ p: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Pagination
-                count={paginationData?.total_pages}
-                page={clientPage}
-                onChange={handlePagination}
-                color="primary"
-              />
-              {paginationData && (
-                <Typography variant="body2" color="text.secondary">
-                  {`${(clientPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
-                    clientPage * (paginationData?.page_size ?? 0),
-                    paginationData?.total_items ?? 0
-                  )} de ${paginationData?.total_items ?? 0} Equipos IA`}
-                </Typography>
-              )}
+            <Paper elevation={3} sx={{ p: 2 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                flexDirection: { xs: 'column', sm: 'row' }, 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                gap: 2,
+              }}>
+                <Pagination
+                  count={paginationData?.total_pages}
+                  page={clientPage}
+                  onChange={handlePagination}
+                  color="primary"
+                  size="small"
+                />
+                {paginationData && (
+                  <Typography variant="body2" color="text.secondary">
+                    {`${(clientPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
+                      clientPage * (paginationData?.page_size ?? 0),
+                      paginationData?.total_items ?? 0
+                    )} de ${paginationData?.total_items ?? 0} Equipos IA`}
+                  </Typography>
+                )}
+              </Box>
             </Paper>
           )}
         </Box>

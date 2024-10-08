@@ -10,6 +10,7 @@ import {
   UserBubbleContainer,
 } from "@/components/styledComponents/Layout";
 import { useNavigate } from "react-router-dom";
+import Pathbar from "../Pathbar";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -34,7 +35,7 @@ const Header: React.FC = () => {
 
   return (
     <HeaderContainer container>
-      <BrandContainer item xs={8} md={3} sx={{paddingLeft: "5px"}}>
+      <BrandContainer item xs={8} md={3} sx={{paddingLeft: "5px", display: "flex", alignItems: "center"}}>
         <Tooltip title={menu ? "Contraer menú" : " Expandir menú"} arrow>
           <BrandMenuBtn
             onClick={() => {
@@ -42,9 +43,10 @@ const Header: React.FC = () => {
             }}
           />
         </Tooltip>
-        <Typography variant="h4" marginLeft={"10px"}>
+        <Typography variant="h4" marginLeft={"10px"} marginRight={"20px"}>
           Gents
         </Typography>
+        <Pathbar />
       </BrandContainer>
       <UserBubbleContainer item xs={4} md={9}>
         {auth.user && (breakpoint === "lg" || breakpoint === "xl") ? (

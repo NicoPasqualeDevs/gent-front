@@ -6,29 +6,21 @@ import { useNavigate } from "react-router-dom";
 
 const Pathbar: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, appNavigation } = useAppContext();
+  const { appNavigation } = useAppContext();
 
   return (
     <Box
       sx={{
-        position: "fixed",
-        top: "70px",
-        width: "97%",
         backgroundColor: "transparent",
-        height: "50px",
-        zIndex: "102",
         display: "flex",
         alignItems: "center",
-        paddingLeft: "10px",
+        flexGrow: 1,
       }}
     >
       <Breadcrumbs
         separator={<Typography>/</Typography>}
         sx={{
-          paddingLeft: `${menu ? "155px" : "0px"}`,
-          transition: `padding-left ${theme.transitions.duration.standard}ms`,
           color: "white",
-          width: "100%",
           maxHeight: "50px",
           overflowY: "auto",
           whiteSpace: "nowrap",
@@ -40,7 +32,7 @@ const Pathbar: React.FC = () => {
       >
         {appNavigation.map((item, index) => {
           if (appNavigation.length - 1 === index) {
-            return <Typography sx={{color:"secondary.light", paddingLeft:"5px"}} variant="body2">{item.label}</Typography>;
+            return <Typography sx={{color:"secondary.light", paddingLeft:"5px"}} variant="body2" key={index}>{item.label}</Typography>;
           }
           return (
             <PathButton
