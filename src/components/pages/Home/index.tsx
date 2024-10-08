@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Paper, Button, Box, Divider } from "@mui/material";
+import { Grid, Typography, Paper, Button, Box } from "@mui/material";
 import { CenterComponentContainer } from "@/utils/ContainerUtil";
 import theme from "@/styles/theme";
 import { useNavigate } from "react-router-dom";
@@ -55,36 +55,18 @@ const HomeComponent: React.FC = () => {
                 Bienvenido/a a Gents
               </Typography>
               <Typography variant="body1" paragraph>
-                Nuestra herramienta de inteligencia artificial está diseñada para procesar sus datos de manera sencilla y rápida.
+                Nuestra novedosa comunidad de emprendedores, enfocada en crear una red de personas o empresas para publicar y consumir herramientas y sistemas basados en inteligencia artificial.
               </Typography>
             </Box>
-
-            <Divider 
-              sx={{ 
-                marginY: 3, 
-                backgroundColor: theme.palette.primary.main,
-                height: '2px',  // Aumentamos el grosor
-                opacity: 0.7    // Ajustamos la opacidad para que sea más visible
-              }} 
-            />
 
             <Box sx={{ marginY: 4 }}>
               <Typography variant="h6" color={theme.palette.secondary.main} gutterBottom>
                 ¿Qué es Gents?
               </Typography>
               <Typography variant="body1" paragraph>
-                Gents es nuestra potente herramienta que le permitirá crear su propio equipo de asistentes IA.
+                Es una comunidad donde podras Contratar, Construir, Importar y Publicar, agentes y sistemas de inteligencia artificial de manera rapida y sencilla.
               </Typography>
             </Box>
-
-            <Divider 
-              sx={{ 
-                marginY: 3, 
-                backgroundColor: theme.palette.primary.main,
-                height: '2px',  // Aumentamos el grosor
-                opacity: 0.7    // Ajustamos la opacidad para que sea más visible
-              }} 
-            />
 
             <Box sx={{ marginY: 4 }}>
               <Typography variant="h6" color={theme.palette.secondary.main} gutterBottom>
@@ -94,6 +76,7 @@ const HomeComponent: React.FC = () => {
                 <li>Fácil acceso</li>
                 <li>Rápida implementación</li>
                 <li>Procesamiento eficiente de datos</li>
+                <li>Crea tu contrato</li>
               </Typography>
             </Box>
 

@@ -1,12 +1,13 @@
 import React from "react";
-/* import { useAppContext } from "@/context/app";
-import { useNavigate } from "react-router-dom"; */
+import { useEffect } from "react"
+import { useAppContext } from "@/context/app";
+import { useNavigate, } from "react-router-dom";
 
 type Props = {
   children: React.ReactNode | React.ReactNode[];
 };
 const AuthChecker: React.FC<Props> = ({ children }) => {
-/*   const navigate = useNavigate();
+  const navigate = useNavigate();
   const { auth } = useAppContext();
   useEffect(() => {
     if (!auth.user) {
@@ -14,7 +15,7 @@ const AuthChecker: React.FC<Props> = ({ children }) => {
     }
   }, [auth]);
 
-  if (!auth) return null; */
+  if (!auth) return null;
   return <React.Fragment>{children}</React.Fragment>;
 };
 

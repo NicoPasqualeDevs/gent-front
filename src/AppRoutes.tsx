@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines"; // Importamos el componente
+/* import AuthChecker from "./components/AuthChecker"; */
 
 const HomeModule = lazy(() => import("./modules/home"));
 const AuthModule = lazy(() => import("./modules/auth"));
@@ -12,6 +13,7 @@ const ProfileModule = lazy(() => import("./modules/profile")); // Nuevo módulo
 
 function AppRoutes() {  // Cambiado de App a AppRoutes
   return (
+    /*  <AuthChecker> */
     <>
       <BackgroundLines /> {/* Agregamos el componente BackgroundLines */}
       <Routes>
@@ -24,6 +26,7 @@ function AppRoutes() {  // Cambiado de App a AppRoutes
         <Route path="*" element={<NotFoundModule />} /> // Ruta para manejar 404
       </Routes>
     </>
+    /*     </AuthChecker> */
   );
 }
 
