@@ -24,7 +24,7 @@ const Pathbar: React.FC = () => {
         sx={{
           color: "white",
           maxHeight: "50px",
-          marginTop: "8px",
+          marginTop: "4px",
           overflowY: "auto",
           whiteSpace: "nowrap",
           scrollBehavior: "smooth",
