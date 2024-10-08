@@ -16,7 +16,7 @@ const ContextEntry: React.FC = () => {
   const navigate = useNavigate();
   const { replacePath, appNavigation } = useAppContext();
   const {
-    getBotData,
+    getAgentData,
     getPromptTemplate,
     createBot,
     updateBot,
@@ -48,7 +48,7 @@ const ContextEntry: React.FC = () => {
 
   const onSubmit = (values: ContextEntryData) => {
     if (botId) {
-      updateBotData(values);
+      updateAgentData(values);
     } else {
       createNewBot(values);
     }
@@ -111,9 +111,9 @@ const ContextEntry: React.FC = () => {
     }
   };
 
-  const loadBotData = useCallback(() => {
+  const loadAgentData = useCallback(() => {
     if (botId) {
-      getBotData(botId)
+      getAgentData(botId)
         .then((response) => {
           loadPromptTemplateData(
             response.data.name ?? '',
@@ -167,7 +167,7 @@ const ContextEntry: React.FC = () => {
     }
   };
 
-  const updateBotData = (values: ContextEntryData) => {
+  const updateAgentData = (values: ContextEntryData) => {
     if (clientId && botId) {
       updateBot(botId, { name: values.name, description: values.description, model_ai: values.model_ai })
         .then(() => {
@@ -209,7 +209,7 @@ const ContextEntry: React.FC = () => {
             preview_path: `/bots/contextEntry/${clientId}`,
           },
         ]);
-        loadBotData();
+        loadAgentData();
       } else {
         replacePath([
           ...appNavigation.slice(0, 2),

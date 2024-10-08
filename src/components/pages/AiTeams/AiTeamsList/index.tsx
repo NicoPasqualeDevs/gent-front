@@ -32,7 +32,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 
 const AiTeamsList: React.FC = () => {
-  const navigate = useNavigate();  const {
+  const navigate = useNavigate(); const {
     setNavElevation,
     replacePath,
     clientPage,
@@ -81,8 +81,7 @@ const AiTeamsList: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -105,8 +104,7 @@ const AiTeamsList: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -138,10 +136,10 @@ const AiTeamsList: React.FC = () => {
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
-            <Box sx={{ 
-              display: 'flex', 
+            <Box sx={{
+              display: 'flex',
               flexDirection: { xs: 'column', sm: 'row' },
-              justifyContent: 'space-between', 
+              justifyContent: 'space-between',
               alignItems: 'center',
               gap: 2,
             }}>
@@ -150,19 +148,19 @@ const AiTeamsList: React.FC = () => {
                 startIcon={<AddIcon />}
                 onClick={() => navigate('/builder/form')}
                 fullWidth
-                sx={{ 
+                sx={{
                   width: '100%',
                   maxWidth: { xs: '100%', sm: '200px' }
                 }}
               >
                 Nuevo Equipo IA
               </Button>
-              <Box sx={{ 
-                width: '100%', 
-                display: 'flex', 
+              <Box sx={{
+                width: '100%',
+                display: 'flex',
                 justifyContent: { xs: 'center', sm: 'flex-end' }
               }}>
-                <Search sx={{ 
+                <Search sx={{
                   position: 'relative',
                   width: '100%',
                   maxWidth: { xs: '100%', sm: '300px' },
@@ -170,7 +168,7 @@ const AiTeamsList: React.FC = () => {
                   <StyledInputBase
                     placeholder="Buscar Equipo IA"
                     value={searchQuery}
-                    inputProps={{ 
+                    inputProps={{
                       "aria-label": "search",
                       style: { padding: '8px 8px 8px 16px' }
                     }}
@@ -186,10 +184,10 @@ const AiTeamsList: React.FC = () => {
           </Paper>
 
           <Paper elevation={3} sx={{ p: 2 }}>
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: { xs: 'column', sm: 'row' }, 
-              alignItems: 'center', 
+            <Box sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              alignItems: 'center',
               justifyContent: 'space-between',
               gap: 2,
             }}>
@@ -214,8 +212,8 @@ const AiTeamsList: React.FC = () => {
           </Paper>
 
           {pageContent.length > 0 ? (
-            <Paper elevation={3} sx={{ 
-              p: 2, 
+            <Paper elevation={3} sx={{
+              p: 2,
               border: `2px solid transparent`,
               backgroundColor: 'background.paper',
               minHeight: '33vh'
@@ -223,18 +221,18 @@ const AiTeamsList: React.FC = () => {
               <Grid container spacing={3}>
                 {pageContent.map((client, index) => (
                   <Grid item xs={12} sm={6} md={4} key={`client-${index}`}>
-                    <Card sx={{ 
-                      height: '100%', 
-                      display: 'flex', 
+                    <Card sx={{
+                      height: '100%',
+                      display: 'flex',
                       flexDirection: 'column',
                       backgroundColor: 'transparent',
                       border: `1px solid ${theme.palette.divider}`,
                       boxShadow: 'none',
                       width: '100%',
                     }}>
-                      <CardContent sx={{ 
-                        flexGrow: 1, 
-                        display: 'flex', 
+                      <CardContent sx={{
+                        flexGrow: 1,
+                        display: 'flex',
                         flexDirection: 'column',
                         justifyContent: 'space-between',
                         p: 3,
@@ -244,9 +242,9 @@ const AiTeamsList: React.FC = () => {
                           <Typography variant="h6" component="div" gutterBottom noWrap>
                             {client.name}
                           </Typography>
-                          <Typography 
-                            variant="body2" 
-                            color="text.secondary" 
+                          <Typography
+                            variant="body2"
+                            color="text.primary"
                             sx={{
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
@@ -260,10 +258,17 @@ const AiTeamsList: React.FC = () => {
                             {client.description}
                           </Typography>
                           <Button
-                            variant="outlined"
                             fullWidth
                             onClick={() => navigate(`/bots/IaPanel/${client.name}/${client.id}`)}
-                            sx={{ mt: 2 }}
+                            sx={{
+                              backgroundColor: "secondary.dark",
+                              color: "white",
+                              "&:hover": {
+                                backgroundColor: "secondary.dark",
+                                opacity: 0.9,
+                              },
+                              mt: 2
+                            }}
                           >
                             Ver Equipo
                           </Button>
@@ -305,10 +310,10 @@ const AiTeamsList: React.FC = () => {
 
           {pageContent.length > 0 && (
             <Paper elevation={3} sx={{ p: 2 }}>
-              <Box sx={{ 
-                display: 'flex', 
-                flexDirection: { xs: 'column', sm: 'row' }, 
-                justifyContent: 'space-between', 
+              <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between',
                 alignItems: 'center',
                 gap: 2,
               }}>

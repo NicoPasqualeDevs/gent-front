@@ -10,8 +10,8 @@ import {
   ChatHistory,
   UpdatedChatHistory,
   Ktag,
-  BotData,
-  BotMetaData,
+  AgentData,
+  AgentMetaData,
   WidgetData,
   GetCustomGreetingData,
   CustomGreetingData,
@@ -26,9 +26,9 @@ type UseBotsApiHook = {
   // Gets
   getKnowledgeTags: (clientId: string) => Promise<Ktag[]>;
   getChatHistory: (botId: string) => Promise<ChatHistory>;
-  getBotData: (botId: string) => Promise<ApiResponse<BotData>>;
-  getNoAuthBotData: (botId: string) => Promise<BotData>;
-  getBotsList: (clientId: string, filterParams: string) => Promise<ApiResponseList<BotData>>;
+  getAgentData: (botId: string) => Promise<ApiResponse<AgentData>>;
+  getNoAuthAgentData: (botId: string) => Promise<AgentData>;
+  getBotsList: (clientId: string, filterParams: string) => Promise<ApiResponseList<AgentData>>;
   getKtags: (botId: string) => Promise<Ktag[]>;
   getWidget: (botId: string) => Promise<WidgetData>;
   getCustomMessages: (botId: string) => Promise<GetCustomGreetingData>;
@@ -38,7 +38,7 @@ type UseBotsApiHook = {
   getTool: (toolId: string) => Promise<ToolData>;
 
   //Post
-  createBot: (clientId: string, data: BotMetaData) => Promise<BotData>;
+  createBot: (clientId: string, data: AgentMetaData) => Promise<AgentData>;
   sendMessage: (botId: string, data: MessageUp) => Promise<UpdatedChatHistory>;
   saveKtag: (botId: string, data: Ktag) => Promise<Ktag>;
   postWidget: (botId: string, data: WidgetData) => Promise<WidgetData>;
@@ -59,7 +59,7 @@ type UseBotsApiHook = {
   closeChat: (conversation_id: string) => Promise<void>;
 
   //Puts
-  updateBot: (botId: string, data: BotMetaData) => Promise<BotData>;
+  updateBot: (botId: string, data: AgentMetaData) => Promise<AgentData>;
   editKtag: (tagId: string, data: Ktag) => Promise<void>;
   putWidget: (botId: string, data: WidgetData) => Promise<WidgetData>;
   putCustomMessage: (
@@ -82,17 +82,17 @@ const useBotsApi = (): UseBotsApiHook => {
   const { apiPut, apiPost, apiGet, noAuthGet, apiDelete, apiPatch } = useApi();
 
   // GETS
-  const getBotsList = (clientId: string, filterParams: string): Promise<ApiResponseList<BotData>> => {
+  const getBotsList = (clientId: string, filterParams: string): Promise<ApiResponseList<AgentData>> => {
     const path = `api/client/bots/${clientId}${filterParams}`;
-    return apiGet<ApiResponseList<BotData>>(path);
+    return apiGet<ApiResponseList<AgentData>>(path);
   };
-  const getBotData = (botId: string): Promise<ApiResponse<BotData>> => {
+  const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
     const path = `api/bot/modify/${botId}`;
-    return apiGet<ApiResponse<BotData>>(path);
+    return apiGet<ApiResponse<AgentData>>(path);
   };
-  const getNoAuthBotData = (botId: string): Promise<BotData> => {
+  const getNoAuthAgentData = (botId: string): Promise<AgentData> => {
     const path = `api/bot/modify/${botId}`;
-    return noAuthGet<BotData>(path);
+    return noAuthGet<AgentData>(path);
   };
   const getChatHistory = (botId: string): Promise<ChatHistory> => {
     const path = `chat/api/${botId}`;
@@ -132,7 +132,7 @@ const useBotsApi = (): UseBotsApiHook => {
   };
 
   // POST
-  const createBot = (clientId: string, data: BotMetaData): Promise<BotData> => {
+  const createBot = (clientId: string, data: AgentMetaData): Promise<AgentData> => {
     const path = `api/client/bots/${clientId}`;
     return apiPost(path, data);
   };
@@ -188,7 +188,7 @@ const useBotsApi = (): UseBotsApiHook => {
   };
 
   // PUT
-  const updateBot = (botId: string, data: BotMetaData): Promise<BotData> => {
+  const updateBot = (botId: string, data: AgentMetaData): Promise<AgentData> => {
     const path = `api/bot/modify/${botId}`;
     return apiPut(path, data);
   };
@@ -243,8 +243,8 @@ const useBotsApi = (): UseBotsApiHook => {
     // Gets
     getKnowledgeTags,
     getChatHistory,
-    getNoAuthBotData,
-    getBotData,
+    getNoAuthAgentData,
+    getAgentData,
     getBotsList,
     getKtags,
     getWidget,

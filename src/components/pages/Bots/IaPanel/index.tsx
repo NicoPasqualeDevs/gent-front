@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
 import {
   Grid, Typography, Pagination, Card, CardActions, Button, Divider, Tooltip,
-  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent, IconButton
+  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import useBotsApi from "@/hooks/useBots";
 import { PageCircularProgress } from "@/components/CircularProgress";
-import { BotData } from "@/types/Bots";
+import { AgentData } from "@/types/Bots";
 import { Metadata } from "@/types/Api";
 import ActionAllower from "@/components/ActionAllower";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
@@ -20,14 +20,13 @@ import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchB
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { replacePath, appNavigation, agentsPage, setAgentsPage } = useAppContext();
   const { apiBase } = useApi();
   const { getBotsList, deleteBot } = useBotsApi();
   const [loaded, setLoaded] = useState(false);
   const [allowerState, setAllowerState] = useState(false);
   const [botToDelete, setbotToDelete] = useState("");
-  const [pageContent, setPageContent] = useState<BotData[]>([]);
+  const [pageContent, setPageContent] = useState<AgentData[]>([]);
   const [paginationData, setPaginationData] = useState<Metadata>();
   const [searchQuery, setSearchQuery] = useState("");
   const [contentPerPage, setContentPerPage] = useState("5");
@@ -102,7 +101,7 @@ const IaPanel: React.FC = () => {
     }
   }, []);
 
-  const renderBotCard = (bot: BotData) => (
+  const renderBotCard = (bot: AgentData) => (
     <Card sx={{
       height: '100%',
       display: 'flex',
@@ -116,7 +115,10 @@ const IaPanel: React.FC = () => {
       <CardContent sx={{ flexGrow: 1, px: 2, py: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
         <Box>
           <Typography variant="subtitle1" gutterBottom sx={{ color: 'white', fontWeight: 'bold' }}>
-            {bot.name}
+            Información
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'white' }}>
+            <strong>Nombre:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.name}</span>
           </Typography>
           <Typography variant="body2" sx={{
             color: 'white',
@@ -127,25 +129,28 @@ const IaPanel: React.FC = () => {
             WebkitLineClamp: 2,
             WebkitBoxOrient: "vertical",
           }}>
-            {bot.description}
+            <strong>Descripción:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.description}</span>
+          </Typography>
+          <Typography variant="body2" sx={{ color: 'white' }}>
+            <strong>LLM:</strong> <span style={{ color: theme.palette.secondary.light }}>{bot.model_ai || 'No especificado'}</span>
           </Typography>
         </Box>
         <Divider sx={{ my: 1 }} />
         <Box>
           <Typography variant="subtitle2" gutterBottom>Implementación</Typography>
           <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: 1 }}>
-            {['Widget', 'Probar'].map(action => (
-              <Tooltip key={action} title={`${action === 'Widget' ? 'Descargar' : ''} ${action} Agente`} arrow>
-                <Button
-                  size="small"
-                  onClick={() => action === 'Widget'
-                    ? window.open(apiBase.slice(0, -1) + bot.widget_url, "_blank")
-                    : navigate(`/bots/chat/${bot.id}`)
-                  }
-                  sx={{ color: '#4caf50', '&:hover': { backgroundColor: 'transparent' }, p: 0 }}
-                >
-                  {action}
-                </Button>
+            {['Probar', 'Widget', 'API'].map(action => (
+              <Tooltip key={action} title={`${action === 'Probar' ? 'Probar' : 'Función no disponible'}`} arrow>
+                <span>
+                  <Button
+                    size="small"
+                    onClick={() => action === 'Probar' ? navigate(`/bots/chat/${bot.id}`) : null}
+                    sx={{ p: 0, minWidth: 'auto' }}
+                    disabled={action === 'Widget' || action === 'API'}
+                  >
+                    {action}
+                  </Button>
+                </span>
               </Tooltip>
             ))}
           </Box>
@@ -157,25 +162,31 @@ const IaPanel: React.FC = () => {
             <Grid container spacing={1}>
               <Grid item xs={11}>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {['Editar', 'Ktags', 'Tools', 'Widget', 'Saludos', 'Probar'].map((action) => (
-                    <Tooltip key={action} title={`${action} Agente`} arrow>
-                      <Button
-                        size="small"
-                        onClick={() => {
-                          const routes: { [key: string]: string } = {
-                            Editar: `/bots/contextEntry/${clientId}/${bot.id}`,
-                            Ktags: `/bots/dataEntry/${bot.id}`,
-                            Tools: `/bots/tools/${bot.name}/${bot.id}`,
-                            Widget: `/bots/widgetCustomizer/${bot.id}`,
-                            Saludos: `/bots/customMessages/${bot.id}`,
-                            Probar: `/bots/chat/${bot.id}`
-                          };
-                          navigate(routes[action]);
-                        }}
-                        sx={{ p: 0, minWidth: 'auto' }}
-                      >
-                        {action}
-                      </Button>
+                  {['Editar', 'Ktags', 'Tools', 'Widget', 'Saludos'].map((action) => (
+                    <Tooltip key={action} title={
+                      ['Tools', 'Widget', 'Saludos'].includes(action)
+                        ? 'Función no disponible'
+                        : `${action} Agente`
+                    } arrow>
+                      <span> {/* Envolvemos en un span para que el Tooltip funcione con botones deshabilitados */}
+                        <Button
+                          size="small"
+                          onClick={() => {
+                            const routes: { [key: string]: string } = {
+                              Editar: `/bots/contextEntry/${clientId}/${bot.id}`,
+                              Ktags: `/bots/dataEntry/${bot.id}`,
+                              Tools: `/bots/tools/${bot.name}/${bot.id}`,
+                              Widget: `/bots/widgetCustomizer/${bot.id}`,
+                              Saludos: `/bots/customMessages/${bot.id}`,
+                            };
+                            navigate(routes[action]);
+                          }}
+                          sx={{ p: 0, minWidth: 'auto' }}
+                          disabled={['Tools', 'Widget', 'Saludos'].includes(action)}
+                        >
+                          {action}
+                        </Button>
+                      </span>
                     </Tooltip>
                   ))}
                 </Box>

@@ -45,7 +45,7 @@ export interface Ktag {
   customer_bot: string;
 }
 
-export interface BotData {
+export interface AgentData {
   [propKey: string]: string | undefined | Ktag[];
   api_bot: string;
   api_details: string;
@@ -55,9 +55,10 @@ export interface BotData {
   labels: Ktag[];
   name: string;
   widget_url: string;
+  model_ai: string 
 }
 
-export interface BotMetaData {
+export interface AgentMetaData {
   [propKey: string]: string | undefined;
   id?: string;
   name: string;
