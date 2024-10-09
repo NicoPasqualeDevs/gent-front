@@ -1,9 +1,69 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Box, Grid, Typography, TextField, Button, Paper, CircularProgress } from "@mui/material";
+import { Box, Grid, Typography, TextField, Button, Paper, CircularProgress, Avatar } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import SmartToyIcon from '@mui/icons-material/SmartToy';
+import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChatHistory, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
+
+const StyledPaper = styled(Paper)(() => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  borderRadius: '20px',
+  overflow: 'hidden',
+  backgroundColor: '#1a1a2e',
+}));
+
+const Header = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2),
+  backgroundColor: '#16213e',
+  color: '#e94560',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+}));
+
+const ChatContainer = styled(Box)(({ theme }) => ({
+  flexGrow: 1,
+  overflow: 'auto',
+  padding: theme.spacing(2),
+  backgroundColor: '#1a1a2e',
+}));
+
+const MessageBubble = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
+  maxWidth: '70%',
+  padding: theme.spacing(1, 2),
+  borderRadius: '20px',
+  marginBottom: theme.spacing(1),
+  backgroundColor: isUser ? '#e94560' : '#0f3460',
+  color: '#ffffff',
+  alignSelf: isUser ? 'flex-end' : 'flex-start',
+  wordBreak: 'break-word',
+}));
+
+const InputContainer = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(2),
+  backgroundColor: '#16213e',
+  display: 'flex',
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    color: '#ffffff',
+    '& fieldset': {
+      borderColor: '#0f3460',
+    },
+    '&:hover fieldset': {
+      borderColor: '#e94560',
+    },
+    '&.Mui-focused fieldset': {
+      borderColor: '#e94560',
+    },
+  },
+}));
 
 const Widget: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -15,6 +75,31 @@ const Widget: React.FC = () => {
   const navigate = useNavigate();
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
+  const renderMessageContent = (content: string) => {
+    const linkRegex = /\(https?:\/\/[^\s)]+\)/g;
+    const parts = content.split(linkRegex);
+    const links = content.match(linkRegex);
+
+    return (
+      <>
+        {parts.map((part, index) => (
+          <React.Fragment key={index}>
+            {part}
+            {links && links[index] && (
+              <a
+                href={links[index].slice(1, -1)}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#1976d2', textDecoration: 'underline' }}
+              >
+                {links[index].slice(1, -1)}
+              </a>
+            )}
+          </React.Fragment>
+        ))}
+      </>
+    );
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -146,32 +231,38 @@ const Widget: React.FC = () => {
 
   return (
     <Grid container justifyContent="center" style={{ height: "100vh", padding: "20px" }}>
-      <Grid item xs={12} sm={8} md={6}>
-        <Paper elevation={3} style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-          <Box p={2} display="flex" justifyContent="flex-end">
+      <Grid item xs={12} sm={10} md={8} lg={6}>
+        <StyledPaper elevation={3}>
+          <Header>
+            <Box display="flex" alignItems="center">
+              <Avatar sx={{ bgcolor: '#e94560', mr: 2 }}>
+                <SmartToyIcon />
+              </Avatar>
+              <Typography variant="h6">Asistente IA</Typography>
+            </Box>
             <Button 
               variant="outlined" 
-              color="secondary" 
+              color="error" 
               onClick={handleCloseChat}
             >
               Cerrar chat
             </Button>
-          </Box>
-          <Box p={2} flexGrow={1} overflow="auto" ref={chatContainerRef}>
+          </Header>
+          <ChatContainer ref={chatContainerRef}>
             {chatHistory?.messages.map((msg, index) => (
-              <Box key={index} mb={2} alignSelf={msg.role === "user" ? "flex-end" : "flex-start"}>
-                <Typography variant="body1" bgcolor={msg.role === "user" ? "#e3f2fd" : "#f5f5f5"} p={1} borderRadius={2}>
-                  {msg.content}
+              <MessageBubble key={index} isUser={msg.role === "user"}>
+                <Typography variant="body1">
+                  {renderMessageContent(msg.content)}
                 </Typography>
-              </Box>
+              </MessageBubble>
             )) ?? (
-              <Typography variant="body1" textAlign="center">
+              <Typography variant="body1" textAlign="center" color="#ffffff">
                 No hay mensajes disponibles.
               </Typography>
             )}
-          </Box>
-          <Box p={2} display="flex">
-            <TextField
+          </ChatContainer>
+          <InputContainer>
+            <StyledTextField
               fullWidth
               variant="outlined"
               value={message}
@@ -182,15 +273,15 @@ const Widget: React.FC = () => {
             />
             <Button 
               variant="contained" 
-              color="primary" 
+              color="error" 
               onClick={handleSendMessage} 
               style={{ marginLeft: "10px" }}
               disabled={isSending}
             >
-              {isSending ? <CircularProgress size={24} /> : "Enviar"}
+              {isSending ? <CircularProgress size={24} /> : <SendIcon />}
             </Button>
-          </Box>
-        </Paper>
+          </InputContainer>
+        </StyledPaper>
       </Grid>
     </Grid>
   );

@@ -110,6 +110,12 @@ const Header: React.FC = () => {
             <Typography
               variant="body1"
               color={theme.palette.primary.contrastText}
+              sx={{
+                display: 'flex',
+                fontWeight: '300',
+                alignItems: 'center',
+                height: '100%',
+              }}
             >
               {auth.user.email ? auth.user.email : ""}
             </Typography>
