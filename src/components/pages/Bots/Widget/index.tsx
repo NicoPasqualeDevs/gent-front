@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Box, Grid, Typography, TextField, Button, CircularProgress, Avatar, Divider } from "@mui/material";
+import { Box, Grid, Typography, TextField, Button, CircularProgress, Avatar} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChatHistory, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
+import { ChatHistory, ChatMessage, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
 import { useTheme } from "@mui/material/styles";
 
 const MainContainer = styled(Box)(() => ({
@@ -15,7 +15,7 @@ const MainContainer = styled(Box)(() => ({
   display: 'flex',
 }));
 
-const SidebarContainer = styled(Box)(({ theme }) => ({
+const SidebarContainer = styled(Box)(() => ({
   width: '120px', // Aumentado de 100px a 120px
   borderRight: '1px solid #333333',
   display: 'flex',
@@ -63,12 +63,15 @@ const MessageBubble = styled(Box)<{ isAgent: boolean }>(({ theme, isAgent }) => 
   alignSelf: isAgent ? 'flex-start' : 'flex-end',
   display: 'flex',
   flexDirection: isAgent ? 'row' : 'row-reverse',
-  alignItems: 'flex-start', // Añadido para alinear verticalmente el contenido
+  alignItems: 'flex-start',
 }));
 
 const MessageContent = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
-  marginLeft: isUser ? theme.spacing(3) : 0, // Aumentado de 2 a 3
-  marginRight: isUser ? 0 : theme.spacing(3), // Aumentado de 2 a 3
+  marginLeft: isUser ? theme.spacing(3) : 0,
+  marginRight: isUser ? 0 : theme.spacing(3),
+  flexGrow: 1,
+  position: 'relative', // Añadido para posicionar el TimeStamp
+  paddingBottom: theme.spacing(2), // Espacio para el TimeStamp
 }));
 
 const InputContainer = styled(Box)(({ theme }) => ({
@@ -97,6 +100,16 @@ const LogoContainer = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'center', // Centrar el contenido horizontalmente
   height: '60px',
+}));
+
+const TimeStamp = styled(Typography)<{ isUser: boolean }>(({ theme, isUser }) => ({
+  fontSize: '0.7rem',
+  color: theme.palette.text.secondary,
+  position: 'absolute',
+  right: isUser ? 'auto' : 0,
+  left: isUser ? 0 : 'auto',
+  bottom: 0,
+  marginTop: theme.spacing(0.5),
 }));
 
 const Widget: React.FC = () => {
@@ -215,7 +228,7 @@ const Widget: React.FC = () => {
         return {
           ...prev,
           messages: [...prev.messages,
-          { content: message, role: "user", timestamp: new Date().toISOString() },
+          { content: message, role: "client", timestamp: new Date().toISOString() },
           updatedHistory.response
           ],
         };
@@ -284,7 +297,7 @@ const Widget: React.FC = () => {
       
       if (cleanSuccess) {
         // Cargar el mensaje inicial
-        const initialMessage = {
+        const initialMessage : ChatMessage = {
           content: 'Estoy aquí para ayudarte. ¿En qué puedo ser útil?',
           timestamp: new Date().toISOString(),
           role: 'bot'
@@ -292,7 +305,9 @@ const Widget: React.FC = () => {
         
         setChatHistory({
           conversation: chatHistory.conversation, // Mantenemos el mismo ID de conversación
-          messages: [initialMessage]
+          messages: [initialMessage],
+          customer: chatHistory.customer, // Añadir esta línea
+          customer_bot: chatHistory.customer_bot // Añadir esta línea
         });
         setMessage("");
       } else {
@@ -304,6 +319,10 @@ const Widget: React.FC = () => {
     }
   };
 
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   if (isLoading) {
     return (
@@ -361,16 +380,21 @@ const Widget: React.FC = () => {
                 bgcolor: msg.role === "bot" ? '#50c878' : '#4a90e2',
                 width: 40,
                 height: 40,
+                marginRight: msg.role === "bot" ? '12px' : '6px',
+                marginLeft: msg.role === "bot" ? '6px' : '12px', 
               }}>
                 {msg.role === "bot" ? "AI" : "U"}
               </Avatar>
-              <MessageContent isUser={msg.role === "user"}>
+              <MessageContent isUser={msg.role === "client"}>
                 <Typography variant="subtitle2" fontWeight="bold" mb={1}>
                   {msg.role === "bot" ? "Asistente IA" : "Usuario"}
                 </Typography>
                 <Typography variant="body1">
                   {renderMessageContent(msg.content)}
                 </Typography>
+                <TimeStamp isUser={msg.role === "client"}>
+                  {formatTimestamp(msg.timestamp)}
+                </TimeStamp>
               </MessageContent>
             </MessageBubble>
           )) ?? (

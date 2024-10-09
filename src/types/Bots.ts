@@ -2,7 +2,7 @@
 
 export interface ChatMessage {
   content: string;
-  role: "user" | "bot";
+  role: "client" | "bot";
   timestamp: string;
 }
 
