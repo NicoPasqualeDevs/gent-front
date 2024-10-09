@@ -8,59 +8,61 @@ import useBotsApi from "@/hooks/useBots";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChatHistory, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
 
-const StyledPaper = styled(Paper)(() => ({
-  height: '100%',
+const MainContainer = styled(Box)(() => ({
+  height: '100vh',
+  backgroundColor: '#1e1e1e',
+  color: '#ffffff',
+  display: 'flex',
+}));
+
+const SidebarContainer = styled(Box)(({ theme }) => ({
+  width: '250px',
+  borderRight: '1px solid #333333',
+  padding: theme.spacing(2),
+}));
+
+const ChatContainer = styled(Box)(() => ({
+  flexGrow: 1,
   display: 'flex',
   flexDirection: 'column',
-  borderRadius: '20px',
-  overflow: 'hidden',
-  backgroundColor: '#1a1a2e',
 }));
 
 const Header = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: '#16213e',
-  color: '#e94560',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  borderBottom: '1px solid #333333',
 }));
 
-const ChatContainer = styled(Box)(({ theme }) => ({
+const MessagesContainer = styled(Box)(({ theme }) => ({
   flexGrow: 1,
   overflow: 'auto',
-  padding: theme.spacing(2),
-  backgroundColor: '#1a1a2e',
+  padding: theme.spacing(3),
 }));
 
 const MessageBubble = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
   maxWidth: '70%',
-  padding: theme.spacing(1, 2),
-  borderRadius: '20px',
-  marginBottom: theme.spacing(1),
-  backgroundColor: isUser ? '#e94560' : '#0f3460',
-  color: '#ffffff',
+  padding: theme.spacing(2),
+  borderRadius: '8px',
+  marginBottom: theme.spacing(2),
+  backgroundColor: isUser ? '#2b5278' : '#383838',
   alignSelf: isUser ? 'flex-end' : 'flex-start',
-  wordBreak: 'break-word',
 }));
 
 const InputContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
-  backgroundColor: '#16213e',
-  display: 'flex',
+  borderTop: '1px solid #333333',
 }));
 
-const StyledTextField = styled(TextField)(({ theme }) => ({
+const StyledTextField = styled(TextField)(() => ({
   '& .MuiOutlinedInput-root': {
     color: '#ffffff',
     '& fieldset': {
-      borderColor: '#0f3460',
+      borderColor: '#555555',
     },
     '&:hover fieldset': {
-      borderColor: '#e94560',
+      borderColor: '#777777',
     },
     '&.Mui-focused fieldset': {
-      borderColor: '#e94560',
+      borderColor: '#4a90e2',
     },
   },
 }));
@@ -230,60 +232,71 @@ const Widget: React.FC = () => {
   }
 
   return (
-    <Grid container justifyContent="center" style={{ height: "100vh", padding: "20px" }}>
-      <Grid item xs={12} sm={10} md={8} lg={6}>
-        <StyledPaper elevation={3}>
-          <Header>
-            <Box display="flex" alignItems="center">
-              <Avatar sx={{ bgcolor: '#e94560', mr: 2 }}>
-                <SmartToyIcon />
-              </Avatar>
-              <Typography variant="h6">Asistente IA</Typography>
-            </Box>
+    <MainContainer>
+      <SidebarContainer>
+        <Typography variant="h6" mb={2}>Historial de Conversaciones</Typography>
+        <Typography variant="body2" color="#888888">
+          (Próximamente: Aquí se mostrará el historial de conversaciones)
+        </Typography>
+      </SidebarContainer>
+      <ChatContainer>
+        <Header>
+          <Typography variant="h5" fontWeight="bold">Panel de Agentes IA</Typography>
+        </Header>
+        <MessagesContainer ref={chatContainerRef}>
+          {chatHistory?.messages.map((msg, index) => (
+            <MessageBubble key={index} isUser={msg.role === "user"}>
+              <Box display="flex" alignItems="center" mb={1}>
+                <Avatar sx={{ bgcolor: msg.role === "user" ? '#4a90e2' : '#50c878', mr: 2 }}>
+                  {msg.role === "user" ? "U" : "AI"}
+                </Avatar>
+                <Typography variant="subtitle1" fontWeight="bold">
+                  {msg.role === "user" ? "Usuario" : "Asistente IA"}
+                </Typography>
+              </Box>
+              <Typography variant="body1">
+                {renderMessageContent(msg.content)}
+              </Typography>
+            </MessageBubble>
+          )) ?? (
+            <Typography variant="body1" textAlign="center" color="#888888">
+              No hay mensajes disponibles. Comienza una conversación con el agente IA.
+            </Typography>
+          )}
+        </MessagesContainer>
+        <InputContainer>
+          <StyledTextField
+            fullWidth
+            variant="outlined"
+            value={message}
+            onChange={handleMessageChange}
+            placeholder="Escribe tu mensaje para el agente IA..."
+            onKeyPress={handleKeyPress}
+            disabled={isSending}
+            multiline
+            rows={3}
+          />
+          <Box display="flex" justifyContent="space-between" mt={2}>
             <Button 
               variant="outlined" 
-              color="error" 
+              color="primary" 
               onClick={handleCloseChat}
             >
-              Cerrar chat
+              Finalizar sesión
             </Button>
-          </Header>
-          <ChatContainer ref={chatContainerRef}>
-            {chatHistory?.messages.map((msg, index) => (
-              <MessageBubble key={index} isUser={msg.role === "user"}>
-                <Typography variant="body1">
-                  {renderMessageContent(msg.content)}
-                </Typography>
-              </MessageBubble>
-            )) ?? (
-              <Typography variant="body1" textAlign="center" color="#ffffff">
-                No hay mensajes disponibles.
-              </Typography>
-            )}
-          </ChatContainer>
-          <InputContainer>
-            <StyledTextField
-              fullWidth
-              variant="outlined"
-              value={message}
-              onChange={handleMessageChange}
-              placeholder="Escribe un mensaje..."
-              onKeyPress={handleKeyPress}
-              disabled={isSending}
-            />
             <Button 
               variant="contained" 
-              color="error" 
+              color="primary" 
               onClick={handleSendMessage} 
-              style={{ marginLeft: "10px" }}
               disabled={isSending}
+              endIcon={isSending ? <CircularProgress size={20} /> : <SendIcon />}
             >
-              {isSending ? <CircularProgress size={24} /> : <SendIcon />}
+              Enviar
             </Button>
-          </InputContainer>
-        </StyledPaper>
-      </Grid>
-    </Grid>
+          </Box>
+        </InputContainer>
+      </ChatContainer>
+    </MainContainer>
   );
 };
 
