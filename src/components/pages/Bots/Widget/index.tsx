@@ -36,6 +36,8 @@ const MessagesContainer = styled(Box)(({ theme }) => ({
   flexGrow: 1,
   overflow: 'auto',
   padding: theme.spacing(3),
+  display: 'flex',
+  flexDirection: 'column',
 }));
 
 const MessageBubble = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
@@ -45,6 +47,13 @@ const MessageBubble = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
   marginBottom: theme.spacing(2),
   backgroundColor: isUser ? '#2b5278' : '#383838',
   alignSelf: isUser ? 'flex-end' : 'flex-start',
+  display: 'flex',
+  flexDirection: isUser ? 'row-reverse' : 'row',
+}));
+
+const MessageContent = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
+  marginLeft: isUser ? 0 : theme.spacing(2),
+  marginRight: isUser ? theme.spacing(2) : 0,
 }));
 
 const InputContainer = styled(Box)(({ theme }) => ({
@@ -174,6 +183,56 @@ const Widget: React.FC = () => {
     }
   };
 
+  const handleFinishSession = async () => {
+    if (!chatHistory?.conversation) {
+      console.error("No hay ID de conversación disponible");
+      ErrorToast("No se pudo cerrar el chat: falta el ID de conversación");
+      return;
+    }
+    
+    console.log("ID de conversación:", chatHistory.conversation);
+    
+    try {
+      // Intentar cerrar el chat en el backend
+      try {
+        await closeChat(chatHistory.conversation);
+      } catch (closeError) {
+        console.warn("Error al cerrar el chat en el backend:", closeError);
+        // Continuar con el proceso de limpieza local
+      }
+      
+      // Intentar limpiar el chat
+      try {
+        const response = await fetch('http://127.0.0.1:8000/api/clean-chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ conversation_id: chatHistory.conversation }),
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.warn("Error al limpiar el chat:", errorData);
+          // Continuar con el cierre local del chat
+        }
+      } catch (cleanError) {
+        console.warn("Error al llamar a clean-chat:", cleanError);
+        // Continuar con el cierre local del chat
+      }
+
+      // Limpiar el chat localmente independientemente de los errores anteriores
+      setChatHistory(null);
+      setMessage("");
+
+      navigate(-1); // Redirige a la vista anterior
+    } catch (error) {
+      console.error("Error inesperado al cerrar el chat:", error);
+      ErrorToast("Ocurrió un error inesperado al cerrar el chat");
+    }
+  };
+
+
   const handleCloseChat = async () => {
     if (!chatHistory?.conversation) {
       console.error("No hay ID de conversación disponible");
@@ -246,17 +305,21 @@ const Widget: React.FC = () => {
         <MessagesContainer ref={chatContainerRef}>
           {chatHistory?.messages.map((msg, index) => (
             <MessageBubble key={index} isUser={msg.role === "user"}>
-              <Box display="flex" alignItems="center" mb={1}>
-                <Avatar sx={{ bgcolor: msg.role === "user" ? '#4a90e2' : '#50c878', mr: 2 }}>
-                  {msg.role === "user" ? "U" : "AI"}
-                </Avatar>
-                <Typography variant="subtitle1" fontWeight="bold">
+              <Avatar sx={{ 
+                bgcolor: msg.role === "user" ? '#4a90e2' : '#50c878',
+                width: 40,
+                height: 40,
+              }}>
+                {msg.role === "user" ? "U" : "AI"}
+              </Avatar>
+              <MessageContent isUser={msg.role === "user"}>
+                <Typography variant="subtitle2" fontWeight="bold" mb={1}>
                   {msg.role === "user" ? "Usuario" : "Asistente IA"}
                 </Typography>
-              </Box>
-              <Typography variant="body1">
-                {renderMessageContent(msg.content)}
-              </Typography>
+                <Typography variant="body1">
+                  {renderMessageContent(msg.content)}
+                </Typography>
+              </MessageContent>
             </MessageBubble>
           )) ?? (
             <Typography variant="body1" textAlign="center" color="#888888">
@@ -280,7 +343,7 @@ const Widget: React.FC = () => {
             <Button 
               variant="outlined" 
               color="primary" 
-              onClick={handleCloseChat}
+              onClick={handleFinishSession}
             >
               Finalizar sesión
             </Button>
