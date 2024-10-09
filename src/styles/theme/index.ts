@@ -1,6 +1,6 @@
-import { createTheme, responsiveFontSizes } from "@mui/material/styles";
+import { createTheme as createThemeDefault, responsiveFontSizes } from "@mui/material/styles";
 
-let theme = createTheme({
+let theme = createThemeDefault({
   typography: {
     fontFamily: "Nunito",
     fontSize: 13,

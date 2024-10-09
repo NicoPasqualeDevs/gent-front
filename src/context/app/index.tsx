@@ -2,10 +2,11 @@ import React, { useContext, useReducer } from "react";
 import { AppContext, AppContextState, INITIAL_STATE } from "./AppContext.ts";
 import { AppReducer } from "./AppReducer.ts";
 import { useWidth } from "@/hooks/useWidth.ts";
-import { isWidthDown } from "@mui/material/Hidden/withWidth";
+import { useMediaQuery } from '@mui/material';
 import { AuthUser } from "@/types/Auth.ts";
 import { AiTeamsDetails } from "@/types/AiTeams.ts";
 import { PathData } from "@/types/Pathbar.ts";
+import theme from "@/styles/theme";
 
 interface AppProviderProps {
   children: React.ReactNode | Array<React.ReactNode>;
@@ -29,17 +30,20 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   ] = useReducer(AppReducer, INITIAL_STATE);
 
   const width = useWidth();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+
   React.useEffect(() => {
     dispatch({ type: "setBreakPoint", payload: width });
 
-    if (isWidthDown("sm", width)) {
+    if (isMobile) {
       dispatch({ type: "setDevice", payload: "mobile" });
-    } else if (isWidthDown("md", width)) {
+    } else if (isTablet) {
       dispatch({ type: "setDevice", payload: "tablet" });
     } else {
       dispatch({ type: "setDevice", payload: "pc" });
     }
-  }, [width]);
+  }, [width, isMobile, isTablet]);
 
   const setAuthUser = (value: AuthUser | null) => {
     dispatch({ type: "setAuthUser", payload: value });
