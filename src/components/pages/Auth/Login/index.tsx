@@ -26,7 +26,7 @@ const Login: React.FC = () => {
   const theme = useTheme();
   const [rotatingText, setRotatingText] = useState(0);
   const rotatingTexts = [
-    "Crea y comparte equipos de IA",
+    "Crea y comparte agentes de IA",
     "Implementa rápido y sencillo",
     "Comercializa soluciones de IA",
     "Importa y publica tu solución",
@@ -35,7 +35,7 @@ const Login: React.FC = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setRotatingText((prevText) => (prevText + 1) % rotatingTexts.length);
-    }, 4000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -277,6 +277,7 @@ const Login: React.FC = () => {
                   backgroundColor: theme.palette.secondary.main,
                   color: theme.palette.secondary.contrastText,
                   '&:hover': {
+                    color: "white",
                     backgroundColor: theme.palette.secondary.dark,
                   },
                 }}
