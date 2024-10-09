@@ -5,7 +5,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChatHistory, ChatMessage, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
+import { AgentData, ChatHistory, ChatMessage, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
 import { useTheme } from "@mui/material/styles";
 
 const MainContainer = styled(Box)(() => ({
@@ -120,7 +120,8 @@ const Widget: React.FC = () => {
   const [chatHistory, setChatHistory] = useState<ChatHistory | null>(null);
   const [message, setMessage] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
-  const { getChatHistory, sendMessage, closeChat } = useBotsApi();
+  const [agentData, setAgentData] = useState<AgentData | null>(null);
+  const { getChatHistory, sendMessage, closeChat, getAgentData } = useBotsApi();
   const { botId } = useParams<{ botId: string }>();
   const navigate = useNavigate();
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -175,6 +176,21 @@ const Widget: React.FC = () => {
       </>
     );
   };
+
+  const loadAgentData = useCallback(async () => {
+    if (!botId || agentData) return;
+    try {
+      const res = await getAgentData(botId);
+      setAgentData(res.data);
+    } catch (error) {
+      console.error("Error al cargar los datos del agente:", error);
+      ErrorToast("No se pudieron cargar los datos del agente");
+    }
+  }, [botId, getAgentData, agentData]);
+
+  useEffect(() => {
+    loadAgentData();
+  }, [loadAgentData]);
 
   useEffect(() => {
     let isMounted = true;
@@ -371,7 +387,9 @@ const Widget: React.FC = () => {
       </SidebarContainer>
       <ChatContainer>
         <Header>
-          <Typography variant="h5" fontWeight="bold">Panel de Agentes IA</Typography>
+          <Typography variant="h5" fontWeight="bold">
+            Panel de {agentData?.name || 'Agente IA'}
+          </Typography>
         </Header>
         <MessagesContainer ref={chatContainerRef}>
           {chatHistory?.messages.map((msg, index) => (
@@ -387,7 +405,7 @@ const Widget: React.FC = () => {
               </Avatar>
               <MessageContent isUser={msg.role === "client"}>
                 <Typography variant="subtitle2" fontWeight="bold" mb={1}>
-                  {msg.role === "bot" ? "Asistente IA" : "Usuario"}
+                  {msg.role === "bot" ? (agentData?.name || "Asistente IA") : "Usuario"}
                 </Typography>
                 <Typography variant="body1">
                   {renderMessageContent(msg.content)}
