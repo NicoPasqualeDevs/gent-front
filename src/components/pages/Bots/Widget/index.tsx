@@ -57,6 +57,8 @@ const MessagesContainer = styled(Box)(({ theme }) => ({
 const MessageBubble = styled(Box)<{ isAgent: boolean }>(({ theme, isAgent }) => ({
   maxWidth: '70%',
   padding: theme.spacing(2),
+  paddingLeft: isAgent ? theme.spacing(1) : 0,
+  paddingRight: isAgent ? 0 : theme.spacing(1),
   borderRadius: '8px',
   marginBottom: theme.spacing(2),
   backgroundColor: isAgent ? '#383838' : '#2b5278',
@@ -105,6 +107,7 @@ const LogoContainer = styled(Box)(({ theme }) => ({
 const TimeStamp = styled(Typography)<{ isUser: boolean }>(({ theme, isUser }) => ({
   fontSize: '0.7rem',
   color: theme.palette.text.secondary,
+  opacity: 0.5, // Añadimos esta línea para hacer el tiempo más opaco
   position: 'absolute',
   right: isUser ? 'auto' : 0,
   left: isUser ? 0 : 'auto',
@@ -125,14 +128,6 @@ const Widget: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const theme = useTheme();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
 
   const handleMouseEnter = () => {
     setShowFullName(true);
@@ -216,6 +211,11 @@ const Widget: React.FC = () => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
   }, [chatHistory?.messages]);
 
   const handleSendMessage = async () => {
