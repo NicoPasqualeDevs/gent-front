@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Box, Grid, Typography, TextField, Button, Paper, CircularProgress, Avatar } from "@mui/material";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { Box, Grid, Typography, TextField, Button, CircularProgress, Avatar, Divider } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import SmartToyIcon from '@mui/icons-material/SmartToy';
 import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChatHistory, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
+import { useTheme } from "@mui/material/styles";
 
 const MainContainer = styled(Box)(() => ({
   height: '100vh',
@@ -16,9 +16,10 @@ const MainContainer = styled(Box)(() => ({
 }));
 
 const SidebarContainer = styled(Box)(({ theme }) => ({
-  width: '250px',
+  width: '120px', // Aumentado de 100px a 120px
   borderRight: '1px solid #333333',
-  padding: theme.spacing(2),
+  display: 'flex',
+  flexDirection: 'column',
 }));
 
 const ChatContainer = styled(Box)(() => ({
@@ -38,22 +39,36 @@ const MessagesContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
   display: 'flex',
   flexDirection: 'column',
+  '&::-webkit-scrollbar': {
+    width: '8px',
+  },
+  '&::-webkit-scrollbar-track': {
+    background: theme.palette.background.default,
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: theme.palette.grey[600],
+    borderRadius: '4px',
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    background: theme.palette.grey[500],
+  },
 }));
 
-const MessageBubble = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
+const MessageBubble = styled(Box)<{ isAgent: boolean }>(({ theme, isAgent }) => ({
   maxWidth: '70%',
   padding: theme.spacing(2),
   borderRadius: '8px',
   marginBottom: theme.spacing(2),
-  backgroundColor: isUser ? '#2b5278' : '#383838',
-  alignSelf: isUser ? 'flex-end' : 'flex-start',
+  backgroundColor: isAgent ? '#383838' : '#2b5278',
+  alignSelf: isAgent ? 'flex-start' : 'flex-end',
   display: 'flex',
-  flexDirection: isUser ? 'row-reverse' : 'row',
+  flexDirection: isAgent ? 'row' : 'row-reverse',
+  alignItems: 'flex-start', // Añadido para alinear verticalmente el contenido
 }));
 
 const MessageContent = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
-  marginLeft: isUser ? 0 : theme.spacing(2),
-  marginRight: isUser ? theme.spacing(2) : 0,
+  marginLeft: isUser ? theme.spacing(3) : 0, // Aumentado de 2 a 3
+  marginRight: isUser ? 0 : theme.spacing(3), // Aumentado de 2 a 3
 }));
 
 const InputContainer = styled(Box)(({ theme }) => ({
@@ -76,18 +91,56 @@ const StyledTextField = styled(TextField)(() => ({
   },
 }));
 
+const LogoContainer = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(0, 0.5), // Reducido aún más el padding horizontal
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center', // Centrar el contenido horizontalmente
+  height: '60px',
+}));
+
 const Widget: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory | null>(null);
-  const [message, setMessage] = useState<string>(""); // Added default value
+  const [message, setMessage] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
   const { getChatHistory, sendMessage, closeChat } = useBotsApi();
   const { botId } = useParams<{ botId: string }>();
   const navigate = useNavigate();
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [showFullName, setShowFullName] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const theme = useTheme();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    setShowFullName(true);
+    setIsTransitioning(true);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setShowFullName(false);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      setIsTransitioning(false);
+    }, 150);
+  };
 
   const renderMessageContent = (content: string) => {
-    const linkRegex = /\(https?:\/\/[^\s)]+\)/g;
+    const linkRegex = /(https?:\/\/[^\s]+)/g;
     const parts = content.split(linkRegex);
     const links = content.match(linkRegex);
 
@@ -97,14 +150,17 @@ const Widget: React.FC = () => {
           <React.Fragment key={index}>
             {part}
             {links && links[index] && (
-              <a
-                href={links[index].slice(1, -1)}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: '#1976d2', textDecoration: 'underline' }}
-              >
-                {links[index].slice(1, -1)}
-              </a>
+              <>
+                {' '}
+                <a
+                  href={links[index]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#1976d2', textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  Enlace
+                </a>
+              </>
             )}
           </React.Fragment>
         ))}
@@ -158,9 +214,9 @@ const Widget: React.FC = () => {
         if (!prev) return null;
         return {
           ...prev,
-          messages: [...prev.messages, 
-            { content: message, role: "user", timestamp: new Date().toISOString() },
-            updatedHistory.response
+          messages: [...prev.messages,
+          { content: message, role: "user", timestamp: new Date().toISOString() },
+          updatedHistory.response
           ],
         };
       });
@@ -183,6 +239,29 @@ const Widget: React.FC = () => {
     }
   };
 
+  const cleanChat = useCallback(async (conversationId: string) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/clean-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ conversation_id: conversationId }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.warn("Error al limpiar el chat:", errorData);
+        return false;
+      }
+      
+      return true;
+    } catch (cleanError) {
+      console.warn("Error al llamar a clean-chat:", cleanError);
+      return false;
+    }
+  }, []);
+
   const handleFinishSession = async () => {
     if (!chatHistory?.conversation) {
       console.error("No hay ID de conversación disponible");
@@ -198,89 +277,33 @@ const Widget: React.FC = () => {
         await closeChat(chatHistory.conversation);
       } catch (closeError) {
         console.warn("Error al cerrar el chat en el backend:", closeError);
-        // Continuar con el proceso de limpieza local
       }
       
       // Intentar limpiar el chat
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/clean-chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ conversation_id: chatHistory.conversation }),
-        });
+      const cleanSuccess = await cleanChat(chatHistory.conversation);
+      
+      if (cleanSuccess) {
+        // Cargar el mensaje inicial
+        const initialMessage = {
+          content: 'Estoy aquí para ayudarte. ¿En qué puedo ser útil?',
+          timestamp: new Date().toISOString(),
+          role: 'bot'
+        };
         
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.warn("Error al limpiar el chat:", errorData);
-          // Continuar con el cierre local del chat
-        }
-      } catch (cleanError) {
-        console.warn("Error al llamar a clean-chat:", cleanError);
-        // Continuar con el cierre local del chat
+        setChatHistory({
+          conversation: chatHistory.conversation, // Mantenemos el mismo ID de conversación
+          messages: [initialMessage]
+        });
+        setMessage("");
+      } else {
+        ErrorToast("No se pudo limpiar el chat completamente");
       }
-
-      // Limpiar el chat localmente independientemente de los errores anteriores
-      setChatHistory(null);
-      setMessage("");
-
-      navigate(-1); // Redirige a la vista anterior
     } catch (error) {
       console.error("Error inesperado al cerrar el chat:", error);
       ErrorToast("Ocurrió un error inesperado al cerrar el chat");
     }
   };
 
-
-  const handleCloseChat = async () => {
-    if (!chatHistory?.conversation) {
-      console.error("No hay ID de conversación disponible");
-      ErrorToast("No se pudo cerrar el chat: falta el ID de conversación");
-      return;
-    }
-    
-    console.log("ID de conversación:", chatHistory.conversation);
-    
-    try {
-      // Intentar cerrar el chat en el backend
-      try {
-        await closeChat(chatHistory.conversation);
-      } catch (closeError) {
-        console.warn("Error al cerrar el chat en el backend:", closeError);
-        // Continuar con el proceso de limpieza local
-      }
-      
-      // Intentar limpiar el chat
-      try {
-        const response = await fetch('http://127.0.0.1:8000/api/clean-chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ conversation_id: chatHistory.conversation }),
-        });
-        
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.warn("Error al limpiar el chat:", errorData);
-          // Continuar con el cierre local del chat
-        }
-      } catch (cleanError) {
-        console.warn("Error al llamar a clean-chat:", cleanError);
-        // Continuar con el cierre local del chat
-      }
-
-      // Limpiar el chat localmente independientemente de los errores anteriores
-      setChatHistory(null);
-      setMessage("");
-
-      navigate(-1); // Redirige a la vista anterior
-    } catch (error) {
-      console.error("Error inesperado al cerrar el chat:", error);
-      ErrorToast("Ocurrió un error inesperado al cerrar el chat");
-    }
-  };
 
   if (isLoading) {
     return (
@@ -293,10 +316,39 @@ const Widget: React.FC = () => {
   return (
     <MainContainer>
       <SidebarContainer>
-        <Typography variant="h6" mb={2}>Historial de Conversaciones</Typography>
-        <Typography variant="body2" color="#888888">
-          (Próximamente: Aquí se mostrará el historial de conversaciones)
-        </Typography>
+        <LogoContainer>
+          <Box
+            width={showFullName ? "60px" : "30px"} // Reducido el ancho máximo
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            sx={{
+              transition: "0.25s",
+            }}
+          >
+            <Typography
+              onClick={() => navigate("/builder")}
+              color={"white"}
+              sx={{
+                fontSize: "20px", // Reducido aún más el tamaño de la fuente
+                lineHeight: 1,
+                textAlign: "center",
+                padding: "0px 2px",
+                cursor: "pointer",
+                overflow: "hidden",
+                textShadow: showFullName ? "none" : `0 0 4px ${theme.palette.primary.light}`,
+                transition: "all 0.25s ease-in-out",
+              }}
+            >
+              {showFullName || isTransitioning ? "Gents" : "G"}
+            </Typography>
+          </Box>
+        </LogoContainer>
+        <Box p={1} textAlign="center" display="flex" flexDirection="column">
+          <Typography variant="caption" mb={0.5}>Historial</Typography>
+          <Typography variant="caption" color="#888888" sx={{ fontSize: '0.7rem' }}>
+            (Próximamente)
+          </Typography>
+        </Box>
       </SidebarContainer>
       <ChatContainer>
         <Header>
@@ -304,17 +356,17 @@ const Widget: React.FC = () => {
         </Header>
         <MessagesContainer ref={chatContainerRef}>
           {chatHistory?.messages.map((msg, index) => (
-            <MessageBubble key={index} isUser={msg.role === "user"}>
-              <Avatar sx={{ 
-                bgcolor: msg.role === "user" ? '#4a90e2' : '#50c878',
+            <MessageBubble key={index} isAgent={msg.role === "bot"}>
+              <Avatar sx={{
+                bgcolor: msg.role === "bot" ? '#50c878' : '#4a90e2',
                 width: 40,
                 height: 40,
               }}>
-                {msg.role === "user" ? "U" : "AI"}
+                {msg.role === "bot" ? "AI" : "U"}
               </Avatar>
               <MessageContent isUser={msg.role === "user"}>
                 <Typography variant="subtitle2" fontWeight="bold" mb={1}>
-                  {msg.role === "user" ? "Usuario" : "Asistente IA"}
+                  {msg.role === "bot" ? "Asistente IA" : "Usuario"}
                 </Typography>
                 <Typography variant="body1">
                   {renderMessageContent(msg.content)}
@@ -322,10 +374,10 @@ const Widget: React.FC = () => {
               </MessageContent>
             </MessageBubble>
           )) ?? (
-            <Typography variant="body1" textAlign="center" color="#888888">
-              No hay mensajes disponibles. Comienza una conversación con el agente IA.
-            </Typography>
-          )}
+              <Typography variant="body1" textAlign="center" color="#888888">
+                No hay mensajes disponibles. Comienza una conversación con el agente IA.
+              </Typography>
+            )}
         </MessagesContainer>
         <InputContainer>
           <StyledTextField
@@ -340,17 +392,17 @@ const Widget: React.FC = () => {
             rows={3}
           />
           <Box display="flex" justifyContent="space-between" mt={2}>
-            <Button 
-              variant="outlined" 
-              color="primary" 
+            <Button
+              variant="outlined"
+              color="primary"
               onClick={handleFinishSession}
             >
               Finalizar sesión
             </Button>
-            <Button 
-              variant="contained" 
-              color="primary" 
-              onClick={handleSendMessage} 
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleSendMessage}
               disabled={isSending}
               endIcon={isSending ? <CircularProgress size={20} /> : <SendIcon />}
             >
