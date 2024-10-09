@@ -7,11 +7,11 @@ import useAuth from "@/hooks/useAuth";
 import { ErrorToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import { PasswordInput, TextInput } from "@/components/Inputs";
 import { motion } from "framer-motion"; // Asegúrate de instalar framer-motion
 import Snowfall from 'react-snowfall';
 import { useTheme } from '@mui/material/styles';
+import { useEffect, useState } from "react";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +24,21 @@ const Login: React.FC = () => {
   const [showSnow] = useState(true);
   const [showLoginForm, setShowLoginForm] = useState(false); // Nueva variable de estado
   const theme = useTheme();
+  const [rotatingText, setRotatingText] = useState(0);
+  const rotatingTexts = [
+    "Crea y comparte equipos de IA",
+    "Implementa rápido y sencillo",
+    "Comercializa soluciones de IA",
+    "Importa y publica tu solución",
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRotatingText((prevText) => (prevText + 1) % rotatingTexts.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const initialValues: AuthLoginData = {
     code: "",
@@ -113,7 +128,7 @@ const Login: React.FC = () => {
               position: 'absolute',
               width: '100%',
               height: '100%',
-              opacity: 0.15, // Cambiado de 0.7 a 0.15
+              opacity: 0.034, // Cambiado de 0.7 a 0.15
             }}
           />
         </Box>
@@ -131,6 +146,8 @@ const Login: React.FC = () => {
           borderRadius: '15px',
           padding: '2rem',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          maxHeight: '80vh', // Limitar la altura máxima
+          overflowY: 'auto', // Permitir scroll si el contenido es muy largo
         }}
       >
         <Grid item xs={12}>
@@ -139,6 +156,7 @@ const Login: React.FC = () => {
             textAlign={"center"}
             sx={{
               mb: 1, // Añadido un pequeño margen inferior
+              fontSize: '3rem', // Aumentar el tamaño de la fuente del título
             }}
           >
             Gents
@@ -160,20 +178,31 @@ const Login: React.FC = () => {
               </Typography>
             </>
           ) : (
-            <Typography
-              textAlign={"center"}
-              variant="h6"
-              sx={{
-                mt: 0, // Cambiado de 2 a 0
-                mb: 2, // Reducido de 4 a 2
-                fontWeight: 'normal',
-                color: theme.palette.text.secondary,
-                // Añadido para mejorar la legibilidad si es necesario
-                textShadow: '0 0 5px rgba(0,0,0,0.3)',
-              }}
+            <motion.div
+              key={rotatingText}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
             >
-              Crea tu equipo de Equipos IA con Inteligencia Artificial
-            </Typography>
+              <Typography
+                textAlign={"center"}
+                variant="h5" // Cambiado de h6 a h5 para aumentar el tamaño
+                sx={{
+                  mt: 1, // Cambiado de 2 a 
+                  mb: -2,
+                  fontWeight: 'normal',
+                  color: theme.palette.text.secondary,
+                  // Añadido para mejorar la legibilidad si es necesario
+                  textShadow: '0 0 5px rgba(0,0,0,0.3)',
+                  minHeight: '3em', // Asegura un espacio consistente
+                  lineHeight: '3em',
+                  fontSize: '1.2rem', // Aumentar el tamaño de la fuente del texto rotativo
+                }}
+              >
+                {rotatingTexts[rotatingText]}
+              </Typography>
+            </motion.div>
           )}
         </Grid>
 
@@ -240,6 +269,7 @@ const Login: React.FC = () => {
                 size="large"
                 onClick={() => setShowLoginForm(true)}
                 sx={{
+                  mb: 1,
                   fontSize: '1.5rem', // Reducido de 2rem a 1.5rem
                   padding: '20px 40px', // Reducido de 30px 60px a 20px 40px
                   borderRadius: '50px',

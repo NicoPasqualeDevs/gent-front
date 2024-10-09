@@ -252,7 +252,7 @@ const DataEntryComponent: React.FC = () => {
                           <StyledLinkButton
                             onClick={() => handleEditKtag(item)}
                           >
-                            Edit|
+                            Edit
                           </StyledLinkButton>
                           <StyledLinkButton
                             sx={{ marginLeft: (theme) => theme.spacing(1.5) }}

@@ -90,12 +90,12 @@ const Header: React.FC = () => {
             onClick={() => navigate("/builder")}
             color={"white"}
             sx={{
-              fontSize: showFullName || isTransitioning ? "30px" : "28px",
+              fontSize: showFullName || isTransitioning ? "30px" : "29px",
               padding: "0px 5px",
               marginLeft: "10px",
               cursor: "pointer",
               overflow: "hidden",
-              textShadow: showFullName ? "none" : `0 0 5px ${theme.palette.primary.light}`,
+              textShadow: showFullName ? "none" : `0 0 4.5px ${theme.palette.primary.light}`,
               transition: "all 0.25s ease-in-out",
             }}
           >
