@@ -162,7 +162,7 @@ const IaPanel: React.FC = () => {
             <Grid container spacing={1}>
               <Grid item xs={11}>
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {['Editar', 'Ktags', 'Tools', 'Widget', 'Saludos'].map((action) => (
+                  {['Editar', 'Datos', 'Tools', 'Widget', 'Saludos'].map((action) => (
                     <Tooltip key={action} title={
                       ['Tools', 'Widget', 'Saludos'].includes(action)
                         ? 'Función no disponible'
@@ -174,7 +174,7 @@ const IaPanel: React.FC = () => {
                           onClick={() => {
                             const routes: { [key: string]: string } = {
                               Editar: `/bots/contextEntry/${clientId}/${bot.id}`,
-                              Ktags: `/bots/dataEntry/${bot.id}`,
+                              Datos: `/bots/dataEntry/${bot.id}`,
                               Tools: `/bots/tools/${bot.name}/${bot.id}`,
                               Widget: `/bots/widgetCustomizer/${bot.id}`,
                               Saludos: `/bots/customMessages/${bot.id}`,

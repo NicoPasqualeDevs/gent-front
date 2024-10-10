@@ -173,7 +173,7 @@ const DataEntryComponent: React.FC = () => {
             textAlign="left"
             gap={2}
           >
-            Actualizar etiquetas de conocimientos {"(KTags)"}
+            Actualizar datos del agente
           </StyledPageTitle>
           <Stack id="ktag-wrapper">
             {customTags &&
