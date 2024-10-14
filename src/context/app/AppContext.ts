@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { Breakpoint } from "@mui/material";
-import { AuthTempInfo, AuthUser } from "@/types/Auth.ts";
+import { AuthUser } from "@/types/Auth.ts";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
 
@@ -12,7 +12,6 @@ export interface AppContextState {
     first_name: string;
     last_name: string;
     bio: string;
-    tempInfo?: AuthTempInfo 
   };
   layout: {
     breakpoint: Breakpoint;
@@ -26,7 +25,6 @@ export interface AppContextState {
   clientPage: number;
   toolsPage: number;
   agentsPage: number;
-
   setCustomersList: (value: AiTeamsDetails[]) => void;
   setLogin: (value: AuthUser) => void;
   setAuthUser: (value: AuthUser | null) => void;

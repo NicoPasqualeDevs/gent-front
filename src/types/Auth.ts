@@ -4,15 +4,8 @@ export type AuthUser = {
   last_name: string;
   bio: string;
   token: string;
+  is_superuser?: boolean;
 };
-
-export interface AuthTempInfo {
-  email?: string | null;
-  password?: string;
-
-  country?: string;
-  businessName?: string;
-}
 
 export type SendRegister = {
   email: string;

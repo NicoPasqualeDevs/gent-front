@@ -8,7 +8,7 @@ interface WellcomeContainerProps {
   onStartClick: () => void;
 }
 
-const WellcomeContainer: React.FC<WellcomeContainerProps> = () => {
+const WellcomeContainer: React.FC<WellcomeContainerProps> = ({ onStartClick }) => {
   const [userName, setUserName] = useState<string>("");
 
   const getRandomName = (): string => {
@@ -26,8 +26,8 @@ const WellcomeContainer: React.FC<WellcomeContainerProps> = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setIsGlowing(true);
-      setTimeout(() => setIsGlowing(false), 500); // Duración del brillo
-    }, 5000); // Intervalo de 5 segundos
+      setTimeout(() => setIsGlowing(false), 500);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -91,7 +91,7 @@ const WellcomeContainer: React.FC<WellcomeContainerProps> = () => {
               variant="contained"
               color="primary"
               className={isGlowing ? 'glow-effect' : ''}
-              onClick={() => navigate('/builder')}
+              onClick={() => onStartClick()}
               sx={{
                 '@keyframes glow': {
                   '0%': { boxShadow: `0 0 5px ${theme.palette.primary.main}` },

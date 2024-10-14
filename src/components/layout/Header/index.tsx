@@ -87,7 +87,7 @@ const Header: React.FC = () => {
           }}
         >
           <Typography
-            onClick={() => navigate("/builder")}
+            onClick={() => navigate("/")}
             color={"white"}
             sx={{
               fontSize: "30px",
