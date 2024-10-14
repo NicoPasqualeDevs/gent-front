@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
 import AiTeamsList from "@/components/pages/AiTeams/AiTeamsList";
-import AppLayout from "@/components/layout/AppLayout";
+import AppLayout from "@/components/Layout/AppLayout";
 import AiTeamsForm from "@/components/pages/AiTeams/AiTeamsForm";
 
 const Layout = (

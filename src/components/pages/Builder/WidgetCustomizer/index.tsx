@@ -1,10 +1,10 @@
-import { StyledPageTitle } from "@/components/styledComponents/Typography";
+import { StyledPageTitle } from "@/components/StyledComponents/Typography";
 import useBotsApi from "@/hooks/useBots";
 import { WidgetData } from "@/types/Bots";
 import { Grid } from "@mui/material";
 import React, { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { StyledDefaultButton } from "@/components/styledComponents/Buttons";
+import { StyledDefaultButton } from "@/components/StyledComponents/Buttons";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import {

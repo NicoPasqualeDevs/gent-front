@@ -23,7 +23,7 @@
       "@/*": ["src/*"],
     }
   },
-  "include": ["src", "src/components/layouts/AppLayoutOnboarding/DownContainer/.tsx"],
+  "include": ["src", "src/components/Layouts/AppLayoutOnboarding/DownContainer/.tsx"],
 
   "references": [{ "path": "./tsconfig.node.json" }]
 }

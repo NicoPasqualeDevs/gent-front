@@ -6,19 +6,19 @@ import { Ktag } from "@/types/Bots";
 import {
   StyledDefaultButton,
   StyledLinkButton,
-} from "@/components/styledComponents/Buttons";
+} from "@/components/StyledComponents/Buttons";
 import { SuccessToast, ErrorToast } from "@/components/Toast";
 import {
   StyledPageTitle,
   CardSubTitle,
-} from "@/components/styledComponents/Typography";
+} from "@/components/StyledComponents/Typography";
 import useBotsApi from "@/hooks/useBots";
 import {
   BasicCard,
   BasicCardContent,
   BasicCardAction,
   BasicCardDivider,
-} from "@/components/styledComponents/Cards";
+} from "@/components/StyledComponents/Cards";
 import { useEffect, useState, useCallback } from "react";
 import { useAppContext } from "@/context/app";
 import { Button } from "@mui/material";

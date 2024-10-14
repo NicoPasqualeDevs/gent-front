@@ -1,4 +1,4 @@
-import { useWidgetContext } from "@/components/pages/Bots/Widget/WidgetContext";
+import { useWidgetContext } from "@/components/pages/Builder/Widget/WidgetContext";
 import { Box, Typography } from "@mui/material";
 import { default_theme } from "../../../../styles/default_theme";
 

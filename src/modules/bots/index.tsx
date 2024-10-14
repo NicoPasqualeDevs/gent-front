@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
-import AppLayout from "@/components/layout/AppLayout";
+import AppLayout from "@/components/Layout/AppLayout";
 import AuthChecker from "@/components/AuthChecker";
 import DataEntryComponent from "@/components/pages/Builder/DataEntry";
 import IaPanel from "@/components/pages/Builder/IaPanel";

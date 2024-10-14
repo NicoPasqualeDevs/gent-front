@@ -3,7 +3,7 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
 import ProfileView from "@/components/pages/Profile/View";
 import ProfileEdit from "@/components/pages/Profile/Edit";
-import AppLayout from "@/components/layout/AppLayout";
+import AppLayout from "@/components/Layout/AppLayout";
 
 const Layout = (
   <AppLayout>

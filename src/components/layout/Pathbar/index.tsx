@@ -1,4 +1,4 @@
-import { PathButton } from "@/components/styledComponents/Layout";
+import { PathButton } from "@/components/StyledComponents/Layout";
 import { useAppContext } from "@/context/app";
 import theme from "@/styles/theme";
 import { Box, Breadcrumbs, Typography } from "@mui/material";

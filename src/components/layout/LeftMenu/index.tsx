@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
-import { LeftMenuContainer } from "@/components/styledComponents/Layout";
+import { LeftMenuContainer } from "@/components/StyledComponents/Layout";
 import { SuccessToast } from "@/components/Toast";
 import { LogoutSharp } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
