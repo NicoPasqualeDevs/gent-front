@@ -7,7 +7,13 @@ import { PathData } from "@/types/Pathbar";
 export type AppDevice = "mobile" | "tablet" | "pc";
 
 export interface AppContextState {
-  auth: { user: AuthUser | null; tempInfo?: AuthTempInfo };
+  auth: { 
+    user: AuthUser | null; 
+    first_name: string;
+    last_name: string;
+    bio: string;
+    tempInfo?: AuthTempInfo 
+  };
   layout: {
     breakpoint: Breakpoint;
     device: "mobile" | "tablet" | "pc";

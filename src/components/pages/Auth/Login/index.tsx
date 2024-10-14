@@ -12,6 +12,8 @@ import { motion } from "framer-motion"; // Asegúrate de instalar framer-motion
 import Snowfall from 'react-snowfall';
 import { useTheme } from '@mui/material/styles';
 import { useEffect, useState } from "react";
+import { Link as RouterLink } from 'react-router-dom'; // Añade esta importación
+import { Link as MuiLink } from '@mui/material'; // Añade esta importación
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -207,7 +209,7 @@ const Login: React.FC = () => {
         </Grid>
 
         {showLoginForm ? (
-          <Grid item xs={12} sx={{ mt: 2 }}> {/* Añadido un margen superior */}
+          <Grid item xs={12} sx={{ mt: 2 }}>
             <form onSubmit={formSubmit}>
               <TextInput
                 name="email"
@@ -234,8 +236,9 @@ const Login: React.FC = () => {
                 xs={12}
                 sx={{
                   display: "flex",
-                  justifyContent: "center",
+                  flexDirection: "column",
                   alignItems: "center",
+                  gap: 2,
                 }}
               >
                 <Button
@@ -251,11 +254,17 @@ const Login: React.FC = () => {
                 >
                   Log In
                 </Button>
+                <Typography variant="body2" align="center">
+                  ¿Aún no tienes cuenta?{' '}
+                  <MuiLink component={RouterLink} to="/auth/register">
+                    Regístrate
+                  </MuiLink>
+                </Typography>
               </Grid>
             </form>
           </Grid>
         ) : (
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}> {/* Aumentado de mt: 2 a mt: 6 */}
+          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
             <motion.div
               whileHover={{
                 scale: 1.1,

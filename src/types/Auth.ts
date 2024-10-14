@@ -1,5 +1,8 @@
 export type AuthUser = {
   email: string;
+  first_name: string;
+  last_name: string;
+  bio: string;
   token: string;
 };
 
@@ -15,10 +18,23 @@ export type SendRegister = {
   email: string;
 };
 
-export type AuthRegisterResponse = {
-  message?: string;
-  error?: string;
-};
+export interface AuthRegisterData {
+  email: string;
+  first_name: string;
+  last_name: string;
+  password: string;
+  confirm_password: string;
+}
+
+export interface AuthRegisterResponse {
+  message: string;
+  user: {
+    email: string;
+    first_name: string;
+    last_name: string;
+  };
+  token: string;
+}
 
 export type AuthLoginData = {
   [propKey: string]: string;

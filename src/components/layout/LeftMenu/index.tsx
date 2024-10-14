@@ -144,7 +144,7 @@ const LeftMenu: React.FC = () => {
                 setAuthUser(null);
                 sessionStorage.setItem("user_email", "");
                 sessionStorage.setItem("user_token", "");
-                navigate("/auth/admLogin", { replace: true });
+                navigate("/auth/login", { replace: true });
                 SuccessToast("Has cerrado sesión correctamente");
               }}
             >

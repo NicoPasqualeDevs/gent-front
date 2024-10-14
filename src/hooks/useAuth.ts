@@ -1,19 +1,19 @@
-import { AuthLoginData, AuthRegisterResponse, AuthUser, SendRegister } from "@/types/Auth";
+import { AuthLoginData, AuthRegisterResponse, AuthUser, AuthRegisterData } from "@/types/Auth";
 import { ApiResponse } from "@/types/Api";
 
 import useApi from "./useApi";
 
 type AuthHook = {
   token?: string;
-  registerUser: (data: SendRegister) => Promise<AuthRegisterResponse>;
+  registerUser: (data: AuthRegisterData) => Promise<AuthRegisterResponse>;
   loginUser: (data: AuthLoginData) => Promise<ApiResponse<AuthUser>>;
 };
 
 const useAuth = (): AuthHook => {
   const { apiPost } = useApi();
 
-  const registerUser = (data: SendRegister): Promise<AuthRegisterResponse> => {
-    const path = "api/register";
+  const registerUser = (data: AuthRegisterData): Promise<AuthRegisterResponse> => {
+    const path = "api/register/";
     return apiPost(path, data);
   };
 
