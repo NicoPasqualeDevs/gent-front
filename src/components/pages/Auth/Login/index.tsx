@@ -64,7 +64,6 @@ const Login: React.FC = () => {
         navigate("/builder");
       })
       .catch((error) => {
-        console.log(error);
         if (error instanceof Error) {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {

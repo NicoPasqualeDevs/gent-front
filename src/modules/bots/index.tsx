@@ -2,14 +2,14 @@ import React from "react";
 import { Outlet, Route, Routes } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import AuthChecker from "@/components/AuthChecker";
-import DataEntryComponent from "@/components/pages/Bots/DataEntry";
-import IaPanel from "@/components/pages/Bots/IaPanel";
-import { WidgetCustomizer } from "@/components/pages/Bots/WidgetCustomizer";
-import CustomMessages from "@/components/pages/Bots/CustomMessages";
-import ContextEntry from "@/components/pages/Bots/ContextEntry";
-import Tools from "@/components/pages/Bots/Tools";
-import ToolsForm from "@/components/pages/Bots/ToolsForm";
-import ToolsRelationship from "@/components/pages/Bots/ToolsRelationship";
+import DataEntryComponent from "@/components/pages/Builder/DataEntry";
+import IaPanel from "@/components/pages/Builder/IaPanel";
+import { WidgetCustomizer } from "@/components/pages/Builder/WidgetCustomizer";
+import CustomMessages from "@/components/pages/Builder/CustomMessages";
+import ContextEntry from "@/components/pages/Builder/ContextEntry";
+import Tools from "@/components/pages/Builder/Tools";
+import ToolsForm from "@/components/pages/Builder/ToolsForm";
+import ToolsRelationship from "@/components/pages/Builder/ToolsRelationship";
 
 
 
