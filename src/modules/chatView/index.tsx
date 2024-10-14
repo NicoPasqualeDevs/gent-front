@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Widget from "@/components/pages/Builder/Widget";
+import Widget from "@/pages/Builder/Widget";
 
 const ChatViewModule: React.FC = () => {
   return (

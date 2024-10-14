@@ -1,4 +1,4 @@
-import { useWidgetContext } from "@/components/pages/Builder/Widget/WidgetContext";
+import { useWidgetContext } from "@/pages/Builder/Widget/WidgetContext";
 import { Box, BoxProps } from "@mui/material";
 import { forwardRef } from "react";
 import { default_theme } from "../../../styles/default_theme";

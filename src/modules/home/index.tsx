@@ -1,5 +1,5 @@
 import React from "react";
-import Home from "../../components/pages/Home";
+import Home from "../../pages/Home";
 import { Route, Routes } from "react-router-dom";
 
 const HomeModule: React.FC = () => {

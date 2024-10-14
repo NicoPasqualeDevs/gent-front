@@ -1,4 +1,4 @@
-import { useWidgetContext } from "@/components/pages/Builder/Widget/WidgetContext";
+import { useWidgetContext } from "@/pages/Builder/Widget/WidgetContext";
 import useApi from "@/hooks/useApi";
 import React, { useEffect, useState } from "react";
 import DialogContent from "../DialogContent";

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from "react-router-dom";
-import Register from '@/components/pages/Auth/Register';
-import Login from '@/components/pages/Auth/Login';
+import Register from '@/pages/Auth/Register';
+import Login from '@/pages/Auth/Login';
 
 const AuthModule: React.FC = () => {
 
