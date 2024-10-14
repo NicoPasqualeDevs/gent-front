@@ -1,5 +1,5 @@
 import { MainGridContainer } from "@/utils/ContainerUtil";
-import { Button, Grid, Typography, Box } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { AuthLoginData } from "@/types/Auth";
@@ -9,7 +9,6 @@ import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
 import { motion } from "framer-motion"; // Asegúrate de instalar framer-motion
-import Snowfall from 'react-snowfall';
 import { useTheme } from '@mui/material/styles';
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from 'react-router-dom'; // Añade esta importación
@@ -23,7 +22,6 @@ const Login: React.FC = () => {
     email: " ",
     code: " ",
   });
-  const [showSnow] = useState(true);
   const [showLoginForm, setShowLoginForm] = useState(false); // Nueva variable de estado
   const theme = useTheme();
   const [rotatingText, setRotatingText] = useState(0);
@@ -110,30 +108,7 @@ const Login: React.FC = () => {
         minHeight: '100vh',
       }}
     >
-      {showSnow && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0, // Cambiado de height a bottom para cubrir toda la pantalla
-            overflow: 'hidden',
-            zIndex: 1,
-            pointerEvents: 'none', // Permite que los clics pasen a través de la nieve
-          }}
-        >
-          <Snowfall
-            snowflakeCount={200}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              opacity: 0.034, // Cambiado de 0.7 a 0.15
-            }}
-          />
-        </Box>
-      )}
+
       <Grid
         item
         xs={12}
