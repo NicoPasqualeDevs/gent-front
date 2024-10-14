@@ -22,29 +22,23 @@ const UserL = (
   </UserLayout>
 );
 
-function AppRoutes() {  // Cambiado de App a AppRoutes
+function AppRoutes() {
   return (
-    /*  <AuthChecker> */
     <>
-      <BackgroundLines /> {/* Agregamos el componente BackgroundLines */}
+      <BackgroundLines />
       <Routes>
         <Route path="/">
-          {/* USER AUTH ROUTES */}
-          <Route index path="/auth/*" element={<AuthModule />} />
-          {/* BUILDER ROUTES */}
-          <Route path="/builder/*" element={BuilderL}>
-            <Route index element={<BuilderModule />} />
+          <Route path="auth/*" element={<AuthModule />} />
+          <Route path="builder/*" element={BuilderL}>
+            <Route path="*" element={<BuilderModule />} />
           </Route>
-          {/* USERS PANEL ROUTES */}
-          <Route path="/" element={<HomeModule />} />
-          {/* NOT FOUND ROUTE */}
-          <Route path="*" element={<NotFoundModule />} /> 
+          <Route path="" element={UserL}>
+            <Route index element={<HomeModule />} />
+          </Route>
+          <Route path="*" element={<NotFoundModule />} />
         </Route>
       </Routes>
-      <Routes>
-      </Routes>
     </>
-    /*     </AuthChecker> */
   );
 }
 

@@ -14,23 +14,23 @@ const AgentsDetailsModule: React.FC = () => {
   return (
     <AuthChecker>
       <Routes>
-          <Route index path=":clientName/:clientId" element={<IaPanel />} />
-          <Route
-            path="contextEntry/:clientId?/:botId?"
-            element={<ContextEntry />}
-          />
-          <Route path="dataEntry/:botId?" element={<DataEntryComponent />} />
-          <Route
-            path="widgetCustomizer/:botId?"
-            element={<WidgetCustomizer />}
-          />
-          <Route path="customMessages/:botId?" element={<CustomMessages />} />
-          <Route path="tools/:botName?/:botId?" element={<Tools />} />
-          <Route
-            path="tools-form/:toolName?/:toolId?"
-            element={<ToolsForm />}
-          />
-          <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship />} />
+        <Route index path=":clientName/:clientId" element={<IaPanel />} />
+        <Route
+          path="contextEntry/:clientId?/:botId?"
+          element={<ContextEntry />}
+        />
+        <Route path="dataEntry/:botId?" element={<DataEntryComponent />} />
+        <Route
+          path="widgetCustomizer/:botId?"
+          element={<WidgetCustomizer />}
+        />
+        <Route path="customMessages/:botId?" element={<CustomMessages />} />
+        <Route path="tools/:botName?/:botId?" element={<Tools />} />
+        <Route
+          path="tools-form/:toolName?/:toolId?"
+          element={<ToolsForm />}
+        />
+        <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship />} />
 
       </Routes>
     </AuthChecker>

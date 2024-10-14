@@ -87,7 +87,7 @@ const Header: React.FC = () => {
           }}
         >
           <Typography
-            onClick={() => {auth.user?.is_superuser ?  navigate("/builder") :  navigate("/")}}
+            onClick={() => navigate("/builder")}
             color={"white"}
             sx={{
               fontSize: "30px",
