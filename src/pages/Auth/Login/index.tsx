@@ -61,7 +61,7 @@ const Login: React.FC = () => {
         sessionStorage.setItem("user_email", response.data.email);
         sessionStorage.setItem("user_token", response.data.token);
         setNavElevation("builder");
-        navigate("/builder");
+        response.data.is_superuser ? navigate("/builder") : navigate("/");
       })
       .catch((error) => {
         if (error instanceof Error) {

@@ -2,11 +2,12 @@ import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "@/context/app/AppContext";
 import WellcomeContainer from "./Wellcome";
 import UserPanel from "./Main/User/Panel";
-import BuilderIaPanel from "../Builder/IaPanel";
+import { useNavigate, } from "react-router-dom";
 
 const HomeComponent: React.FC = () => {
   const { auth } = useContext(AppContext);
   const [isWellcome, setIsWellcome] = useState<boolean>(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (auth.user) {
@@ -20,9 +21,7 @@ const HomeComponent: React.FC = () => {
 
   return (
     <>
-      {auth.user?.is_superuser ? (
-        <BuilderIaPanel />
-      ) : (
+      {auth.user?.is_superuser ? ()=> navigate("/builder") : (
         isWellcome ? <WellcomeContainer onStartClick={handleStartClick} /> : <UserPanel />
       )}
     </>

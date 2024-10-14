@@ -31,7 +31,7 @@ const WellcomeContainer: React.FC<WellcomeContainerProps> = ({ onStartClick }) =
   }, []);
 
   return (
-    <CenterComponentContainer container>
+    <Grid container sx={{justifyContent:"center", mt: 7}}>
       <Grid item xs={12} md={10} lg={8}>
         <Paper
           elevation={3}
@@ -106,7 +106,7 @@ const WellcomeContainer: React.FC<WellcomeContainerProps> = ({ onStartClick }) =
           </Box>
         </Paper>
       </Grid>
-    </CenterComponentContainer>
+    </Grid>
   );
 };
 

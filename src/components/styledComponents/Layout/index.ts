@@ -56,7 +56,7 @@ export const LeftMenuContainer = styled(Box)(({ theme }) => ({
 export const MainContent = styled(Grid)(({ theme }) => ({
   width: "100%",
   height: `calc(100vh - 70px)`,
-  paddingTop: "50px",
+  paddingTop: "8px",
   justifyContent: "center",
   overflowY: "auto",
   scrollBehavior: "smooth",

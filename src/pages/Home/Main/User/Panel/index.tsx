@@ -181,7 +181,7 @@ const UserPanel: React.FC = () => {
               gap: 2,
             }}>
               <Typography variant="h5" sx={{ mr: 2 }}>
-                Tus equipos de IA
+                Explora Agentes de IA
               </Typography>
               <Select
                 value={contentPerPage}
@@ -247,15 +247,13 @@ const UserPanel: React.FC = () => {
                             {client.description}
                           </Typography>
                         </Box>
-                        <Box sx={{ mt: 2 }}>
+                        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
                           <Button
                             variant="text"
                             size="small"
                             onClick={() => navigate(`/bots/IaPanel/${client.name}/${client.id}`)}
                             sx={{
-                              color: "text.secondary",
-                              justifyContent: "flex-start",
-                              pl: 0,
+                              color: theme.palette.primary.main,
                               "&:hover": {
                                 backgroundColor: "transparent",
                                 color: "white",
@@ -263,29 +261,10 @@ const UserPanel: React.FC = () => {
                             }}
                             endIcon={<ArrowForwardIcon />}
                           >
-                            Administrar Equipo
+                            Ver Agentes de IA
                           </Button>
                         </Box>
                       </CardContent>
-                      <Divider />
-                      <CardActions sx={{ pl: 2, pr: 2, pt: 1, pb: 1, justifyContent: 'space-between' }}>
-                        <Button
-                          size="small"
-                          onClick={() => navigate(`/builder/form/${client.name}/${client.id}`)}
-                        >
-                          Editar
-                        </Button>
-                        <IconButton
-                          size="small"
-                          color="error"
-                          onClick={() => {
-                            setAllowerState(true);
-                            setClientToDelete(client.id);
-                          }}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </CardActions>
                     </Card>
                   </Grid>
                 ))}
