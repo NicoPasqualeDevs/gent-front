@@ -1,6 +1,5 @@
 import React from "react";
-import { Outlet, Route, Routes } from "react-router-dom";
-import AppLayout from "@/components/Layout/AppLayout";
+import { Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
 import DataEntryComponent from "@/pages/Builder/DataEntry";
 import IaPanel from "@/pages/Builder/IaPanel";
@@ -11,20 +10,11 @@ import Tools from "@/pages/Builder/Tools";
 import ToolsForm from "@/pages/Builder/ToolsForm";
 import ToolsRelationship from "@/pages/Builder/ToolsRelationship";
 
-
-
-const Layout = (
-  <AppLayout>
-    <Outlet />
-  </AppLayout>
-);
-
-const BotsDetailsModule: React.FC = () => {
+const AgentsDetailsModule: React.FC = () => {
   return (
     <AuthChecker>
       <Routes>
-        <Route path="/" element={Layout}>
-          <Route path="iaPanel/:clientName/:clientId" element={<IaPanel />} />
+          <Route index path=":clientName/:clientId" element={<IaPanel />} />
           <Route
             path="contextEntry/:clientId?/:botId?"
             element={<ContextEntry />}
@@ -40,11 +30,11 @@ const BotsDetailsModule: React.FC = () => {
             path="tools-form/:toolName?/:toolId?"
             element={<ToolsForm />}
           />
-          <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship/>}/>
-        </Route>
+          <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship />} />
+
       </Routes>
     </AuthChecker>
   );
 };
 
-export default BotsDetailsModule;
+export default AgentsDetailsModule;

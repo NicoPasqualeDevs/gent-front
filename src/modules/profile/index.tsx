@@ -1,21 +1,14 @@
 import React from "react";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
-import ProfileView from "@/pages/Profile/View";
-import ProfileEdit from "@/pages/Profile/Edit";
-import AppLayout from "@/components/Layout/AppLayout";
-
-const Layout = (
-  <AppLayout>
-    <Outlet />
-  </AppLayout>
-);
+import ProfileEdit from "../../pages/Home/Main/User/Profile/Edit";
+import ProfileView from "../../pages/Home/Main/User/Profile/View";
 
 const ProfileModule: React.FC = () => {
   return (
     <AuthChecker>
       <Routes>
-        <Route path="/" element={Layout}>
+        <Route path="/">
           <Route index element={<ProfileView />} />
           <Route path="edit" element={<ProfileEdit />} />
         </Route>

@@ -1,15 +1,26 @@
 import { lazy } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Outlet, Routes, Route } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines"; // Importamos el componente
+import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
+import UserLayout from "./components/Layouts/User/UserLayout";
 /* import AuthChecker from "./components/AuthChecker"; */
 
 const HomeModule = lazy(() => import("./modules/home"));
 const AuthModule = lazy(() => import("./modules/auth"));
-const BotsDetailsModule = lazy(() => import("./modules/bots"));
 const BuilderModule = lazy(() => import("./modules/builder"));
-const ChatViewModule = lazy(() => import("./modules/chatView"));
-const NotFoundModule = lazy(() => import("./modules/notFound")); // Asumiendo que existe
-const ProfileModule = lazy(() => import("./modules/profile")); // Nuevo módulo
+const NotFoundModule = lazy(() => import("./modules/notFound"));
+
+const BuilderL = (
+  <BuilderLayout>
+    <Outlet />
+  </BuilderLayout>
+);
+
+const UserL = (
+  <UserLayout>
+    <Outlet />
+  </UserLayout>
+);
 
 function AppRoutes() {  // Cambiado de App a AppRoutes
   return (
@@ -17,13 +28,20 @@ function AppRoutes() {  // Cambiado de App a AppRoutes
     <>
       <BackgroundLines /> {/* Agregamos el componente BackgroundLines */}
       <Routes>
-        <Route path="/" element={<HomeModule />} />
-        <Route path="/bots/*" element={<BotsDetailsModule />} />
-        <Route path="/builder/*" element={<BuilderModule />} />
-        <Route path="/auth/*" element={<AuthModule />} />
-        <Route path="/bots/chat/:botId" element={<ChatViewModule />} />
-        <Route path="/profile/*" element={<ProfileModule />} /> // Nueva ruta
-        <Route path="*" element={<NotFoundModule />} /> // Ruta para manejar 404
+        <Route path="/">
+          {/* USER AUTH ROUTES */}
+          <Route index path="/auth/*" element={<AuthModule />} />
+          {/* BUILDER ROUTES */}
+          <Route path="/builder/*" element={BuilderL}>
+            <Route index element={<BuilderModule />} />
+          </Route>
+          {/* USERS PANEL ROUTES */}
+          <Route path="/" element={<HomeModule />} />
+          {/* NOT FOUND ROUTE */}
+          <Route path="*" element={<NotFoundModule />} /> 
+        </Route>
+      </Routes>
+      <Routes>
       </Routes>
     </>
     /*     </AuthChecker> */

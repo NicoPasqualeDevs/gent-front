@@ -110,11 +110,13 @@ const Header: React.FC = () => {
             <Typography
               variant="body1"
               color={theme.palette.primary.contrastText}
+              onClick={handleProfileClick}
               sx={{
                 display: 'flex',
                 fontWeight: '300',
                 alignItems: 'center',
                 height: '100%',
+                cursor: 'pointer'
               }}
             >
               {auth.user.email ? auth.user.email : ""}

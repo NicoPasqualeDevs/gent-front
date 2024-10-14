@@ -305,7 +305,7 @@ const Tools: React.FC = () => {
                 marginBottom: "20px",
               }}
               onClick={() =>
-                navigate(`/bots/tools-relationship/${botName}/${botId}`)
+                navigate(`/builder/agents/tools-relationship/${botName}/${botId}`)
               }
             >
               Asignar Tools

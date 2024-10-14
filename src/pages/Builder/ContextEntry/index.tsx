@@ -144,7 +144,7 @@ const ContextEntry: React.FC = () => {
         .then((response) => {
           SuccessToast("Bot creado satisfactoriamente");
           setTimeout(() => {
-            navigate(`/bots/contextEntry/${clientId}/${response.id}`);
+            navigate(`/builder/agents/contextEntry/${clientId}/${response.id}`);
           }, 1000);
         })
         .catch((error) => {

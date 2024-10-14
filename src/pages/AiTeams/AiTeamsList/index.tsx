@@ -264,7 +264,7 @@ const AiTeamsList: React.FC = () => {
                           <Button
                             variant="text"
                             size="small"
-                            onClick={() => navigate(`/bots/IaPanel/${client.name}/${client.id}`)}
+                            onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
                             sx={{
                               color: "text.secondary",
                               justifyContent: "flex-start",

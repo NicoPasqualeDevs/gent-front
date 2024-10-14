@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Typography, Paper, Button, Box } from "@mui/material";
-import { CenterComponentContainer } from "@/utils/ContainerUtil";
 import theme from "@/styles/theme";
 
 interface WellcomeContainerProps {

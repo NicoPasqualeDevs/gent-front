@@ -72,7 +72,7 @@ const ToolsForm: React.FC = () => {
     postTool(formData)
       .then(() => {
         SuccessToast("Tool creada satisfactoriamente");
-        navigate(`/bots/tools`);
+        navigate(`/builder/agents/tools`);
       })
       .catch((error) => {
         if (error instanceof Error) {

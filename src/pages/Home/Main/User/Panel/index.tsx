@@ -1,15 +1,12 @@
 import { useEffect, useCallback, useState } from "react";
 import { useAppContext } from "@/context/app";
-import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
   Card,
-  CardActions,
   CardContent,
-  Divider,
   Grid,
   MenuItem,
   Pagination,
@@ -19,7 +16,6 @@ import {
   Box,
   Paper,
   Container,
-  IconButton
 } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import useCustomersApi from "@/hooks/useCustomers";
@@ -251,7 +247,7 @@ const UserPanel: React.FC = () => {
                           <Button
                             variant="text"
                             size="small"
-                            onClick={() => navigate(`/bots/IaPanel/${client.name}/${client.id}`)}
+                            onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
                             sx={{
                               color: theme.palette.primary.main,
                               "&:hover": {

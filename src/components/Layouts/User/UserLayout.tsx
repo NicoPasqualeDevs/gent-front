@@ -2,7 +2,7 @@ import React from "react";
 import LeftMenu from "./LeftMenu";
 import Header from "./Header";
 import { Grid, Stack } from "@mui/material";
-import { MainContent } from "../StyledComponents/Layout";
+import { MainContent } from "../../StyledComponents/Layout";
 
 interface ComponentProps {
   children: React.ReactNode;

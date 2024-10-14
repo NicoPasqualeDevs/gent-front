@@ -6,7 +6,7 @@ import { useNavigate, } from "react-router-dom";
 
 const HomeComponent: React.FC = () => {
   const { auth } = useContext(AppContext);
-  const [isWellcome, setIsWellcome] = useState<boolean>(true);
+  const [isWellcome, setIsWellcome] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {

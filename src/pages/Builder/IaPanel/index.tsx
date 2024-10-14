@@ -144,7 +144,7 @@ const IaPanel: React.FC = () => {
                 <span>
                   <Button
                     size="small"
-                    onClick={() => action === 'Probar' ? navigate(`/bots/chat/${bot.id}`) : null}
+                    onClick={() => action === 'Probar' ? navigate(`/builder/agents/chat/${bot.id}`) : null}
                     sx={{ p: 0, minWidth: 'auto' }}
                     disabled={action === 'Widget' || action === 'API'}
                   >
@@ -228,7 +228,7 @@ const IaPanel: React.FC = () => {
             }}>
               <Button
                 variant="contained"
-                onClick={() => navigate(`/bots/contextEntry/${clientId}`)}
+                onClick={() => navigate(`/builder/agents/contextEntry/${clientId}`)}
                 fullWidth
                 sx={{
                   width: '100%',

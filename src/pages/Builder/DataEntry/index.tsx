@@ -340,7 +340,7 @@ const DataEntryComponent: React.FC = () => {
                     opacity: 0.9,
                   },
                 }}
-                onClick={() => navigate(`/bots/chat/${botId}`)}
+                onClick={() => navigate(`/builder/agents/chat/${botId}`)}
               >
                 Probar Bot
               </Button>
