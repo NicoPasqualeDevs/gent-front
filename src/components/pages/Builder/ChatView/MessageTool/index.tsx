@@ -83,7 +83,7 @@ const MessageTool: React.FC<MessageToolsProps> = ({
       const userMessage: ChatMessage = {
         content: message,
         timestamp: new Date().toString(),
-        role: "user",
+        role: "client",
       };
       updateBotWriting(true);
       updateUserMessages(userMessage);

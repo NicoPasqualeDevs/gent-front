@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Grid, Typography, Paper, Button, Box } from "@mui/material";
 import { CenterComponentContainer } from "@/utils/ContainerUtil";
 import theme from "@/styles/theme";
-import { useNavigate } from "react-router-dom";
 
 interface WellcomeContainerProps {
   onStartClick: () => void;
@@ -17,7 +16,6 @@ const WellcomeContainer: React.FC<WellcomeContainerProps> = ({ onStartClick }) =
   };
 
   const [isGlowing, setIsGlowing] = useState<boolean>(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     setUserName(getRandomName());

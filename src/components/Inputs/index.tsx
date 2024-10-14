@@ -10,7 +10,6 @@ import {
   TextField,
   Typography,
   Select,
-  SelectProps,
 } from "@mui/material";
 import { useState } from "react";
 import { ErrorToast } from "../Toast";
