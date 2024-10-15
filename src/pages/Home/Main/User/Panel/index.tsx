@@ -12,12 +12,10 @@ import { PageCircularProgress } from "@/components/CircularProgress";
 import useCustomersApi from "@/hooks/useCustomers";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
-// Importa todas las imágenes necesarias
 import agent from '@/assets/agents/1.png';
 import agronomia from '@/assets/categories/agronomia.png';
 import musica from '@/assets/categories/musica.png';
@@ -25,26 +23,11 @@ import comercio from '@/assets/categories/comercio.png';
 import salud from '@/assets/categories/salud.png';
 import costureria from '@/assets/categories/costureria.png';
 import filosofia from '@/assets/categories/filosofia.png';
-/*import estudio from '@/assets/categories/estudio.png';
-import derechos from '@/assets/categories/derechos.png';
-import turismo from '@/assets/categories/turismo.png';
-import mecanicos from '@/assets/categories/mecanicos.png';
-import gastronomia from '@/assets/categories/gastronomia.png'; */
-
 import theme from "@/styles/theme";
-
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import { styled } from "@mui/material/styles";
-import { alpha } from '@mui/material/styles'; // Asegúrate de importar alpha
+import { alpha } from '@mui/material/styles';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import HomeIcon from '@mui/icons-material/Home';
-import CategoryIcon from '@mui/icons-material/Category';
-import StarIcon from '@mui/icons-material/Star';
 import { CSSObject } from '@mui/material/styles';
 
 // Componente estilizado actualizado para las tarjetas
@@ -151,20 +134,10 @@ const UserPanel: React.FC = () => {
   const [pageContent, setPageContent] = useState<AiTeamsDetails[]>([]);
   const [paginationData, setPaginationData] = useState<Metadata>();
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [contentPerPage, setContentPerPage] = useState<string>("5");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-
-  const handlePagination = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    event.preventDefault();
-    setClientPage(value);
-    setLoaded(false);
-    getAiTeamsData(`?page_size=${contentPerPage}&page=${value}`);
-  };
+  const contentPerPage : string = "5"
 
   const getAiTeamsData = useCallback((filterParams: string) => {
     setIsLoading(true);
@@ -281,42 +254,7 @@ const UserPanel: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
-      {/* Sección de menú y navegación */}
-      <Drawer
-        variant="permanent"
-        sx={{
-          width: 240,
-          flexShrink: 0,
-          '& .MuiDrawer-paper': {
-            width: 240,
-            boxSizing: 'border-box',
-            backgroundColor: theme.palette.background.paper,
-          },
-        }}
-      >
-        <List>
-          <ListItem button>
-            <ListItemIcon>
-              <HomeIcon />
-            </ListItemIcon>
-            <ListItemText primary="Inicio" />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <CategoryIcon />
-            </ListItemIcon>
-            <ListItemText primary="Categorías" />
-          </ListItem>
-          <ListItem button>
-            <ListItemIcon>
-              <StarIcon />
-            </ListItemIcon>
-            <ListItemText primary="Favoritos" />
-          </ListItem>
-        </List>
-      </Drawer>
-
+    <Box sx={{ display: 'flex', height: 'calc(100vh)'}}>
       {/* Sección central con tarjetas */}
       <Box sx={{ 
         flexGrow: 1, 
@@ -324,7 +262,9 @@ const UserPanel: React.FC = () => {
         p: 3, 
         display: 'flex', 
         flexDirection: 'column',
-        ...scrollbarStyles, // Aplica los estilos del scrollbar aquí
+        ...scrollbarStyles,
+        marginLeft: '240px', // Ancho del LeftMenu
+        marginRight: '120px', // Ancho del RightMenu
       }}>
         <Container 
           maxWidth={false} 
@@ -429,7 +369,6 @@ const UserPanel: React.FC = () => {
                       }}
                       onChange={(e) => handleSearch(e.target.value)}
                       fullWidth
-                      inputRef={searchInputRef}
                     />
                     <SearchIconWrapper>
                       <SearchIcon />
@@ -580,30 +519,6 @@ const UserPanel: React.FC = () => {
             />
           )}
         </Container>
-      </Box>
-
-      {/* Sección de sugerencias */}
-      <Box
-        sx={{
-          width: 120,
-          flexShrink: 0,
-          backgroundColor: theme.palette.background.paper,
-          p: 2,
-          overflowY: 'auto',
-        }}
-      >
-        <Typography variant="h6" gutterBottom>
-          Sugerencias
-        </Typography>
-        {/* Aquí puedes agregar tus sugerencias */}
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="subtitle2">Agente IA</Typography>
-          <Typography variant="body2">Prueba nuestro nuevo agente de marketing</Typography>
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <Typography variant="subtitle2">Categoría</Typography>
-          <Typography variant="body2">Explora la categoría de Tecnología</Typography>
-        </Box>
       </Box>
     </Box>
   );

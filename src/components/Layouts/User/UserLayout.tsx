@@ -1,8 +1,6 @@
 import React from "react";
 import LeftMenu from "./LeftMenu";
-import Header from "./Header";
-import { Grid, Stack } from "@mui/material";
-import { MainContent } from "../../StyledComponents/Layout";
+import RightMenu from "./RightMenu";
 
 interface ComponentProps {
   children: React.ReactNode;
@@ -11,10 +9,10 @@ interface ComponentProps {
 const UserLayout: React.FC<ComponentProps> = ({ children }) => {
   return (
     <>
-   {/*    <Header /> */}
-
-            {children}
-
+      {/*    <Header /> */}
+      <LeftMenu />
+      <RightMenu />
+      {children}
     </>
   );
 };
