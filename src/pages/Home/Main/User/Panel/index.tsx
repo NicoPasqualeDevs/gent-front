@@ -1,17 +1,8 @@
 import { useEffect, useCallback, useState, useRef } from "react";
 import { useAppContext } from "@/context/app";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import {
-  Button,
-  Card,
-  CardContent,
-  Grid,
-  MenuItem,
-  Pagination,
-  Select,
-  SelectChangeEvent,
   Typography,
   Box,
   Paper,
@@ -26,10 +17,35 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
+// Importa todas las imágenes necesarias
+import agent from '@/assets/agents/1.png';
+import agronomia from '@/assets/categories/agronomia.png';
+import musica from '@/assets/categories/musica.png';
+import comercio from '@/assets/categories/comercio.png';
+import salud from '@/assets/categories/salud.png';
+import costureria from '@/assets/categories/costureria.png';
+import filosofia from '@/assets/categories/filosofia.png';
+/*import estudio from '@/assets/categories/estudio.png';
+import derechos from '@/assets/categories/derechos.png';
+import turismo from '@/assets/categories/turismo.png';
+import mecanicos from '@/assets/categories/mecanicos.png';
+import gastronomia from '@/assets/categories/gastronomia.png'; */
+
 import theme from "@/styles/theme";
 
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import { styled } from "@mui/material/styles";
+import { alpha } from '@mui/material/styles'; // Asegúrate de importar alpha
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import HomeIcon from '@mui/icons-material/Home';
+import CategoryIcon from '@mui/icons-material/Category';
+import StarIcon from '@mui/icons-material/Star';
+import { CSSObject } from '@mui/material/styles';
 
 // Componente estilizado actualizado para las tarjetas
 const AiTeamCard = styled(Box)(({ theme }) => ({
@@ -38,7 +54,7 @@ const AiTeamCard = styled(Box)(({ theme }) => ({
   flexBasis: '280px',
   maxWidth: 'calc(20% - 24px)', // 5 tarjetas por fila como máximo
   margin: theme.spacing(1.5),
-  aspectRatio: '3 / 4', // Cambiado para hacer las tarjetas más altas
+  aspectRatio: '3 / 4',
   overflow: 'hidden',
   borderRadius: theme.shape.borderRadius,
   transition: 'transform 0.3s ease-in-out',
@@ -58,18 +74,24 @@ const AiTeamCardContent = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-end',
-  background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%)',
+  background: `linear-gradient(to bottom, 
+    rgba(0,0,0,0) 0%, 
+    rgba(0,0,0,0) 60%, 
+    rgba(0,0,0,0.4) 80%, 
+    ${theme.palette.background.default} 100%)`,
   color: theme.palette.common.white,
   padding: theme.spacing(2),
 }));
 
 const AiTeamCardImage = styled('img')({
   position: 'absolute',
-  top: 0,
+  top: '-45%',
   left: 0,
   width: '100%',
-  height: '100%',
+  height: '140%',
   objectFit: 'cover',
+  maskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 85%)',
+  WebkitMaskImage: 'linear-gradient(to bottom, black 0%, black 60%, transparent 85%)',
 });
 
 const CardsContainer = styled(Box)({
@@ -95,6 +117,24 @@ const PaginationArrow = styled(Box)(({ theme }) => ({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
   },
 }));
+
+// Añade estos estilos personalizados para el scrollbar
+const scrollbarStyles: CSSObject = {
+  '&::-webkit-scrollbar': {
+    width: '8px',
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '10px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: 'rgba(255, 255, 255, 0.3)',
+    borderRadius: '10px',
+    '&:hover': {
+      background: 'rgba(255, 255, 255, 0.5)',
+    },
+  },
+};
 
 const UserPanel: React.FC = () => {
   const navigate = useNavigate(); const {
@@ -220,122 +260,352 @@ const UserPanel: React.FC = () => {
     }
   }, []);
 
+  const getImageForCategory = (category: string): string => {
+    switch (category.toLowerCase()) {
+      case 'agronomía':
+        return agronomia;
+      case 'música': return musica;
+      case 'comercio': return comercio;
+      case 'salud': return salud;
+      case 'costurería - blanquería': return costureria;
+      case 'filosofia': return filosofia;
+      case 'estudio':
+      case 'derechos':
+      case 'turismo':
+      case 'mecánicos':
+      case 'gastronomía':
+        return comercio;
+      default:
+        return comercio; // Imagen por defecto
+    }
+  };
+
   return (
-    <Container maxWidth="xl" disableGutters sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, position: 'relative' }}>
-        {/* Buscador */}
-        <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
-          <Box sx={{
+    <Box sx={{ display: 'flex', height: '100vh' }}>
+      {/* Sección de menú y navegación */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          width: 240,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: 240,
+            boxSizing: 'border-box',
+            backgroundColor: theme.palette.background.paper,
+          },
+        }}
+      >
+        <List>
+          <ListItem button>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inicio" />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>
+              <CategoryIcon />
+            </ListItemIcon>
+            <ListItemText primary="Categorías" />
+          </ListItem>
+          <ListItem button>
+            <ListItemIcon>
+              <StarIcon />
+            </ListItemIcon>
+            <ListItemText primary="Favoritos" />
+          </ListItem>
+        </List>
+      </Drawer>
+
+      {/* Sección central con tarjetas */}
+      <Box sx={{ 
+        flexGrow: 1, 
+        overflow: 'auto', 
+        p: 3, 
+        display: 'flex', 
+        flexDirection: 'column',
+        ...scrollbarStyles, // Aplica los estilos del scrollbar aquí
+      }}>
+        <Container 
+          maxWidth={false} 
+          disableGutters 
+          sx={{ 
+            py: 2, 
+            px: { xs: 1, sm: 2, md: 3 },
+            height: '100%',
             display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
+            flexDirection: 'column',
+            flexGrow: 1,
+          }}
+        >
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: 2, 
+            position: 'relative',
+            flexGrow: 1,
           }}>
-            <Box sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: { xs: 'center', sm: 'flex-end' }
-            }}>
-              <Search sx={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: { xs: '100%', sm: '300px' },
-              }}>
-                <StyledInputBase
-                  placeholder="Buscar Equipo IA"
-                  value={searchQuery}
-                  inputProps={{
-                    "aria-label": "search",
-                    style: { padding: '8px 8px 8px 16px' }
-                  }}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  fullWidth
-                  inputRef={searchInputRef}
-                />
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-              </Search>
-            </Box>
-          </Box>
-        </Paper>
-
-        {/* Sección de Equipos de IA */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h4" sx={{ color: 'common.white' }}>
-            Categorias
-          </Typography>
-        </Box>
-
-        {/* Grid de tarjetas de Equipos IA */}
-        {isLoading || isSearching ? (
-          <PageCircularProgress />
-        ) : (
-          pageContent.length > 0 ? (
-            <Box sx={{ position: 'relative' }}>
-              <CardsContainer>
-                {pageContent.map((client, index) => (
-                  <AiTeamCard 
-                    key={`client-${index}`}
-                    onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
-                  >
-                    <AiTeamCardImage 
-                      src={`https://source.unsplash.com/random/300x400?ai,robot&sig=${client.id}`} 
-                      alt={client.name}
-                    />
-                    <AiTeamCardContent>
-                      <Typography variant="h6" component="div" gutterBottom noWrap>
-                        {client.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: '-webkit-box',
-                          WebkitLineClamp: 3,
-                          WebkitBoxOrient: 'vertical',
-                        }}
-                      >
-                        {client.description}
-                      </Typography>
-                    </AiTeamCardContent>
-                  </AiTeamCard>
-                ))}
-              </CardsContainer>
-              
-              {/* Flechas de paginación */}
-              {clientPage > 1 && (
-                <PaginationArrow sx={{ left: 0 }} onClick={handlePrevPage}>
-                  <ArrowBackIosNewIcon />
-                </PaginationArrow>
-              )}
-              {clientPage < (paginationData?.total_pages || 0) && (
-                <PaginationArrow sx={{ right: 0 }} onClick={handleNextPage}>
-                  <ArrowForwardIosIcon />
-                </PaginationArrow>
-              )}
-            </Box>
-          ) : (
-            <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
-              <Typography variant="subtitle1" sx={{ color: 'common.white' }}>
-                {searchQuery && searchQuery.trim() !== ""
-                  ? "No se encontraron Equipos IA con ese nombre"
-                  : "No hay Equipos IA para mostrar"}
+            {/* Sección actualizada con título más pequeño y recomendación */}
+            <Paper
+              elevation={3}
+              sx={{
+                backgroundColor: alpha(theme.palette.primary.main, 0.9),
+                borderRadius: '16px',
+                padding: '24px',
+                mb: 4,
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignItems: 'center',
+                gap: 2,
+              }}
+            >
+              <Typography
+                variant="h4" // Cambiado de h3 a h4
+                sx={{
+                  color: 'common.white',
+                  width: { xs: '100%', md: '66%' },
+                  textAlign: { xs: 'center', md: 'left' },
+                  fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }, // Tamaños de fuente responsivos
+                  fontWeight: 'bold', // Añadido para mantener la importancia visual
+                }}
+              >
+                Busque sus agentes de IA
               </Typography>
+
+              <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                width: { xs: '100%', md: '33%' },
+                justifyContent: { xs: 'center', md: 'flex-end' },
+              }}>
+                <Box sx={{
+                  position: 'relative',
+                  width: 60,
+                  height: 60,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                  <CardGiftcardIcon sx={{ color: 'common.white', fontSize: 40, position: 'relative', zIndex: 1 }} />
+                </Box>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    color: 'common.white',
+                    textAlign: { xs: 'center', md: 'right' },
+                  }}
+                >
+                  Recomendación: Pruebe nuestro nuevo agente de IA para marketing
+                </Typography>
+              </Box>
             </Paper>
-          )
-        )}
+
+            {/* Buscador */}
+            <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
+              <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 2,
+              }}>
+                <Box sx={{
+                  width: '100%',
+                  display: 'flex',
+                  justifyContent: { xs: 'center', sm: 'flex-end' }
+                }}>
+                  <Search sx={{
+                    position: 'relative',
+                    width: '100%',
+                    maxWidth: { xs: '100%', sm: '300px' },
+                  }}>
+                    <StyledInputBase
+                      placeholder="Buscar Equipo IA"
+                      value={searchQuery}
+                      inputProps={{
+                        "aria-label": "search",
+                        style: { padding: '8px 8px 8px 16px' }
+                      }}
+                      onChange={(e) => handleSearch(e.target.value)}
+                      fullWidth
+                      inputRef={searchInputRef}
+                    />
+                    <SearchIconWrapper>
+                      <SearchIcon />
+                    </SearchIconWrapper>
+                  </Search>
+                </Box>
+              </Box>
+            </Paper>
+
+            {/* Sección de Equipos de IA */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h4" sx={{ color: 'common.white' }}>
+                Categorias
+              </Typography>
+            </Box>
+
+            {/* Grid de tarjetas de Equipos IA */}
+            {isLoading || isSearching ? (
+              <PageCircularProgress />
+            ) : (
+              pageContent.length > 0 ? (
+                <Box sx={{ position: 'relative' }}>
+                  <CardsContainer>
+                    {pageContent.map((client, index) => (
+                      <AiTeamCard
+                        key={`client-${index}`}
+                        onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
+                      >
+                        <AiTeamCardImage
+                          src={getImageForCategory(client.name)}
+                          alt={client.name}
+                        />
+                        <AiTeamCardContent>
+                          <Typography variant="h6" component="div" gutterBottom noWrap>
+                            {client.name}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                            }}
+                          >
+                            {client.description}
+                          </Typography>
+                        </AiTeamCardContent>
+                      </AiTeamCard>
+                    ))}
+                  </CardsContainer>
+
+                  {/* Flechas de paginación */}
+                  {clientPage > 1 && (
+                    <PaginationArrow sx={{ left: 0 }} onClick={handlePrevPage}>
+                      <ArrowBackIosNewIcon />
+                    </PaginationArrow>
+                  )}
+                  {clientPage < (paginationData?.total_pages || 0) && (
+                    <PaginationArrow sx={{ right: 0 }} onClick={handleNextPage}>
+                      <ArrowForwardIosIcon />
+                    </PaginationArrow>
+                  )}
+                </Box>
+              ) : (
+                <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                  <Typography variant="subtitle1" sx={{ color: 'common.white' }}>
+                    {searchQuery && searchQuery.trim() !== ""
+                      ? "No se encontraron Equipos IA con ese nombre"
+                      : "No hay Equipos IA para mostrar"}
+                  </Typography>
+                </Paper>
+              )
+            )}
+
+            {/* Sección de Equipos de IA */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h4" sx={{ color: 'common.white' }}>
+                Agentes populares
+              </Typography>
+            </Box>
+            {/* Grid de tarjetas de Equipos IA */}
+            {isLoading || isSearching ? (
+              <PageCircularProgress />
+            ) : (
+              pageContent.length > 0 ? (
+                <Box sx={{ position: 'relative' }}>
+                  <CardsContainer>
+                    {pageContent.map((client, index) => (
+                      <AiTeamCard
+                        key={`client-${index}`}
+                        onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
+                      >
+                        <AiTeamCardImage
+                          src={agent}
+                          alt={client.name}
+                        />
+                        <AiTeamCardContent>
+                          <Typography variant="h6" component="div" gutterBottom noWrap>
+                            {client.name}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                            }}
+                          >
+                            {client.description}
+                          </Typography>
+                        </AiTeamCardContent>
+                      </AiTeamCard>
+                    ))}
+                  </CardsContainer>
+
+                  {/* Flechas de paginación */}
+                  {clientPage > 1 && (
+                    <PaginationArrow sx={{ left: 0 }} onClick={handlePrevPage}>
+                      <ArrowBackIosNewIcon />
+                    </PaginationArrow>
+                  )}
+                  {clientPage < (paginationData?.total_pages || 0) && (
+                    <PaginationArrow sx={{ right: 0 }} onClick={handleNextPage}>
+                      <ArrowForwardIosIcon />
+                    </PaginationArrow>
+                  )}
+                </Box>
+              ) : (
+                <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                  <Typography variant="subtitle1" sx={{ color: 'common.white' }}>
+                    {searchQuery && searchQuery.trim() !== ""
+                      ? "No se encontraron Equipos IA con ese nombre"
+                      : "No hay Equipos IA para mostrar"}
+                  </Typography>
+                </Paper>
+              )
+            )}
+          </Box>
+          {allowerState && (
+            <ActionAllower
+              allowerStateCleaner={setAllowerState}
+              actionToDo={deleteAction}
+              actionParams={clientToDelete}
+            />
+          )}
+        </Container>
       </Box>
-      {allowerState && (
-        <ActionAllower
-          allowerStateCleaner={setAllowerState}
-          actionToDo={deleteAction}
-          actionParams={clientToDelete}
-        />
-      )}
-    </Container>
+
+      {/* Sección de sugerencias */}
+      <Box
+        sx={{
+          width: 120,
+          flexShrink: 0,
+          backgroundColor: theme.palette.background.paper,
+          p: 2,
+          overflowY: 'auto',
+        }}
+      >
+        <Typography variant="h6" gutterBottom>
+          Sugerencias
+        </Typography>
+        {/* Aquí puedes agregar tus sugerencias */}
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="subtitle2">Agente IA</Typography>
+          <Typography variant="body2">Prueba nuestro nuevo agente de marketing</Typography>
+        </Box>
+        <Box sx={{ mb: 2 }}>
+          <Typography variant="subtitle2">Categoría</Typography>
+          <Typography variant="body2">Explora la categoría de Tecnología</Typography>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
