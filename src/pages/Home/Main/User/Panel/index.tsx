@@ -29,6 +29,8 @@ import { styled } from "@mui/material/styles";
 import { alpha } from '@mui/material/styles';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import { CSSObject } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // Componente estilizado actualizado para las tarjetas
 const AiTeamCard = styled(Box)(({ theme }) => ({
@@ -138,6 +140,8 @@ const UserPanel: React.FC = () => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const contentPerPage : string = "5"
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   const getAiTeamsData = useCallback((filterParams: string) => {
     setIsLoading(true);
@@ -254,20 +258,20 @@ const UserPanel: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', height: 'calc(100vh)'}}>
-      {/* Sección central con tarjetas */}
+    <Box sx={{ 
+      display: 'flex', 
+      flexDirection: 'column', 
+      minHeight: '100vh',
+      pb: { xs: '56px', lg: 0 }, // Padding en la parte inferior para dispositivos móviles
+    }}>
       <Box sx={{ 
         flexGrow: 1, 
         overflow: 'auto', 
-        p: 3, 
-        display: 'flex', 
-        flexDirection: 'column',
+        p: { xs: 2, sm: 3 }, 
         ...scrollbarStyles,
-        marginLeft: '240px', // Ancho del LeftMenu
-        marginRight: '120px', // Ancho del RightMenu
       }}>
         <Container 
-          maxWidth={false} 
+          maxWidth={false} // Cambiado a false para que ocupe todo el ancho disponible
           disableGutters 
           sx={{ 
             py: 2, 
@@ -290,9 +294,9 @@ const UserPanel: React.FC = () => {
               elevation={3}
               sx={{
                 backgroundColor: alpha(theme.palette.primary.main, 0.9),
-                borderRadius: '16px',
-                padding: '24px',
-                mb: 4,
+                borderRadius: '64px', // Aumentado de '32px' a '64px'
+                padding: '16px',
+                mb: 3,
                 display: 'flex',
                 flexDirection: { xs: 'column', md: 'row' },
                 alignItems: 'center',
@@ -300,13 +304,13 @@ const UserPanel: React.FC = () => {
               }}
             >
               <Typography
-                variant="h4" // Cambiado de h3 a h4
+                variant="h5"
                 sx={{
                   color: 'common.white',
                   width: { xs: '100%', md: '66%' },
                   textAlign: { xs: 'center', md: 'left' },
-                  fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }, // Tamaños de fuente responsivos
-                  fontWeight: 'bold', // Añadido para mantener la importancia visual
+                  fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' },
+                  fontWeight: 'bold',
                 }}
               >
                 Busque sus agentes de IA
@@ -321,16 +325,16 @@ const UserPanel: React.FC = () => {
               }}>
                 <Box sx={{
                   position: 'relative',
-                  width: 60,
-                  height: 60,
+                  width: 48,
+                  height: 48,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                 }}>
-                  <CardGiftcardIcon sx={{ color: 'common.white', fontSize: 40, position: 'relative', zIndex: 1 }} />
+                  <CardGiftcardIcon sx={{ color: 'common.white', fontSize: 32, position: 'relative', zIndex: 1 }} />
                 </Box>
                 <Typography
-                  variant="subtitle1"
+                  variant="body2"
                   sx={{
                     color: 'common.white',
                     textAlign: { xs: 'center', md: 'right' },

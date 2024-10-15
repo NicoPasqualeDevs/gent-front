@@ -11,9 +11,10 @@ const RightMenu: React.FC = () => {
         backgroundColor: theme.palette.background.paper,
         p: 2,
         overflowY: 'auto',
-        height: 'calc(100%)', // Ajustamos la altura para que coincida con UserPanel
+        height: '100%',
         position: 'fixed',
         right: 0,
+        display: { xs: 'none', lg: 'block' }, // Ocultar en pantallas menores a lg
       }}
     >
       <Typography variant="h6" gutterBottom>
