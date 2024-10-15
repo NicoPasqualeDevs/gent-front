@@ -26,7 +26,38 @@ import { Metadata } from "@/types/Api";
 import theme from "@/styles/theme";
 
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
+import { styled } from "@mui/material/styles";
 
+// Nuevo componente estilizado para las tarjetas
+const AiTeamCard = styled(Card)(({ theme }) => ({
+  position: 'relative',
+  height: 0,
+  paddingTop: '150%', // Aspecto 2:3
+  overflow: 'hidden',
+  transition: 'transform 0.3s ease-in-out',
+  '&:hover': {
+    transform: 'scale(1.05)',
+    zIndex: 1,
+    '& .MuiCardContent-root': {
+      opacity: 1,
+    },
+  },
+}));
+
+const AiTeamCardContent = styled(CardContent)(({ theme }) => ({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-end',
+  background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%)',
+  opacity: 0,
+  transition: 'opacity 0.3s ease-in-out',
+  color: theme.palette.common.white,
+}));
 
 const UserPanel: React.FC = () => {
   const navigate = useNavigate(); const {
@@ -127,11 +158,12 @@ const UserPanel: React.FC = () => {
   }, []);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
+    <Container maxWidth={false} sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
       {isLoading ? (
         <PageCircularProgress />
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* Buscador */}
           <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
             <Box sx={{
               display: 'flex',
@@ -168,107 +200,43 @@ const UserPanel: React.FC = () => {
             </Box>
           </Paper>
 
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Box sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 2,
-            }}>
-              <Typography variant="h5" sx={{ mr: 2 }}>
-                Explora Agentes de IA
-              </Typography>
-              <Select
-                value={contentPerPage}
-                onChange={(e: SelectChangeEvent) => {
-                  setContentPerPage(e.target.value);
-                  setLoaded(false);
-                  getAiTeamsData(`?page_size=${e.target.value}`);
-                }}
-                size="small"
-                sx={{ width: { xs: '100%', sm: 'auto' } }}
-              >
-                <MenuItem value="5">5 por página</MenuItem>
-                <MenuItem value="10">10 por página</MenuItem>
-                <MenuItem value="20">20 por página</MenuItem>
-              </Select>
-            </Box>
-          </Paper>
-
+          {/* Sección de Equipos de IA */}
+          {/* Título y selector de elementos por página */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h4" sx={{ color: 'common.white' }}>
+              Equipos de IA
+            </Typography>
+          </Box>
+          {/* Grid de tarjetas de Equipos IA */}
           {pageContent.length > 0 ? (
-            <Paper elevation={3} sx={{
-              p: 2,
-              border: `2px solid transparent`,
-              backgroundColor: 'background.paper',
-              minHeight: '33vh'
-            }}>
-              <Grid container spacing={3}>
-                {pageContent.map((client, index) => (
-                  <Grid item xs={12} sm={6} md={4} key={`client-${index}`}>
-                    <Card sx={{
-                      height: '100%',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      backgroundColor: 'transparent',
-                      border: `1px solid ${theme.palette.divider}`,
-                      boxShadow: 'none',
-                      width: '100%',
-                    }}>
-                      <CardContent sx={{
-                        flexGrow: 1,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        p: 3,
-                        '&:last-child': { pb: 3 },
-                      }}>
-                        <Box>
-                          <Typography sx={{color: theme.palette.secondary.light}} variant="h6" component="div" gutterBottom noWrap>
-                            {client.name}
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="text.primary"
-                            sx={{
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              display: '-webkit-box',
-                              WebkitLineClamp: 3,
-                              WebkitBoxOrient: 'vertical',
-                              minHeight: '3.6em',
-                              mb: 2,
-                            }}
-                          >
-                            {client.description}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
-                          <Button
-                            variant="text"
-                            size="small"
-                            onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
-                            sx={{
-                              color: theme.palette.primary.main,
-                              "&:hover": {
-                                backgroundColor: "transparent",
-                                color: "white",
-                              },
-                            }}
-                            endIcon={<ArrowForwardIcon />}
-                          >
-                            Ver Agentes de IA
-                          </Button>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            </Paper>
+            <Grid container spacing={2}>
+              {pageContent.map((client, index) => (
+                <Grid item xs={6} sm={4} md={3} lg={2} key={`client-${index}`}>
+                  <AiTeamCard onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}>
+                    <AiTeamCardContent>
+                      <Typography variant="h6" component="div" gutterBottom noWrap>
+                        {client.name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                        }}
+                      >
+                        {client.description}
+                      </Typography>
+                    </AiTeamCardContent>
+                  </AiTeamCard>
+                </Grid>
+              ))}
+            </Grid>
           ) : (
-            <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="subtitle1">
+            <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+              <Typography variant="subtitle1" sx={{ color: 'common.white' }}>
                 {searchQuery && searchQuery.trim() !== ""
                   ? "No se encontraron Equipos IA con ese nombre"
                   : "No hay Equipos IA para mostrar"}
@@ -276,33 +244,87 @@ const UserPanel: React.FC = () => {
             </Paper>
           )}
 
+          {/* Paginación */}
           {pageContent.length > 0 && (
-            <Paper elevation={3} sx={{ p: 2 }}>
-              <Box sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: 2,
-              }}>
-                <Pagination
-                  count={paginationData?.total_pages}
-                  page={clientPage}
-                  onChange={handlePagination}
-                  color="primary"
-                  size="small"
-                />
-                {paginationData && (
-                  <Typography variant="body2" color="text.secondary">
-                    {`${(clientPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
-                      clientPage * (paginationData?.page_size ?? 0),
-                      paginationData?.total_items ?? 0
-                    )} de ${paginationData?.total_items ?? 0} Equipos IA`}
-                  </Typography>
-                )}
-              </Box>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Pagination
+                count={paginationData?.total_pages}
+                page={clientPage}
+                onChange={handlePagination}
+                color="primary"
+                size="large"
+                sx={{
+                  '& .MuiPaginationItem-root': {
+                    color: 'common.white',
+                  },
+                }}
+              />
+            </Box>
+          )}
+
+          {/* Título y selector de elementos por página */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h4" sx={{ color: 'common.white' }}>
+              Agentes de IA
+            </Typography>
+          </Box>
+
+          {/* Grid de tarjetas de Equipos IA */}
+          {pageContent.length > 0 ? (
+            <Grid container spacing={2}>
+              {pageContent.map((client, index) => (
+                <Grid item xs={6} sm={4} md={3} lg={2} key={`client-${index}`}>
+                  <AiTeamCard onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}>
+                    <AiTeamCardContent>
+                      <Typography variant="h6" component="div" gutterBottom noWrap>
+                        {client.name}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                        }}
+                      >
+                        {client.description}
+                      </Typography>
+                    </AiTeamCardContent>
+                  </AiTeamCard>
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Paper elevation={3} sx={{ p: 3, textAlign: 'center', backgroundColor: 'rgba(0,0,0,0.5)' }}>
+              <Typography variant="subtitle1" sx={{ color: 'common.white' }}>
+                {searchQuery && searchQuery.trim() !== ""
+                  ? "No se encontraron Equipos IA con ese nombre"
+                  : "No hay Equipos IA para mostrar"}
+              </Typography>
             </Paper>
           )}
+
+          {/* Paginación */}
+          {pageContent.length > 0 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+              <Pagination
+                count={paginationData?.total_pages}
+                page={clientPage}
+                onChange={handlePagination}
+                color="primary"
+                size="large"
+                sx={{
+                  '& .MuiPaginationItem-root': {
+                    color: 'common.white',
+                  },
+                }}
+              />
+            </Box>
+          )}
+
+
         </Box>
       )}
       {allowerState && (

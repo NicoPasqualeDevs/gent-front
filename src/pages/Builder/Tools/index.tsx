@@ -115,7 +115,7 @@ const Tools: React.FC = () => {
         ...appNavigation.slice(0, 2),
         {
           label: "Tools",
-          current_path: `/bots/tools/${botName}/${botId}`,
+          current_path: `/builder/agents/tools/${botName}/${botId}`,
           preview_path: "",
         },
       ]);
@@ -124,7 +124,7 @@ const Tools: React.FC = () => {
       replacePath([
         {
           label: "Tools",
-          current_path: `/bots/tools`,
+          current_path: `/builder/agents/tools`,
           preview_path: "",
         },
       ]);
@@ -263,7 +263,7 @@ const Tools: React.FC = () => {
                           }}
                           onClick={() =>
                             navigate(
-                              `/bots/tools-form/${tool.tool_name}/${tool.id}`
+                              `/builder/agents/tools-form/${tool.tool_name}/${tool.id}`
                             )
                           }
                         >
@@ -314,7 +314,7 @@ const Tools: React.FC = () => {
             <Button
               variant="contained"
               sx={{ marginBottom: "20px" }}
-              onClick={() => navigate("/bots/tools-form/")}
+              onClick={() => navigate("/builder/agents/tools-form/")}
             >
               Crear Tool
             </Button>

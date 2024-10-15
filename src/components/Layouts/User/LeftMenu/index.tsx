@@ -17,12 +17,12 @@ const options = [
   {
     navElevation: "Register",
     label: "Registrar Equipo",
-    path: "/builder/form",
+    path: "/builder/agents/form",
   },
 /*   {
     navElevation: "Tools",
     label: "Tools",
-    path: "/bots/tools",
+    path: "/builder/agents/tools",
   }, */
 ];
 

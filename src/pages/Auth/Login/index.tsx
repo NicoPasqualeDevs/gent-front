@@ -1,5 +1,5 @@
 import { MainGridContainer } from "@/utils/ContainerUtil";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid, Typography, Box } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { AuthLoginData } from "@/types/Auth";
@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from 'react-router-dom'; // Añade esta importación
 import { Link as MuiLink } from '@mui/material'; // Añade esta importación
+import Snowfall from 'react-snowfall';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -108,7 +109,28 @@ const Login: React.FC = () => {
         minHeight: '100vh',
       }}
     >
-
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflow: 'hidden',
+          zIndex: 1,
+          pointerEvents: 'none',
+        }}
+      >
+        <Snowfall
+          snowflakeCount={200}
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            opacity: 0.034,
+          }}
+        />
+      </Box>
       <Grid
         item
         xs={12}

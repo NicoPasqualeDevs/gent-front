@@ -4,7 +4,7 @@ import { Outlet, Routes, Route } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines"; // Importamos el componente
 import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
-import Snowfall from 'react-snowfall';
+
 /* import AuthChecker from "./components/AuthChecker"; */
 
 const HomeModule = lazy(() => import("./modules/home"));
@@ -40,17 +40,7 @@ function AppRoutes() {
           pointerEvents: 'none', // Permite que los clics pasen a través de la nieve
         }}
       >
-        <Snowfall
-          snowflakeCount={200}
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            opacity: 0.034, // Cambiado de 0.7 a 0.15
-          }}
-        />
       </Box>
-
       <Routes>
         <Route path="/">
           <Route path="auth/*" element={<AuthModule />} />

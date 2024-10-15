@@ -93,7 +93,7 @@ const ShortHeader: React.FC = () => {
                 }`,
             }}
             onClick={() => {
-              navigate("/builder/form");
+              navigate("/builder/agents/form");
               setNavElevation("Register");
             }}
           >
@@ -108,7 +108,7 @@ const ShortHeader: React.FC = () => {
               }`,
             }}
             onClick={() => {
-              navigate("/bots/tools");
+              navigate("/builder/agents/tools");
               setNavElevation("Tools");
             }}
           >

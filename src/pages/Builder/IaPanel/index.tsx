@@ -89,7 +89,7 @@ const IaPanel: React.FC = () => {
     if (clientId && clientName) {
       replacePath([
         ...appNavigation.slice(0, 1),
-        { label: clientName, current_path: `/bots/IaPanel/${clientName}/${clientId}`, preview_path: "" },
+        { label: clientName, current_path: `/builder/agents/${clientName}/${clientId}`, preview_path: "" },
       ]);
       if (!loaded) {
         getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
@@ -173,11 +173,11 @@ const IaPanel: React.FC = () => {
                           size="small"
                           onClick={() => {
                             const routes: { [key: string]: string } = {
-                              Editar: `/bots/contextEntry/${clientId}/${bot.id}`,
-                              Datos: `/bots/dataEntry/${bot.id}`,
-                              Tools: `/bots/tools/${bot.name}/${bot.id}`,
-                              Widget: `/bots/widgetCustomizer/${bot.id}`,
-                              Saludos: `/bots/customMessages/${bot.id}`,
+                              Editar: `/builder/agents/contextEntry/${clientId}/${bot.id}`,
+                              Datos: `/builder/agents/dataEntry/${bot.id}`,
+                              Tools: `/builder/agents/tools/${bot.name}/${bot.id}`,
+                              Widget: `/builder/agents/widgetCustomizer/${bot.id}`,
+                              Saludos: `/builder/agents/customMessages/${bot.id}`,
                             };
                             navigate(routes[action]);
                           }}

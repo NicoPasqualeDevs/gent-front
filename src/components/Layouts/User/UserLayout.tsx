@@ -8,10 +8,10 @@ interface ComponentProps {
   children: React.ReactNode;
 }
 
-const AppLayout: React.FC<ComponentProps> = ({ children }) => {
+const UserLayout: React.FC<ComponentProps> = ({ children }) => {
   return (
     <>
-      <Header />
+   {/*    <Header /> */}
       <Stack direction={"row"} position={"relative"}>
         <LeftMenu />
         <MainContent container>
@@ -32,4 +32,4 @@ const AppLayout: React.FC<ComponentProps> = ({ children }) => {
   );
 };
 
-export default AppLayout;
+export default UserLayout;

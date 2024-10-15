@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
 import { motion } from "framer-motion";
 import Snowfall from 'react-snowfall';
-import { useState } from "react";
 import { Link as RouterLink } from 'react-router-dom';
 import { Link as MuiLink } from '@mui/material';
 
@@ -18,7 +17,6 @@ const Register: React.FC = () => {
   const navigate = useNavigate();
   const { setAuthUser } = useAppContext();
   const { registerUser } = useAuth();
-  const [showSnow] = useState(true);
 
   const initialValues: AuthRegisterData = {
     email: "",
@@ -93,7 +91,6 @@ const Register: React.FC = () => {
         minHeight: '100vh',
       }}
     >
-      {showSnow && (
         <Box
           sx={{
             position: 'absolute',
@@ -116,7 +113,6 @@ const Register: React.FC = () => {
             }}
           />
         </Box>
-      )}
       <Grid
         item
         xs={12}

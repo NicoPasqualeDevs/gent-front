@@ -170,7 +170,7 @@ const ToolsForm: React.FC = () => {
         ...appNavigation.slice(0, 3),
         {
           label: "Editar",
-          current_path: `/bots/tools-form/${toolName}/${toolId}`,
+          current_path: `/builder/agents/tools-form/${toolName}/${toolId}`,
           preview_path: "",
         },
       ]);

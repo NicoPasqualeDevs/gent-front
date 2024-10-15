@@ -198,15 +198,15 @@ const ContextEntry: React.FC = () => {
       if (botId) {
         /*setAppNavigation({
           label: "Editar Agente",
-          current_path: `/bots/contextEntry/${clientId}/${botId}`,
-          preview_path: `/bots/contextEntry/${clientId}`,
+          current_path: `/builder/agents/contextEntry/${clientId}/${botId}`,
+          preview_path: `/builder/agents/contextEntry/${clientId}`,
         });*/
         replacePath([
           ...appNavigation.slice(0, 2),
           {
             label: "Editar Agente",
-            current_path: `/bots/contextEntry/${clientId}/${botId}`,
-            preview_path: `/bots/contextEntry/${clientId}`,
+            current_path: `/builder/agents/contextEntry/${clientId}/${botId}`,
+            preview_path: `/builder/agents/contextEntry/${clientId}`,
           },
         ]);
         loadAgentData();
@@ -215,8 +215,8 @@ const ContextEntry: React.FC = () => {
           ...appNavigation.slice(0, 2),
           {
             label: "Crear Agente",
-            current_path: `/bots/contextEntry/${clientId}/`,
-            preview_path: `/bots/contextEntry/${clientId}`,
+            current_path: `/builder/agents/contextEntry/${clientId}/`,
+            preview_path: `/builder/agents/contextEntry/${clientId}`,
           },
         ]);
         setLoaded(true);

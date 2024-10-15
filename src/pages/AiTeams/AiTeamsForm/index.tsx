@@ -115,7 +115,7 @@ const AiTeamsForm: React.FC = () => {
     postClientDetails(values)
       .then((response) => {
         SuccessToast("Cliente creado satisfactoriamente");
-        navigate(`/builder/form/${response.name}/${response.id}`);
+        navigate(`/builder/agents/form/${response.name}/${response.id}`);
       })
       .catch((error) => {
         if (error instanceof Error) {
@@ -152,7 +152,7 @@ const AiTeamsForm: React.FC = () => {
         },
         {
           label: "Editar",
-          current_path: `bots/builder/form/${clientId}`,
+          current_path: `bots/builder/agents/form/${clientId}`,
           preview_path: "",
         },
       ]);
@@ -163,7 +163,7 @@ const AiTeamsForm: React.FC = () => {
       replacePath([
         {
           label: "Registrar Equipo",
-          current_path: `bots/builder/form`,
+          current_path: `bots/builder/agents/form`,
           preview_path: "",
         },
       ]);

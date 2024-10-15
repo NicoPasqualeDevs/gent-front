@@ -148,7 +148,7 @@ const AiTeamsList: React.FC = () => {
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
-                onClick={() => navigate('/builder/form')}
+                onClick={() => navigate('/builder/agents/form')}
                 fullWidth
                 sx={{
                   width: '100%',
@@ -284,7 +284,7 @@ const AiTeamsList: React.FC = () => {
                       <CardActions sx={{ pl: 2, pr: 2, pt: 1, pb: 1, justifyContent: 'space-between' }}>
                         <Button
                           size="small"
-                          onClick={() => navigate(`/builder/form/${client.name}/${client.id}`)}
+                          onClick={() => navigate(`/builder/agents/form/${client.name}/${client.id}`)}
                         >
                           Editar
                         </Button>
