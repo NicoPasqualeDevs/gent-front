@@ -13,6 +13,8 @@ import PeopleIcon from '@mui/icons-material/People';
 import BuildIcon from '@mui/icons-material/Build';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
 import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import TokenIcon from '@mui/icons-material/Token';
 
 interface LeftMenuProps {
   isMobile?: boolean;
@@ -57,8 +59,9 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ isMobile = false, isOpen = false, o
       </Box>
 
       {/* Contenido central */}
-      <Box sx={{ flexGrow: 1, overflowY: 'auto' }}>
-        <List>
+      <Box sx={{ flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
+        {/* Primera sección: Lista de botones */}
+        <List sx={{ flexGrow: 1 }}>
           <ListItem button>
             <ListItemIcon>
               <HomeIcon />
@@ -102,6 +105,22 @@ const LeftMenu: React.FC<LeftMenuProps> = ({ isMobile = false, isOpen = false, o
             <ListItemText primary="Librería" />
           </ListItem>
         </List>
+
+        {/* Segunda sección: Perfil y Tokens */}
+        <Box sx={{ p: 2, borderTop: `1px solid ${theme.palette.divider}` }}>
+          <ListItem>
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+            <ListItemText primary="Perfil de Usuario" />
+          </ListItem>
+          <ListItem>
+            <ListItemIcon>
+              <TokenIcon />
+            </ListItemIcon>
+            <ListItemText primary="Tokens restantes: 1000" />
+          </ListItem>
+        </Box>
       </Box>
 
       {/* Pie */}

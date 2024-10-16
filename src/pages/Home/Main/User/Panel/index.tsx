@@ -23,14 +23,12 @@ import comercio from '@/assets/categories/comercio.png';
 import salud from '@/assets/categories/salud.png';
 import costureria from '@/assets/categories/costureria.png';
 import filosofia from '@/assets/categories/filosofia.png';
-import theme from "@/styles/theme";
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import { styled } from "@mui/material/styles";
 import { alpha } from '@mui/material/styles';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
 import { CSSObject } from '@mui/material/styles';
 import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 
 // Componente estilizado actualizado para las tarjetas
 const AiTeamCard = styled(Box)(({ theme }) => ({
@@ -139,9 +137,7 @@ const UserPanel: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const contentPerPage : string = "5"
   const theme = useTheme();
-  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
 
   const getAiTeamsData = useCallback((filterParams: string) => {
     setIsLoading(true);
@@ -180,9 +176,9 @@ const UserPanel: React.FC = () => {
     if (value.trim() !== "") {
       getAiTeamsData(`?name__icontains=${value}`);
     } else {
-      getAiTeamsData(`?page_size=${contentPerPage}&page=1`);
+      getAiTeamsData(`?page_size=5&page=1`);
     }
-  }, [contentPerPage, getAiTeamsData]);
+  }, [getAiTeamsData]);
 
   const deleteAction = (clientId: string) => {
     deleteClientDetails(clientId)
@@ -210,7 +206,7 @@ const UserPanel: React.FC = () => {
     if (clientPage > 1) {
       setClientPage(clientPage - 1);
       setLoaded(false);
-      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage - 1}`);
+      getAiTeamsData(`?page_size=5&page=${clientPage - 1}`);
     }
   };
 
@@ -218,7 +214,7 @@ const UserPanel: React.FC = () => {
     if (clientPage < (paginationData?.total_pages || 0)) {
       setClientPage(clientPage + 1);
       setLoaded(false);
-      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage + 1}`);
+      getAiTeamsData(`?page_size=5&page=${clientPage + 1}`);
     }
   };
 
@@ -233,14 +229,14 @@ const UserPanel: React.FC = () => {
     setAgentsPage(1);
     setNavElevation("builder");
     if (!loaded) {
-      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
+      getAiTeamsData(`?page_size=5&page=${clientPage}`);
     }
   }, []);
 
   const getImageForCategory = (category: string): string => {
     switch (category.toLowerCase()) {
       case 'agronomía':
-        return agronomia;
+      return agronomia;
       case 'música': return musica;
       case 'comercio': return comercio;
       case 'salud': return salud;
