@@ -5,7 +5,7 @@ import BackgroundLines from "./styles/components/BackgroundLines"; // Importamos
 import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
 
-const ChatViewModule = lazy(() => import("./pages/Builder/Widget"));/* import AuthChecker from "./components/AuthChecker"; */
+const ChatViewModule = lazy(() => import("./pages/Builder/ChatView"));/* import AuthChecker from "./components/AuthChecker"; */
 
 const HomeModule = lazy(() => import("./modules/home"));
 const AuthModule = lazy(() => import("./modules/auth"));

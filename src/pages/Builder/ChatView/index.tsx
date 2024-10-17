@@ -115,7 +115,7 @@ const TimeStamp = styled(Typography)<{ isUser: boolean }>(({ theme, isUser }) =>
   marginTop: theme.spacing(0.5),
 }));
 
-const Widget: React.FC = () => {
+const ChatView: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [chatHistory, setChatHistory] = useState<ChatHistory | null>(null);
   const [message, setMessage] = useState<string>("");
@@ -184,7 +184,7 @@ const Widget: React.FC = () => {
       setAgentData(res.data);
     } catch (error) {
       console.error("Error al cargar los datos del agente:", error);
-      ErrorToast("No se pudieron cargar los datos del agente");
+      //ErrorToast("No se pudieron cargar los datos del agente");
     }
   }, [botId, getAgentData, agentData]);
 
@@ -443,7 +443,7 @@ const Widget: React.FC = () => {
             </Button>
             <Button
               variant="contained"
-              color="primary"
+              sx={{color: theme.palette.secondary.main}}
               onClick={handleSendMessage}
               disabled={isSending}
               endIcon={isSending ? <CircularProgress size={20} /> : <SendIcon />}
@@ -457,4 +457,4 @@ const Widget: React.FC = () => {
   );
 };
 
-export default Widget;
+export default ChatView;
