@@ -153,7 +153,7 @@ const AiTeamsList: React.FC = () => {
             <Button
               variant="contained"
               startIcon={<AddIcon />}
-              onClick={() => navigate('/builder/agents/form')}
+              onClick={() => navigate('/builder/form')}
               fullWidth
               sx={{
                 color: theme.palette.secondary.main, // Cambiado a blanco
