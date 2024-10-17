@@ -17,7 +17,8 @@ type AppContextActions =
   | { type: "setClientPage"; payload: number }
   | { type: "setToolsPage"; payload: number }
   | { type: "setAgentsPage"; payload: number }
-  | { type: "cleanState" };
+  | { type: "cleanState" }
+  | { type: "setLanguage"; payload: string };
 
 export const AppReducer = (
   state: AppContextState,
@@ -113,6 +114,11 @@ export const AppReducer = (
         agentsPage: action.payload,
       };
     }
+    case "setLanguage":
+      return {
+        ...state,
+        language: action.payload,
+      };
     default:
       return state;
   }

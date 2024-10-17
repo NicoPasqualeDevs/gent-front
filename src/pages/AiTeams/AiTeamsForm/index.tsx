@@ -10,35 +10,32 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { MultilineInput, TextInput } from "@/components/Inputs";
 import { useAppContext } from "@/context/app";
+import { languages } from "@/utils/Traslations/languages";
 
 const AiTeamsForm: React.FC = () => {
   const navigate = useNavigate();
   const { clientName, clientId } = useParams();
-  const { setNavElevation, appNavigation, replacePath, setAgentsPage } =
-    useAppContext();
-  const { getClientDetails, postClientDetails, putClientDetails } =
-    useCustomersApi();
+  const { setNavElevation, appNavigation, replacePath, setAgentsPage, language } = useAppContext();
+  const { getClientDetails, postClientDetails, putClientDetails } = useCustomersApi();
+  const t = languages[language as keyof typeof languages].aiTeamsForm;
 
   const [loaded, setLoaded] = useState<boolean>(false);
   const [initialValues, setInitialValues] = useState<AiTeamsDetails>({
     name: "",
     address: "",
     description: "",
-    // Se eliminó model_ia
   });
   
   const [inputError, setInputError] = useState<AiTeamsDetails>({
     name: "",
     address: "",
     description: "",
-    // Se eliminó model_ia
   });
 
   const validationSchema = Yup.object({
-    name: Yup.string().required("Este es un campo requerido"),
-    address: Yup.string().required("Este es un campo requerido"),
-    description: Yup.string().required("Este es un campo requerido"),
-    // Se eliminó la validación de model_ia
+    name: Yup.string().required(t.fieldRequired),
+    address: Yup.string().required(t.fieldRequired),
+    description: Yup.string().required(t.fieldRequired),
   });
 
   const onSubmit = (values: AiTeamsDetails) => {
@@ -60,7 +57,6 @@ const AiTeamsForm: React.FC = () => {
       name: errors.name || " ",
       address: errors.address || " ",
       description: errors.description || " ",
-      // Se eliminó model_ia
     });
     handleSubmit(e);
   };
@@ -72,19 +68,17 @@ const AiTeamsForm: React.FC = () => {
           name: response.name,
           address: response.address,
           description: response.description,
-          // Se eliminó model_ia
         });
         setInitialValues({
           name: response.name,
           address: response.address,
           description: response.description,
-          // Se eliminó model_ia
         });
         setLoaded(true);
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.errorConnection);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${
@@ -93,14 +87,14 @@ const AiTeamsForm: React.FC = () => {
           );
         }
       });
-  }, []);
+  }, [t.errorConnection]);
 
   const updateClient = (values: AiTeamsDetails, clientId: string) => {
     putClientDetails(values, clientId)
-      .then(() => SuccessToast("Cliente actualizado satisfactoriamente"))
+      .then(() => SuccessToast(t.successUpdate))
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.errorConnection);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${
@@ -114,12 +108,12 @@ const AiTeamsForm: React.FC = () => {
   const createNewClient = (values: AiTeamsDetails) => {
     postClientDetails(values)
       .then((response) => {
-        SuccessToast("Cliente creado satisfactoriamente");
+        SuccessToast(t.successCreate);
         navigate(`/builder/agents/form/${response.name}/${response.id}`);
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.errorConnection);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${
@@ -151,7 +145,7 @@ const AiTeamsForm: React.FC = () => {
           preview_path: "",
         },
         {
-          label: "Editar",
+          label: t.edit,
           current_path: `bots/builder/agents/form/${clientId}`,
           preview_path: "",
         },
@@ -162,14 +156,14 @@ const AiTeamsForm: React.FC = () => {
       setAgentsPage(1);
       replacePath([
         {
-          label: "Registrar Equipo",
+          label: t.register,
           current_path: `bots/builder/agents/form`,
           preview_path: "",
         },
       ]);
       setLoaded(true);
     }
-  }, [clientId]);
+  }, [clientId, clientName, t]);
 
   return (
     <Box component={"form"} onSubmit={formSubmit} width={"100%"}>
@@ -178,12 +172,12 @@ const AiTeamsForm: React.FC = () => {
       ) : (
         <>
           <Typography variant="h4">
-            {clientId ? "Editar equipo de Equipos IA" : "Registrar nuevo equipo de Equipos IA"}
+            {clientId ? t.editTitle : t.createTitle}
           </Typography>
           <Box marginTop={"20px"}>
             <TextInput
               name="name"
-              label="Nombre del Equipo"
+              label={t.teamName}
               value={values.name}
               helperText={inputError.name}
               onChange={handleChange}
@@ -192,7 +186,7 @@ const AiTeamsForm: React.FC = () => {
           <Box marginTop={"20px"}>
             <TextInput
               name="address"
-              label="Dirección"
+              label={t.address}
               value={values.address}
               helperText={inputError.address}
               onChange={handleChange}
@@ -201,7 +195,7 @@ const AiTeamsForm: React.FC = () => {
           <Box marginTop={"30px"} >
             <MultilineInput
               name="description"
-              label="Descripción"
+              label={t.description}
               value={values.description}
               rows={6}
               helperText={inputError.description}
@@ -215,7 +209,7 @@ const AiTeamsForm: React.FC = () => {
               marginTop: "10px",
             }}
           >
-            {clientId ? "Editar" : "Registrar"}
+            {clientId ? t.edit : t.register}
           </Button>
         </>
       )}

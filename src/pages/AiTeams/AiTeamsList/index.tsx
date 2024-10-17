@@ -29,17 +29,18 @@ import ActionAllower from "@/components/ActionAllower";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
 import { useTheme } from "@mui/material/styles";
-
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
-
+import { languages } from "@/utils/Traslations/languages";
 
 const AiTeamsList: React.FC = () => {
-  const navigate = useNavigate(); const {
+  const navigate = useNavigate();
+  const {
     setNavElevation,
     replacePath,
     clientPage,
     setClientPage,
     setAgentsPage,
+    language
   } = useAppContext();
   const { getCustomerList, deleteClientDetails } = useCustomersApi();
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -53,6 +54,7 @@ const AiTeamsList: React.FC = () => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const theme = useTheme();
+  const t = languages[language as keyof typeof languages];
 
   const getAiTeamsData = useCallback((filterParams: string) => {
     setIsLoading(true);
@@ -67,7 +69,7 @@ const AiTeamsList: React.FC = () => {
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.aiTeamsForm.errorConnection);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
@@ -82,7 +84,7 @@ const AiTeamsList: React.FC = () => {
           searchInputRef.current.focus();
         }
       });
-  }, [getCustomerList]);
+  }, [getCustomerList, setClientPage, t.aiTeamsForm.errorConnection]);
 
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
@@ -90,7 +92,6 @@ const AiTeamsList: React.FC = () => {
     setLoaded(false);
     getAiTeamsData(`?page_size=${contentPerPage}&page=${value}`);
   };
-
 
   const handleSearch = useCallback((value: string) => {
     setSearchQuery(value);
@@ -110,11 +111,11 @@ const AiTeamsList: React.FC = () => {
         setPageContent(temp);
         setAllowerState(false);
         setClientToDelete("");
-        SuccessToast("Cliente eliminado satisfactoriamente");
+        SuccessToast(t.aiTeamsList.successDelete);
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.aiTeamsForm.errorConnection);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
@@ -127,7 +128,7 @@ const AiTeamsList: React.FC = () => {
   useEffect(() => {
     replacePath([
       {
-        label: "Mis Equipos",
+        label: t.aiTeamsList.yourAiTeams,
         current_path: "/builder",
         preview_path: "/builder",
       },
@@ -156,12 +157,12 @@ const AiTeamsList: React.FC = () => {
               onClick={() => navigate('/builder/form')}
               fullWidth
               sx={{
-                color: theme.palette.secondary.main, // Cambiado a blanco
+                color: theme.palette.secondary.main,
                 width: '100%',
                 maxWidth: { xs: '100%', sm: '200px' }
               }}
             >
-              Nuevo Equipo IA
+              {t.aiTeamsList.newAiTeam}
             </Button>
             <Box sx={{
               width: '100%',
@@ -177,7 +178,7 @@ const AiTeamsList: React.FC = () => {
                   <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
-                  placeholder="Buscar Equipo IA"
+                  placeholder={t.aiTeamsList.searchPlaceholder}
                   value={searchQuery}
                   inputProps={{
                     "aria-label": "search",
@@ -201,7 +202,7 @@ const AiTeamsList: React.FC = () => {
             gap: 2,
           }}>
             <Typography variant="h5" sx={{ mr: 2 }}>
-              Tus equipos de IA
+              {t.aiTeamsList.yourAiTeams}
             </Typography>
             <Select
               value={contentPerPage}
@@ -213,9 +214,9 @@ const AiTeamsList: React.FC = () => {
               size="small"
               sx={{ width: { xs: '100%', sm: 'auto' } }}
             >
-              <MenuItem value="5">5 por página</MenuItem>
-              <MenuItem value="10">10 por página</MenuItem>
-              <MenuItem value="20">20 por página</MenuItem>
+              <MenuItem value="5">5 {t.aiTeamsList.perPage}</MenuItem>
+              <MenuItem value="10">10 {t.aiTeamsList.perPage}</MenuItem>
+              <MenuItem value="20">20 {t.aiTeamsList.perPage}</MenuItem>
             </Select>
           </Box>
         </Paper>
@@ -287,7 +288,7 @@ const AiTeamsList: React.FC = () => {
                               }}
                               endIcon={<ArrowForwardIcon />}
                             >
-                              Administrar Equipo
+                              {t.aiTeamsList.manageTeam}
                             </Button>
                           </Box>
                         </CardContent>
@@ -297,7 +298,7 @@ const AiTeamsList: React.FC = () => {
                             size="small"
                             onClick={() => navigate(`/builder/form/${client.name}/${client.id}`)}
                           >
-                            Editar
+                            {t.aiTeamsList.edit}
                           </Button>
                           <IconButton
                             size="small"
@@ -319,8 +320,8 @@ const AiTeamsList: React.FC = () => {
               <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
                 <Typography variant="subtitle1">
                   {searchQuery && searchQuery.trim() !== ""
-                    ? "No se encontraron Equipos IA con ese nombre"
-                    : "No hay Equipos IA para mostrar"}
+                    ? t.aiTeamsList.noTeamsFound
+                    : t.aiTeamsList.noTeamsToShow}
                 </Typography>
               </Paper>
             )}
@@ -348,7 +349,7 @@ const AiTeamsList: React.FC = () => {
                   {`${(clientPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
                     clientPage * (paginationData?.page_size ?? 0),
                     paginationData?.total_items ?? 0
-                  )} de ${paginationData?.total_items ?? 0} Equipos IA`}
+                  )} ${t.aiTeamsList.teamsCount.replace("{total}", paginationData?.total_items?.toString() ?? "0")}`}
                 </Typography>
               )}
             </Box>

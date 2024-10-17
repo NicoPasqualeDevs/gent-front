@@ -46,8 +46,8 @@ export interface Ktag {
 }
 
 export interface AgentData {
-  [propKey: string]: string | undefined | Ktag[];
-  api_bot: string;
+  [propKey: string]: string | undefined | Ktag[] | null;
+  api_bot: string | null;
   api_details: string;
   description: string;
   id: string;

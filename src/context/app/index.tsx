@@ -25,6 +25,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       clientPage,
       toolsPage,
       agentsPage,
+      language,
     },
     dispatch,
   ] = useReducer(AppReducer, INITIAL_STATE);
@@ -92,6 +93,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     dispatch({ type: "setAgentsPage", payload: value });
   };
 
+  const setLanguage = (lang: string) => {
+    dispatch({ type: "setLanguage", payload: lang });
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -105,6 +110,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         clientPage,
         toolsPage,
         agentsPage,
+        language,
         setCustomersList,
         setLogin,
         setLoaded,
@@ -117,6 +123,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         setClientPage,
         setToolsPage,
         setAgentsPage,
+        setLanguage,
       }}
     >
       {children}

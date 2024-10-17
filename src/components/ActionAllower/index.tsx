@@ -12,6 +12,8 @@ import { TextInput } from "../Inputs";
 import { useState } from "react";
 import { ActionAllowerProps, ConfirmData } from "@/types/ActionAllower";
 import { ActionAllowerContainer } from "@/utils/ContainerUtil";
+import { useAppContext } from "@/context/app";
+import { languages } from "@/utils/Traslations/languages";
 
 /* 
   ActionAllower
@@ -46,9 +48,11 @@ const ActionAllower = <T, U>(props: ActionAllowerProps<T, U>) => {
   } = props;
   const [inputError, setInputError] = useState<ConfirmData>({ confirm: "" });
   const initialValues: ConfirmData = { confirm: "" };
+  const { language } = useAppContext();
+  const t = languages[language as keyof typeof languages];
 
   const validationSchema = Yup.object({
-    confirm: Yup.string().required("Este campo es requerido"),
+    confirm: Yup.string().required(t.actionAllower.fieldRequired),
   });
 
   const onSubmit = () => {
@@ -86,14 +90,14 @@ const ActionAllower = <T, U>(props: ActionAllowerProps<T, U>) => {
             marginBottom={"10px"}
             marginTop={"10px"}
           >
-            {alertText || "Confirme la Acción"}
+            {alertText || t.actionAllower.confirmAction}
           </Typography>
           <TextInput
             name="confirm"
-            label="Confirmación"
+            label={t.actionAllower.confirmation}
             value={values.confirm}
             helperText={inputError.confirm}
-            placeholder={`Escriba ${confirmWord || "confirmar"}`}
+            placeholder={`${t.actionAllower.write} ${confirmWord || t.actionAllower.confirm}`}
             onChange={handleChange}
           />
         </CardContent>
@@ -101,12 +105,12 @@ const ActionAllower = <T, U>(props: ActionAllowerProps<T, U>) => {
           <Grid container marginBottom={"10px"}>
             <Grid item xs={12} sm={6} textAlign={{ xs: "center", sm: "start" }}>
               <Button size="small" type="submit">
-                Confirmar
+                {t.actionAllower.confirm}
               </Button>
             </Grid>
             <Grid item xs={12} sm={6} textAlign={{ xs: "center", sm: "end" }}>
               <Button size="small" onClick={formCancel}>
-                Cancelar
+                {t.actionAllower.cancel}
               </Button>
             </Grid>
           </Grid>

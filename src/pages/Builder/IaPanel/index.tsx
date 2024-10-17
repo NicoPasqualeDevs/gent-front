@@ -21,6 +21,7 @@ import WidgetsIcon from "@mui/icons-material/Widgets";
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
 import ApiIcon from '@mui/icons-material/Api'; // Añade esta importación
 import EditIcon from '@mui/icons-material/Edit';
+import { languages } from "@/utils/Traslations/languages";
 
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
@@ -35,6 +36,8 @@ const IaPanel: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [contentPerPage, setContentPerPage] = useState("5");
   const { apiBase } = useApi()
+  const { language } = useAppContext();
+  const t = languages[language as keyof typeof languages];
 
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
@@ -127,16 +130,16 @@ const IaPanel: React.FC = () => {
       },
       '&::before': {
         top: 0,
-        borderTop: `2px solid transparent`,
+        borderTop: `1px solid transparent`, // Cambiado de 2px a 1px
       },
       '&::after': {
         bottom: 0,
-        borderBottom: `2px solid transparent`,
+        borderBottom: `1px solid transparent`, // Cambiado de 2px a 1px
       },
       '&:hover::before, &:hover::after': {
         height: '50%',
-        backgroundColor: `${theme.palette.secondary.light}10`, // 10% de opacidad
-        borderColor: theme.palette.secondary.light, // Sin opacidad
+        backgroundColor: `${theme.palette.secondary.light}05`,
+        borderColor: theme.palette.secondary.light,
       },
     }}>
       <Box sx={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -147,8 +150,7 @@ const IaPanel: React.FC = () => {
             </Avatar>
           }
           title={bot.name}
-          subheader={"Creado: 00:00 - 01/01/2000"}
-          /* ${new Date(bot.created_at).toLocaleDateString()} */
+          subheader={t.iaPanel.created.replace("{date}", "20/10/2024")}
           sx={{
             p: 1.5,
             '& .MuiCardHeader-title': {
@@ -163,7 +165,7 @@ const IaPanel: React.FC = () => {
             },
           }}
           action={
-            <Tooltip title="Editar" arrow placement="top">
+            <Tooltip title={t.iaPanel.edit} arrow placement="top">
               <IconButton
                 onClick={() => navigate(`/builder/agents/contextEntry/${clientId}/${bot.id}`)}
                 size="small"
@@ -239,7 +241,7 @@ const IaPanel: React.FC = () => {
                   }
                 }}
               >
-                Probar
+                {t.iaPanel.testAgent}
               </Button>
               <Button
                 variant="outlined"
@@ -259,7 +261,7 @@ const IaPanel: React.FC = () => {
                   }
                 }}
               >
-                Use API
+                {t.iaPanel.useAPI}
               </Button>
               <Button
                 variant="outlined"
@@ -279,7 +281,7 @@ const IaPanel: React.FC = () => {
                   }
                 }}
               >
-                Widget
+                {t.iaPanel.widget}
               </Button>
             </Box>
           </Box>
@@ -288,7 +290,7 @@ const IaPanel: React.FC = () => {
           
           <Box sx={{ p: 2 }}>
             <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
-              Configuración
+              {t.iaPanel.configuration}
             </Typography>
             <Box sx={{ 
               display: 'flex', 
@@ -297,23 +299,23 @@ const IaPanel: React.FC = () => {
               gap: 1,
               flexWrap: 'wrap'
             }}>
-              {['Datos', 'Personalización', 'Herramientas'].map((action) => (
+              {[t.iaPanel.data, t.iaPanel.customization, t.iaPanel.tools].map((action) => (
                 <Button
                   key={action}
                   variant="text"
                   size="small"
                   onClick={() => {
                     const routes: { [key: string]: string } = {
-                      Datos: `/builder/agents/dataEntry/${bot.id}`,
-                      Personalización: `/builder/agents/customMessages/${bot.id}`,
-                      Herramientas: `/builder/agents/tools/${bot.id}`,
+                      [t.iaPanel.data]: `/builder/agents/dataEntry/${bot.id}`,
+                      [t.iaPanel.customization]: `/builder/agents/customMessages/${bot.id}`,
+                      [t.iaPanel.tools]: `/builder/agents/tools/${bot.id}`,
                     };
                     navigate(routes[action]);
                   }}
-                  disabled={action === 'Personalización' || action === 'Herramientas'}
+                  disabled={action === t.iaPanel.customization || action === t.iaPanel.tools}
                   sx={{ 
                     textTransform: 'none',
-                    color: (action === 'Personalización' || action === 'Herramientas') ? theme.palette.text.disabled : theme.palette.primary.main,
+                    color: (action === t.iaPanel.customization || action === t.iaPanel.tools) ? theme.palette.text.disabled : theme.palette.primary.main,
                     fontSize: '0.9rem',
                   }}
                 >
@@ -367,7 +369,7 @@ const IaPanel: React.FC = () => {
                   },
                 }}
               >
-                Crear Agente
+                {t.iaPanel.createAgent}
               </Button>
               <Box sx={{
                 width: '100%',
@@ -383,7 +385,7 @@ const IaPanel: React.FC = () => {
                     <SearchIcon />
                   </SearchIconWrapper>
                   <StyledInputBase
-                    placeholder="Buscar Equipo IA"
+                    placeholder={t.iaPanel.searchPlaceholder}
                     value={searchQuery}
                     inputProps={{
                       "aria-label": "search",
@@ -406,7 +408,7 @@ const IaPanel: React.FC = () => {
               gap: 2,
             }}>
               <Typography variant="h5" sx={{ mr: 2 }}>
-                Agentes de {clientName}
+                {t.iaPanel.agentsOf.replace("{clientName}", clientName || "")}
               </Typography>
               <Select
                 value={contentPerPage}
@@ -420,7 +422,7 @@ const IaPanel: React.FC = () => {
               >
                 {[5, 10, 20].map((value) => (
                   <MenuItem key={value} value={value.toString()}>
-                    {value} por página
+                    {value} {t.iaPanel.perPage}
                   </MenuItem>
                 ))}
               </Select>
@@ -445,8 +447,8 @@ const IaPanel: React.FC = () => {
             <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
               <Typography variant="subtitle1">
                 {searchQuery.trim() !== ""
-                  ? "No se encontraron Equipos IA con ese nombre"
-                  : "No hay Equipos IA para mostrar"}
+                  ? t.iaPanel.noAgentsFound
+                  : t.iaPanel.noAgentsToShow}
               </Typography>
             </Paper>
           )}
@@ -472,7 +474,7 @@ const IaPanel: React.FC = () => {
                     {`${(agentsPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
                       agentsPage * (paginationData?.page_size ?? 0),
                       paginationData?.total_items ?? 0
-                    )} de ${paginationData?.total_items ?? 0} Equipos IA`}
+                    )} ${t.iaPanel.agentsCount.replace("{total}", paginationData?.total_items?.toString() || "0")}`}
                   </Typography>
                 )}
               </Box>

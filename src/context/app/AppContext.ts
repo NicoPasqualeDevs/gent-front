@@ -37,6 +37,8 @@ export interface AppContextState {
   setClientPage: (value: number) => void;
   setToolsPage: (value: number) => void;
   setAgentsPage: (value: number) => void;
+  language: string;
+  setLanguage: (lang: string) => void;
 }
 
 export const INITIAL_STATE: AppContextState = {
@@ -53,6 +55,7 @@ export const INITIAL_STATE: AppContextState = {
   clientPage: 1,
   toolsPage: 1,
   agentsPage: 1,
+  language: 'en', // Cambiado de 'es' a 'en'
 } as AppContextState;
 
 export const AppContext = createContext(INITIAL_STATE);

@@ -11,6 +11,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Pathbar from "../Pathbar";
 import { useTheme } from "@mui/material/styles";
+import LanguageSelector from "@/components/LanguageSelector"; // Importamos el LanguageSelector
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -103,7 +104,10 @@ const Header: React.FC = () => {
         </Box>
         {isLargeScreen && <Pathbar />}
       </BrandContainer>
-      <UserBubbleContainer item xs={4} md={9} sx={{ display: "flex", justifyContent: "flex-end", paddingRight: "5px" }}>
+      <UserBubbleContainer item xs={4} md={9} sx={{ display: "flex", justifyContent: "flex-end", paddingRight: "5px", alignItems: "center" }}>
+        <Box sx={{ marginRight: 2 }}>
+          <LanguageSelector />
+        </Box>
         {auth.user && isLargeScreen ? (
           <UserBubble>
             <Typography

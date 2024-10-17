@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Box, Grid, Typography, TextField, Button, CircularProgress, Avatar} from "@mui/material";
+import { Box, Grid, Typography, TextField, Button, CircularProgress, Avatar } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
@@ -7,6 +7,9 @@ import useBotsApi from "@/hooks/useBots";
 import { useParams, useNavigate } from "react-router-dom";
 import { AgentData, ChatHistory, ChatMessage, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
 import { useTheme } from "@mui/material/styles";
+import { useAppContext } from "@/context/app";
+import { languages } from "@/utils/Traslations/languages";
+import apiBase from "@/hooks/useApi";
 
 const MainContainer = styled(Box)(() => ({
   height: '100vh',
@@ -16,7 +19,7 @@ const MainContainer = styled(Box)(() => ({
 }));
 
 const SidebarContainer = styled(Box)(() => ({
-  width: '120px', // Aumentado de 100px a 120px
+  width: '120px',
   borderRight: '1px solid #333333',
   display: 'flex',
   flexDirection: 'column',
@@ -72,8 +75,8 @@ const MessageContent = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => (
   marginLeft: isUser ? theme.spacing(3) : 0,
   marginRight: isUser ? 0 : theme.spacing(3),
   flexGrow: 1,
-  position: 'relative', // Añadido para posicionar el TimeStamp
-  paddingBottom: theme.spacing(2), // Espacio para el TimeStamp
+  position: 'relative',
+  paddingBottom: theme.spacing(2),
 }));
 
 const InputContainer = styled(Box)(({ theme }) => ({
@@ -97,17 +100,17 @@ const StyledTextField = styled(TextField)(() => ({
 }));
 
 const LogoContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(0, 0.5), // Reducido aún más el padding horizontal
+  padding: theme.spacing(0, 0.5),
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center', // Centrar el contenido horizontalmente
+  justifyContent: 'center',
   height: '60px',
 }));
 
 const TimeStamp = styled(Typography)<{ isUser: boolean }>(({ theme, isUser }) => ({
   fontSize: '0.7rem',
   color: theme.palette.text.secondary,
-  opacity: 0.5, // Añadimos esta línea para hacer el tiempo más opaco
+  opacity: 0.5,
   position: 'absolute',
   right: isUser ? 'auto' : 0,
   left: isUser ? 0 : 'auto',
@@ -129,6 +132,9 @@ const ChatView: React.FC = () => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const theme = useTheme();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { language } = useAppContext();
+  const t = languages[language as keyof typeof languages].chatView;
+  const [agentDataError, setAgentDataError] = useState<boolean>(false);
 
   const handleMouseEnter = () => {
     setShowFullName(true);
@@ -177,51 +183,47 @@ const ChatView: React.FC = () => {
     );
   };
 
-  const loadAgentData = useCallback(async () => {
-    if (!botId || agentData) return;
+  const fetchChatViewData = useCallback(async () => {
+    if (!botId) return;
+    setIsLoading(true);
     try {
-      const res = await getAgentData(botId);
-      setAgentData(res.data);
-    } catch (error) {
-      console.error("Error al cargar los datos del agente:", error);
-      //ErrorToast("No se pudieron cargar los datos del agente");
-    }
-  }, [botId, getAgentData, agentData]);
+      const history = await getChatHistory(botId);
+      setChatHistory(history);
 
-  useEffect(() => {
-    loadAgentData();
-  }, [loadAgentData]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchChatHistory = async () => {
-      if (!botId) return;
-      setIsLoading(true);
-      try {
-        const history = await getChatHistory(botId);
-        if (isMounted) {
-          console.log(history)
-          setChatHistory(history);
-        }
-      } catch (error) {
-        console.error("Error al cargar el historial del chat:", error);
-        if (isMounted) {
-          ErrorToast("No se pudo cargar el historial del chat");
-        }
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
+      if (!agentDataError) {
+        try {
+          const agentDataResponse = await getAgentData(botId);
+          setAgentData(agentDataResponse.data);
+        } catch (agentError) {
+          console.error("Error al cargar los datos del agente:", agentError);
+          setAgentDataError(true);
+          // Generar datos simulados del agente
+          setAgentData({
+            id: 'simulated-id',
+            name: `${t.defaultAgentName}`,
+            description: '',
+            api_bot: '',
+            api_details: '',
+            iframe_code: '',
+            labels: [],
+            widget_url: '',
+            model_ai: '',
+          } as AgentData);
         }
       }
-    };
+    } catch (error) {
+      console.error("Error al cargar los datos del chat:", error);
+      ErrorToast(t.errorLoadingData);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [botId, getChatHistory, getAgentData, t.errorLoadingData, agentDataError]);
 
-    fetchChatHistory();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [botId]);
+  useEffect(() => {
+    if (!chatHistory && !agentData && !agentDataError) {
+      fetchChatViewData();
+    }
+  }, [fetchChatViewData, chatHistory, agentData, agentDataError]);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -252,7 +254,7 @@ const ChatView: React.FC = () => {
       setMessage("");
     } catch (error) {
       console.error("Error al enviar el mensaje:", error);
-      ErrorToast("No se pudo enviar el mensaje");
+      ErrorToast(t.errorSendingMessage);
     } finally {
       setIsSending(false);
     }
@@ -270,20 +272,20 @@ const ChatView: React.FC = () => {
 
   const cleanChat = useCallback(async (conversationId: string) => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/clean-chat', {
+      const response = await fetch(`${apiBase}/clean-chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ conversation_id: conversationId }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         console.warn("Error al limpiar el chat:", errorData);
         return false;
       }
-      
+
       return true;
     } catch (cleanError) {
       console.warn("Error al llamar a clean-chat:", cleanError);
@@ -294,44 +296,41 @@ const ChatView: React.FC = () => {
   const handleFinishSession = async () => {
     if (!chatHistory?.conversation) {
       console.error("No hay ID de conversación disponible");
-      ErrorToast("No se pudo cerrar el chat: falta el ID de conversación");
+      ErrorToast(t.errorClosingChat);
       return;
     }
-    
+
     console.log("ID de conversación:", chatHistory.conversation);
-    
+
     try {
-      // Intentar cerrar el chat en el backend
       try {
         await closeChat(chatHistory.conversation);
       } catch (closeError) {
         console.warn("Error al cerrar el chat en el backend:", closeError);
       }
-      
-      // Intentar limpiar el chat
+
       const cleanSuccess = await cleanChat(chatHistory.conversation);
-      
+
       if (cleanSuccess) {
-        // Cargar el mensaje inicial
-        const initialMessage : ChatMessage = {
-          content: 'Estoy aquí para ayudarte. ¿En qué puedo ser útil?',
+        const initialMessage: ChatMessage = {
+          content: t.noMessages,
           timestamp: new Date().toISOString(),
           role: 'bot'
         };
-        
+
         setChatHistory({
-          conversation: chatHistory.conversation, // Mantenemos el mismo ID de conversación
+          conversation: chatHistory.conversation,
           messages: [initialMessage],
-          customer: chatHistory.customer, // Añadir esta línea
-          customer_bot: chatHistory.customer_bot // Añadir esta línea
+          customer: chatHistory.customer,
+          customer_bot: chatHistory.customer_bot
         });
         setMessage("");
       } else {
-        ErrorToast("No se pudo limpiar el chat completamente");
+        ErrorToast(t.errorCleaningChat);
       }
     } catch (error) {
       console.error("Error inesperado al cerrar el chat:", error);
-      ErrorToast("Ocurrió un error inesperado al cerrar el chat");
+      ErrorToast(t.unexpectedError);
     }
   };
 
@@ -353,7 +352,7 @@ const ChatView: React.FC = () => {
       <SidebarContainer>
         <LogoContainer>
           <Box
-            width={showFullName ? "60px" : "30px"} // Reducido el ancho máximo
+            width={showFullName ? "60px" : "30px"}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             sx={{
@@ -364,7 +363,7 @@ const ChatView: React.FC = () => {
               onClick={() => navigate("/builder")}
               color={"white"}
               sx={{
-                fontSize: "20px", // Reducido aún más el tamaño de la fuente
+                fontSize: "20px",
                 lineHeight: 1,
                 textAlign: "center",
                 padding: "0px 2px",
@@ -379,16 +378,16 @@ const ChatView: React.FC = () => {
           </Box>
         </LogoContainer>
         <Box p={1} textAlign="center" display="flex" flexDirection="column">
-          <Typography variant="caption" mb={0.5}>Historial</Typography>
+          <Typography variant="caption" mb={0.5}>{t.history}</Typography>
           <Typography variant="caption" color="#888888" sx={{ fontSize: '0.7rem' }}>
-            (Próximamente)
+            {t.comingSoon}
           </Typography>
         </Box>
       </SidebarContainer>
       <ChatContainer>
         <Header>
           <Typography variant="h5" fontWeight="bold">
-            Panel de {agentData?.name || 'Agente IA'}
+            {t.agentPanel.replace("{agentName}", agentData?.name || t.defaultAgentName)}
           </Typography>
         </Header>
         <MessagesContainer ref={chatContainerRef}>
@@ -399,13 +398,13 @@ const ChatView: React.FC = () => {
                 width: 40,
                 height: 40,
                 marginRight: msg.role === "bot" ? '12px' : '6px',
-                marginLeft: msg.role === "bot" ? '6px' : '12px', 
+                marginLeft: msg.role === "bot" ? '6px' : '12px',
               }}>
                 {msg.role === "bot" ? "AI" : "U"}
               </Avatar>
               <MessageContent isUser={msg.role === "client"}>
                 <Typography variant="subtitle2" fontWeight="bold" mb={1}>
-                  {msg.role === "bot" ? (agentData?.name || "Asistente IA") : "Usuario"}
+                  {msg.role === "bot" ? (agentData?.name || t.assistant) : t.user}
                 </Typography>
                 <Typography variant="body1">
                   {renderMessageContent(msg.content)}
@@ -417,7 +416,7 @@ const ChatView: React.FC = () => {
             </MessageBubble>
           )) ?? (
               <Typography variant="body1" textAlign="center" color="#888888">
-                No hay mensajes disponibles. Comienza una conversación con el agente IA.
+                {t.noMessages}
               </Typography>
             )}
         </MessagesContainer>
@@ -427,7 +426,7 @@ const ChatView: React.FC = () => {
             variant="outlined"
             value={message}
             onChange={handleMessageChange}
-            placeholder="Escribe tu mensaje para el agente IA..."
+            placeholder={t.inputPlaceholder}
             onKeyPress={handleKeyPress}
             disabled={isSending}
             multiline
@@ -439,16 +438,16 @@ const ChatView: React.FC = () => {
               color="primary"
               onClick={handleFinishSession}
             >
-              Finalizar sesión
+              {t.finishSession}
             </Button>
             <Button
               variant="contained"
-              sx={{color: theme.palette.secondary.main}}
+              sx={{ color: theme.palette.secondary.main }}
               onClick={handleSendMessage}
               disabled={isSending}
               endIcon={isSending ? <CircularProgress size={20} /> : <SendIcon />}
             >
-              Enviar
+              {t.sendButton}
             </Button>
           </Box>
         </InputContainer>

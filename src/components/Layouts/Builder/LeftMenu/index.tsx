@@ -6,36 +6,33 @@ import { SuccessToast } from "@/components/Toast";
 import { LogoutSharp } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
-import { useEffect, useState } from "react"; // Añadimos useState
-
-const options = [
-  {
-    navElevation: "builder",
-    label: "Equipos IA",
-    path: "/builder",
-  },
-  {
-    navElevation: "Register",
-    label: "Registrar Equipo",
-    path: "/builder/agents/form",
-  },
-/*   {
-    navElevation: "Tools",
-    label: "Tools",
-    path: "/builder/agents/tools",
-  }, */
-];
+import { useEffect, useState } from "react";
+import { languages } from "@/utils/Traslations/languages";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, navElevation, setNavElevation, setAuthUser, setMenu } = useAppContext();
+  const { menu, navElevation, setNavElevation, setAuthUser, setMenu, language } = useAppContext();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
-  const [isInitialRender, setIsInitialRender] = useState(true); // Nuevo estado
+  const [isInitialRender, setIsInitialRender] = useState(true);
+  const t = languages[language as keyof typeof languages];
+
+  const options = [
+    {
+      navElevation: "builder",
+      label: t.leftMenu.aiTeams,
+      path: "/builder",
+    },
+    {
+      navElevation: "Register",
+      label: t.leftMenu.registerTeam,
+      path: "/builder/form",
+    },
+  ];
 
   useEffect(() => {
     if (isInitialRender) {
-      setMenu(false); // Ocultar el menú en el primer renderizado
+      setMenu(false);
       setIsInitialRender(false);
     }
   }, [isInitialRender, setMenu]);
@@ -145,7 +142,7 @@ const LeftMenu: React.FC = () => {
                 sessionStorage.setItem("user_email", "");
                 sessionStorage.setItem("user_token", "");
                 navigate("/auth/login", { replace: true });
-                SuccessToast("Has cerrado sesión correctamente");
+                SuccessToast(t.leftMenu.logoutSuccess);
               }}
             >
               <LogoutSharp
@@ -155,7 +152,7 @@ const LeftMenu: React.FC = () => {
                   transform: "scaleX(-1)",
                 }}
               />
-              Cerrar Sesión
+              {t.leftMenu.logout}
             </Typography>
           </Box>
         </Stack>

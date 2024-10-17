@@ -1,0 +1,91 @@
+const es = {
+  greeting: "Hola",
+  farewell: "Adiós",
+  actionAllower: {
+    fieldRequired: "Este campo es requerido",
+    confirmAction: "Confirme la Acción",
+    confirmation: "Confirmación",
+    write: "Escriba",
+    confirm: "Confirmar",
+    cancel: "Cancelar"
+  },
+  leftMenu: {
+    aiTeams: "Equipos IA",
+    registerTeam: "Nuevo equipo",
+    logout: "Cerrar Sesión",
+    logoutSuccess: "Has cerrado sesión correctamente"
+  },
+  aiTeamsForm: {
+    editTitle: "Editar equipo de Equipos IA",
+    createTitle: "Registrar nuevo equipo de Equipos IA",
+    teamName: "Nombre del Equipo",
+    address: "Dirección",
+    description: "Descripción",
+    edit: "Editar",
+    register: "Registrar",
+    fieldRequired: "Este es un campo requerido",
+    successUpdate: "Cliente actualizado satisfactoriamente",
+    successCreate: "Cliente creado satisfactoriamente",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor"
+  },
+  aiTeamsList: {
+    newAiTeam: "Nuevo Equipo IA",
+    searchPlaceholder: "Buscar Equipo IA",
+    yourAiTeams: "Tus equipos de IA",
+    perPage: "por página",
+    manageTeam: "Administrar Equipo",
+    edit: "Editar",
+    noTeamsFound: "No se encontraron Equipos IA con ese nombre",
+    noTeamsToShow: "No hay Equipos IA para mostrar",
+    teamsCount: "de {total} Equipos IA",
+    successDelete: "Cliente eliminado satisfactoriamente"
+  },
+  iaPanel: {
+    createAgent: "Crear Agente",
+    searchPlaceholder: "Buscar Agente IA",
+    agentsOf: "Agentes de {clientName}",
+    perPage: "por página",
+    noAgentsFound: "No se encontraron Agentes IA con ese nombre",
+    noAgentsToShow: "No hay Agentes IA para mostrar",
+    agentsCount: "de {total} Agentes IA",
+    testAgent: "Probar",
+    useAPI: "Usar API",
+    widget: "Widget",
+    configuration: "Configuración",
+    data: "Datos",
+    customization: "Personalización",
+    tools: "Herramientas",
+    deleteSuccess: "Chatbot eliminado satisfactoriamente",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    errorLoadingClient: "Error al cargar clientId en esta vista",
+    errorDeletingBot: "Error al cargar botId al borrar",
+    edit: "Editar",
+    created: "Creado: {date}"
+  },
+  chatView: {
+    agentPanel: "Panel de {agentName}",
+    defaultAgentName: "Agente IA",
+    history: "Historial",
+    comingSoon: "(Próximamente)",
+    noMessages: "No hay mensajes disponibles. Comienza una conversación con el agente IA.",
+    inputPlaceholder: "Escribe tu mensaje para el agente IA...",
+    sendButton: "Enviar",
+    finishSession: "Finalizar sesión",
+    assistant: "Asistente IA",
+    user: "Usuario",
+    errorLoadingAgent: "No se pudieron cargar los datos del agente",
+    errorLoadingHistory: "No se pudo cargar el historial del chat",
+    errorSendingMessage: "No se pudo enviar el mensaje",
+    errorClosingChat: "No se pudo cerrar el chat: falta el ID de conversación",
+    errorCleaningChat: "No se pudo limpiar el chat completamente",
+    unexpectedError: "Ocurrió un error inesperado al cerrar el chat",
+    errorLoadingData: "No se pudieron cargar los datos del chat"
+  },
+  notFound: {
+    title: "404 - Página no encontrada",
+    message: "Lo sentimos, la página que estás buscando no existe.",
+    redirectMessage: "Serás redirigido a la página anterior en {countdown} segundos."
+  }
+};
+
+export default es;

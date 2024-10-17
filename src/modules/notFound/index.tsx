@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAppContext } from "@/context/app";
+import { languages } from "@/utils/Traslations/languages";
 
 const NotFoundModule: React.FC = () => {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(5);
+  const { language } = useAppContext();
+  const t = languages[language as keyof typeof languages].notFound;
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -24,13 +28,13 @@ const NotFoundModule: React.FC = () => {
   return (
     <Grid container direction="column" alignItems="center" justifyContent="center" style={{ minHeight: '100vh' }}>
       <Typography variant="h2" gutterBottom>
-        404 - Página no encontrada
+        {t.title}
       </Typography>
       <Typography variant="body1" gutterBottom>
-        Lo sentimos, la página que estás buscando no existe.
+        {t.message}
       </Typography>
       <Typography variant="body2">
-        Serás redirigido a la página anterior en {countdown} segundos.
+        {t.redirectMessage.replace("{countdown}", countdown.toString())}
       </Typography>
     </Grid>
   );

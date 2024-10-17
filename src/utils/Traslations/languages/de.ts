@@ -1,0 +1,91 @@
+const de = {
+  greeting: "Hallo",
+  farewell: "Auf Wiedersehen",
+  actionAllower: {
+    fieldRequired: "Dieses Feld ist erforderlich",
+    confirmAction: "Aktion bestätigen",
+    confirmation: "Bestätigung",
+    write: "Schreiben Sie",
+    confirm: "Bestätigen",
+    cancel: "Abbrechen"
+  },
+  leftMenu: {
+    aiTeams: "KI-Teams",
+    registerTeam: "Neues Team",
+    logout: "Abmelden",
+    logoutSuccess: "Sie haben sich erfolgreich abgemeldet"
+  },
+  aiTeamsForm: {
+    editTitle: "KI-Teams-Team bearbeiten",
+    createTitle: "Neues KI-Teams-Team registrieren",
+    teamName: "Teamname",
+    address: "Adresse",
+    description: "Beschreibung",
+    edit: "Bearbeiten",
+    register: "Registrieren",
+    fieldRequired: "Dieses Feld ist erforderlich",
+    successUpdate: "Kunde erfolgreich aktualisiert",
+    successCreate: "Kunde erfolgreich erstellt",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
+  },
+  aiTeamsList: {
+    newAiTeam: "Neues KI-Team",
+    searchPlaceholder: "KI-Team suchen",
+    yourAiTeams: "Ihre KI-Teams",
+    perPage: "pro Seite",
+    manageTeam: "Team verwalten",
+    edit: "Bearbeiten",
+    noTeamsFound: "Keine KI-Teams mit diesem Namen gefunden",
+    noTeamsToShow: "Keine KI-Teams zum Anzeigen",
+    teamsCount: "von {total} KI-Teams",
+    successDelete: "Kunde erfolgreich gelöscht"
+  },
+  iaPanel: {
+    createAgent: "Agent erstellen",
+    searchPlaceholder: "KI-Agent suchen",
+    agentsOf: "Agenten von {clientName}",
+    perPage: "pro Seite",
+    noAgentsFound: "Keine KI-Agenten mit diesem Namen gefunden",
+    noAgentsToShow: "Keine KI-Agenten zum Anzeigen",
+    agentsCount: "von {total} KI-Agenten",
+    testAgent: "Testen",
+    useAPI: "API verwenden",
+    widget: "Widget",
+    configuration: "Konfiguration",
+    data: "Daten",
+    customization: "Anpassung",
+    tools: "Werkzeuge",
+    deleteSuccess: "Chatbot erfolgreich gelöscht",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    errorLoadingClient: "Fehler beim Laden der clientId in dieser Ansicht",
+    errorDeletingBot: "Fehler beim Laden der botId zum Löschen",
+    edit: "Bearbeiten",
+    created: "Erstellt am: {date}"
+  },
+  chatView: {
+    agentPanel: "Panel von {agentName}",
+    defaultAgentName: "KI-Agent",
+    history: "Verlauf",
+    comingSoon: "(Demnächst verfügbar)",
+    noMessages: "Keine Nachrichten verfügbar. Beginnen Sie ein Gespräch mit dem KI-Agenten.",
+    inputPlaceholder: "Geben Sie Ihre Nachricht für den KI-Agenten ein...",
+    sendButton: "Senden",
+    finishSession: "Sitzung beenden",
+    assistant: "KI-Assistent",
+    user: "Benutzer",
+    errorLoadingAgent: "Agentendaten konnten nicht geladen werden",
+    errorLoadingHistory: "Chatverlauf konnte nicht geladen werden",
+    errorSendingMessage: "Nachricht konnte nicht gesendet werden",
+    errorClosingChat: "Chat konnte nicht geschlossen werden: Fehlende Konversations-ID",
+    errorCleaningChat: "Chat konnte nicht vollständig bereinigt werden",
+    unexpectedError: "Beim Schließen des Chats ist ein unerwarteter Fehler aufgetreten",
+    errorLoadingData: "Chatdaten konnten nicht geladen werden"
+  },
+  notFound: {
+    title: "404 - Seite nicht gefunden",
+    message: "Entschuldigung, die gesuchte Seite existiert nicht.",
+    redirectMessage: "Sie werden in {countdown} Sekunden zur vorherigen Seite weitergeleitet."
+  }
+};
+
+export default de;
