@@ -6,7 +6,6 @@ import AiTeamsList from "@/pages/AiTeams/AiTeamsList";
 import AiTeamsForm from "@/pages/AiTeams/AiTeamsForm";
 
 const AgentsDetailsModule = lazy(() => import("./agents"));
-const ChatViewModule = lazy(() => import("../../modules/chatView"));
 const ProfileModule = lazy(() => import("../../modules/profile")); // Nuevo módulo
 
 const AiTeamsModule: React.FC = () => {
@@ -17,7 +16,6 @@ const AiTeamsModule: React.FC = () => {
           {/* AI TEAMS */}
           <Route index element={<AiTeamsList />} />
           <Route path="form/:clientName?/:clientId?" element={<AiTeamsForm />} />
-          <Route path="agents/chat/:botId" element={<ChatViewModule />} />
           <Route path="profile/*" element={<ProfileModule />} />
           {/* AGENTS DETAILS*/}
           <Route path="agents/*" element={<AgentsDetailsModule />} />

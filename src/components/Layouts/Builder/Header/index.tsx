@@ -34,7 +34,6 @@ const Header: React.FC = () => {
   };
 
   const isLargeScreen = breakpoint === "lg" || breakpoint === "xl";
-
   const [showFullName, setShowFullName] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const theme = useTheme();
@@ -109,7 +108,7 @@ const Header: React.FC = () => {
           <UserBubble>
             <Typography
               variant="body1"
-              color={theme.palette.primary.contrastText}
+              color={theme.palette.secondary.main}
               onClick={handleProfileClick}
               sx={{
                 display: 'flex',

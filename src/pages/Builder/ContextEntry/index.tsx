@@ -10,6 +10,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MultilineInput, TextInput, SelectInput } from "@/components/Inputs";
 import { useAppContext } from "@/context/app";
+import { modelAIOptions } from "@/utils/LargeModelsUtils";
 
 const ContextEntry: React.FC = () => {
   const { clientId, botId } = useParams();
@@ -228,13 +229,6 @@ const ContextEntry: React.FC = () => {
       }, 1000);
     }
   }, []);
-
-  const modelAIOptions = [
-    { label: "Claude 3.5", value: "claude-3-5-sonnet-20240620" },
-    { label: "Claude 3 Opus", value: "claude-3-opus-20240229" },
-    { label: "GPT-4", value: "gpt-4o" },
-    { label: "GPT-3.5", value: "gpt-3.5-turbo-1106" },
-  ];
 
   return (
     <>

@@ -5,7 +5,7 @@ import BackgroundLines from "./styles/components/BackgroundLines"; // Importamos
 import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
 
-/* import AuthChecker from "./components/AuthChecker"; */
+const ChatViewModule = lazy(() => import("./pages/Builder/Widget"));/* import AuthChecker from "./components/AuthChecker"; */
 
 const HomeModule = lazy(() => import("./modules/home"));
 const AuthModule = lazy(() => import("./modules/auth"));
@@ -51,6 +51,7 @@ function AppRoutes() {
             <Route index element={<HomeModule />} />
           </Route>
           <Route path="*" element={<NotFoundModule />} />
+          <Route path="builder/agents/chat/:botId" element={<ChatViewModule />} />
         </Route>
       </Routes>
     </>

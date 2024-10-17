@@ -28,7 +28,7 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
-import theme from "@/styles/theme";
+import { useTheme } from "@mui/material/styles";
 
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 
@@ -52,6 +52,7 @@ const AiTeamsList: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const theme = useTheme();
 
   const getAiTeamsData = useCallback((filterParams: string) => {
     setIsLoading(true);
@@ -155,6 +156,7 @@ const AiTeamsList: React.FC = () => {
               onClick={() => navigate('/builder/agents/form')}
               fullWidth
               sx={{
+                color: theme.palette.secondary.main, // Cambiado a blanco
                 width: '100%',
                 maxWidth: { xs: '100%', sm: '200px' }
               }}

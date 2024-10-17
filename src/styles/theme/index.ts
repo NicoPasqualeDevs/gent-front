@@ -26,7 +26,7 @@ let theme = createThemeDefault({
   palette: {
     mode: "dark", // Cambiamos el modo a oscuro
     primary: {
-      main: "#E2BFD3", // Magenta pastel principal con toque de lila y más brillo
+      main: "#D27B9A", // Magenta pastel principal con toque de lila y más brillo
       light: "#EACBDF", // Magenta claro pastel con toque de lila y más brillo
       dark: "#DAB3C7", // Magenta oscuro pastel con toque de lila y más brillo
       contrastText: "#000000", // Negro
