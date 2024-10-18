@@ -53,7 +53,7 @@ const useApi = (): UseApiHook => {
       const isFormData = body instanceof FormData;
       const requestOptions: RequestInit = {
         method,
-        headers: createHeaders(headers),
+        headers: isFormData ? { Authorization: `Token ${token}` } : createHeaders(headers),
         body: isFormData ? body : body ? JSON.stringify(body) : undefined,
       };
 

@@ -53,10 +53,17 @@ const ToolsForm: React.FC = () => {
   });
 
   const onSubmit = (values: ToolData) => {
+    const formData = new FormData();
+    formData.append("tool_name", values.tool_name);
+    formData.append("instruction", values.instruction ?? "");
+    if (values.tool_code instanceof File) {
+      formData.append("tool_code", values.tool_code);
+    }
+
     if (toolId) {
-      updateTool(toolId, values);
+      updateTool(toolId, formData);
     } else {
-      createNewTool(values);
+      createNewTool(formData);
     }
   };
 
@@ -66,12 +73,7 @@ const ToolsForm: React.FC = () => {
     validationSchema,
   });
 
-  const createNewTool = (values: ToolData) => {
-    const formData = new FormData();
-    formData.append("tool_name", values.tool_name);
-    formData.append("instruction", values.instruction ?? "");
-    formData.append("tool_code", values.tool_code ?? "");
-
+  const createNewTool = (formData: FormData) => {
     postTool(formData)
       .then(() => {
         SuccessToast(t.toolsForm.createSuccess);
@@ -143,12 +145,7 @@ const ToolsForm: React.FC = () => {
       });
   }, []);
 
-  const updateTool = (toolId: string, values: ToolData) => {
-    const formData = new FormData();
-    formData.append("tool_name", values.tool_name);
-    formData.append("instruction", values.instruction ?? "");
-    formData.append("tool_code", values.tool_code ?? "");
-
+  const updateTool = (toolId: string, formData: FormData) => {
     patchTool(toolId, formData)
       .then(() => {
         SuccessToast(t.toolsForm.updateSuccess);
