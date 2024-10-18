@@ -40,7 +40,8 @@ const AiTeamsList: React.FC = () => {
     clientPage,
     setClientPage,
     setAgentsPage,
-    language
+    language,
+    auth
   } = useAppContext();
   const { getCustomerList, deleteClientDetails } = useCustomersApi();
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -151,19 +152,21 @@ const AiTeamsList: React.FC = () => {
             alignItems: 'center',
             gap: 2,
           }}>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => navigate('/builder/form')}
-              fullWidth
-              sx={{
-                color: theme.palette.secondary.main,
-                width: '100%',
-                maxWidth: { xs: '100%', sm: '200px' }
-              }}
-            >
-              {t.aiTeamsList.newAiTeam}
-            </Button>
+            {auth?.user?.is_superuser && (
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => navigate('/builder/form')}
+                fullWidth
+                sx={{
+                  color: theme.palette.secondary.main,
+                  width: '100%',
+                  maxWidth: { xs: '100%', sm: '200px' }
+                }}
+              >
+                {t.aiTeamsList.newAiTeam}
+              </Button>
+            )}
             <Box sx={{
               width: '100%',
               display: 'flex',

@@ -3,7 +3,7 @@ import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { LeftMenuContainer } from "@/components/StyledComponents/Layout";
 import { SuccessToast } from "@/components/Toast";
-import { LogoutSharp, PersonAddOutlined } from "@mui/icons-material";
+import { LogoutSharp } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";

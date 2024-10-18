@@ -72,11 +72,6 @@ const ProfileView: React.FC = () => {
             </Grid>
           </Grid>
           <Divider sx={{ my: 3, backgroundColor: 'primary.light' }} />
-          <Box display="flex" justifyContent="center">
-            <Typography variant="body1" paragraph sx={{ maxWidth: '80%', textAlign: 'center' }}>
-              {auth.user.bio || "No hay biografía disponible."}
-            </Typography>
-          </Box>
           <Box mt={2} display="flex" justifyContent="center" flexWrap="wrap">
             {['React', 'TypeScript', 'Material-UI'].map((skill) => (
               <Chip

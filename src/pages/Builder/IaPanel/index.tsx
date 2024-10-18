@@ -26,7 +26,7 @@ import { languages } from "@/utils/Traslations/languages";
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();
   const navigate = useNavigate();
-  const { replacePath, appNavigation, agentsPage, setAgentsPage } = useAppContext();
+  const { replacePath, appNavigation, agentsPage, setAgentsPage, language, auth } = useAppContext();
   const { getBotsList, deleteBot } = useBotsApi();
   const [loaded, setLoaded] = useState(false);
   const [allowerState, setAllowerState] = useState(false);
@@ -36,7 +36,6 @@ const IaPanel: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [contentPerPage, setContentPerPage] = useState("5");
   const { apiBase } = useApi()
-  const { language } = useAppContext();
   const t = languages[language as keyof typeof languages];
 
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
@@ -356,21 +355,23 @@ const IaPanel: React.FC = () => {
               alignItems: 'center',
               gap: 2,
             }}>
-              <Button
-                variant="contained"
-                onClick={() => navigate(`/builder/agents/contextEntry/${clientId}`)}
-                fullWidth
-                sx={{
-                  width: '100%',
-                  maxWidth: { xs: '100%', sm: '200px' },
-                  color: 'white', // Cambiado a blanco
-                  '&:hover': {
-                    color: 'white', // Asegura que el color se mantenga blanco al pasar el mouse
-                  },
-                }}
-              >
-                {t.iaPanel.createAgent}
-              </Button>
+              {auth?.user?.is_superuser && (
+                <Button
+                  variant="contained"
+                  onClick={() => navigate(`/builder/agents/contextEntry/${clientId}`)}
+                  fullWidth
+                  sx={{
+                    width: '100%',
+                    maxWidth: { xs: '100%', sm: '200px' },
+                    color: 'white',
+                    '&:hover': {
+                      color: 'white',
+                    },
+                  }}
+                >
+                  {t.iaPanel.createAgent}
+                </Button>
+              )}
               <Box sx={{
                 width: '100%',
                 display: 'flex',
