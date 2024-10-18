@@ -121,3 +121,13 @@ export interface ToolData {
 export interface ToolRelationshipData {
   agent_tool_ids: number[];
 }
+
+export interface Client {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  code: string;
+  user_email: string;
+  // Añade cualquier otro campo que pueda tener un cliente
+}

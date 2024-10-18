@@ -106,7 +106,11 @@ const AiTeamsForm: React.FC = () => {
   };
 
   const createNewClient = (values: AiTeamsDetails) => {
-    postClientDetails(values)
+    // Asumiendo que tienes acceso al email del usuario actual
+    const userEmail = "usuario@ejemplo.com"; // Reemplaza esto con la forma en que obtienes el email del usuario actual
+    const dataWithEmail = { ...values, email: userEmail };
+    
+    postClientDetails(dataWithEmail)
       .then((response) => {
         SuccessToast(t.successCreate);
         navigate(`/builder/agents/form/${response.name}/${response.id}`);

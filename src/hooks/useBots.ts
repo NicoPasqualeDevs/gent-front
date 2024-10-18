@@ -15,6 +15,7 @@ import {
   WidgetData,
   GetCustomGreetingData,
   CustomGreetingData,
+  Client,
 } from "@/types/Bots";
 import { ApiResponseList, ApiResponse } from "@/types/Api";
 
@@ -37,6 +38,7 @@ type UseBotsApiHook = {
   getBotTools: (botId: string) => Promise<ToolData[]>;
   getTool: (toolId: string) => Promise<ToolData>;
   getClientTools: (clientId: string) => Promise<ToolData[]>;
+  getMyClients: () => Promise<ApiResponseList<Client>>;
 
   //Post
   createBot: (clientId: string, data: AgentMetaData) => Promise<AgentData>;
@@ -134,6 +136,10 @@ const useBotsApi = (): UseBotsApiHook => {
   const getClientTools = (clientId: string): Promise<ToolData[]> => {
     const path = `api/tool/client/${clientId}`;
     return apiGet<{ message: string; data: ToolData[] }>(path).then(response => response.data);
+  };
+  const getMyClients = (): Promise<ApiResponseList<Client>> => {
+    const path = `api/client/actions/clients/my_clients/`;
+    return apiGet<ApiResponseList<Client>>(path);
   };
 
   // POST
@@ -259,6 +265,7 @@ const useBotsApi = (): UseBotsApiHook => {
     getBotTools,
     getTool,
     getClientTools,
+    getMyClients,
 
     //Post
     createBot,

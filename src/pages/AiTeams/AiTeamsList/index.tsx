@@ -43,7 +43,7 @@ const AiTeamsList: React.FC = () => {
     language,
     auth
   } = useAppContext();
-  const { getCustomerList, deleteClientDetails } = useCustomersApi();
+  const { getMyClients, deleteClientDetails } = useCustomersApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
@@ -57,9 +57,9 @@ const AiTeamsList: React.FC = () => {
   const theme = useTheme();
   const t = languages[language as keyof typeof languages];
 
-  const getAiTeamsData = useCallback((filterParams: string) => {
+  const getAiTeamsData = useCallback(() => {
     setIsLoading(true);
-    getCustomerList(filterParams)
+    getMyClients()
       .then((response) => {
         const data: AiTeamsDetails[] = response.data;
         const paginationData: Metadata = response.metadata;
@@ -85,24 +85,25 @@ const AiTeamsList: React.FC = () => {
           searchInputRef.current.focus();
         }
       });
-  }, [getCustomerList, setClientPage, t.aiTeamsForm.errorConnection]);
+  }, [getMyClients, setClientPage, t.aiTeamsForm.errorConnection]);
 
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
     setAgentsPage(value);
     setLoaded(false);
-    getAiTeamsData(`?page_size=${contentPerPage}&page=${value}`);
+    getAiTeamsData();
   };
 
   const handleSearch = useCallback((value: string) => {
     setSearchQuery(value);
     setIsSearching(true);
-    if (value.trim() !== "") {
-      getAiTeamsData(`?name__icontains=${value}`);
-    } else {
-      getAiTeamsData(`?page_size=${contentPerPage}&page=1`);
-    }
-  }, [contentPerPage, getAiTeamsData]);
+    // Nota: La búsqueda ahora se realiza en el frontend
+    const filteredContent = pageContent.filter(client => 
+      client.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setPageContent(filteredContent);
+    setIsSearching(false);
+  }, [pageContent]);
 
   const deleteAction = (clientId: string) => {
     deleteClientDetails(clientId)
@@ -137,7 +138,7 @@ const AiTeamsList: React.FC = () => {
     setAgentsPage(1);
     setNavElevation("builder");
     if (!loaded) {
-      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
+      getAiTeamsData();
     }
   }, []);
 
@@ -212,7 +213,7 @@ const AiTeamsList: React.FC = () => {
               onChange={(e: SelectChangeEvent) => {
                 setContentPerPage(e.target.value);
                 setLoaded(false);
-                getAiTeamsData(`?page_size=${e.target.value}`);
+                getAiTeamsData();
               }}
               size="small"
               sx={{ width: { xs: '100%', sm: 'auto' } }}

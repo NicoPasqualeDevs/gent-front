@@ -54,7 +54,7 @@ const ToolsForm: React.FC = () => {
     postTool(formData)
       .then((response) => {
         SuccessToast(t.toolsForm.createSuccess);
-        navigate(`/builder/agents/tools`);
+        navigate(`/builder/agents/tools/${clientId}/${botId}`);
       })
       .catch((error) => {
         if (error instanceof Error) {

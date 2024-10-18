@@ -13,6 +13,7 @@ type UseCustomersApiHook = {
     clientId: string
   ) => Promise<AiTeamsDetails>;
   deleteClientDetails: (clientId: string) => Promise<Response>;
+  getMyClients: () => Promise<ApiResponseList<AiTeamsDetails>>;
 };
 
 const useCustomersApi = (): UseCustomersApiHook => {
@@ -31,9 +32,14 @@ const useCustomersApi = (): UseCustomersApiHook => {
     return apiGet<AiTeamsDetails>(path);
   };
 
+  const getMyClients = (): Promise<ApiResponseList<AiTeamsDetails>> => {
+    const path = `api/client/actions/clients/my_clients/`;
+    return apiGet<ApiResponseList<AiTeamsDetails>>(path);
+  };
+
   // POST
   const postClientDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
-    const path = "api/client/actions/";
+    const path = `api/client/actions/clients/`;
     return apiPost(path, data);
   };
 
@@ -57,6 +63,7 @@ const useCustomersApi = (): UseCustomersApiHook => {
     postClientDetails,
     putClientDetails,
     deleteClientDetails,
+    getMyClients,
   };
 };
 
