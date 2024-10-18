@@ -13,7 +13,7 @@ import { useAppContext } from "@/context/app";
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
 
 const ContextEntry: React.FC = () => {
-  const { clientId, botId } = useParams();
+  const { aiTeamId, botId } = useParams();
   const navigate = useNavigate();
   const { replacePath, appNavigation } = useAppContext();
   const {
@@ -136,8 +136,8 @@ const ContextEntry: React.FC = () => {
   }, []);
 
   const createNewBot = (values: ContextEntryData) => {
-    if (clientId) {
-      createBot(clientId, {
+    if (aiTeamId) {
+      createBot(aiTeamId, {
         name: values.name,
         description: values.description,
         model_ai: values.model_ai 
@@ -145,7 +145,7 @@ const ContextEntry: React.FC = () => {
         .then((response) => {
           SuccessToast("Bot creado satisfactoriamente");
           setTimeout(() => {
-            navigate(`/builder/agents/contextEntry/${clientId}/${response.id}`);
+            navigate(`/builder/agents/contextEntry/${aiTeamId}/${response.id}`);
           }, 1000);
         })
         .catch((error) => {
@@ -160,7 +160,7 @@ const ContextEntry: React.FC = () => {
         });
     } else {
       ErrorToast(
-        "Error al cargar clientId en la vista. No se puede crear el bot."
+        "Error al cargar aiTeamId en la vista. No se puede crear el bot."
       );
       setTimeout(() => {
         navigate(-1);
@@ -169,7 +169,7 @@ const ContextEntry: React.FC = () => {
   };
 
   const updateAgentData = (values: ContextEntryData) => {
-    if (clientId && botId) {
+    if (aiTeamId && botId) {
       updateBot(botId, { name: values.name, description: values.description, model_ai: values.model_ai })
         .then(() => {
           updatePromptTemplateData(values.prompt_template);
@@ -186,7 +186,7 @@ const ContextEntry: React.FC = () => {
         });
     } else {
       ErrorToast(
-        "Error al cargar botId o clientId en la vista. No se pueden actualizar los datos."
+        "Error al cargar botId o aiTeamId en la vista. No se pueden actualizar los datos."
       );
       setTimeout(() => {
         navigate(-1);
@@ -195,19 +195,19 @@ const ContextEntry: React.FC = () => {
   };
 
   useEffect(() => {
-    if (clientId) {
+    if (aiTeamId) {
       if (botId) {
         /*setAppNavigation({
           label: "Editar Agente",
-          current_path: `/builder/agents/contextEntry/${clientId}/${botId}`,
-          preview_path: `/builder/agents/contextEntry/${clientId}`,
+          current_path: `/builder/agents/contextEntry/${aiTeamId}/${botId}`,
+          preview_path: `/builder/agents/contextEntry/${aiTeamId}`,
         });*/
         replacePath([
           ...appNavigation.slice(0, 2),
           {
             label: "Editar Agente",
-            current_path: `/builder/agents/contextEntry/${clientId}/${botId}`,
-            preview_path: `/builder/agents/contextEntry/${clientId}`,
+            current_path: `/builder/agents/contextEntry/${aiTeamId}/${botId}`,
+            preview_path: `/builder/agents/contextEntry/${aiTeamId}`,
           },
         ]);
         loadAgentData();
@@ -216,14 +216,14 @@ const ContextEntry: React.FC = () => {
           ...appNavigation.slice(0, 2),
           {
             label: "Crear Agente",
-            current_path: `/builder/agents/contextEntry/${clientId}/`,
-            preview_path: `/builder/agents/contextEntry/${clientId}`,
+            current_path: `/builder/agents/contextEntry/${aiTeamId}/`,
+            preview_path: `/builder/agents/contextEntry/${aiTeamId}`,
           },
         ]);
         setLoaded(true);
       }
     } else {
-      ErrorToast("Error al cargar clientId en el vista");
+      ErrorToast("Error al cargar aiTeamId en el vista");
       setTimeout(() => {
         navigate(-1);
       }, 1000);

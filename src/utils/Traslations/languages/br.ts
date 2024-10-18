@@ -58,7 +58,7 @@ const br = {
     tools: "Ferramentas",
     deleteSuccess: "Chatbot excluído com sucesso",
     errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
-    errorLoadingClient: "Erro ao carregar clientId nesta visualização",
+    errorLoadingClient: "Erro ao carregar aiTeamId nesta visualização",
     errorDeletingBot: "Erro ao carregar botId para exclusão",
     edit: "Editar",
     created: "Criado em: {date}"

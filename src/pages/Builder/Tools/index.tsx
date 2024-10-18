@@ -14,17 +14,17 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const Tools: React.FC = () => {
   const navigate = useNavigate();
-  const { clientId } = useParams();
+  const { aiTeamId } = useParams();
   const { getClientTools } = useBotsApi();
   const [tools, setTools] = useState<ToolData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchTools = useCallback(async () => {
-    if (!clientId) return;
+    if (!aiTeamId) return;
 
     setIsLoading(true);
     try {
-      const response = await getClientTools(clientId);
+      const response = await getClientTools(aiTeamId);
       setTools(response);
     } catch (error) {
       ErrorToast("Error al cargar las herramientas");
@@ -32,7 +32,7 @@ const Tools: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [clientId, getClientTools]);
+  }, [aiTeamId, getClientTools]);
 
   useEffect(() => {
     if (isLoading) {
@@ -65,7 +65,7 @@ const Tools: React.FC = () => {
       <Button
         variant="contained"
         sx={{ marginTop: 2 }}
-        onClick={() => navigate(`/builder/agents/tools-form/${clientId}`)}
+        onClick={() => navigate(`/builder/agents/tools-form/${aiTeamId}`)}
       >
         Crear Tool
       </Button>

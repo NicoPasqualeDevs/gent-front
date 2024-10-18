@@ -58,7 +58,7 @@ const de = {
     tools: "Werkzeuge",
     deleteSuccess: "Chatbot erfolgreich gelöscht",
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
-    errorLoadingClient: "Fehler beim Laden der clientId in dieser Ansicht",
+    errorLoadingClient: "Fehler beim Laden der aiTeamId in dieser Ansicht",
     errorDeletingBot: "Fehler beim Laden der botId zum Löschen",
     edit: "Bearbeiten",
     created: "Erstellt am: {date}"

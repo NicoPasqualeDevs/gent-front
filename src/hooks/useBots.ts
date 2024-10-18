@@ -25,11 +25,11 @@ type MessageUp = {
 
 type UseBotsApiHook = {
   // Gets
-  getKnowledgeTags: (clientId: string) => Promise<Ktag[]>;
+  getKnowledgeTags: (aiTeamId: string) => Promise<Ktag[]>;
   getChatHistory: (botId: string) => Promise<ChatHistory>;
   getAgentData: (botId: string) => Promise<ApiResponse<AgentData>>;
   getNoAuthAgentData: (botId: string) => Promise<AgentData>;
-  getBotsList: (clientId: string, filterParams: string) => Promise<ApiResponseList<AgentData>>;
+  getBotsList: (aiTeamId: string, filterParams: string) => Promise<ApiResponseList<AgentData>>;
   getKtags: (botId: string) => Promise<Ktag[]>;
   getWidget: (botId: string) => Promise<WidgetData>;
   getCustomMessages: (botId: string) => Promise<GetCustomGreetingData>;
@@ -37,11 +37,11 @@ type UseBotsApiHook = {
   getAllTools: () => Promise<ToolData[]>;
   getBotTools: (botId: string) => Promise<ToolData[]>;
   getTool: (toolId: string) => Promise<ToolData>;
-  getClientTools: (clientId: string) => Promise<ToolData[]>;
+  getClientTools: (aiTeamId: string) => Promise<ToolData[]>;
   getMyClients: () => Promise<ApiResponseList<Client>>;
 
   //Post
-  createBot: (clientId: string, data: AgentMetaData) => Promise<AgentData>;
+  createBot: (aiTeamId: string, data: AgentMetaData) => Promise<AgentData>;
   sendMessage: (botId: string, data: MessageUp) => Promise<UpdatedChatHistory>;
   saveKtag: (botId: string, data: Ktag) => Promise<Ktag>;
   postWidget: (botId: string, data: WidgetData) => Promise<WidgetData>;
@@ -85,8 +85,8 @@ const useBotsApi = (): UseBotsApiHook => {
   const { apiPut, apiPost, apiGet, noAuthGet, apiDelete, apiPatch } = useApi();
 
   // GETS
-  const getBotsList = (clientId: string, filterParams: string): Promise<ApiResponseList<AgentData>> => {
-    const path = `api/client/bots/${clientId}${filterParams}`;
+  const getBotsList = (aiTeamId: string, filterParams: string): Promise<ApiResponseList<AgentData>> => {
+    const path = `api/client/bots/${aiTeamId}${filterParams}`;
     return apiGet<ApiResponseList<AgentData>>(path);
   };
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
@@ -101,8 +101,8 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `chat/api/${botId}`;
     return apiGet<ChatHistory>(path);
   };
-  const getKnowledgeTags = (clientId: string): Promise<Ktag[]> => {
-    const path = `api/ktag/${clientId}`;
+  const getKnowledgeTags = (aiTeamId: string): Promise<Ktag[]> => {
+    const path = `api/ktag/${aiTeamId}`;
     return apiGet<Ktag[]>(path);
   };
   const getKtags = (botId: string): Promise<Ktag[]> => {
@@ -133,8 +133,8 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/tool/modify/${toolId}`;
     return apiGet<ToolData>(path);
   };
-  const getClientTools = (clientId: string): Promise<ToolData[]> => {
-    const path = `api/tool/client/${clientId}`;
+  const getClientTools = (aiTeamId: string): Promise<ToolData[]> => {
+    const path = `api/tool/client/${aiTeamId}`;
     return apiGet<{ message: string; data: ToolData[] }>(path).then(response => response.data);
   };
   const getMyClients = (): Promise<ApiResponseList<Client>> => {
@@ -143,8 +143,8 @@ const useBotsApi = (): UseBotsApiHook => {
   };
 
   // POST
-  const createBot = (clientId: string, data: AgentMetaData): Promise<AgentData> => {
-    const path = `api/client/bots/${clientId}`;
+  const createBot = (aiTeamId: string, data: AgentMetaData): Promise<AgentData> => {
+    const path = `api/client/bots/${aiTeamId}`;
     return apiPost(path, data);
   };
   const sendMessage = (

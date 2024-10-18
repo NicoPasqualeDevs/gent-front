@@ -24,7 +24,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { languages } from "@/utils/Traslations";
 
 const IaPanel: React.FC = () => {
-  const { clientName, clientId } = useParams();
+  const { clientName, aiTeamId } = useParams();
   const navigate = useNavigate();
   const { replacePath, appNavigation, agentsPage, setAgentsPage, language, auth } = useAppContext();
   const { getBotsList, deleteBot } = useBotsApi();
@@ -73,11 +73,11 @@ const IaPanel: React.FC = () => {
   };
 
   const getBotsData = useCallback((filterParams: string) => {
-    if (!clientId) {
+    if (!aiTeamId) {
       ErrorToast("Conflicto en el id del cliente");
       return;
     }
-    getBotsList(clientId, filterParams)
+    getBotsList(aiTeamId, filterParams)
       .then(response => {
         setAgentsPage(response.metadata.current_page || 1);
         console.log(response.data, "<-- data")
@@ -91,19 +91,19 @@ const IaPanel: React.FC = () => {
           : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
         );
       });
-  }, [clientId, getBotsList]);
+  }, [aiTeamId, getBotsList]);
 
   useEffect(() => {
-    if (clientId && clientName) {
+    if (aiTeamId && clientName) {
       replacePath([
         ...appNavigation.slice(0, 1),
-        { label: clientName, current_path: `/builder/agents/${clientName}/${clientId}`, preview_path: "" },
+        { label: clientName, current_path: `/builder/agents/${clientName}/${aiTeamId}`, preview_path: "" },
       ]);
       if (!loaded) {
         getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
       }
     } else {
-      ErrorToast("Error al cargar clientId en esta vista");
+      ErrorToast("Error al cargar aiTeamId en esta vista");
     }
   }, []);
 
@@ -166,7 +166,7 @@ const IaPanel: React.FC = () => {
           action={
             <Tooltip title={t.iaPanel.edit} arrow placement="top">
               <IconButton
-                onClick={() => navigate(`/builder/agents/contextEntry/${clientId}/${bot.id}`)}
+                onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}/${bot.id}`)}
                 size="small"
                 sx={{ 
                   zIndex: 3,
@@ -245,7 +245,7 @@ const IaPanel: React.FC = () => {
               <Button
                 variant="outlined"
                 size="small"
-                onClick={() => navigate(`/builder/agents/tools/${clientId}/${bot.name}/${bot.id}`)}
+                onClick={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
                 startIcon={<ApiIcon />}
                 fullWidth
                 sx={{ 
@@ -307,7 +307,7 @@ const IaPanel: React.FC = () => {
                     const routes: { [key: string]: string } = {
                       [t.iaPanel.data]: `/builder/agents/dataEntry/${bot.id}`,
                       [t.iaPanel.customization]: `/builder/agents/customMessages/${bot.id}`,
-                      [t.iaPanel.tools]: `/builder/agents/tools/${clientId}/${bot.name}/${bot.id}`,
+                      [t.iaPanel.tools]: `/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`,
                     };
                     navigate(routes[action]);
                   }}
@@ -358,7 +358,7 @@ const IaPanel: React.FC = () => {
               {auth?.user?.is_superuser && (
                 <Button
                   variant="contained"
-                  onClick={() => navigate(`/builder/agents/contextEntry/${clientId}`)}
+                  onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
                   fullWidth
                   sx={{
                     width: '100%',

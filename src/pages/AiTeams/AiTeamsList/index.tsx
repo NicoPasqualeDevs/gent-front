@@ -105,11 +105,11 @@ const AiTeamsList: React.FC = () => {
     setIsSearching(false);
   }, [pageContent]);
 
-  const deleteAction = (clientId: string) => {
-    deleteClientDetails(clientId)
+  const deleteAction = (aiTeamId: string) => {
+    deleteClientDetails(aiTeamId)
       .then(() => {
         let temp = pageContent;
-        temp = temp.filter((item) => item.id !== clientId);
+        temp = temp.filter((item) => item.id !== aiTeamId);
         setPageContent(temp);
         setAllowerState(false);
         setClientToDelete("");

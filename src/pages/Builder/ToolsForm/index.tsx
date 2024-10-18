@@ -24,9 +24,9 @@ const ToolsForm: React.FC = () => {
   const { language } = useAppContext();
   const { postTool, } = useBotsApi();
   const t = languages[language as keyof typeof languages];
-  const { clientId, botId, toolId, toolName, botName } = useParams<{ clientId: string, botId: string, toolId: string, toolName: string, botName: string }>();
+  const { aiTeamId, botId, toolId, toolName, botName } = useParams<{ aiTeamId: string, botId: string, toolId: string, toolName: string, botName: string }>();
 
-  console.log(clientId, "clientId", botId, "botId", toolId, "toolId", toolName, "toolName", botName, "botName" , "<-- paramas")
+  console.log(aiTeamId, "aiTeamId", botId, "botId", toolId, "toolId", toolName, "toolName", botName, "botName" , "<-- paramas")
 
   const [fileError, setFileError] = useState<string>("");
 
@@ -34,7 +34,7 @@ const ToolsForm: React.FC = () => {
     tool_name: "",
     tool_code: "",
     instruction: "",
-    client_id: clientId || "",  // Usamos clientId del parámetro de la URL
+    client_id: aiTeamId || "",  // Usamos aiTeamId del parámetro de la URL
   };
 
   const validationSchema = Yup.object({
@@ -54,7 +54,7 @@ const ToolsForm: React.FC = () => {
     postTool(formData)
       .then((response) => {
         SuccessToast(t.toolsForm.createSuccess);
-        navigate(`/builder/agents/tools/${clientId}/${botId}`);
+        navigate(`/builder/agents/tools/${aiTeamId}/${botId}`);
       })
       .catch((error) => {
         if (error instanceof Error) {
@@ -156,7 +156,7 @@ const ToolsForm: React.FC = () => {
                 <Select
                   labelId="client-select-label"
                   id="client-select"
-                  value={clientId || ""}
+                  value={aiTeamId || ""}
                   label={t.toolsForm.client}
                   onChange={(e) => setFieldValue("client_ids", [e.target.value])}
                 >

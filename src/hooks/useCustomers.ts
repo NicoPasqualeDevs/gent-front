@@ -6,13 +6,13 @@ type UseCustomersApiHook = {
   getCustomerList: (
     filterParams: string
   ) => Promise<ApiResponseList<AiTeamsDetails>>;
-  getClientDetails: (clientId: string) => Promise<AiTeamsDetails>;
+  getClientDetails: (aiTeamId: string) => Promise<AiTeamsDetails>;
   postClientDetails: (data: AiTeamsDetails) => Promise<AiTeamsDetails>;
   putClientDetails: (
     data: AiTeamsDetails,
-    clientId: string
+    aiTeamId: string
   ) => Promise<AiTeamsDetails>;
-  deleteClientDetails: (clientId: string) => Promise<Response>;
+  deleteClientDetails: (aiTeamId: string) => Promise<Response>;
   getMyClients: () => Promise<ApiResponseList<AiTeamsDetails>>;
 };
 
@@ -27,8 +27,8 @@ const useCustomersApi = (): UseCustomersApiHook => {
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
-  const getClientDetails = (clientId: string): Promise<AiTeamsDetails> => {
-    const path = `api/client/actions/${clientId}/`;
+  const getClientDetails = (aiTeamId: string): Promise<AiTeamsDetails> => {
+    const path = `api/client/actions/${aiTeamId}/`;
     return apiGet<AiTeamsDetails>(path);
   };
 
@@ -46,14 +46,14 @@ const useCustomersApi = (): UseCustomersApiHook => {
   // PUTS
   const putClientDetails = (
     data: AiTeamsDetails,
-    clientId: string
+    aiTeamId: string
   ): Promise<AiTeamsDetails> => {
-    const path = `api/client/actions/${clientId}/`;
+    const path = `api/client/actions/${aiTeamId}/`;
     return apiPut(path, data);
   };
 
-  const deleteClientDetails = (clientId: string): Promise<Response> => {
-    const path = `api/client/actions/${clientId}/`;
+  const deleteClientDetails = (aiTeamId: string): Promise<Response> => {
+    const path = `api/client/actions/${aiTeamId}/`;
     return apiDelete(path);
   };
 

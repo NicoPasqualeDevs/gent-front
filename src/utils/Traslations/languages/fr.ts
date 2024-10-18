@@ -58,7 +58,7 @@ const fr = {
     tools: "Outils",
     deleteSuccess: "Chatbot supprimé avec succès",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
-    errorLoadingClient: "Erreur lors du chargement du clientId dans cette vue",
+    errorLoadingClient: "Erreur lors du chargement du aiTeamId dans cette vue",
     errorDeletingBot: "Erreur lors du chargement du botId pour la suppression",
     edit: "Modifier",
     created: "Créé le : {date}"

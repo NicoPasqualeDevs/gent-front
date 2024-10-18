@@ -58,7 +58,7 @@ const en = {
     tools: "Tools",
     deleteSuccess: "Chatbot deleted successfully",
     errorConnection: "Error: Could not establish connection with the server",
-    errorLoadingClient: "Error loading clientId in this view",
+    errorLoadingClient: "Error loading aiTeamId in this view",
     errorDeletingBot: "Error loading botId for deletion",
     edit: "Edit",
     created: "Created: {date}"

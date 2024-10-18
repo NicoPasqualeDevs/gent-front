@@ -14,7 +14,7 @@ import { languages } from "@/utils/Traslations";
 
 const AiTeamsForm: React.FC = () => {
   const navigate = useNavigate();
-  const { clientName, clientId } = useParams();
+  const { clientName, aiTeamId } = useParams();
   const { setNavElevation, appNavigation, replacePath, setAgentsPage, language } = useAppContext();
   const { getClientDetails, postClientDetails, putClientDetails } = useCustomersApi();
   const t = languages[language as keyof typeof languages].aiTeamsForm;
@@ -39,8 +39,8 @@ const AiTeamsForm: React.FC = () => {
   });
 
   const onSubmit = (values: AiTeamsDetails) => {
-    if (clientId) {
-      updateClient(values, clientId);
+    if (aiTeamId) {
+      updateClient(values, aiTeamId);
     } else {
       createNewClient(values);
     }
@@ -61,8 +61,8 @@ const AiTeamsForm: React.FC = () => {
     handleSubmit(e);
   };
 
-  const getClientData = useCallback((clientId: string) => {
-    getClientDetails(clientId)
+  const getClientData = useCallback((aiTeamId: string) => {
+    getClientDetails(aiTeamId)
       .then((response) => {
         setValues({
           name: response.name,
@@ -89,8 +89,8 @@ const AiTeamsForm: React.FC = () => {
       });
   }, [t.errorConnection]);
 
-  const updateClient = (values: AiTeamsDetails, clientId: string) => {
-    putClientDetails(values, clientId)
+  const updateClient = (values: AiTeamsDetails, aiTeamId: string) => {
+    putClientDetails(values, aiTeamId)
       .then(() => SuccessToast(t.successUpdate))
       .catch((error) => {
         if (error instanceof Error) {
@@ -140,7 +140,7 @@ const AiTeamsForm: React.FC = () => {
       address: "",
       description: "",
     });
-    if (clientId && clientName) {
+    if (aiTeamId && clientName) {
       replacePath([
         ...appNavigation.slice(0, 2),
         {
@@ -150,12 +150,12 @@ const AiTeamsForm: React.FC = () => {
         },
         {
           label: t.edit,
-          current_path: `bots/builder/agents/form/${clientId}`,
+          current_path: `bots/builder/agents/form/${aiTeamId}`,
           preview_path: "",
         },
       ]);
       setNavElevation("builder");
-      getClientData(clientId);
+      getClientData(aiTeamId);
     } else {
       setAgentsPage(1);
       replacePath([
@@ -167,7 +167,7 @@ const AiTeamsForm: React.FC = () => {
       ]);
       setLoaded(true);
     }
-  }, [clientId, clientName, t]);
+  }, [aiTeamId, clientName, t]);
 
   return (
     <Box component={"form"} onSubmit={formSubmit} width={"100%"}>
@@ -176,7 +176,7 @@ const AiTeamsForm: React.FC = () => {
       ) : (
         <>
           <Typography variant="h4">
-            {clientId ? t.editTitle : t.createTitle}
+            {aiTeamId ? t.editTitle : t.createTitle}
           </Typography>
           <Box marginTop={"20px"}>
             <TextInput
@@ -213,7 +213,7 @@ const AiTeamsForm: React.FC = () => {
               marginTop: "10px",
             }}
           >
-            {clientId ? t.edit : t.register}
+            {aiTeamId ? t.edit : t.register}
           </Button>
         </>
       )}
