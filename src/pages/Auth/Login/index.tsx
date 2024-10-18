@@ -56,11 +56,18 @@ const Login: React.FC = () => {
   const onSubmit = (values: AuthLoginData) => {
     loginUser(values)
       .then((response) => {
-        setAuthUser(response.data);
+        console.log(response.data);
+        setAuthUser({
+          email: response.data.email,
+          first_name: response.data.first_name ?? "Admin",
+          last_name: response.data.last_name ?? "Admin",
+          token: response.data.token,
+          is_superuser: response.data.is_superuser ?? false,
+        });
         sessionStorage.setItem("user_email", response.data.email);
         sessionStorage.setItem("user_token", response.data.token);
         setNavElevation("builder");
-        response.data.is_superuser ? navigate("/builder") : navigate("/");
+        navigate("/builder");
       })
       .catch((error) => {
         if (error instanceof Error) {

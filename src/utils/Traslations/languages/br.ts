@@ -13,7 +13,8 @@ const br = {
     aiTeams: "Equipes de IA",
     registerTeam: "Nova equipe",
     logout: "Sair",
-    logoutSuccess: "Você saiu com sucesso"
+    logoutSuccess: "Você saiu com sucesso",
+    registerUser: "Registrar Usuário"
   },
   aiTeamsForm: {
     editTitle: "Editar equipe de Equipes IA",

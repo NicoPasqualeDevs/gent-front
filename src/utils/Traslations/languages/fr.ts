@@ -13,7 +13,8 @@ const fr = {
     aiTeams: "Équipes IA",
     registerTeam: "Nouvelle équipe",
     logout: "Déconnexion",
-    logoutSuccess: "Vous vous êtes déconnecté avec succès"
+    logoutSuccess: "Vous vous êtes déconnecté avec succès",
+    registerUser: "Enregistrer un Utilisateur"
   },
   aiTeamsForm: {
     editTitle: "Modifier l'équipe d'Équipes IA",

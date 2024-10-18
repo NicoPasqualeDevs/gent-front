@@ -24,6 +24,7 @@ const Register: React.FC = () => {
     last_name: "",
     password: "",
     confirm_password: "",
+    is_superuser: false,
   };
 
   const validationSchema = Yup.object({
@@ -49,18 +50,18 @@ const Register: React.FC = () => {
   const onSubmit = (values: AuthRegisterData) => {
     registerUser(values)
       .then((response) => {
-        // Guardamos el usuario y el token en el contexto
+        // Asegúrate de que el tipo de respuesta incluya is_superuser
         setAuthUser({
           email: response.user.email,
           first_name: response.user.first_name,
           last_name: response.user.last_name,
           token: response.token,
-          bio: "",
+          is_superuser: response.is_superuser ?? false,
         });
         sessionStorage.setItem("user_email", response.user.email);
         sessionStorage.setItem("user_token", response.token);
         SuccessToast(response.message);
-        navigate("/");
+        navigate("/builder");
       })
       .catch((error) => {
         console.error(error);

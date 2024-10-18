@@ -13,7 +13,8 @@ const de = {
     aiTeams: "KI-Teams",
     registerTeam: "Neues Team",
     logout: "Abmelden",
-    logoutSuccess: "Sie haben sich erfolgreich abgemeldet"
+    logoutSuccess: "Sie haben sich erfolgreich abgemeldet",
+    registerUser: "Benutzer registrieren"
   },
   aiTeamsForm: {
     editTitle: "KI-Teams-Team bearbeiten",

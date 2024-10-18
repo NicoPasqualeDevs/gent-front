@@ -12,6 +12,7 @@ export interface AppContextState {
     first_name: string;
     last_name: string;
     bio: string;
+    is_superuser: boolean;
   };
   layout: {
     breakpoint: Breakpoint;

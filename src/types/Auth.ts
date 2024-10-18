@@ -1,11 +1,10 @@
-export type AuthUser = {
+export interface AuthUser {
   email: string;
   first_name: string;
   last_name: string;
-  bio: string;
   token: string;
-  is_superuser?: boolean;
-};
+  is_superuser: boolean;
+}
 
 export type SendRegister = {
   email: string;
@@ -17,6 +16,7 @@ export interface AuthRegisterData {
   last_name: string;
   password: string;
   confirm_password: string;
+  is_superuser: boolean;
 }
 
 export interface AuthRegisterResponse {
@@ -27,6 +27,7 @@ export interface AuthRegisterResponse {
     last_name: string;
   };
   token: string;
+  is_superuser: boolean;
 }
 
 export type AuthLoginData = {

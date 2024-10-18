@@ -3,7 +3,7 @@ import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { LeftMenuContainer } from "@/components/StyledComponents/Layout";
 import { SuccessToast } from "@/components/Toast";
-import { LogoutSharp } from "@mui/icons-material";
+import { LogoutSharp, PersonAddOutlined } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -11,7 +11,7 @@ import { languages } from "@/utils/Traslations/languages";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, navElevation, setNavElevation, setAuthUser, setMenu, language } = useAppContext();
+  const { menu, navElevation, setNavElevation, setAuthUser, setMenu, language, auth } = useAppContext();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const [isInitialRender, setIsInitialRender] = useState(true);
@@ -19,23 +19,31 @@ const LeftMenu: React.FC = () => {
 
   const options = [
     {
-      navElevation: "builder",
+      navElevation: t.leftMenu.aiTeams,
       label: t.leftMenu.aiTeams,
       path: "/builder",
     },
     {
-      navElevation: "Register",
+      navElevation: t.leftMenu.registerTeam,
       label: t.leftMenu.registerTeam,
       path: "/builder/form",
     },
   ];
 
+  // Opción de registro de usuario para superusuarios
+  const superUserOption = {
+    navElevation: t.leftMenu.registerUser,
+    label: t.leftMenu.registerUser,
+    path: "/auth/register",
+  };
+
   useEffect(() => {
+    console.log('Auth state:', auth);
     if (isInitialRender) {
       setMenu(false);
       setIsInitialRender(false);
     }
-  }, [isInitialRender, setMenu]);
+  }, [isInitialRender, setMenu, auth]);
 
   return (
     <>
@@ -106,6 +114,9 @@ const LeftMenu: React.FC = () => {
                   ":hover": {
                     color: theme.palette.primary.main,
                   },
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
                 }}
                 onClick={() => {
                   setNavElevation(option.navElevation);
@@ -116,6 +127,32 @@ const LeftMenu: React.FC = () => {
               </Typography>
             );
           })}
+          {auth?.user?.is_superuser && (
+            <Typography
+              sx={{
+                cursor: "pointer",
+                marginBottom: "10px",
+                opacity: `${menu ? "1" : "0"}`,
+                fontSize: `${menu ? "110%" : "0px"}`,
+                transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
+                color: navElevation === superUserOption.navElevation
+                  ? theme.palette.primary.main
+                  : theme.palette.text.primary,
+                ":hover": {
+                  color: theme.palette.primary.main,
+                },
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+              }}
+              onClick={() => {
+                setNavElevation(superUserOption.navElevation);
+                navigate(superUserOption.path);
+              }}
+            >
+              {superUserOption.label}
+            </Typography>
+          )}
           <Box
             sx={{
               height: "100%",

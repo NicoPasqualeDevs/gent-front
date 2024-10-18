@@ -13,7 +13,8 @@ const en = {
     aiTeams: "AI Teams",
     registerTeam: "New team",
     logout: "Logout",
-    logoutSuccess: "You have successfully logged out"
+    logoutSuccess: "You have successfully logged out",
+    registerUser: "Register User"
   },
   aiTeamsForm: {
     editTitle: "Edit AI Teams team",
