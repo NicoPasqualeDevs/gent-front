@@ -13,7 +13,7 @@ import { useState } from "react";
 import { ActionAllowerProps, ConfirmData } from "@/types/ActionAllower";
 import { ActionAllowerContainer } from "@/utils/ContainerUtil";
 import { useAppContext } from "@/context/app";
-import { languages } from "@/utils/Traslations";
+import { languages } from "@/utils/traslations";
 
 /* 
   ActionAllower

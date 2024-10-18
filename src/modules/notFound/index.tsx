@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from "@/context/app";
-import { languages } from "@/utils/Traslations";
+import { languages } from "@/utils/traslations";
 
 const NotFoundModule: React.FC = () => {
   const navigate = useNavigate();

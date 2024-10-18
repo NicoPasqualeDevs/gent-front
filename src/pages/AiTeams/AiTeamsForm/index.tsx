@@ -10,7 +10,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { MultilineInput, TextInput } from "@/components/Inputs";
 import { useAppContext } from "@/context/app";
-import { languages } from "@/utils/Traslations";
+import { languages } from "@/utils/traslations";
 
 const AiTeamsForm: React.FC = () => {
   const navigate = useNavigate();

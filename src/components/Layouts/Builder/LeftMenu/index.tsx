@@ -7,7 +7,7 @@ import { LogoutSharp } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 import { useEffect, useState } from "react";
-import { languages } from "@/utils/Traslations";
+import { languages } from "@/utils/traslations";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();

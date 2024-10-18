@@ -30,7 +30,7 @@ import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
 import { useTheme } from "@mui/material/styles";
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
-import { languages } from "@/utils/Traslations";
+import { languages } from "@/utils/traslations";
 
 const AiTeamsList: React.FC = () => {
   const navigate = useNavigate();

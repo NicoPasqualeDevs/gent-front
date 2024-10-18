@@ -15,7 +15,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Link as MuiLink } from '@mui/material';
 import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
-import { languages } from "@/utils/Traslations";
+import { languages } from "@/utils/traslations";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
