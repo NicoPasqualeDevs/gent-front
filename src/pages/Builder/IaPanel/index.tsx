@@ -245,7 +245,7 @@ const IaPanel: React.FC = () => {
               <Button
                 variant="outlined"
                 size="small"
-                onClick={() => navigate(`/builder/agents/tools/${bot.id}`)}
+                onClick={() => navigate(`/builder/agents/tools/${clientId}/${bot.name}/${bot.id}`)}
                 startIcon={<ApiIcon />}
                 fullWidth
                 sx={{ 
@@ -307,7 +307,7 @@ const IaPanel: React.FC = () => {
                     const routes: { [key: string]: string } = {
                       [t.iaPanel.data]: `/builder/agents/dataEntry/${bot.id}`,
                       [t.iaPanel.customization]: `/builder/agents/customMessages/${bot.id}`,
-                      [t.iaPanel.tools]: `/builder/agents/tools/${bot.id}`,
+                      [t.iaPanel.tools]: `/builder/agents/tools/${clientId}/${bot.name}/${bot.id}`,
                     };
                     navigate(routes[action]);
                   }}

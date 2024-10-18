@@ -123,7 +123,11 @@ const de = {
     toolFile: "Werkzeugdatei",
     update: "Aktualisieren",
     create: "Erstellen",
-    edit: "Bearbeiten"
+    edit: "Bearbeiten",
+    toolNotFound: "Werkzeug nicht gefunden",
+    toolNotFoundMessage: "Entschuldigung, das gesuchte Werkzeug existiert nicht oder wurde entfernt.",
+    backToTools: "Zurück zu Werkzeugen",
+    client: "Kunde"
   }
 };
 

@@ -123,7 +123,11 @@ const es = {
     toolFile: "Archivo de la herramienta",
     update: "Actualizar",
     create: "Crear",
-    edit: "Editar"
+    edit: "Editar",
+    toolNotFound: "Herramienta no encontrada",
+    toolNotFoundMessage: "Lo sentimos, la herramienta que estás buscando no existe o ha sido eliminada.",
+    backToTools: "Volver a Herramientas",
+    client: "Cliente"
   }
 };
 

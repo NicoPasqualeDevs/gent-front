@@ -109,12 +109,13 @@ export interface GetCustomGreetingData {
 }
 
 export interface ToolData {
-  [propKey: string]: string | File | undefined;
+  [propKey: string]: string | File | undefined | string[];
   id?: string;
   tool_name: string;
   type?: string;
   tool_code?: string | File;
   instruction?: string;
+  client_id?: string;  // Cambiamos client_ids por client_id
 }
 
 export interface ToolRelationshipData {

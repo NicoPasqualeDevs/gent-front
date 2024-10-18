@@ -123,7 +123,11 @@ const en = {
     toolFile: "Tool file",
     update: "Update",
     create: "Create",
-    edit: "Edit"
+    edit: "Edit",
+    toolNotFound: "Tool not found",
+    toolNotFoundMessage: "Sorry, the tool you are looking for does not exist or has been removed.",
+    backToTools: "Back to Tools",
+    client: "Client"
   }
 };
 

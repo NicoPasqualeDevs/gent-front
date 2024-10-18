@@ -123,7 +123,11 @@ const br = {
     toolFile: "Arquivo da ferramenta",
     update: "Atualizar",
     create: "Criar",
-    edit: "Editar"
+    edit: "Editar",
+    toolNotFound: "Ferramenta não encontrada",
+    toolNotFoundMessage: "Desculpe, a ferramenta que você está procurando não existe ou foi removida.",
+    backToTools: "Voltar para Ferramentas",
+    client: "Cliente"
   }
 };
 

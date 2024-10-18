@@ -25,7 +25,7 @@ import { useAppContext } from "@/context/app";
 
 const Tools: React.FC = () => {
   const navigate = useNavigate();
-  const { botName, botId } = useParams();
+  const { botName, botId, clientId, toolName, toolId } = useParams();
   const { replacePath, appNavigation, setAgentsPage } = useAppContext();
   const { getAllTools, getBotTools, deleteTool } = useBotsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -59,8 +59,7 @@ const Tools: React.FC = () => {
             ErrorToast("Error: no se pudo establecer conexión con el servidor");
           } else {
             ErrorToast(
-              `${error.status} - ${error.error} ${
-                error.data ? ": " + error.data : ""
+              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
               }`
             );
           }
@@ -81,8 +80,7 @@ const Tools: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -100,8 +98,7 @@ const Tools: React.FC = () => {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -298,27 +295,15 @@ const Tools: React.FC = () => {
               No hay Tools para mostrar
             </Typography>
           )}
-          {botId ? (
-            <Button
-              variant="contained"
-              sx={{
-                marginBottom: "20px",
-              }}
-              onClick={() =>
-                navigate(`/builder/agents/tools-relationship/${botName}/${botId}`)
-              }
-            >
-              Asignar Tools
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              sx={{ marginBottom: "20px" }}
-              onClick={() => navigate("/builder/agents/tools-form/")}
-            >
-              Crear Tool
-            </Button>
-          )}
+
+          <Button
+            variant="contained"
+            sx={{ marginBottom: "20px" }}
+            onClick={() => navigate(`/builder/agents/tools-form/${clientId}/${botName}/${botId}/${toolName}/${toolId}`)}
+          >
+            Crear Tool
+          </Button>
+
         </>
       )}
       {allowerState && (

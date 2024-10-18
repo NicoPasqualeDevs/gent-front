@@ -123,7 +123,11 @@ const fr = {
     toolFile: "Fichier de l'outil",
     update: "Mettre à jour",
     create: "Créer",
-    edit: "Modifier"
+    edit: "Modifier",
+    toolNotFound: "Outil non trouvé",
+    toolNotFoundMessage: "Désolé, l'outil que vous recherchez n'existe pas ou a été supprimé.",
+    backToTools: "Retour aux Outils",
+    client: "Client"
   }
 };
 

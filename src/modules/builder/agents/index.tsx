@@ -25,9 +25,9 @@ const AgentsDetailsModule: React.FC = () => {
           element={<WidgetCustomizer />}
         />
         <Route path="customMessages/:botId?" element={<CustomMessages />} />
-        <Route path="tools/:botName?/:botId?" element={<Tools />} />
+        <Route path="tools/:clientId?/:botName?/:botId?/:toolName?/:toolId?" element={<Tools />} />
         <Route
-          path="tools-form/:toolName?/:toolId?"
+          path="tools-form/:clientId?/:botName?/:botId?/:toolName?/:toolId?"
           element={<ToolsForm />}
         />
         <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship />} />
