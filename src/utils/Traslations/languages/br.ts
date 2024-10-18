@@ -107,6 +107,23 @@ const br = {
     invalidCredentials: "Credenciais inválidas",
     fieldRequired: "Este campo é obrigatório",
     connectionError: "Erro: Não foi possível estabelecer conexão com o servidor"
+  },
+  toolsForm: {
+    required: "Este campo é obrigatório",
+    onlyPyFiles: "Apenas arquivos .py são permitidos",
+    createSuccess: "Ferramenta criada com sucesso",
+    updateSuccess: "Ferramenta atualizada com sucesso",
+    connectionError: "Erro: Não foi possível estabelecer conexão com o servidor",
+    fileError: "Erro ao carregar o arquivo",
+    editTool: "Editar ferramenta {toolName}",
+    createNewTool: "Criar nova ferramenta",
+    toolName: "Nome da ferramenta",
+    toolType: "Tipo de ferramenta",
+    instructions: "Instruções",
+    toolFile: "Arquivo da ferramenta",
+    update: "Atualizar",
+    create: "Criar",
+    edit: "Editar"
   }
 };
 

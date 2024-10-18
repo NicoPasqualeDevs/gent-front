@@ -350,10 +350,10 @@ export const FileInput: React.FC<FileInputProps> = ({
   value,
 }) => {
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const allowedFileTypes = ["text/x-python"];
+    const allowedFileTypes = ["text/x-python", "application/x-python-code", "text/plain"];
     const files = (e.target as HTMLInputElement).files;
     if (files && files.length > 0) {
-      if (allowedFileTypes.includes(files[0].type)) {
+      if (allowedFileTypes.includes(files[0].type) || files[0].name.endsWith('.py')) {
         onChange({
           target: {
             name,

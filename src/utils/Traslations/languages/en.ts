@@ -107,6 +107,23 @@ const en = {
     invalidCredentials: "Invalid credentials",
     fieldRequired: "This field is required",
     connectionError: "Error: Could not establish connection with the server"
+  },
+  toolsForm: {
+    required: "This field is required",
+    onlyPyFiles: "Only .py files are allowed",
+    createSuccess: "Tool created successfully",
+    updateSuccess: "Tool updated successfully",
+    connectionError: "Error: Could not establish connection with the server",
+    fileError: "Error loading file",
+    editTool: "Edit tool {toolName}",
+    createNewTool: "Create new tool",
+    toolName: "Tool name",
+    toolType: "Tool type",
+    instructions: "Instructions",
+    toolFile: "Tool file",
+    update: "Update",
+    create: "Create",
+    edit: "Edit"
   }
 };
 

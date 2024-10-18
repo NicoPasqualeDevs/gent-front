@@ -107,6 +107,23 @@ const es = {
     invalidCredentials: "Credenciales incorrectas",
     fieldRequired: "Este campo es requerido",
     connectionError: "Error: no se pudo establecer conexión con el servidor"
+  },
+  toolsForm: {
+    required: "Este campo es requerido",
+    onlyPyFiles: "Solo se permiten archivos .py",
+    createSuccess: "Herramienta creada exitosamente",
+    updateSuccess: "Herramienta actualizada exitosamente",
+    connectionError: "Error: No se pudo establecer conexión con el servidor",
+    fileError: "Error al cargar el archivo",
+    editTool: "Editar herramienta {toolName}",
+    createNewTool: "Crear nueva herramienta",
+    toolName: "Nombre de la herramienta",
+    toolType: "Tipo de herramienta",
+    instructions: "Instrucciones",
+    toolFile: "Archivo de la herramienta",
+    update: "Actualizar",
+    create: "Crear",
+    edit: "Editar"
   }
 };
 

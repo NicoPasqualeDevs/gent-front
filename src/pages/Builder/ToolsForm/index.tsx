@@ -1,43 +1,55 @@
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  Box,
+  Button,
+  Typography,
+  Container,
+  Paper,
+  Grid,
+} from "@mui/material";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { FileInput, MultilineInput, TextInput } from "@/components/Inputs";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
 import useBotsApi from "@/hooks/useBots";
 import { ToolData } from "@/types/Bots";
-import { Box, Button, Typography } from "@mui/material";
-import { useFormik } from "formik";
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import * as Yup from "yup";
+import { languages } from "@/utils/traslations";
 
 const ToolsForm: React.FC = () => {
   const navigate = useNavigate();
-  const { replacePath, appNavigation } = useAppContext();
+  const { replacePath, appNavigation, language } = useAppContext();
   const { toolName, toolId } = useParams();
   const { postTool, getTool, patchTool } = useBotsApi();
+  const t = languages[language as keyof typeof languages];
 
   const [loaded, setLoaded] = useState<boolean>(false);
-
   const [initialValues, setInitialValues] = useState<ToolData>({
     tool_name: "",
     tool_code: "",
     instruction: "",
   });
-  const [inputError, setInputError] = useState<ToolData>({
-    tool_name: "",
-    tool_code: "",
-    instruction: "",
-  });
+  const [fileError, setFileError] = useState<string>("");
+
   const validationSchema = Yup.object({
     tool_name: toolId
       ? Yup.string()
-      : Yup.string().required("Este campo es requerido"),
+      : Yup.string().required(t.toolsForm.required),
     tool_code: toolId
       ? Yup.mixed()
-      : Yup.mixed().required("Este campo es requerido"),
+      : Yup.mixed()
+          .required(t.toolsForm.required)
+          .test("fileType", t.toolsForm.onlyPyFiles, (value) => {
+            if (!value) return true;
+            if (typeof value === 'string') return value.toLowerCase().endsWith('.py');
+            return value instanceof File && value.name.toLowerCase().endsWith('.py');
+          }),
     instruction: toolId
       ? Yup.string()
-      : Yup.string().required("Este campo es requerido"),
+      : Yup.string().required(t.toolsForm.required),
   });
 
   const onSubmit = (values: ToolData) => {
@@ -54,15 +66,6 @@ const ToolsForm: React.FC = () => {
     validationSchema,
   });
 
-  const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    setInputError({
-      tool_name: errors.tool_name || " ",
-      tool_code: errors.tool_code || " ",
-      instruction: errors.instruction || " ",
-    });
-    handleSubmit(e);
-  };
-
   const createNewTool = (values: ToolData) => {
     const formData = new FormData();
     formData.append("tool_name", values.tool_name);
@@ -71,12 +74,12 @@ const ToolsForm: React.FC = () => {
 
     postTool(formData)
       .then(() => {
-        SuccessToast("Tool creada satisfactoriamente");
+        SuccessToast(t.toolsForm.createSuccess);
         navigate(`/builder/agents/tools`);
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.toolsForm.connectionError);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${
@@ -117,7 +120,7 @@ const ToolsForm: React.FC = () => {
             }
           };
           xhr.onerror = () => {
-            console.error("Error: no se pudo obtener el archivo.");
+            console.error(t.toolsForm.fileError);
             setLoaded(true);
           };
           xhr.send();
@@ -129,7 +132,7 @@ const ToolsForm: React.FC = () => {
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.toolsForm.connectionError);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${
@@ -148,11 +151,11 @@ const ToolsForm: React.FC = () => {
 
     patchTool(toolId, formData)
       .then(() => {
-        SuccessToast("Tool actualizada satisfactoriamente");
+        SuccessToast(t.toolsForm.updateSuccess);
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.toolsForm.connectionError);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${
@@ -163,13 +166,26 @@ const ToolsForm: React.FC = () => {
       });
   };
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: File; } }) => {
+    const file = 'files' in event.target ? event.target.files?.[0] : event.target.value;
+    if (file) {
+      if (file.name.toLowerCase().endsWith(".py")) {
+        setValues({ ...values, tool_code: file });
+        setFileError("");
+      } else {
+        setFileError(t.toolsForm.onlyPyFiles);
+        if ('files' in event.target) event.target.value = "";
+      }
+    }
+  };
+
   useEffect(() => {
     setLoaded(false);
     if (toolId) {
       replacePath([
         ...appNavigation.slice(0, 3),
         {
-          label: "Editar",
+          label: t.toolsForm.edit,
           current_path: `/builder/agents/tools-form/${toolName}/${toolId}`,
           preview_path: "",
         },
@@ -181,58 +197,73 @@ const ToolsForm: React.FC = () => {
   }, [toolId]);
 
   return (
-    <>
+    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
       {!loaded ? (
         <PageCircularProgress />
       ) : (
-        <Box component={"form"} onSubmit={formSubmit}>
-          <Typography variant="h4">
-            {toolName ? `Editar ${toolName}` : "Crear Nueva Tool"}
-          </Typography>
-          <Box marginTop={"20px"}>
-            <TextInput
-              name="tool_name"
-              label="Nombre de Tool"
-              value={values.tool_name}
-              helperText={inputError.tool_name}
-              onChange={handleChange}
-            />
+        <Box component="form" onSubmit={handleSubmit}>
+          <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
+            <Typography variant="h5" sx={{ mb: 3 }}>
+              {toolName ? t.toolsForm.editTool.replace("{toolName}", toolName) : t.toolsForm.createNewTool}
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid item xs={12} sm={6}>
+                <TextInput
+                  name="tool_name"
+                  label={t.toolsForm.toolName}
+                  value={values.tool_name}
+                  helperText={errors.tool_name}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextInput
+                  name="type"
+                  label={t.toolsForm.toolType}
+                  value={values.type}
+                  helperText={errors.type}
+                  onChange={handleChange}
+                  disabled={true}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <MultilineInput
+                  name="instruction"
+                  label={t.toolsForm.instructions}
+                  rows={6}
+                  value={values.instruction}
+                  helperText={errors.instruction}
+                  onChange={handleChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FileInput
+                  name="tool_code"
+                  label={t.toolsForm.toolFile}
+                  onChange={handleFileChange}
+                  value={values.tool_code}
+                  helperText={fileError || errors.tool_code}
+                />
+              </Grid>
+            </Grid>
+          </Paper>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{
+                color: 'white',
+                '&:hover': {
+                  color: 'white',
+                },
+              }}
+            >
+              {toolId ? t.toolsForm.update : t.toolsForm.create}
+            </Button>
           </Box>
-          <Box marginTop={"20px"}>
-            <TextInput
-              name="type"
-              label="Tipo de Tool"
-              value={values.type}
-              helperText={inputError.type}
-              onChange={handleChange}
-              disabled={true}
-            />
-          </Box>
-          <Box marginTop={"20px"}>
-            <MultilineInput
-              name="instruction"
-              label="Instrucciones"
-              rows={9}
-              value={values.instruction}
-              helperText={inputError.instruction}
-              onChange={handleChange}
-            />
-          </Box>
-          <Box marginTop={"20px"}>
-            <FileInput
-              name="tool_code"
-              label="Archivo de Tool"
-              onChange={handleChange}
-              value={values.tool_code}
-              helperText={inputError.tool_code}
-            />
-          </Box>
-          <Button variant="contained" type="submit" sx={{ marginTop: "20px" }}>
-            {toolId ? "Actualizar" : "Crear"}
-          </Button>
         </Box>
       )}
-    </>
+    </Container>
   );
 };
 

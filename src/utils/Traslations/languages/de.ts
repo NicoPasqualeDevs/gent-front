@@ -107,6 +107,23 @@ const de = {
     invalidCredentials: "Ungültige Anmeldedaten",
     fieldRequired: "Dieses Feld ist erforderlich",
     connectionError: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
+  },
+  toolsForm: {
+    required: "Dieses Feld ist erforderlich",
+    onlyPyFiles: "Nur .py-Dateien sind erlaubt",
+    createSuccess: "Werkzeug erfolgreich erstellt",
+    updateSuccess: "Werkzeug erfolgreich aktualisiert",
+    connectionError: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    fileError: "Fehler beim Laden der Datei",
+    editTool: "Werkzeug {toolName} bearbeiten",
+    createNewTool: "Neues Werkzeug erstellen",
+    toolName: "Werkzeugname",
+    toolType: "Werkzeugtyp",
+    instructions: "Anweisungen",
+    toolFile: "Werkzeugdatei",
+    update: "Aktualisieren",
+    create: "Erstellen",
+    edit: "Bearbeiten"
   }
 };
 

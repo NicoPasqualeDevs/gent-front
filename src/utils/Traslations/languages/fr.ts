@@ -107,6 +107,23 @@ const fr = {
     invalidCredentials: "Identifiants incorrects",
     fieldRequired: "Ce champ est obligatoire",
     connectionError: "Erreur : Impossible d'établir une connexion avec le serveur"
+  },
+  toolsForm: {
+    required: "Ce champ est obligatoire",
+    onlyPyFiles: "Seuls les fichiers .py sont autorisés",
+    createSuccess: "Outil créé avec succès",
+    updateSuccess: "Outil mis à jour avec succès",
+    connectionError: "Erreur : Impossible d'établir une connexion avec le serveur",
+    fileError: "Erreur lors du chargement du fichier",
+    editTool: "Modifier l'outil {toolName}",
+    createNewTool: "Créer un nouvel outil",
+    toolName: "Nom de l'outil",
+    toolType: "Type d'outil",
+    instructions: "Instructions",
+    toolFile: "Fichier de l'outil",
+    update: "Mettre à jour",
+    create: "Créer",
+    edit: "Modifier"
   }
 };
 

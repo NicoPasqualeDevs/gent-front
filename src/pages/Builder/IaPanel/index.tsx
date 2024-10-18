@@ -245,14 +245,14 @@ const IaPanel: React.FC = () => {
               <Button
                 variant="outlined"
                 size="small"
-                onClick={() => navigate(`/builder/agents/tools/${bot.name}/${bot.id}`)}
+                onClick={() => navigate(`/builder/agents/tools/${bot.id}`)}
                 startIcon={<ApiIcon />}
                 fullWidth
                 sx={{ 
                   flex: 1,
                   padding: '4px 8px',
                   '& .MuiButton-startIcon': {
-                    marginRight: 0.5, // Reducido de 1 a 0.5
+                    marginRight: 0.5,
                   },
                   '& .MuiButton-label': {
                     marginTop: '2px',
@@ -311,10 +311,10 @@ const IaPanel: React.FC = () => {
                     };
                     navigate(routes[action]);
                   }}
-                  disabled={action === t.iaPanel.customization || action === t.iaPanel.tools}
+                  disabled={action === t.iaPanel.customization}
                   sx={{ 
                     textTransform: 'none',
-                    color: (action === t.iaPanel.customization || action === t.iaPanel.tools) ? theme.palette.text.disabled : theme.palette.primary.main,
+                    color: action === t.iaPanel.customization ? theme.palette.text.disabled : theme.palette.primary.main,
                     fontSize: '0.9rem',
                   }}
                 >
