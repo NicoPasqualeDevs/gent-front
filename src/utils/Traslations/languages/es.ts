@@ -14,7 +14,7 @@ const es = {
     registerTeam: "Nuevo equipo",
     logout: "Cerrar Sesión",
     logoutSuccess: "Has cerrado sesión correctamente",
-    registerUser: "Registrar Usuario"
+    registerUser: "Nuevo Usuario"
   },
   aiTeamsForm: {
     editTitle: "Editar equipo de Equipos IA",

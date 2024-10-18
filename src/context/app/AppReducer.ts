@@ -5,7 +5,7 @@ import { AiTeamsDetails } from "@/types/AiTeams.ts";
 import { PathData } from "@/types/Pathbar.ts";
 
 type AppContextActions =
-  | { type: "setAuthUser"; payload: AuthUser | null }
+  | { type: "setAuth"; payload: AuthUser | null }
   | { type: "setLoaded"; payload: boolean }
   | { type: "setCustomersList"; payload: AiTeamsDetails[] }
   | { type: "setMenu"; payload: boolean }
@@ -25,7 +25,7 @@ export const AppReducer = (
   action: AppContextActions
 ): AppContextState => {
   switch (action.type) {
-    case "setAuthUser":
+    case "setAuth":
       return {
         ...state,
         auth: { ...state.auth, user: action.payload },

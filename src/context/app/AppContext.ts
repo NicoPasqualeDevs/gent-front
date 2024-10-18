@@ -28,7 +28,7 @@ export interface AppContextState {
   agentsPage: number;
   setCustomersList: (value: AiTeamsDetails[]) => void;
   setLogin: (value: AuthUser) => void;
-  setAuthUser: (value: AuthUser | null) => void;
+  setAuth: (value: AuthUser | null) => void;
   setMenu: (value: boolean) => void;
   setLoaded: (value: boolean) => void;
   setNavElevation: (value: string) => void;

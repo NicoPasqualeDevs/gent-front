@@ -15,7 +15,7 @@ import { Link as MuiLink } from '@mui/material';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { setAuthUser } = useAppContext();
+  const { setAuth } = useAppContext();
   const { registerUser } = useAuth();
 
   const initialValues: AuthRegisterData = {
@@ -51,7 +51,7 @@ const Register: React.FC = () => {
     registerUser(values)
       .then((response) => {
         // Asegúrate de que el tipo de respuesta incluya is_superuser
-        setAuthUser({
+        setAuth({
           email: response.user.email,
           first_name: response.user.first_name,
           last_name: response.user.last_name,

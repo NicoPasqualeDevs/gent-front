@@ -25,10 +25,10 @@ interface LeftMenuProps {
 const LeftMenu: React.FC<LeftMenuProps> = ({ isMobile = false, isOpen = false, onToggle }) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { setAuthUser } = useAppContext();
+  const { setAuth } = useAppContext();
 
   const handleLogout = () => {
-    setAuthUser(null);
+    setAuth(null);
     sessionStorage.setItem("user_email", "");
     sessionStorage.setItem("user_token", "");
     navigate("/auth/login", { replace: true });

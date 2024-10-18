@@ -11,15 +11,13 @@ import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
 import { motion } from "framer-motion";
 import { useTheme } from '@mui/material/styles';
-import { Link as RouterLink } from 'react-router-dom';
-import { Link as MuiLink } from '@mui/material';
 import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
 import { languages } from "@/utils/traslations";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { setAuthUser, setNavElevation, language } = useAppContext();
+  const { setAuth, setNavElevation, language } = useAppContext();
   const { loginUser } = useAuth();
   const [inputError, setInputError] = useState<AuthLoginData>({
     email: " ",
@@ -53,8 +51,8 @@ const Login: React.FC = () => {
   const onSubmit = (values: AuthLoginData) => {
     loginUser(values)
       .then((response) => {
-        console.log(response.data);
-        setAuthUser({
+        console.log(response.data, "<-- loguin");
+        setAuth({
           email: response.data.email,
           first_name: response.data.first_name ?? "Admin",
           last_name: response.data.last_name ?? "Admin",
@@ -245,9 +243,8 @@ const Login: React.FC = () => {
                 xs={12}
                 sx={{
                   display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 2,
+                  justifyContent: "center",
+                  mt: 2,
                 }}
               >
                 <Button
@@ -263,12 +260,6 @@ const Login: React.FC = () => {
                 >
                   {t.loginButton}
                 </Button>
-                <Typography variant="body2" align="center">
-                  {t.registerPrompt}{' '}
-                  <MuiLink component={RouterLink} to="/auth/register">
-                    {t.registerLink}
-                  </MuiLink>
-                </Typography>
               </Grid>
             </form>
           </Grid>

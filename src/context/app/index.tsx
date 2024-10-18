@@ -46,11 +46,11 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
   }, [width, isMobile, isTablet]);
 
-  const setAuthUser = (value: AuthUser | null) => {
-    dispatch({ type: "setAuthUser", payload: value });
+  const setAuth = (value: AuthUser | null) => {
+    dispatch({ type: "setAuth", payload: value });
   };
   const setLogin = (value: AuthUser) => {
-    dispatch({ type: "setAuthUser", payload: value });
+    dispatch({ type: "setAuth", payload: value });
   };
 
   const setLoaded = (value: boolean) => {
@@ -115,7 +115,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         setLogin,
         setLoaded,
         setMenu,
-        setAuthUser,
+        setAuth,
         setNavElevation,
         setAppNavigation,
         replacePath,
