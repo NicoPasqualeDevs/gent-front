@@ -8,7 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { AgentData, ChatHistory, ChatMessage, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
 import { useTheme } from "@mui/material/styles";
 import { useAppContext } from "@/context/app";
-import { languages } from "@/utils/Traslations/languages";
+import { languages } from "@/utils/Traslations";
 import apiBase from "@/hooks/useApi";
 
 const MainContainer = styled(Box)(() => ({

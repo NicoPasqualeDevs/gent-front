@@ -86,6 +86,27 @@ const fr = {
     title: "404 - Page Non Trouvée",
     message: "Désolé, la page que vous recherchez n'existe pas.",
     redirectMessage: "Vous serez redirigé vers la page précédente dans {countdown} secondes."
+  },
+  login: {
+    title: "Gents",
+    subtitle: "Projet basé sur l'IA par Nicolas Pasquale",
+    version: "v 0.1",
+    rotatingTexts: [
+      "Créez et partagez des agents IA",
+      "Implémentez rapidement et facilement",
+      "Commercialisez des solutions IA",
+      "Importez et publiez votre solution",
+    ],
+    emailLabel: "Adresse e-mail",
+    passwordLabel: "Mot de passe",
+    loginButton: "Se connecter",
+    registerPrompt: "Vous n'avez pas encore de compte ?",
+    registerLink: "Inscrivez-vous",
+    startButton: "Commencer",
+    invalidEmail: "Adresse e-mail invalide",
+    invalidCredentials: "Identifiants incorrects",
+    fieldRequired: "Ce champ est obligatoire",
+    connectionError: "Erreur : Impossible d'établir une connexion avec le serveur"
   }
 };
 

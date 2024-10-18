@@ -86,6 +86,27 @@ const en = {
     title: "404 - Page Not Found",
     message: "Sorry, the page you are looking for does not exist.",
     redirectMessage: "You will be redirected to the previous page in {countdown} seconds."
+  },
+  login: {
+    title: "Gents",
+    subtitle: "AI-based project by Nicolas Pasquale",
+    version: "v 0.1",
+    rotatingTexts: [
+      "Create and share AI agents",
+      "Implement quickly and easily",
+      "Commercialize AI solutions",
+      "Import and publish your solution",
+    ],
+    emailLabel: "Email",
+    passwordLabel: "Password",
+    loginButton: "Log In",
+    registerPrompt: "Don't have an account yet?",
+    registerLink: "Register",
+    startButton: "Get Started",
+    invalidEmail: "Invalid email",
+    invalidCredentials: "Invalid credentials",
+    fieldRequired: "This field is required",
+    connectionError: "Error: Could not establish connection with the server"
   }
 };
 

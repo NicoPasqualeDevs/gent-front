@@ -86,6 +86,27 @@ const es = {
     title: "404 - Página no encontrada",
     message: "Lo sentimos, la página que estás buscando no existe.",
     redirectMessage: "Serás redirigido a la página anterior en {countdown} segundos."
+  },
+  login: {
+    title: "Gents",
+    subtitle: "Proyecto basado en IA por Nicolas Pasquale",
+    version: "v 0.1",
+    rotatingTexts: [
+      "Crea y comparte agentes de IA",
+      "Implementa rápido y sencillo",
+      "Comercializa soluciones de IA",
+      "Importa y publica tu solución",
+    ],
+    emailLabel: "Correo electrónico",
+    passwordLabel: "Contraseña",
+    loginButton: "Iniciar sesión",
+    registerPrompt: "¿Aún no tienes cuenta?",
+    registerLink: "Regístrate",
+    startButton: "Comenzar",
+    invalidEmail: "Correo no válido",
+    invalidCredentials: "Credenciales incorrectas",
+    fieldRequired: "Este campo es requerido",
+    connectionError: "Error: no se pudo establecer conexión con el servidor"
   }
 };
 

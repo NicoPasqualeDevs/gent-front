@@ -1,6 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import languages from './Traslations/languages';
+import languages from './Traslations';
 
 i18n
   .use(initReactI18next)

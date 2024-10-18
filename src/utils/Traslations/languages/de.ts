@@ -86,6 +86,27 @@ const de = {
     title: "404 - Seite nicht gefunden",
     message: "Entschuldigung, die gesuchte Seite existiert nicht.",
     redirectMessage: "Sie werden in {countdown} Sekunden zur vorherigen Seite weitergeleitet."
+  },
+  login: {
+    title: "Gents",
+    subtitle: "KI-basiertes Projekt von Nicolas Pasquale",
+    version: "v 0.1",
+    rotatingTexts: [
+      "Erstellen und teilen Sie KI-Agenten",
+      "Implementieren Sie schnell und einfach",
+      "Vermarkten Sie KI-Lösungen",
+      "Importieren und veröffentlichen Sie Ihre Lösung",
+    ],
+    emailLabel: "E-Mail-Adresse",
+    passwordLabel: "Passwort",
+    loginButton: "Anmelden",
+    registerPrompt: "Noch kein Konto?",
+    registerLink: "Registrieren",
+    startButton: "Beginnen",
+    invalidEmail: "Ungültige E-Mail-Adresse",
+    invalidCredentials: "Ungültige Anmeldedaten",
+    fieldRequired: "Dieses Feld ist erforderlich",
+    connectionError: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
   }
 };
 

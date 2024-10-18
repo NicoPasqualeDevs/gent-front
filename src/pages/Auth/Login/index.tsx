@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { MainGridContainer } from "@/utils/ContainerUtil";
 import { Button, Grid, Typography, Box } from "@mui/material";
 import * as Yup from "yup";
@@ -8,38 +9,34 @@ import { ErrorToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
-import { motion } from "framer-motion"; // Asegúrate de instalar framer-motion
+import { motion } from "framer-motion";
 import { useTheme } from '@mui/material/styles';
-import { useEffect, useState } from "react";
-import { Link as RouterLink } from 'react-router-dom'; // Añade esta importación
-import { Link as MuiLink } from '@mui/material'; // Añade esta importación
+import { Link as RouterLink } from 'react-router-dom';
+import { Link as MuiLink } from '@mui/material';
 import Snowfall from 'react-snowfall';
+import LanguageSelector from '@/components/LanguageSelector';
+import { languages } from "@/utils/Traslations";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { setAuthUser, setNavElevation } = useAppContext();
+  const { setAuthUser, setNavElevation, language } = useAppContext();
   const { loginUser } = useAuth();
   const [inputError, setInputError] = useState<AuthLoginData>({
     email: " ",
     code: " ",
   });
-  const [showLoginForm, setShowLoginForm] = useState(false); // Nueva variable de estado
+  const [showLoginForm, setShowLoginForm] = useState(false);
   const theme = useTheme();
   const [rotatingText, setRotatingText] = useState(0);
-  const rotatingTexts = [
-    "Crea y comparte agentes de IA",
-    "Implementa rápido y sencillo",
-    "Comercializa soluciones de IA",
-    "Importa y publica tu solución",
-  ];
+  const t = languages[language as keyof typeof languages].login;
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setRotatingText((prevText) => (prevText + 1) % rotatingTexts.length);
+      setRotatingText((prevText) => (prevText + 1) % t.rotatingTexts.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [t.rotatingTexts.length]);
 
   const initialValues: AuthLoginData = {
     code: "",
@@ -48,9 +45,9 @@ const Login: React.FC = () => {
 
   const validationSchema = Yup.object({
     email: Yup.string()
-      .email("Correo no válido")
-      .required("Este campo es requerido"),
-    code: Yup.string().required("Este campo es requerido"),
+      .email(t.invalidEmail)
+      .required(t.fieldRequired),
+    code: Yup.string().required(t.fieldRequired),
   });
 
   const onSubmit = (values: AuthLoginData) => {
@@ -71,17 +68,17 @@ const Login: React.FC = () => {
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.connectionError);
         } else {
           ErrorToast(error.data.message);
           setInputError({
             email:
-              error.data.message === "Correo no válido"
-                ? "Correo no válido"
+              error.data.message === t.invalidEmail
+                ? t.invalidEmail
                 : "",
             code:
-              error.data.message === "Credenciales incorrectas"
-                ? "Credenciales incorrectas"
+              error.data.message === t.invalidCredentials
+                ? t.invalidCredentials
                 : "",
           });
         }
@@ -97,7 +94,7 @@ const Login: React.FC = () => {
   const { handleChange, values } = formik;
 
   const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevenir el comportamiento por defecto del formulario
+    e.preventDefault();
     setInputError({
       email: formik.errors.email || "",
       code: formik.errors.code || "",
@@ -116,6 +113,16 @@ const Login: React.FC = () => {
         minHeight: '100vh',
       }}
     >
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 16,
+          right: 16,
+          zIndex: 3,
+        }}
+      >
+        <LanguageSelector />
+      </Box>
       <Box
         sx={{
           position: 'absolute',
@@ -146,13 +153,13 @@ const Login: React.FC = () => {
         lg={4}
         sx={{
           zIndex: 2,
-          backgroundColor: 'rgba(255, 255, 255, 0.05)', // Cambiado de 0.1 a 0.05
-          backdropFilter: 'blur(5px)', // Reducido de 10px a 5px
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(5px)',
           borderRadius: '15px',
           padding: '2rem',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          maxHeight: '80vh', // Limitar la altura máxima
-          overflowY: 'auto', // Permitir scroll si el contenido es muy largo
+          maxHeight: '80vh',
+          overflowY: 'auto',
         }}
       >
         <Grid item xs={12}>
@@ -160,26 +167,26 @@ const Login: React.FC = () => {
             variant="h1"
             textAlign={"center"}
             sx={{
-              mb: 1, // Añadido un pequeño margen inferior
-              fontSize: '3rem', // Aumentar el tamaño de la fuente del título
+              mb: 1,
+              fontSize: '3rem',
             }}
           >
-            Gents
+            {t.title}
           </Typography>
           {showLoginForm ? (
             <>
               <Typography textAlign={"center"} sx={{ mt: 1 }}>
-                AI based project by Nicolas Pasquale
+                {t.subtitle}
               </Typography>
               <Typography
                 fontSize={"75%"}
                 textAlign={"center"}
                 sx={{
                   mt: 0.5,
-                  mb: 4, // Añadido un margen inferior más grande
+                  mb: 4,
                 }}
               >
-                v 0.1
+                {t.version}
               </Typography>
             </>
           ) : (
@@ -192,20 +199,19 @@ const Login: React.FC = () => {
             >
               <Typography
                 textAlign={"center"}
-                variant="h5" // Cambiado de h6 a h5 para aumentar el tamaño
+                variant="h5"
                 sx={{
-                  mt: 1, // Cambiado de 2 a 
+                  mt: 1,
                   mb: -2,
                   fontWeight: 'normal',
                   color: theme.palette.text.secondary,
-                  // Añadido para mejorar la legibilidad si es necesario
                   textShadow: '0 0 5px rgba(0,0,0,0.3)',
-                  minHeight: '3em', // Asegura un espacio consistente
+                  minHeight: '3em',
                   lineHeight: '3em',
-                  fontSize: '1.2rem', // Aumentar el tamaño de la fuente del texto rotativo
+                  fontSize: '1.2rem',
                 }}
               >
-                {rotatingTexts[rotatingText]}
+                {t.rotatingTexts[rotatingText]}
               </Typography>
             </motion.div>
           )}
@@ -216,7 +222,7 @@ const Login: React.FC = () => {
             <form onSubmit={formSubmit}>
               <TextInput
                 name="email"
-                label="Email"
+                label={t.emailLabel}
                 value={values.email}
                 helperText={inputError.email}
                 error={
@@ -226,7 +232,7 @@ const Login: React.FC = () => {
               />
               <PasswordInput
                 name="code"
-                label="Código"
+                label={t.passwordLabel}
                 value={values.code}
                 helperText={inputError.code}
                 error={
@@ -255,12 +261,12 @@ const Login: React.FC = () => {
                     },
                   }}
                 >
-                  Log In
+                  {t.loginButton}
                 </Button>
                 <Typography variant="body2" align="center">
-                  ¿Aún no tienes cuenta?{' '}
+                  {t.registerPrompt}{' '}
                   <MuiLink component={RouterLink} to="/auth/register">
-                    Regístrate
+                    {t.registerLink}
                   </MuiLink>
                 </Typography>
               </Grid>
@@ -282,8 +288,8 @@ const Login: React.FC = () => {
                 onClick={() => setShowLoginForm(true)}
                 sx={{
                   mb: 1,
-                  fontSize: '1.5rem', // Reducido de 2rem a 1.5rem
-                  padding: '20px 40px', // Reducido de 30px 60px a 20px 40px
+                  fontSize: '1.5rem',
+                  padding: '20px 40px',
                   borderRadius: '50px',
                   boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
                   backgroundColor: theme.palette.secondary.main,
@@ -294,7 +300,7 @@ const Login: React.FC = () => {
                   },
                 }}
               >
-                Comenzar
+                {t.startButton}
               </Button>
             </motion.div>
           </Grid>
