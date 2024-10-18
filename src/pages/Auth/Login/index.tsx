@@ -13,7 +13,7 @@ import { motion } from "framer-motion";
 import { useTheme } from '@mui/material/styles';
 import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
-import { languages } from "@/utils/traslations";
+import { languages } from "@/utils/Traslations";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

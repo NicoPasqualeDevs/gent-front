@@ -17,7 +17,7 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
 import useBotsApi from "@/hooks/useBots";
 import { ToolData } from "@/types/Bots";
-import { languages } from "@/utils/traslations";
+import { languages } from "@/utils/Traslations";
 
 const ToolsForm: React.FC = () => {
   const navigate = useNavigate();

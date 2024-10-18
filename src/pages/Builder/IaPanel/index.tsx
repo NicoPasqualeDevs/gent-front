@@ -21,7 +21,7 @@ import WidgetsIcon from "@mui/icons-material/Widgets";
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
 import ApiIcon from '@mui/icons-material/Api'; // Añade esta importación
 import EditIcon from '@mui/icons-material/Edit';
-import { languages } from "@/utils/traslations";
+import { languages } from "@/utils/Traslations";
 
 const IaPanel: React.FC = () => {
   const { clientName, clientId } = useParams();

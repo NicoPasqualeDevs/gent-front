@@ -7,7 +7,7 @@ import {
   HeaderContainer,
   UserBubble,
   UserBubbleContainer,
-} from "@/components/StyledComponents/Layout";
+} from "@/components/styledComponents/Layout";
 import { useNavigate } from "react-router-dom";
 import Pathbar from "../Pathbar";
 import { useTheme } from "@mui/material/styles";

@@ -2,11 +2,11 @@ import { PageCircularProgress } from "@/components/CircularProgress";
 import {
   StyledDangerButton,
   StyledDefaultButton,
-} from "@/components/StyledComponents/Buttons";
+} from "@/components/styledComponents/Buttons";
 import {
   StyledPageSubTitle,
   StyledPageTitle,
-} from "@/components/StyledComponents/Typography";
+} from "@/components/styledComponents/Typography";
 import useBotsApi from "@/hooks/useBots";
 import { CustomGreetingData, NewGreetingData } from "@/types/Bots";
 import { Box } from "@mui/material";
