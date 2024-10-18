@@ -36,6 +36,7 @@ type UseBotsApiHook = {
   getAllTools: () => Promise<ToolData[]>;
   getBotTools: (botId: string) => Promise<ToolData[]>;
   getTool: (toolId: string) => Promise<ToolData>;
+  getClientTools: (clientId: string) => Promise<ToolData[]>;
 
   //Post
   createBot: (clientId: string, data: AgentMetaData) => Promise<AgentData>;
@@ -129,6 +130,10 @@ const useBotsApi = (): UseBotsApiHook => {
   const getTool = (toolId: string): Promise<ToolData> => {
     const path = `api/tool/modify/${toolId}`;
     return apiGet<ToolData>(path);
+  };
+  const getClientTools = (clientId: string): Promise<ToolData[]> => {
+    const path = `api/tool/client/${clientId}`;
+    return apiGet<{ message: string; data: ToolData[] }>(path).then(response => response.data);
   };
 
   // POST
@@ -253,6 +258,7 @@ const useBotsApi = (): UseBotsApiHook => {
     getAllTools,
     getBotTools,
     getTool,
+    getClientTools,
 
     //Post
     createBot,
