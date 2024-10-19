@@ -127,7 +127,7 @@ const br = {
     toolNotFound: "Ferramenta não encontrada",
     toolNotFoundMessage: "Desculpe, a ferramenta que você está procurando não existe ou foi removida.",
     backToTools: "Voltar para Ferramentas",
-    client: "Cliente"
+    aiTeam: "Cliente"
   }
 };
 

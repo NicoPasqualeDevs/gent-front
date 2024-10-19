@@ -25,8 +25,8 @@ const en = {
     edit: "Edit",
     register: "Register",
     fieldRequired: "This field is required",
-    successUpdate: "Client updated successfully",
-    successCreate: "Client created successfully",
+    successUpdate: "AiTeam updated successfully",
+    successCreate: "AiTeam created successfully",
     errorConnection: "Error: Could not establish connection with the server"
   },
   aiTeamsList: {
@@ -39,7 +39,7 @@ const en = {
     noTeamsFound: "No AI Teams found with that name",
     noTeamsToShow: "No AI Teams to show",
     teamsCount: "of {total} AI Teams",
-    successDelete: "Client deleted successfully"
+    successDelete: "AiTeam deleted successfully"
   },
   iaPanel: {
     createAgent: "Create Agent",
@@ -127,7 +127,7 @@ const en = {
     toolNotFound: "Tool not found",
     toolNotFoundMessage: "Sorry, the tool you are looking for does not exist or has been removed.",
     backToTools: "Back to Tools",
-    client: "Client"
+    aiTeam: "AiTeam"
   }
 };
 

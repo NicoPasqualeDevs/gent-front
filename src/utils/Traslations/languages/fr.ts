@@ -25,8 +25,8 @@ const fr = {
     edit: "Modifier",
     register: "Enregistrer",
     fieldRequired: "Ce champ est obligatoire",
-    successUpdate: "Client mis à jour avec succès",
-    successCreate: "Client créé avec succès",
+    successUpdate: "AiTeam mis à jour avec succès",
+    successCreate: "AiTeam créé avec succès",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur"
   },
   aiTeamsList: {
@@ -39,7 +39,7 @@ const fr = {
     noTeamsFound: "Aucune Équipe IA trouvée avec ce nom",
     noTeamsToShow: "Aucune Équipe IA à afficher",
     teamsCount: "sur {total} Équipes IA",
-    successDelete: "Client supprimé avec succès"
+    successDelete: "AiTeam supprimé avec succès"
   },
   iaPanel: {
     createAgent: "Créer un Agent",
@@ -127,7 +127,7 @@ const fr = {
     toolNotFound: "Outil non trouvé",
     toolNotFoundMessage: "Désolé, l'outil que vous recherchez n'existe pas ou a été supprimé.",
     backToTools: "Retour aux Outils",
-    client: "Client"
+    aiTeam: "AiTeam"
   }
 };
 

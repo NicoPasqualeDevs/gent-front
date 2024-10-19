@@ -127,7 +127,7 @@ const de = {
     toolNotFound: "Werkzeug nicht gefunden",
     toolNotFoundMessage: "Entschuldigung, das gesuchte Werkzeug existiert nicht oder wurde entfernt.",
     backToTools: "Zurück zu Werkzeugen",
-    client: "Kunde"
+    aiTeam: "Kunde"
   }
 };
 

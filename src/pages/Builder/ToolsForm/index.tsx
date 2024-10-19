@@ -34,7 +34,7 @@ const ToolsForm: React.FC = () => {
     tool_name: "",
     tool_code: "",
     instruction: "",
-    client_id: aiTeamId || "",  // Usamos aiTeamId del parámetro de la URL
+    aiTeam_id: aiTeamId || "",  // Usamos aiTeamId del parámetro de la URL
   };
 
   const validationSchema = Yup.object({
@@ -74,8 +74,8 @@ const ToolsForm: React.FC = () => {
     if (values.tool_code instanceof File) {
       formData.append("tool_code", values.tool_code);
     }
-    if (values.client_id) {
-      formData.append("client_id", values.client_id);
+    if (values.aiTeam_id) {
+      formData.append("aiTeam_id", values.aiTeam_id);
     }
 
     createNewTool(formData);
@@ -152,17 +152,17 @@ const ToolsForm: React.FC = () => {
             </Grid>
 {/*             <Grid item xs={12}>
               <FormControl fullWidth>
-                <InputLabel id="client-select-label">{t.toolsForm.client}</InputLabel>
+                <InputLabel id="aiTeam-select-label">{t.toolsForm.aiTeam}</InputLabel>
                 <Select
-                  labelId="client-select-label"
-                  id="client-select"
+                  labelId="aiTeam-select-label"
+                  id="aiTeam-select"
                   value={aiTeamId || ""}
-                  label={t.toolsForm.client}
+                  label={t.toolsForm.aiTeam}
                   onChange={(e) => setFieldValue("client_ids", [e.target.value])}
                 >
-                  {clients.map((client) => (
-                    <MenuItem key={client.id} value={client.id}>
-                      {client.name}
+                  {aiTeams.map((aiTeam) => (
+                    <MenuItem key={aiTeam.id} value={aiTeam.id}>
+                      {aiTeam.name}
                     </MenuItem>
                   ))}
                 </Select>

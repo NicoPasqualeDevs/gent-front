@@ -98,22 +98,21 @@ const AiTeamsList: React.FC = () => {
     setSearchQuery(value);
     setIsSearching(true);
     // Nota: La búsqueda ahora se realiza en el frontend
-    const filteredContent = pageContent.filter(client => 
-      client.name.toLowerCase().includes(value.toLowerCase())
+    const filteredContent = pageContent.filter(aiTeam => 
+      aiTeam.name.toLowerCase().includes(value.toLowerCase())
     );
     setPageContent(filteredContent);
     setIsSearching(false);
   }, [pageContent]);
 
   const deleteAction = (aiTeamId: string) => {
+    setIsLoading(true);
     deleteClientDetails(aiTeamId)
-      .then(() => {
-        let temp = pageContent;
-        temp = temp.filter((item) => item.id !== aiTeamId);
-        setPageContent(temp);
+      .then((response) => {
+        setPageContent(prevContent => prevContent.filter(item => item.id !== aiTeamId));
         setAllowerState(false);
         setClientToDelete("");
-        SuccessToast(t.aiTeamsList.successDelete);
+        SuccessToast(response.message || t.aiTeamsList.successDelete);
       })
       .catch((error) => {
         if (error instanceof Error) {
@@ -124,6 +123,10 @@ const AiTeamsList: React.FC = () => {
             }`
           );
         }
+      })
+      .finally(() => {
+        setIsLoading(false);
+        getAiTeamsData(); // Actualizar la lista después de eliminar
       });
   };
 
@@ -237,8 +240,8 @@ const AiTeamsList: React.FC = () => {
                 minHeight: '33vh'
               }}>
                 <Grid container spacing={3}>
-                  {pageContent.map((client, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={`client-${index}`}>
+                  {pageContent.map((aiTeam, index) => (
+                    <Grid item xs={12} sm={6} md={4} key={`aiTeam-${index}`}>
                       <Card sx={{
                         height: '100%',
                         display: 'flex',
@@ -258,7 +261,7 @@ const AiTeamsList: React.FC = () => {
                         }}>
                           <Box>
                             <Typography sx={{color: theme.palette.secondary.light}} variant="h6" component="div" gutterBottom noWrap>
-                              {client.name}
+                              {aiTeam.name}
                             </Typography>
                             <Typography
                               variant="body2"
@@ -273,14 +276,14 @@ const AiTeamsList: React.FC = () => {
                                 mb: 2,
                               }}
                             >
-                              {client.description}
+                              {aiTeam.description}
                             </Typography>
                           </Box>
                           <Box sx={{ mt: 2 }}>
                             <Button
                               variant="text"
                               size="small"
-                              onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
+                              onClick={() => navigate(`/builder/agents/${aiTeam.name}/${aiTeam.id}`)}
                               sx={{
                                 color: "text.secondary",
                                 justifyContent: "flex-start",
@@ -300,7 +303,7 @@ const AiTeamsList: React.FC = () => {
                         <CardActions sx={{ pl: 2, pr: 2, pt: 1, pb: 1, justifyContent: 'space-between' }}>
                           <Button
                             size="small"
-                            onClick={() => navigate(`/builder/form/${client.name}/${client.id}`)}
+                            onClick={() => navigate(`/builder/form/${aiTeam.name}/${aiTeam.id}`)}
                           >
                             {t.aiTeamsList.edit}
                           </Button>
@@ -309,7 +312,7 @@ const AiTeamsList: React.FC = () => {
                             color="error"
                             onClick={() => {
                               setAllowerState(true);
-                              setClientToDelete(client.id);
+                              setClientToDelete(aiTeam.id || '');
                             }}
                           >
                             <DeleteIcon fontSize="small" />
@@ -351,9 +354,9 @@ const AiTeamsList: React.FC = () => {
               {paginationData && (
                 <Typography variant="body2" color="text.secondary">
                   {`${(clientPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
-                    clientPage * (paginationData?.page_size ?? 0),
-                    paginationData?.total_items ?? 0
-                  )} ${t.aiTeamsList.teamsCount.replace("{total}", paginationData?.total_items?.toString() ?? "0")}`}
+                  clientPage * (paginationData?.page_size ?? 0),
+                  paginationData?.total_items ?? 0
+                )} ${t.aiTeamsList.teamsCount.replace("{total}", paginationData?.total_items?.toString() ?? "0")}`}
                 </Typography>
               )}
             </Box>

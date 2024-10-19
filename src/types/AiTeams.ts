@@ -1,6 +1,8 @@
 export interface AiTeamsDetails {
-  [propKey: string]: string;
+  name: string;
   address: string;
   description: string;
-  name: string;
+  id?: string;
+  code?: string;
 }
+

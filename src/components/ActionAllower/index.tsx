@@ -15,29 +15,6 @@ import { ActionAllowerContainer } from "@/utils/ContainerUtil";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
 
-/* 
-  ActionAllower
-  es un componente creado para proteger acciones con confirmaciones lucidas por
-  parte del usuario.
-  Para su funcionamiento se necesita que el componente padre maneje el estado
-  de si está activo o no, por convencion llamaremos a esa variable de estado
-  "allowerState", donde true significa que el componente ActionAllower será 
-  visible, y false que significa que no lo será.
-  Parámetros:
-  - allowerStateCleaner: es la funcion setState para la variable de estado,
-   "allowerState", que maneja el componente padre. Para que ActionAllower pueda
-   limpiar su propio estado y cerrarse al confirmarse satisfactoriamente la acción
-   o cancelar la acción.
-   - actionToDo: es una función la cual será protegida por el ActionAllower, si
-   se confirma la acción, se ejecutará esta función.
-   - actionParams: son los argumentos necesarios para que la función "actionToDo"
-   funcione correctamente.
-  - alertText(opcional): es el texto de encabezado que alerta al usuario sobre
-  la confirmación. El valor por defecto es "Confirme la Acción".
-  - confirmWord(opcional): es la palabra clave necesario para confirmar la acción que debe 
-  ser introducida en el input del ActionAllower. Su valor por defecto es "confirmar".   
-*/
-
 const ActionAllower = <T, U>(props: ActionAllowerProps<T, U>) => {
   const {
     allowerStateCleaner,

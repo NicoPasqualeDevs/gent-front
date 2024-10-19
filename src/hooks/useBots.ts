@@ -15,7 +15,7 @@ import {
   WidgetData,
   GetCustomGreetingData,
   CustomGreetingData,
-  Client,
+  AiTeam,
 } from "@/types/Bots";
 import { ApiResponseList, ApiResponse } from "@/types/Api";
 
@@ -38,7 +38,7 @@ type UseBotsApiHook = {
   getBotTools: (botId: string) => Promise<ToolData[]>;
   getTool: (toolId: string) => Promise<ToolData>;
   getClientTools: (aiTeamId: string) => Promise<ToolData[]>;
-  getMyClients: () => Promise<ApiResponseList<Client>>;
+  getMyClients: () => Promise<ApiResponseList<AiTeam>>;
 
   //Post
   createBot: (aiTeamId: string, data: AgentMetaData) => Promise<AgentData>;
@@ -86,7 +86,7 @@ const useBotsApi = (): UseBotsApiHook => {
 
   // GETS
   const getBotsList = (aiTeamId: string, filterParams: string): Promise<ApiResponseList<AgentData>> => {
-    const path = `api/client/bots/${aiTeamId}${filterParams}`;
+    const path = `api/aiTeam/bots/${aiTeamId}${filterParams}`;
     return apiGet<ApiResponseList<AgentData>>(path);
   };
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
@@ -134,17 +134,17 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiGet<ToolData>(path);
   };
   const getClientTools = (aiTeamId: string): Promise<ToolData[]> => {
-    const path = `api/tool/client/${aiTeamId}`;
+    const path = `api/tool/aiTeam/${aiTeamId}`;
     return apiGet<{ message: string; data: ToolData[] }>(path).then(response => response.data);
   };
-  const getMyClients = (): Promise<ApiResponseList<Client>> => {
-    const path = `api/client/actions/clients/my_clients/`;
-    return apiGet<ApiResponseList<Client>>(path);
+  const getMyClients = (): Promise<ApiResponseList<AiTeam>> => {
+    const path = `api/aiTeam/actions/aiTeams/my_clients/`;
+    return apiGet<ApiResponseList<AiTeam>>(path);
   };
 
   // POST
   const createBot = (aiTeamId: string, data: AgentMetaData): Promise<AgentData> => {
-    const path = `api/client/bots/${aiTeamId}`;
+    const path = `api/aiTeam/bots/${aiTeamId}`;
     return apiPost(path, data);
   };
   const sendMessage = (

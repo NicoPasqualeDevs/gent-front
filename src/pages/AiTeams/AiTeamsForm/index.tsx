@@ -14,8 +14,8 @@ import { languages } from "@/utils/Traslations";
 
 const AiTeamsForm: React.FC = () => {
   const navigate = useNavigate();
-  const { clientName, aiTeamId } = useParams();
-  const { setNavElevation, appNavigation, replacePath, setAgentsPage, language } = useAppContext();
+  const { aiTeamName, aiTeamId } = useParams();
+  const { setNavElevation, appNavigation, replacePath, setAgentsPage, language, auth } = useAppContext();
   const { getClientDetails, postClientDetails, putClientDetails } = useCustomersApi();
   const t = languages[language as keyof typeof languages].aiTeamsForm;
 
@@ -25,7 +25,7 @@ const AiTeamsForm: React.FC = () => {
     address: "",
     description: "",
   });
-  
+
   const [inputError, setInputError] = useState<AiTeamsDetails>({
     name: "",
     address: "",
@@ -81,8 +81,7 @@ const AiTeamsForm: React.FC = () => {
           ErrorToast(t.errorConnection);
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -97,8 +96,7 @@ const AiTeamsForm: React.FC = () => {
           ErrorToast(t.errorConnection);
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
             }`
           );
         }
@@ -106,27 +104,25 @@ const AiTeamsForm: React.FC = () => {
   };
 
   const createNewClient = (values: AiTeamsDetails) => {
-    // Asumiendo que tienes acceso al email del usuario actual
-    const userEmail = "usuario@ejemplo.com"; // Reemplaza esto con la forma en que obtienes el email del usuario actual
-    const dataWithEmail = { ...values, email: userEmail };
-    
-    postClientDetails(dataWithEmail)
-      .then((response) => {
-        SuccessToast(t.successCreate);
-        navigate(`/builder/agents/form/${response.name}/${response.id}`);
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.errorConnection);
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
-        }
-      });
-  };
+    if (auth?.user?.email) {
+      const dataWithEmail = { ...values, email: auth.user.email };
+      postClientDetails(dataWithEmail)
+        .then(() => {
+          SuccessToast(t.successCreate);
+          navigate(`/builder`);
+        })
+        .catch((error) => {
+          if (error instanceof Error) {
+            ErrorToast(t.errorConnection);
+          } else {
+            ErrorToast(
+              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
+              }`
+            );
+          }
+        });
+    };
+  }
 
   useEffect(() => {
     setLoaded(false);
@@ -140,11 +136,11 @@ const AiTeamsForm: React.FC = () => {
       address: "",
       description: "",
     });
-    if (aiTeamId && clientName) {
+    if (aiTeamId && aiTeamName) {
       replacePath([
         ...appNavigation.slice(0, 2),
         {
-          label: clientName,
+          label: aiTeamName,
           current_path: "/builder",
           preview_path: "",
         },
@@ -167,7 +163,7 @@ const AiTeamsForm: React.FC = () => {
       ]);
       setLoaded(true);
     }
-  }, [aiTeamId, clientName, t]);
+  }, [aiTeamId, aiTeamName, t]);
 
   return (
     <Box component={"form"} onSubmit={formSubmit} width={"100%"}>

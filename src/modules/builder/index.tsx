@@ -15,7 +15,7 @@ const AiTeamsModule: React.FC = () => {
         <Route path='/'>
           {/* AI TEAMS */}
           <Route index element={<AiTeamsList />} />
-          <Route path="form/*:clientName?/:aiTeamId?" element={<AiTeamsForm />} />
+          <Route path="form/:aiTeamName?/:aiTeamId?" element={<AiTeamsForm />} />
           <Route path="profile/*" element={<ProfileModule />} />
           {/* AGENTS DETAILS*/}
           <Route path="agents/*" element={<AgentsDetailsModule />} />

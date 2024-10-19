@@ -115,14 +115,14 @@ export interface ToolData {
   type?: string;
   tool_code?: string | File;
   instruction?: string;
-  client_id?: string;  // Cambiamos client_ids por client_id
+  aiTeam_id?: string;  // Cambiamos client_ids por aiTeam_id
 }
 
 export interface ToolRelationshipData {
   agent_tool_ids: number[];
 }
 
-export interface Client {
+export interface AiTeam {
   id: string;
   name: string;
   description: string;

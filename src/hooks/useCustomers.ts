@@ -12,7 +12,7 @@ type UseCustomersApiHook = {
     data: AiTeamsDetails,
     aiTeamId: string
   ) => Promise<AiTeamsDetails>;
-  deleteClientDetails: (aiTeamId: string) => Promise<Response>;
+  deleteClientDetails: (aiTeamId: string) => Promise<{ message: string }>;
   getMyClients: () => Promise<ApiResponseList<AiTeamsDetails>>;
 };
 
@@ -23,23 +23,23 @@ const useCustomersApi = (): UseCustomersApiHook => {
   const getCustomerList = (
     filterParams: string
   ): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/client/actions/${filterParams}`;
+    const path = `api/aiTeam/actions/${filterParams}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
   const getClientDetails = (aiTeamId: string): Promise<AiTeamsDetails> => {
-    const path = `api/client/actions/${aiTeamId}/`;
+    const path = `api/aiTeam/actions/aiTeams/${aiTeamId}/`;
     return apiGet<AiTeamsDetails>(path);
   };
 
   const getMyClients = (): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/client/actions/clients/my_clients/`;
+    const path = `api/aiTeam/actions/aiTeams/my_clients/`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
   // POST
   const postClientDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
-    const path = `api/client/actions/clients/`;
+    const path = `api/aiTeam/actions/aiTeams/`;
     return apiPost(path, data);
   };
 
@@ -48,13 +48,14 @@ const useCustomersApi = (): UseCustomersApiHook => {
     data: AiTeamsDetails,
     aiTeamId: string
   ): Promise<AiTeamsDetails> => {
-    const path = `api/client/actions/${aiTeamId}/`;
+    const path = `api/aiTeam/actions/aiTeams/${aiTeamId}/`;
     return apiPut(path, data);
   };
 
-  const deleteClientDetails = (aiTeamId: string): Promise<Response> => {
-    const path = `api/client/actions/${aiTeamId}/`;
-    return apiDelete(path);
+  // DELETE
+  const deleteClientDetails = (aiTeamId: string): Promise<{ message: string }> => {
+    const path = `api/aiTeam/actions/aiTeams/${aiTeamId}/`;
+    return apiDelete(path).then(response => response.json());
   };
 
   return {

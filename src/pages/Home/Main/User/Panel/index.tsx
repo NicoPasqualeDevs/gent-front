@@ -392,18 +392,18 @@ const UserPanel: React.FC = () => {
               pageContent.length > 0 ? (
                 <Box sx={{ position: 'relative' }}>
                   <CardsContainer>
-                    {pageContent.map((client, index) => (
+                    {pageContent.map((aiTeam, index) => (
                       <AiTeamCard
-                        key={`client-${index}`}
-                        onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
+                        key={`aiTeam-${index}`}
+                        onClick={() => navigate(`/builder/agents/${aiTeam.name}/${aiTeam.id}`)}
                       >
                         <AiTeamCardImage
-                          src={getImageForCategory(client.name)}
-                          alt={client.name}
+                          src={getImageForCategory(aiTeam.name)}
+                          alt={aiTeam.name}
                         />
                         <AiTeamCardContent>
                           <Typography variant="h6" component="div" gutterBottom noWrap>
-                            {client.name}
+                            {aiTeam.name}
                           </Typography>
                           <Typography
                             variant="body2"
@@ -415,7 +415,7 @@ const UserPanel: React.FC = () => {
                               WebkitBoxOrient: 'vertical',
                             }}
                           >
-                            {client.description}
+                            {aiTeam.description}
                           </Typography>
                         </AiTeamCardContent>
                       </AiTeamCard>
@@ -458,18 +458,18 @@ const UserPanel: React.FC = () => {
               pageContent.length > 0 ? (
                 <Box sx={{ position: 'relative' }}>
                   <CardsContainer>
-                    {pageContent.map((client, index) => (
+                    {pageContent.map((aiTeam, index) => (
                       <AiTeamCard
-                        key={`client-${index}`}
-                        onClick={() => navigate(`/builder/agents/${client.name}/${client.id}`)}
+                        key={`aiTeam-${index}`}
+                        onClick={() => navigate(`/builder/agents/${aiTeam.name}/${aiTeam.id}`)}
                       >
                         <AiTeamCardImage
                           src={agent}
-                          alt={client.name}
+                          alt={aiTeam.name}
                         />
                         <AiTeamCardContent>
                           <Typography variant="h6" component="div" gutterBottom noWrap>
-                            {client.name}
+                            {aiTeam.name}
                           </Typography>
                           <Typography
                             variant="body2"
@@ -481,7 +481,7 @@ const UserPanel: React.FC = () => {
                               WebkitBoxOrient: 'vertical',
                             }}
                           >
-                            {client.description}
+                            {aiTeam.description}
                           </Typography>
                         </AiTeamCardContent>
                       </AiTeamCard>
