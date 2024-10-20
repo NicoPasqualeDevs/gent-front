@@ -28,7 +28,9 @@ const en = {
     fieldRequired: "This field is required",
     successUpdate: "AiTeam updated successfully",
     successCreate: "AiTeam created successfully",
-    errorConnection: "Error: Could not establish connection with the server"
+    errorConnection: "Error: Could not establish connection with the server",
+    selectUser: "Select user",
+    noUsersAvailable: "No users available"
   },
   aiTeamsList: {
     newAiTeam: "New AI Team",

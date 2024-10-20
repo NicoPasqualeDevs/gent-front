@@ -28,7 +28,9 @@ const br = {
     fieldRequired: "Este campo é obrigatório",
     successUpdate: "Cliente atualizado com sucesso",
     successCreate: "Cliente criado com sucesso",
-    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor"
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
+    selectUser: "Selecionar usuário",
+    noUsersAvailable: "Nenhum usuário disponível"
   },
   aiTeamsList: {
     newAiTeam: "Nova Equipe IA",

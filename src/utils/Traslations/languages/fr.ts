@@ -28,7 +28,9 @@ const fr = {
     fieldRequired: "Ce champ est obligatoire",
     successUpdate: "AiTeam mis à jour avec succès",
     successCreate: "AiTeam créé avec succès",
-    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur"
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    selectUser: "Sélectionner un utilisateur",
+    noUsersAvailable: "Aucun utilisateur disponible"
   },
   aiTeamsList: {
     newAiTeam: "Nouvelle Équipe IA",

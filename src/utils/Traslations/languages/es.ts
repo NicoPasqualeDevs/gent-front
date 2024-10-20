@@ -28,7 +28,9 @@ const es = {
     fieldRequired: "Este es un campo requerido",
     successUpdate: "Cliente actualizado satisfactoriamente",
     successCreate: "Cliente creado satisfactoriamente",
-    errorConnection: "Error: no se pudo establecer conexión con el servidor"
+    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    selectUser: "Seleccionar usuario",
+    noUsersAvailable: "No hay usuarios disponibles"
   },
   aiTeamsList: {
     newAiTeam: "Nuevo Equipo IA",

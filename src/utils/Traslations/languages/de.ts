@@ -28,7 +28,9 @@ const de = {
     fieldRequired: "Dieses Feld ist erforderlich",
     successUpdate: "Kunde erfolgreich aktualisiert",
     successCreate: "Kunde erfolgreich erstellt",
-    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    selectUser: "Benutzer auswählen",
+    noUsersAvailable: "Keine Benutzer verfügbar"
   },
   aiTeamsList: {
     newAiTeam: "Neues KI-Team",
