@@ -9,7 +9,7 @@ import {
   Container,
 } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
-import useCustomersApi from "@/hooks/useCustomers";
+import useAiTeamsApi from "@/hooks/useCustomers";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ErrorToast, SuccessToast } from "@/components/Toast";
@@ -127,7 +127,7 @@ const UserPanel: React.FC = () => {
     setClientPage,
     setAgentsPage,
   } = useAppContext();
-  const { getCustomerList, deleteClientDetails } = useCustomersApi();
+  const { getAiTeamsList, deleteAiTeamDetails } = useAiTeamsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
@@ -141,7 +141,7 @@ const UserPanel: React.FC = () => {
 
   const getAiTeamsData = useCallback((filterParams: string) => {
     setIsLoading(true);
-    getCustomerList(filterParams)
+    getAiTeamsList(filterParams)
       .then((response) => {
         const data: AiTeamsDetails[] = response.data;
         const paginationData: Metadata = response.metadata;
@@ -163,12 +163,11 @@ const UserPanel: React.FC = () => {
       .finally(() => {
         setIsLoading(false);
         setIsSearching(false);
-        // Restaurar el foco al campo de búsqueda
         if (searchInputRef.current) {
           searchInputRef.current.focus();
         }
       });
-  }, [getCustomerList]);
+  }, [getAiTeamsList, setClientPage]);
 
   const handleSearch = useCallback((value: string) => {
     setSearchQuery(value);
@@ -181,7 +180,7 @@ const UserPanel: React.FC = () => {
   }, [getAiTeamsData]);
 
   const deleteAction = (aiTeamId: string) => {
-    deleteClientDetails(aiTeamId)
+    deleteAiTeamDetails(aiTeamId)
       .then(() => {
         let temp = pageContent;
         temp = temp.filter((item) => item.id !== aiTeamId);

@@ -16,7 +16,7 @@ const AiTeamsForm: React.FC = () => {
   const navigate = useNavigate();
   const { aiTeamName, aiTeamId } = useParams();
   const { setNavElevation, appNavigation, replacePath, setAgentsPage, language, auth } = useAppContext();
-  const { getClientDetails, postClientDetails, putClientDetails } = useCustomersApi();
+  const { getAiTeamDetails, postAiTeamDetails, putAiTeamDetails } = useCustomersApi();
   const t = languages[language as keyof typeof languages].aiTeamsForm;
 
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -61,8 +61,8 @@ const AiTeamsForm: React.FC = () => {
     handleSubmit(e);
   };
 
-  const getClientData = useCallback((aiTeamId: string) => {
-    getClientDetails(aiTeamId)
+  const getAiTeamData = useCallback((aiTeamId: string) => {
+    getAiTeamDetails(aiTeamId)
       .then((response) => {
         setValues({
           name: response.name,
@@ -86,10 +86,10 @@ const AiTeamsForm: React.FC = () => {
           );
         }
       });
-  }, [t.errorConnection]);
+  }, [getAiTeamDetails, setValues, setInitialValues, setLoaded, t.errorConnection]);
 
   const updateClient = (values: AiTeamsDetails, aiTeamId: string) => {
-    putClientDetails(values, aiTeamId)
+    putAiTeamDetails(values, aiTeamId)
       .then(() => SuccessToast(t.successUpdate))
       .catch((error) => {
         if (error instanceof Error) {
@@ -106,7 +106,7 @@ const AiTeamsForm: React.FC = () => {
   const createNewClient = (values: AiTeamsDetails) => {
     if (auth?.user?.email) {
       const dataWithEmail = { ...values, email: auth.user.email };
-      postClientDetails(dataWithEmail)
+      postAiTeamDetails(dataWithEmail)
         .then(() => {
           SuccessToast(t.successCreate);
           navigate(`/builder`);
@@ -151,7 +151,7 @@ const AiTeamsForm: React.FC = () => {
         },
       ]);
       setNavElevation("builder");
-      getClientData(aiTeamId);
+      getAiTeamData(aiTeamId);
     } else {
       setAgentsPage(1);
       replacePath([

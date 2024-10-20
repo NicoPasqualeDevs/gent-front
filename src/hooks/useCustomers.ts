@@ -2,70 +2,70 @@ import useApi from "@/hooks/useApi.ts";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { ApiResponseList } from "@/types/Api";
 
-type UseCustomersApiHook = {
-  getCustomerList: (
+type UseAiTeamsApiHook = {
+  getAiTeamsList: (
     filterParams: string
   ) => Promise<ApiResponseList<AiTeamsDetails>>;
-  getClientDetails: (aiTeamId: string) => Promise<AiTeamsDetails>;
-  postClientDetails: (data: AiTeamsDetails) => Promise<AiTeamsDetails>;
-  putClientDetails: (
+  getAiTeamDetails: (aiTeamId: string) => Promise<AiTeamsDetails>;
+  postAiTeamDetails: (data: AiTeamsDetails) => Promise<AiTeamsDetails>;
+  putAiTeamDetails: (
     data: AiTeamsDetails,
     aiTeamId: string
   ) => Promise<AiTeamsDetails>;
-  deleteClientDetails: (aiTeamId: string) => Promise<{ message: string }>;
-  getMyClients: () => Promise<ApiResponseList<AiTeamsDetails>>;
+  deleteAiTeamDetails: (aiTeamId: string) => Promise<{ message: string }>;
+  getMyAiTeams: () => Promise<ApiResponseList<AiTeamsDetails>>;
 };
 
-const useCustomersApi = (): UseCustomersApiHook => {
+const useAiTeamsApi = (): UseAiTeamsApiHook => {
   const { apiPut, apiPost, apiGet, apiDelete } = useApi();
 
   // GETS
-  const getCustomerList = (
+  const getAiTeamsList = (
     filterParams: string
   ): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/aiTeam/actions/${filterParams}`;
+    const path = `api/ai_teams/${filterParams}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
-  const getClientDetails = (aiTeamId: string): Promise<AiTeamsDetails> => {
-    const path = `api/aiTeam/actions/aiTeams/${aiTeamId}/`;
+  const getAiTeamDetails = (aiTeamId: string): Promise<AiTeamsDetails> => {
+    const path = `api/ai_teams/${aiTeamId}/`;
     return apiGet<AiTeamsDetails>(path);
   };
 
-  const getMyClients = (): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/aiTeam/actions/aiTeams/my_clients/`;
+  const getMyAiTeams = (): Promise<ApiResponseList<AiTeamsDetails>> => {
+    const path = `api/ai_teams/`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
   // POST
-  const postClientDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
-    const path = `api/aiTeam/actions/aiTeams/`;
+  const postAiTeamDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
+    const path = `api/ai_teams/`;
     return apiPost(path, data);
   };
 
   // PUTS
-  const putClientDetails = (
+  const putAiTeamDetails = (
     data: AiTeamsDetails,
     aiTeamId: string
   ): Promise<AiTeamsDetails> => {
-    const path = `api/aiTeam/actions/aiTeams/${aiTeamId}/`;
+    const path = `api/ai_teams/${aiTeamId}/`;
     return apiPut(path, data);
   };
 
   // DELETE
-  const deleteClientDetails = (aiTeamId: string): Promise<{ message: string }> => {
-    const path = `api/aiTeam/actions/aiTeams/${aiTeamId}/`;
+  const deleteAiTeamDetails = (aiTeamId: string): Promise<{ message: string }> => {
+    const path = `api/ai_teams/${aiTeamId}/`;
     return apiDelete(path).then(response => response.json());
   };
 
   return {
-    getCustomerList,
-    getClientDetails,
-    postClientDetails,
-    putClientDetails,
-    deleteClientDetails,
-    getMyClients,
+    getAiTeamsList,
+    getAiTeamDetails,
+    postAiTeamDetails,
+    putAiTeamDetails,
+    deleteAiTeamDetails,
+    getMyAiTeams,
   };
 };
 
-export default useCustomersApi;
+export default useAiTeamsApi;

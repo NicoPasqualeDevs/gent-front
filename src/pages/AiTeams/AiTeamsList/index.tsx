@@ -23,7 +23,7 @@ import {
   IconButton
 } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
-import useCustomersApi from "@/hooks/useCustomers";
+import useAiTeamsApi from "@/hooks/useCustomers";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
 import { AiTeamsDetails } from "@/types/AiTeams";
@@ -43,7 +43,7 @@ const AiTeamsList: React.FC = () => {
     language,
     auth
   } = useAppContext();
-  const { getMyClients, deleteClientDetails } = useCustomersApi();
+  const { getMyAiTeams, deleteAiTeamDetails } = useAiTeamsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
@@ -59,7 +59,7 @@ const AiTeamsList: React.FC = () => {
 
   const getAiTeamsData = useCallback(() => {
     setIsLoading(true);
-    getMyClients()
+    getMyAiTeams()
       .then((response) => {
         const data: AiTeamsDetails[] = response.data;
         const paginationData: Metadata = response.metadata;
@@ -85,7 +85,7 @@ const AiTeamsList: React.FC = () => {
           searchInputRef.current.focus();
         }
       });
-  }, [getMyClients, setClientPage, t.aiTeamsForm.errorConnection]);
+  }, [getMyAiTeams, setClientPage, t.aiTeamsForm.errorConnection]);
 
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
@@ -107,7 +107,7 @@ const AiTeamsList: React.FC = () => {
 
   const deleteAction = (aiTeamId: string) => {
     setIsLoading(true);
-    deleteClientDetails(aiTeamId)
+    deleteAiTeamDetails(aiTeamId)
       .then((response) => {
         setPageContent(prevContent => prevContent.filter(item => item.id !== aiTeamId));
         setAllowerState(false);
