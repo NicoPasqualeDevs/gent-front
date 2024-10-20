@@ -18,6 +18,7 @@ import {
   AiTeam,
 } from "@/types/Bots";
 import { ApiResponseList, ApiResponse } from "@/types/Api";
+import { AiTeamsDetails } from "@/types/AiTeams";
 
 type MessageUp = {
   message: string;
@@ -29,7 +30,10 @@ type UseBotsApiHook = {
   getChatHistory: (botId: string) => Promise<ChatHistory>;
   getAgentData: (botId: string) => Promise<ApiResponse<AgentData>>;
   getNoAuthAgentData: (botId: string) => Promise<AgentData>;
-  getBotsList: (aiTeamId: string, filterParams: string) => Promise<ApiResponseList<AgentData>>;
+  getBotsList: (
+    aiTeamId: string,
+    filterParams: string
+  ) => Promise<ApiResponseList<AgentData>>;
   getKtags: (botId: string) => Promise<Ktag[]>;
   getWidget: (botId: string) => Promise<WidgetData>;
   getCustomMessages: (botId: string) => Promise<GetCustomGreetingData>;
@@ -85,7 +89,10 @@ const useBotsApi = (): UseBotsApiHook => {
   const { apiPut, apiPost, apiGet, noAuthGet, apiDelete, apiPatch } = useApi();
 
   // GETS
-  const getBotsList = (aiTeamId: string, filterParams: string): Promise<ApiResponseList<AgentData>> => {
+  const getBotsList = (
+    aiTeamId: string,
+    filterParams: string
+  ): Promise<ApiResponseList<AgentData>> => {
     const path = `api/ai_teams/bots/${aiTeamId}${filterParams}`;
     return apiGet<ApiResponseList<AgentData>>(path);
   };
