@@ -22,7 +22,7 @@ const LeftMenu: React.FC = () => {
       navElevation: t.leftMenu.aiTeams,
       label: t.leftMenu.aiTeams,
       path: "/builder",
-    },
+    }
   ];
 
   // Opción de registro de equipo solo para superusuarios
@@ -36,6 +36,11 @@ const LeftMenu: React.FC = () => {
       navElevation: t.leftMenu.registerUser,
       label: t.leftMenu.registerUser,
       path: "/auth/register",
+    },
+    {
+      navElevation: t.leftMenu.tools,
+      label: t.leftMenu.tools,
+      path: "/builder/admin-tools-form",
     },
   ];
 

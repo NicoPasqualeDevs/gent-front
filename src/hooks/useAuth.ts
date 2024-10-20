@@ -10,16 +10,16 @@ type AuthHook = {
 };
 
 const useAuth = (): AuthHook => {
-  const { apiPost } = useApi();
+  const { apiPost, noAuthPost } = useApi();
 
   const registerUser = (data: AuthRegisterData): Promise<AuthRegisterResponse> => {
     const path = "api/register/";
-    return apiPost(path, data);
+    return noAuthPost(path, data);
   };
 
   const loginUser = (data: AuthLoginData): Promise<ApiResponse<AuthUser>> => {
     const path = "api/login/";
-    return apiPost(path, data);
+    return noAuthPost(path, data);
   };
 
   return {

@@ -14,7 +14,8 @@ const fr = {
     registerTeam: "Nouvelle équipe",
     logout: "Déconnexion",
     logoutSuccess: "Vous vous êtes déconnecté avec succès",
-    registerUser: "Nouvel Utilisateur"
+    registerUser: "Nouvel Utilisateur",
+    tools: "Outils"
   },
   aiTeamsForm: {
     editTitle: "Modifier l'équipe d'Équipes IA",
@@ -108,26 +109,19 @@ const fr = {
     fieldRequired: "Ce champ est obligatoire",
     connectionError: "Erreur : Impossible d'établir une connexion avec le serveur"
   },
-  toolsForm: {
-    required: "Ce champ est obligatoire",
-    onlyPyFiles: "Seuls les fichiers .py sont autorisés",
-    createSuccess: "Outil créé avec succès",
-    updateSuccess: "Outil mis à jour avec succès",
-    connectionError: "Erreur : Impossible d'établir une connexion avec le serveur",
-    fileError: "Erreur lors du chargement du fichier",
-    editTool: "Modifier l'outil {toolName}",
-    createNewTool: "Créer un nouvel outil",
-    toolName: "Nom de l'outil",
-    toolType: "Type d'outil",
-    instructions: "Instructions",
-    toolFile: "Fichier de l'outil",
-    update: "Mettre à jour",
-    create: "Créer",
-    edit: "Modifier",
-    toolNotFound: "Outil non trouvé",
-    toolNotFoundMessage: "Désolé, l'outil que vous recherchez n'existe pas ou a été supprimé.",
-    backToTools: "Retour aux Outils",
-    aiTeam: "AiTeam"
+  tools: {
+    libraryTitle: "Bibliothèque d'Outils",
+    relatedTitle: "Outils Associés",
+    type: "Type",
+    relateButton: "Associer",
+    unrelateButton: "Dissocier",
+    successRelate: "Outil associé avec succès",
+    successUnrelate: "Outil dissocié avec succès",
+    errorRelate: "Erreur lors de l'association de l'outil",
+    errorUnrelate: "Erreur lors de la dissociation de l'outil",
+    errorToken: "Erreur d'authentification",
+    errorLoading: "Erreur lors du chargement des outils",
+    createToolButton: "Créer un Outil"
   }
 };
 

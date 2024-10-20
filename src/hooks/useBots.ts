@@ -41,7 +41,7 @@ type UseBotsApiHook = {
   getAllTools: () => Promise<ToolData[]>;
   getBotTools: (botId: string) => Promise<ToolData[]>;
   getTool: (toolId: string) => Promise<ToolData>;
-  getClientTools: (aiTeamId: string) => Promise<ToolData[]>;
+  getClientTools: (token: string) => Promise<ApiResponse<ToolData[]>>;
   getMyClients: () => Promise<ApiResponseList<AiTeam>>;
 
   //Post
@@ -83,6 +83,10 @@ type UseBotsApiHook = {
   deleteKtag: (KtagId: string) => Promise<Response>;
   deleteCustomMessage: (messageId: string) => Promise<Response>;
   deleteTool: (toolId: string) => Promise<Response>;
+
+  // Nuevos métodos para herramientas
+  addToolToBot: (botId: string, toolIds: number[]) => Promise<ApiResponse<unknown>>;
+  removeToolFromBot: (botId: string, toolIds: number[]) => Promise<ApiResponse<unknown>>;
 };
 
 const useBotsApi = (): UseBotsApiHook => {
@@ -134,18 +138,18 @@ const useBotsApi = (): UseBotsApiHook => {
   };
   const getBotTools = (botId: string): Promise<ToolData[]> => {
     const path = `api/tool/list/${botId}`;
-    return apiGet<ToolData[]>(path);
+    return apiGet<ApiResponse<ToolData[]>>(path).then(response => response.data);
   };
   const getTool = (toolId: string): Promise<ToolData> => {
     const path = `api/tool/modify/${toolId}`;
     return apiGet<ToolData>(path);
   };
-  const getClientTools = (aiTeamId: string): Promise<ToolData[]> => {
-    const path = `api/tool/ai_team/${aiTeamId}`;
-    return apiGet<{ message: string; data: ToolData[] }>(path).then(response => response.data);
+  const getClientTools = (token: string): Promise<ApiResponse<ToolData[]>> => {
+    const path = `api/tool/user/${token}`;
+    return apiGet<ApiResponse<ToolData[]>>(path);
   };
   const getMyClients = (): Promise<ApiResponseList<AiTeam>> => {
-    const path = `api/ai_teams/`;
+    const path = `api/ai_teams/my_clients/`;  // Actualizado el endpoint
     return apiGet<ApiResponseList<AiTeam>>(path);
   };
 
@@ -257,6 +261,17 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiDelete(path);
   };
 
+  // Nuevos métodos para herramientas
+  const addToolToBot = (botId: string, toolIds: number[]): Promise<ApiResponse<unknown>> => {
+    const path = `api/bot/tools/${botId}`;
+    return apiPost(path, { agent_tool_ids: toolIds });
+  };
+
+  const removeToolFromBot = (botId: string, toolIds: number[]): Promise<ApiResponse<unknown>> => {
+    const path = `api/bot/remove-tools/${botId}`;
+    return apiPost(path, { agent_tool_ids: toolIds });
+  };
+
   return {
     // Gets
     getKnowledgeTags,
@@ -301,6 +316,10 @@ const useBotsApi = (): UseBotsApiHook => {
     deleteKtag,
     deleteCustomMessage,
     deleteTool,
+
+    // Nuevos métodos para herramientas
+    addToolToBot,
+    removeToolFromBot,
   };
 };
 

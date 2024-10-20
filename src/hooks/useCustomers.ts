@@ -33,7 +33,7 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
   };
 
   const getMyAiTeams = (): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/ai_teams/`;
+    const path = `api/ai_teams/my_clients/`;  // Actualizado el endpoint
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 

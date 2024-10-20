@@ -1,75 +1,160 @@
+import React, { useCallback, useEffect, useState } from "react";
+import { useTheme } from "@mui/material/styles";
+import { useParams, useNavigate } from "react-router-dom";
+import { Button, Card, CardContent, Typography, Stack, CardActions, Container, Box, Paper } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
-import { ErrorToast } from "@/components/Toast";
+import { ErrorToast, SuccessToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import { ToolData } from "@/types/Bots";
-import {
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  Stack,
-} from "@mui/material";
-import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useAppContext } from "@/context/app";
+import { languages } from "@/utils/Traslations";
+import AddIcon from "@mui/icons-material/Add";
+
 
 const Tools: React.FC = () => {
-  const navigate = useNavigate();
-  const { aiTeamId } = useParams();
-  const { getClientTools } = useBotsApi();
+  const { aiTeamId, clientName, botName, botId } = useParams();
+  const { getClientTools, addToolToBot, removeToolFromBot, getBotTools } = useBotsApi();
   const [tools, setTools] = useState<ToolData[]>([]);
+  const [agentTools, setAgentTools] = useState<ToolData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { auth, language, replacePath, appNavigation } = useAppContext();
+  const t = languages[language as keyof typeof languages].tools;
+  const theme = useTheme();
+  const navigate = useNavigate();
 
   const fetchTools = useCallback(async () => {
-    if (!aiTeamId) return;
+    if (!auth.user?.token || !botId) {
+      ErrorToast(t.errorToken);
+      return;
+    }
 
     setIsLoading(true);
     try {
-      const response = await getClientTools(aiTeamId);
-      setTools(response);
+      const [clientToolsResponse, botToolsResponse] = await Promise.all([
+        getClientTools(auth.user.token),
+        getBotTools(botId)
+      ]);
+      
+      const allClientTools = clientToolsResponse.data;
+      const botTools = botToolsResponse;
+
+      setTools(allClientTools.filter(tool => !botTools.some(botTool => botTool.id === tool.id)));
+      setAgentTools(botTools);
     } catch (error) {
-      ErrorToast("Error al cargar las herramientas");
+      ErrorToast(t.errorLoading);
       console.error(error);
     } finally {
       setIsLoading(false);
     }
-  }, [aiTeamId, getClientTools]);
+  }, [auth.user?.token, botId, getClientTools, getBotTools, t.errorToken, t.errorLoading]);
 
   useEffect(() => {
-    if (isLoading) {
-      fetchTools();
+    const updatePathAndFetchTools = async () => {
+      if (aiTeamId && clientName && botName) {
+        replacePath([
+          ...appNavigation.slice(0, 1),
+          { label: clientName, current_path: `/builder/agents/${clientName}/${aiTeamId}`, preview_path: "" },
+          { label: botName, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "" },
+          { label: t.type, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "" },
+        ]);
+      }
+      await fetchTools();
+    };
+
+    updatePathAndFetchTools();
+  }, [aiTeamId, clientName, botName]);
+
+  const handleToolAction = async (toolId: number, action: 'relate' | 'unrelate') => {
+    if (!botId) return;
+
+    try {
+      if (action === 'relate') {
+        await addToolToBot(botId, [toolId]);
+        SuccessToast(t.successRelate);
+      } else {
+        await removeToolFromBot(botId, [toolId]);
+        SuccessToast(t.successUnrelate);
+      }
+
+      await fetchTools(); // Refetch tools after action
+    } catch (error) {
+      ErrorToast(action === 'relate' ? t.errorRelate : t.errorUnrelate);
+      console.error(error);
     }
-  }, [fetchTools, isLoading]);
+  };
+
+  const handleAddTool = () => {
+    navigate(`/builder/agents/tools-form/${aiTeamId}/${botName}`);
+  };
 
   if (isLoading) {
     return <PageCircularProgress />;
   }
 
   return (
-    <>
-      <Typography variant="h4" gutterBottom>Listado de Tools</Typography>
-      {tools.length > 0 ? (
-        tools.map((tool) => (
-          <Card key={tool.id} sx={{ marginBottom: 2 }}>
-            <CardContent>
-              <Typography variant="h6">{tool.tool_name}</Typography>
-              <Stack direction="row" spacing={2}>
-                <Typography>ID: {tool.id}</Typography>
-                <Typography>Tipo: {tool.type}</Typography>
-              </Stack>
-            </CardContent>
-          </Card>
-        ))
-      ) : (
-        <Typography>No hay Tools para mostrar</Typography>
+    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
+      {auth.user?.is_superuser && (
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleAddTool}
+          sx={{ mb: 2, color: theme.palette.secondary.main }}
+        >
+          {t.createToolButton}
+        </Button>
       )}
-      <Button
-        variant="contained"
-        sx={{ marginTop: 2 }}
-        onClick={() => navigate(`/builder/agents/tools-form/${aiTeamId}`)}
-      >
-        Crear Tool
-      </Button>
-    </>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Paper elevation={3} sx={{ p: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h4">{t.libraryTitle}</Typography>
+          </Box>
+          {tools.map((tool) => (
+            <Card key={tool.id} sx={{ marginBottom: 2 }}>
+              <CardContent>
+                <Typography variant="h6">{tool.tool_name}</Typography>
+                <Stack direction="row" spacing={2}>
+                  <Typography>ID: {tool.id}</Typography>
+                  <Typography>{t.type}: {tool.type}</Typography>
+                </Stack>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  variant="contained"
+                  onClick={() => handleToolAction(Number(tool.id), 'relate')}
+                >
+                  {t.relateButton}
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Paper>
+        <Paper elevation={3} sx={{ p: 2 }}>
+          <Typography variant="h4" gutterBottom>{t.relatedTitle}</Typography>
+          {agentTools.map((tool) => (
+            <Card key={tool.id} sx={{ marginBottom: 2 }}>
+              <CardContent>
+                <Typography variant="h6">{tool.tool_name}</Typography>
+                <Stack direction="row" spacing={2}>
+                  <Typography>ID: {tool.id}</Typography>
+                  <Typography>{t.type}: {tool.type}</Typography>
+                </Stack>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => handleToolAction(Number(tool.id), 'unrelate')}
+                >
+                  {t.unrelateButton}
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Paper>
+      </Box>
+    </Container>
   );
 };
 

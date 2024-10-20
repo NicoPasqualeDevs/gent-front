@@ -14,7 +14,8 @@ const en = {
     registerTeam: "New team",
     logout: "Logout",
     logoutSuccess: "You have successfully logged out",
-    registerUser: "New User"
+    registerUser: "New User",
+    tools: "Tools"
   },
   aiTeamsForm: {
     editTitle: "Edit AI Teams team",
@@ -128,6 +129,20 @@ const en = {
     toolNotFoundMessage: "Sorry, the tool you are looking for does not exist or has been removed.",
     backToTools: "Back to Tools",
     aiTeam: "AiTeam"
+  },
+  tools: {
+    libraryTitle: "Tools Library",
+    relatedTitle: "Related Tools",
+    type: "Type",
+    relateButton: "Relate",
+    unrelateButton: "Unrelate",
+    successRelate: "Tool related successfully",
+    successUnrelate: "Tool unrelated successfully",
+    errorRelate: "Error relating tool",
+    errorUnrelate: "Error unrelating tool",
+    errorToken: "Authentication error",
+    errorLoading: "Error loading tools",
+    createToolButton: "Create Tool"
   }
 };
 

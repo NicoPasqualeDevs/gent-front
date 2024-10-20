@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
 import AiTeamsList from "@/pages/AiTeams/AiTeamsList";
 import AiTeamsForm from "@/pages/AiTeams/AiTeamsForm";
+import ToolsForm from "@/pages/Builder/ToolsForm/Client";
 
 const AgentsDetailsModule = lazy(() => import("./agents"));
 const ProfileModule = lazy(() => import("../../modules/profile")); // Nuevo módulo
@@ -19,6 +20,11 @@ const AiTeamsModule: React.FC = () => {
           <Route path="profile/*" element={<ProfileModule />} />
           {/* AGENTS DETAILS*/}
           <Route path="agents/*" element={<AgentsDetailsModule />} />
+          {/* ADMIN TOOLS */}
+          <Route
+            path="admin-tools-form"
+            element={<ToolsForm />}
+          />
         </Route>
       </Routes>
     </AuthChecker>

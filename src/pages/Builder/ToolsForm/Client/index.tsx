@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Box,
@@ -10,8 +10,6 @@ import {
 } from "@mui/material";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
-import { PageCircularProgress } from "@/components/CircularProgress";
 import { FileInput, MultilineInput, TextInput } from "@/components/Inputs";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
@@ -21,12 +19,10 @@ import { languages } from "@/utils/Traslations";
 
 const ToolsForm: React.FC = () => {
   const navigate = useNavigate();
-  const { language } = useAppContext();
-  const { postTool, } = useBotsApi();
-  const t = languages[language as keyof typeof languages];
-  const { aiTeamId, botId, toolId, toolName, botName } = useParams<{ aiTeamId: string, botId: string, toolId: string, toolName: string, botName: string }>();
-
-  console.log(aiTeamId, "aiTeamId", botId, "botId", toolId, "toolId", toolName, "toolName", botName, "botName" , "<-- paramas")
+  const { language, auth } = useAppContext();
+  const { postTool } = useBotsApi();
+  const t = languages[language as keyof typeof languages].toolsForm;
+  const { aiTeamId, botId } = useParams<{ aiTeamId: string, botId: string, toolId: string, toolName: string, botName: string }>();
 
   const [fileError, setFileError] = useState<string>("");
 
@@ -38,27 +34,28 @@ const ToolsForm: React.FC = () => {
   };
 
   const validationSchema = Yup.object({
-    tool_name: Yup.string().required(t.toolsForm.required),
+    tool_name: Yup.string().required(t.required),
     tool_code: Yup.mixed()
-      .required(t.toolsForm.required)
-      .test("fileType", t.toolsForm.onlyPyFiles, (value) => {
+      .required(t.required)
+      .test("fileType", t.onlyPyFiles, (value) => {
         if (!value) return true;
         if (typeof value === 'string') return value.toLowerCase().endsWith('.py');
         return value instanceof File && value.name.toLowerCase().endsWith('.py');
       }),
-    instruction: Yup.string().required(t.toolsForm.required),
+    instruction: Yup.string().required(t.required),
     client_ids: Yup.array().of(Yup.string()).min(1, "Cliente requerido"),
   });
 
   const createNewTool = (formData: FormData) => {
     postTool(formData)
-      .then((response) => {
-        SuccessToast(t.toolsForm.createSuccess);
-        navigate(`/builder/agents/tools/${aiTeamId}/${botId}`);
+      .then(() => {
+        SuccessToast(t.createSuccess);
+        // Cambio en la navegación
+        navigate(-1);
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast(t.toolsForm.connectionError);
+          ErrorToast(t.connectionError);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
@@ -77,6 +74,8 @@ const ToolsForm: React.FC = () => {
     if (values.aiTeam_id) {
       formData.append("aiTeam_id", values.aiTeam_id);
     }
+    // Agregar user_token al formData
+    formData.append("user_token", auth.user?.token || "");
 
     createNewTool(formData);
   };
@@ -94,28 +93,24 @@ const ToolsForm: React.FC = () => {
         setFieldValue("tool_code", file);
         setFileError("");
       } else {
-        setFileError(t.toolsForm.onlyPyFiles);
+        setFileError(t.onlyPyFiles);
         if ('files' in event.target) event.target.value = "";
       }
     }
   };
-
-  useEffect(() => {
-
-  }, []);
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
       <Box component="form" onSubmit={handleSubmit}>
         <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
           <Typography variant="h5" sx={{ mb: 3 }}>
-            {t.toolsForm.createNewTool}
+            {t.createNewTool}
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={12} sm={6}>
               <TextInput
                 name="tool_name"
-                label={t.toolsForm.toolName}
+                label={t.toolName}
                 value={values.tool_name}
                 helperText={errors.tool_name}
                 onChange={handleChange}
@@ -124,7 +119,7 @@ const ToolsForm: React.FC = () => {
             <Grid item xs={12} sm={6}>
               <TextInput
                 name="type"
-                label={t.toolsForm.toolType}
+                label={t.toolType}
                 value={values.type}
                 helperText={errors.type}
                 onChange={handleChange}
@@ -134,7 +129,7 @@ const ToolsForm: React.FC = () => {
             <Grid item xs={12}>
               <MultilineInput
                 name="instruction"
-                label={t.toolsForm.instructions}
+                label={t.instructions}
                 rows={6}
                 value={values.instruction}
                 helperText={errors.instruction}
@@ -144,31 +139,12 @@ const ToolsForm: React.FC = () => {
             <Grid item xs={12}>
               <FileInput
                 name="tool_code"
-                label={t.toolsForm.toolFile}
+                label={t.toolFile}
                 onChange={handleFileChange}
                 value={values.tool_code}
                 helperText={fileError || errors.tool_code}
               />
             </Grid>
-{/*             <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id="aiTeam-select-label">{t.toolsForm.aiTeam}</InputLabel>
-                <Select
-                  labelId="aiTeam-select-label"
-                  id="aiTeam-select"
-                  value={aiTeamId || ""}
-                  label={t.toolsForm.aiTeam}
-                  onChange={(e) => setFieldValue("client_ids", [e.target.value])}
-                >
-                  {aiTeams.map((aiTeam) => (
-                    <MenuItem key={aiTeam.id} value={aiTeam.id}>
-                      {aiTeam.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              {errors.client_ids && <Typography color="error">{errors.client_ids}</Typography>}
-            </Grid> */}
           </Grid>
         </Paper>
         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -182,7 +158,7 @@ const ToolsForm: React.FC = () => {
               },
             }}
           >
-            {t.toolsForm.create}
+            {t.create}
           </Button>
         </Box>
       </Box>

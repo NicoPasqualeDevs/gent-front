@@ -14,7 +14,8 @@ const de = {
     registerTeam: "Neues Team",
     logout: "Abmelden",
     logoutSuccess: "Sie haben sich erfolgreich abgemeldet",
-    registerUser: "Neuer Benutzer"
+    registerUser: "Neuer Benutzer",
+    tools: "Werkzeuge",
   },
   aiTeamsForm: {
     editTitle: "KI-Teams-Team bearbeiten",
@@ -127,7 +128,34 @@ const de = {
     toolNotFound: "Werkzeug nicht gefunden",
     toolNotFoundMessage: "Entschuldigung, das gesuchte Werkzeug existiert nicht oder wurde entfernt.",
     backToTools: "Zurück zu Werkzeugen",
-    aiTeam: "Kunde"
+    aiTeam: "Kunde",
+    libraryTitle: "Werkzeugbibliothek",
+    relatedTitle: "Zugehörige Werkzeuge",
+    type: "Typ",
+    relateButton: "Zuordnen",
+    unrelateButton: "Zuordnung aufheben",
+    successRelate: "Werkzeug erfolgreich zugeordnet",
+    successUnrelate: "Zuordnung des Werkzeugs erfolgreich aufgehoben",
+    errorRelate: "Fehler beim Zuordnen des Werkzeugs",
+    errorUnrelate: "Fehler beim Aufheben der Zuordnung des Werkzeugs",
+    errorToken: "Authentifizierungsfehler",
+    errorLoading: "Fehler beim Laden der Werkzeuge"
+  },
+
+  tools: {
+    errorToken: "Authentifizierungsfehler",
+    errorLoading: "Fehler beim Laden der Werkzeuge",
+    tools: "Werkzeuge",
+    libraryTitle: "Werkzeugbibliothek",
+    relatedTitle: "Zugehörige Werkzeuge",
+    type: "Typ",
+    relateButton: "Zuordnen",
+    unrelateButton: "Zuordnung aufheben",
+    successRelate: "Werkzeug erfolgreich zugeordnet",
+    successUnrelate: "Zuordnung des Werkzeugs erfolgreich aufgehoben",
+    errorRelate: "Fehler beim Zuordnen des Werkzeugs",
+    errorUnrelate: "Fehler beim Aufheben der Zuordnung des Werkzeugs",
+    createToolButton: "Werkzeug erstellen"
   }
 };
 

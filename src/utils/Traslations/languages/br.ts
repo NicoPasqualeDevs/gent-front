@@ -14,7 +14,8 @@ const br = {
     registerTeam: "Nova equipe",
     logout: "Sair",
     logoutSuccess: "Você saiu com sucesso",
-    registerUser: "Novo Usuário"
+    registerUser: "Novo Usuário",
+    tools: "Ferramentas"
   },
   aiTeamsForm: {
     editTitle: "Editar equipe de Equipes IA",
@@ -95,7 +96,7 @@ const br = {
       "Crie e compartilhe agentes de IA",
       "Implemente rápido e fácil",
       "Comercialize soluções de IA",
-      "Importe e publique sua solução",
+      "Importe e publique sua soluço",
     ],
     emailLabel: "E-mail",
     passwordLabel: "Senha",
@@ -128,6 +129,20 @@ const br = {
     toolNotFoundMessage: "Desculpe, a ferramenta que você está procurando não existe ou foi removida.",
     backToTools: "Voltar para Ferramentas",
     aiTeam: "Cliente"
+  },
+  tools: {
+    libraryTitle: "Biblioteca de Ferramentas",
+    relatedTitle: "Ferramentas Relacionadas",
+    type: "Tipo",
+    relateButton: "Relacionar",
+    unrelateButton: "Desvincular",
+    successRelate: "Ferramenta relacionada com sucesso",
+    successUnrelate: "Ferramenta desvinculada com sucesso",
+    errorRelate: "Erro ao relacionar ferramenta",
+    errorUnrelate: "Erro ao desvincular ferramenta",
+    errorToken: "Erro de autenticação",
+    errorLoading: "Erro ao carregar ferramentas",
+    createToolButton: "Criar Ferramenta"
   }
 };
 

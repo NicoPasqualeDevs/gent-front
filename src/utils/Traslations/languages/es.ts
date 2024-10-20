@@ -14,7 +14,8 @@ const es = {
     registerTeam: "Nuevo equipo",
     logout: "Cerrar Sesión",
     logoutSuccess: "Has cerrado sesión correctamente",
-    registerUser: "Nuevo Usuario"
+    registerUser: "Nuevo Usuario",
+    tools: "Herramientas"
   },
   aiTeamsForm: {
     editTitle: "Editar equipo de Equipos IA",
@@ -128,6 +129,20 @@ const es = {
     toolNotFoundMessage: "Lo sentimos, la herramienta que estás buscando no existe o ha sido eliminada.",
     backToTools: "Volver a Herramientas",
     aiTeam: "Cliente"
+  },
+  tools: {
+    libraryTitle: "Biblioteca de Herramientas",
+    relatedTitle: "Herramientas Relacionadas",
+    type: "Tipo",
+    relateButton: "Relacionar",
+    unrelateButton: "Desvincular",
+    successRelate: "Herramienta relacionada con éxito",
+    successUnrelate: "Herramienta desvinculada con éxito",
+    errorRelate: "Error al relacionar la herramienta",
+    errorUnrelate: "Error al desvincular la herramienta",
+    errorToken: "Error de autenticación",
+    errorLoading: "Error al cargar las herramientas",
+    createToolButton: "Crear Herramienta"
   }
 };
 
