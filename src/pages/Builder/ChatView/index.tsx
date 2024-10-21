@@ -10,6 +10,7 @@ import { useTheme } from "@mui/material/styles";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
 import apiBase from "@/hooks/useApi";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const MainContainer = styled(Box)(() => ({
   height: '100vh',
@@ -34,6 +35,9 @@ const ChatContainer = styled(Box)(() => ({
 const Header = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   borderBottom: '1px solid #333333',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 }));
 
 const MessagesContainer = styled(Box)(({ theme }) => ({
@@ -270,68 +274,29 @@ const ChatView: React.FC = () => {
     }
   };
 
-  const cleanChat = useCallback(async (conversationId: string) => {
-    try {
-      const response = await fetch(`${apiBase}/clean-chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ conversation_id: conversationId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.warn("Error al limpiar el chat:", errorData);
-        return false;
-      }
-
-      return true;
-    } catch (cleanError) {
-      console.warn("Error al llamar a clean-chat:", cleanError);
-      return false;
-    }
-  }, []);
-
   const handleFinishSession = async () => {
     if (!chatHistory?.conversation) {
       console.error("No hay ID de conversación disponible");
       ErrorToast(t.errorClosingChat);
       return;
     }
+    await closeChat(chatHistory.conversation).then(() => {
+      const initialMessage: ChatMessage = {
+        content: t.noMessages,
+        timestamp: new Date().toISOString(),
+        role: 'bot'
+      };
 
-    console.log("ID de conversación:", chatHistory.conversation);
-
-    try {
-      try {
-        await closeChat(chatHistory.conversation);
-      } catch (closeError) {
-        console.warn("Error al cerrar el chat en el backend:", closeError);
-      }
-
-      const cleanSuccess = await cleanChat(chatHistory.conversation);
-
-      if (cleanSuccess) {
-        const initialMessage: ChatMessage = {
-          content: t.noMessages,
-          timestamp: new Date().toISOString(),
-          role: 'bot'
-        };
-
-        setChatHistory({
-          conversation: chatHistory.conversation,
-          messages: [initialMessage],
-          customer: chatHistory.customer,
-          customer_bot: chatHistory.customer_bot
-        });
-        setMessage("");
-      } else {
-        ErrorToast(t.errorCleaningChat);
-      }
-    } catch (error) {
-      console.error("Error inesperado al cerrar el chat:", error);
-      ErrorToast(t.unexpectedError);
-    }
+      setChatHistory({
+        conversation: chatHistory.conversation,
+        messages: [initialMessage],
+        customer: chatHistory.customer,
+        customer_bot: chatHistory.customer_bot
+      });
+      setMessage("");
+    }).catch(() => {
+      ErrorToast(t.errorCleaningChat);
+    })
   };
 
   const formatTimestamp = (timestamp: string) => {
@@ -389,6 +354,7 @@ const ChatView: React.FC = () => {
           <Typography variant="h5" fontWeight="bold">
             {t.agentPanel.replace("{agentName}", agentData?.name || t.defaultAgentName)}
           </Typography>
+          <LanguageSelector />
         </Header>
         <MessagesContainer ref={chatContainerRef}>
           {chatHistory?.messages.map((msg, index) => (

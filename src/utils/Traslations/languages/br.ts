@@ -1,3 +1,13 @@
+const randomGreeting = (): string => {
+  const saudacoes = [
+    "Olá! Como você está?",
+    "Bem-vindo! Em que posso ajudar?",
+    "Saudações! Como está seu dia?",
+    "Que bom ver você! Como vai?"
+  ];
+  return saudacoes[Math.floor(Math.random() * saudacoes.length)];
+};
+
 const br = {
   greeting: "Olá",
   farewell: "Tchau",
@@ -73,7 +83,7 @@ const br = {
     defaultAgentName: "Agente IA",
     history: "Histórico",
     comingSoon: "(Em breve)",
-    noMessages: "Nenhuma mensagem disponível. Inicie uma conversa com o agente IA.",
+    noMessages: randomGreeting(),
     inputPlaceholder: "Digite sua mensagem para o agente IA...",
     sendButton: "Enviar",
     finishSession: "Finalizar Sessão",

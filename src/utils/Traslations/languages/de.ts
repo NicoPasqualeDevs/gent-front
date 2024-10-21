@@ -1,3 +1,13 @@
+const randomGreeting = (): string => {
+  const grüße = [
+    "Hallo! Wie geht es Ihnen?",
+    "Willkommen! Wie kann ich Ihnen helfen?",
+    "Grüß Gott! Wie läuft Ihr Tag?",
+    "Schön Sie zu sehen! Wie geht es Ihnen?"
+  ];
+  return grüße[Math.floor(Math.random() * grüße.length)];
+};
+
 const de = {
   greeting: "Hallo",
   farewell: "Auf Wiedersehen",
@@ -30,7 +40,7 @@ const de = {
     successCreate: "Kunde erfolgreich erstellt",
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     selectUser: "Benutzer auswählen",
-    noUsersAvailable: "Keine Benutzer verfgbar",
+    noUsersAvailable: "Keine Benutzer verfügbar",
     currentUser: "Aktueller Benutzer"
   },
   aiTeamsList: {
@@ -73,7 +83,7 @@ const de = {
     defaultAgentName: "KI-Agent",
     history: "Verlauf",
     comingSoon: "(Demnächst verfügbar)",
-    noMessages: "Keine Nachrichten verfügbar. Beginnen Sie ein Gespräch mit dem KI-Agenten.",
+    noMessages: randomGreeting(),
     inputPlaceholder: "Geben Sie Ihre Nachricht für den KI-Agenten ein...",
     sendButton: "Senden",
     finishSession: "Sitzung beenden",
