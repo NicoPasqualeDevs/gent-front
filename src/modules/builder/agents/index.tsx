@@ -7,7 +7,7 @@ import { WidgetCustomizer } from "@/pages/Builder/WidgetCustomizer";
 import CustomMessages from "@/pages/Builder/CustomMessages";
 import ContextEntry from "@/pages/Builder/ContextEntry";
 import Tools from "@/pages/Builder/Tools";
-import ToolsForm from "@/pages/Builder/ToolsForm/Admin";
+import ToolsForm from "@/pages/Builder/ToolsForm/Client";
 import ToolsRelationship from "@/pages/Builder/ToolsRelationship";
 
 const AgentsDetailsModule: React.FC = () => {
@@ -27,7 +27,7 @@ const AgentsDetailsModule: React.FC = () => {
         <Route path="customMessages/:botId?" element={<CustomMessages />} />
         <Route path="tools/:aiTeamId?/:botName?/:botId?/:toolName?/:toolId?" element={<Tools />} />
         <Route
-          path="admin-tools-form"
+          path="tools-form/:aiTeamId?/:botName?/:botId?/:toolName?/:toolId?" 
           element={<ToolsForm />}
         />
         <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship />} />

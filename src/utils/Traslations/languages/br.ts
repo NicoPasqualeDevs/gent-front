@@ -43,7 +43,8 @@ const br = {
     noTeamsFound: "Nenhuma Equipe IA encontrada com esse nome",
     noTeamsToShow: "Nenhuma Equipe IA para mostrar",
     teamsCount: "de {total} Equipes IA",
-    successDelete: "Cliente excluído com sucesso"
+    successDelete: "Cliente excluído com sucesso",
+    owner: "Proprietário",
   },
   iaPanel: {
     createAgent: "Criar Agente",

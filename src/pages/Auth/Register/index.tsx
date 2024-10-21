@@ -70,7 +70,7 @@ const Register: React.FC = () => {
         } else {
           ErrorToast(error.message || "Error en el registro");
         }
-      });
+      })
   };
 
   const formik = useFormik({

@@ -30,7 +30,7 @@ const de = {
     successCreate: "Kunde erfolgreich erstellt",
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     selectUser: "Benutzer auswählen",
-    noUsersAvailable: "Keine Benutzer verf��gbar",
+    noUsersAvailable: "Keine Benutzer verfgbar",
     currentUser: "Aktueller Benutzer"
   },
   aiTeamsList: {
@@ -43,7 +43,8 @@ const de = {
     noTeamsFound: "Keine KI-Teams mit diesem Namen gefunden",
     noTeamsToShow: "Keine KI-Teams zum Anzeigen",
     teamsCount: "von {total} KI-Teams",
-    successDelete: "Kunde erfolgreich gelöscht"
+    successDelete: "Kunde erfolgreich gelöscht",
+    owner: "Eigentümer"
   },
   iaPanel: {
     createAgent: "Agent erstellen",

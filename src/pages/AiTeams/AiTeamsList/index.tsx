@@ -4,6 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from '@mui/icons-material/Add';
+import PersonIcon from '@mui/icons-material/Person'; // Nuevo ícono para el propietario
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -20,7 +21,8 @@ import {
   Box,
   Paper,
   Container,
-  IconButton
+  IconButton,
+  Tooltip
 } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import useAiTeamsApi from "@/hooks/useCustomers";
@@ -306,6 +308,18 @@ const AiTeamsList: React.FC = () => {
                             >
                               {aiTeam.description}
                             </Typography>
+                            
+                            {/* Nueva sección para mostrar owner_data */}
+                            {aiTeam.owner_data && (
+                              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+                                <Tooltip title={t.aiTeamsList.owner}>
+                                  <PersonIcon sx={{ mr: 1, fontSize: 'small', color: theme.palette.text.secondary }} />
+                                </Tooltip>
+                                <Typography variant="body2" color="text.secondary">
+                                  {aiTeam.owner_data.name} ({aiTeam.owner_data.email})
+                                </Typography>
+                              </Box>
+                            )}
                           </Box>
                           <Box sx={{ mt: 2 }}>
                             <Button

@@ -43,7 +43,8 @@ const es = {
     noTeamsFound: "No se encontraron Equipos IA con ese nombre",
     noTeamsToShow: "No hay Equipos IA para mostrar",
     teamsCount: "de {total} Equipos IA",
-    successDelete: "Cliente eliminado satisfactoriamente"
+    successDelete: "Cliente eliminado satisfactoriamente",
+    owner: "Propietario"
   },
   iaPanel: {
     createAgent: "Crear Agente",

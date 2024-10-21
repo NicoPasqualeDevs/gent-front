@@ -28,7 +28,7 @@ const AiTeamsForm: React.FC = () => {
     name: "",
     address: "",
     description: "",
-    owner: "", // Asegúrate de que esto esté incluido
+    owner_data: undefined,
   });
 
   const [inputError, setInputError] = useState<AiTeamsDetails>({
@@ -49,10 +49,14 @@ const AiTeamsForm: React.FC = () => {
   });
 
   const onSubmit = (values: AiTeamsDetails) => {
+    let submissionValues = { ...values };
+    if (auth?.user?.is_superuser && submissionValues.owner_data?.name === "") {
+      submissionValues.owner_data.name = "Admin";
+    }
     if (aiTeamId) {
-      updateClient(values, aiTeamId);
+      updateClient(submissionValues, aiTeamId);
     } else {
-      createNewClient(values);
+      createNewClient(submissionValues);
     }
   };
 
@@ -72,20 +76,19 @@ const AiTeamsForm: React.FC = () => {
   };
 
   const getAiTeamData = useCallback((aiTeamId: string) => {
-    console.log(aiTeamId, "<--------------aiTeamId")
     getAiTeamDetails(aiTeamId)
       .then((response) => {
         setValues({
           name: response.name,
           address: response.address,
           description: response.description,
-          owner: response.owner, // Asegúrate de incluir el owner
+          owner_data: response.owner_data,
         });
         setInitialValues({
           name: response.name,
           address: response.address,
           description: response.description,
-          owner: response.owner, // Asegúrate de incluir el owner
+          owner_data: response.owner_data,
         });
         setIsTeamDataLoaded(true);
       })
@@ -237,7 +240,6 @@ const AiTeamsForm: React.FC = () => {
       ]);
       setIsTeamDataLoaded(true);
     }
-    console.log(auth, "<--------------auth")
     if (auth.user) {
       auth.user.is_superuser ? fetchNonSuperUsers() : setIsUsersDataLoaded(true);
     } else {
@@ -269,15 +271,19 @@ const AiTeamsForm: React.FC = () => {
           return prevUsers;
         });
 
-        if (!values.owner) {
+        if (!values.owner_data) {
           setValues(prevValues => ({
             ...prevValues,
-            owner: currentUser.id.toString()
+            owner_data: {
+              id: currentUser.id.toString(),
+              name: auth?.user?.is_superuser ? "Admin" : currentUser.username,
+              email: currentUser.email
+            }
           }));
         }
       }
     }
-  }, [isTeamDataLoaded, isUsersDataLoaded, auth?.user, values.owner, setValues]);
+  }, [isTeamDataLoaded, isUsersDataLoaded, auth?.user, values.owner_data, setValues]);
 
   // Efecto para actualizar el estado de carga
   useEffect(() => {
@@ -285,12 +291,6 @@ const AiTeamsForm: React.FC = () => {
       setLoaded(true);
     }
   }, [isTeamDataLoaded, isUsersDataLoaded]);
-
-  // Efecto de depuración
-  useEffect(() => {
-    console.log("nonSuperUsers actualizados:", nonSuperUsers);
-    console.log("Valor actual de owner:", values.owner);
-  }, [nonSuperUsers, values.owner]);
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
@@ -338,10 +338,22 @@ const AiTeamsForm: React.FC = () => {
                     <Select
                       labelId="user-select-label"
                       id="user-select"
-                      value={values.owner || ''}
+                      value={values.owner_data?.id || ''}
                       label={t.selectUser}
-                      onChange={handleChange}
-                      name="owner"
+                      onChange={(e) => {
+                        const selectedUser = nonSuperUsers.find(user => user.id.toString() === e.target.value);
+                        if (selectedUser) {
+                          setValues(prevValues => ({
+                            ...prevValues,
+                            owner_data: {
+                              id: selectedUser.id.toString(),
+                              name: selectedUser.username, // Cambiado a username
+                              email: selectedUser.email
+                            }
+                          }));
+                        }
+                      }}
+                      name="owner_data.id"
                     >
                       {nonSuperUsers.map((user) => (
                         <MenuItem key={user.id} value={user.id.toString()}>

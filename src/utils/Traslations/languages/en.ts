@@ -43,7 +43,8 @@ const en = {
     noTeamsFound: "No AI Teams found with that name",
     noTeamsToShow: "No AI Teams to show",
     teamsCount: "of {total} AI Teams",
-    successDelete: "AiTeam deleted successfully"
+    successDelete: "AiTeam deleted successfully",
+    owner: "Owner"
   },
   iaPanel: {
     createAgent: "Create Agent",
