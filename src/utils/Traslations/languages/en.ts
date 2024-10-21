@@ -30,7 +30,8 @@ const en = {
     successCreate: "AiTeam created successfully",
     errorConnection: "Error: Could not establish connection with the server",
     selectUser: "Select user",
-    noUsersAvailable: "No users available"
+    noUsersAvailable: "No users available",
+    currentUser: "Current user"
   },
   aiTeamsList: {
     newAiTeam: "New AI Team",

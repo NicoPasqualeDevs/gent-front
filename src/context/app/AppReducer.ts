@@ -28,7 +28,7 @@ export const AppReducer = (
     case "setAuth":
       return {
         ...state,
-        auth: { ...state.auth, user: action.payload },
+        auth: { user: action.payload },
       };
 
     case "cleanState": {

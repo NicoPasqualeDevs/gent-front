@@ -9,10 +9,6 @@ export type AppDevice = "mobile" | "tablet" | "pc";
 export interface AppContextState {
   auth: { 
     user: AuthUser | null; 
-    first_name: string;
-    last_name: string;
-    bio: string;
-    is_superuser: boolean;
   };
   layout: {
     breakpoint: Breakpoint;

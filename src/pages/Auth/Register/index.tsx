@@ -50,16 +50,16 @@ const Register: React.FC = () => {
   const onSubmit = (values: AuthRegisterData) => {
     registerUser(values)
       .then((response) => {
-        // Asegúrate de que el tipo de respuesta incluya is_superuser
         setAuth({
-          email: response.user.email,
-          first_name: response.user.first_name,
-          last_name: response.user.last_name,
-          token: response.token,
-          is_superuser: response.is_superuser ?? false,
+          uuid: response.data.uuid,
+          email: response.data.email,
+          first_name: response.data.first_name,
+          last_name: response.data.last_name,
+          token: response.data.token,
+          is_superuser: response.data.is_superuser ?? false,
         });
-        sessionStorage.setItem("user_email", response.user.email);
-        sessionStorage.setItem("user_token", response.token);
+        sessionStorage.setItem("user_email", response.data.email);
+        sessionStorage.setItem("user_token", response.data.token);
         SuccessToast(response.message);
         navigate("/builder");
       })

@@ -28,7 +28,7 @@ const AiTeamsForm: React.FC = () => {
     name: "",
     address: "",
     description: "",
-    selectedUser: "", // Añade esta línea
+    owner: "", // Asegúrate de que esto esté incluido
   });
 
   const [inputError, setInputError] = useState<AiTeamsDetails>({
@@ -37,8 +37,8 @@ const AiTeamsForm: React.FC = () => {
     description: "",
   });
 
-  // Asegúrate de que este tipo coincida con la respuesta de la API
-  type NonSuperUser = { username: string; email: string };
+  // Modifica la definición del tipo NonSuperUser
+  type NonSuperUser = { id: number; username: string; email: string; first_name: string; last_name: string };
 
   const [nonSuperUsers, setNonSuperUsers] = useState<NonSuperUser[]>([]);
 
@@ -72,17 +72,20 @@ const AiTeamsForm: React.FC = () => {
   };
 
   const getAiTeamData = useCallback((aiTeamId: string) => {
+    console.log(aiTeamId, "<--------------aiTeamId")
     getAiTeamDetails(aiTeamId)
       .then((response) => {
         setValues({
           name: response.name,
           address: response.address,
           description: response.description,
+          owner: response.owner, // Asegúrate de incluir el owner
         });
         setInitialValues({
           name: response.name,
           address: response.address,
           description: response.description,
+          owner: response.owner, // Asegúrate de incluir el owner
         });
         setIsTeamDataLoaded(true);
       })
@@ -132,20 +135,63 @@ const AiTeamsForm: React.FC = () => {
             );
           }
         });
-    };
+    }
   }
 
   const fetchNonSuperUsers = useCallback(() => {
     listNonSuperUsers()
       .then((response) => {
-        setNonSuperUsers(response.data);
+        setNonSuperUsers(prevUsers => {
+          const newUsers = response.data.map(user => ({
+            ...user,
+            id: Number(user.id)
+          }));
+          
+          // Asegurarse de que el usuario actual esté incluido
+          let updatedUsers = [...newUsers];
+          if (auth?.user) {
+            const currentUser : NonSuperUser = {
+              id: Number(auth.user.uuid),
+              username: auth.user.first_name,
+              email: auth.user.email,
+              first_name: auth.user.first_name,
+              last_name: auth.user.last_name || '' // Usa un string vacío si last_name no está disponible
+            };
+            updatedUsers = [currentUser, ...updatedUsers];
+            
+          }
+          
+          // Filtrar para evitar duplicados con usuarios previamente cargados
+          const uniqueUsers = updatedUsers.filter(newUser => 
+            !prevUsers.some(prevUser => prevUser.id === newUser.id)
+          );
+          
+          return [...prevUsers, ...uniqueUsers];
+        });
         setIsUsersDataLoaded(true);
       })
       .catch((error) => {
         console.error("Error al obtener usuarios no superusuarios:", error);
-        setIsUsersDataLoaded(true); // Asegurarse de que se marque como cargado incluso en caso de error
+        // En caso de error, asegurarse de que al menos el usuario actual esté incluido
+        if (auth?.user) {
+          setNonSuperUsers(prevUsers => {
+            const currentUser: NonSuperUser = {
+              id: Number(auth.user?.uuid || ''),
+              username: auth.user?.first_name || "",
+              email: auth?.user?.email || "",
+              first_name: auth.user?.first_name || "",
+              last_name: auth.user?.last_name || '' // Usa un string vacío si last_name no está disponible
+            };
+            const currentUserExists = prevUsers.some(user => user.id === currentUser.id);
+            if (!currentUserExists) {
+              return [currentUser, ...prevUsers];
+            }
+            return prevUsers;
+          });
+        }
+        setIsUsersDataLoaded(true);
       });
-  }, [listNonSuperUsers]);
+  }, [listNonSuperUsers, auth?.user]);
 
   useEffect(() => {
     const initializeForm = () => {
@@ -163,9 +209,7 @@ const AiTeamsForm: React.FC = () => {
         description: "",
       });
     };
-
     initializeForm();
-
     if (aiTeamId && aiTeamName) {
       replacePath([
         ...appNavigation.slice(0, 2),
@@ -191,17 +235,62 @@ const AiTeamsForm: React.FC = () => {
           preview_path: "",
         },
       ]);
-      setIsTeamDataLoaded(true); // No hay datos de equipo que cargar en este caso
+      setIsTeamDataLoaded(true);
     }
-
-    fetchNonSuperUsers();
+    console.log(auth, "<--------------auth")
+    if (auth.user) {
+      auth.user.is_superuser ? fetchNonSuperUsers() : setIsUsersDataLoaded(true);
+    } else {
+      setIsUsersDataLoaded(true);
+    }
   }, [aiTeamId, aiTeamName]);
 
   useEffect(() => {
     if (isTeamDataLoaded && isUsersDataLoaded) {
       setLoaded(true);
+      if (auth?.user) {
+        const currentUser: NonSuperUser = {
+          id: Number(auth.user.uuid),
+          username: auth.user.first_name,
+          email: auth.user.email,
+          first_name: auth.user.first_name,
+          last_name: auth.user.last_name || ''
+        };
+        
+        setNonSuperUsers(prevUsers => {
+          if (!auth.user?.is_superuser) {
+            return [currentUser];
+          }
+          const userExists = prevUsers.some(user => user.id === currentUser.id);
+          if (!userExists) {
+            console.log("Agregando usuario actual:", currentUser);
+            return [currentUser, ...prevUsers];
+          }
+          return prevUsers;
+        });
+
+        if (!values.owner) {
+          setValues(prevValues => ({
+            ...prevValues,
+            owner: currentUser.id.toString()
+          }));
+        }
+      }
+    }
+  }, [isTeamDataLoaded, isUsersDataLoaded, auth?.user, values.owner, setValues]);
+
+  // Efecto para actualizar el estado de carga
+  useEffect(() => {
+    if (isTeamDataLoaded && isUsersDataLoaded) {
+      setLoaded(true);
     }
   }, [isTeamDataLoaded, isUsersDataLoaded]);
+
+  // Efecto de depuración
+  useEffect(() => {
+    console.log("nonSuperUsers actualizados:", nonSuperUsers);
+    console.log("Valor actual de owner:", values.owner);
+  }, [nonSuperUsers, values.owner]);
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
@@ -242,29 +331,28 @@ const AiTeamsForm: React.FC = () => {
                   onChange={handleChange}
                 />
               </Box>
-              <Box marginTop={"20px"}>
-                <FormControl fullWidth>
-                  <InputLabel id="user-select-label">{t.selectUser}</InputLabel>
-                  <Select
-                    labelId="user-select-label"
-                    id="user-select"
-                    value={values.selectedUser || ''}
-                    label={t.selectUser}
-                    onChange={handleChange}
-                    name="selectedUser"
-                  >
-                    {nonSuperUsers && nonSuperUsers.length > 0 ? (
-                      nonSuperUsers.map((user) => (
-                        <MenuItem key={user.email} value={user.email}>
+              {auth?.user?.is_superuser && (
+                <Box marginTop={"20px"}>
+                  <FormControl fullWidth>
+                    <InputLabel id="user-select-label">{t.selectUser}</InputLabel>
+                    <Select
+                      labelId="user-select-label"
+                      id="user-select"
+                      value={values.owner || ''}
+                      label={t.selectUser}
+                      onChange={handleChange}
+                      name="owner"
+                    >
+                      {nonSuperUsers.map((user) => (
+                        <MenuItem key={user.id} value={user.id.toString()}>
                           {user.username} - {user.email}
+                          {user.id === Number(auth?.user?.uuid) && ` (${t.currentUser})`}
                         </MenuItem>
-                      ))
-                    ) : (
-                      <MenuItem disabled>{t.noUsersAvailable}</MenuItem>
-                    )}
-                  </Select>
-                </FormControl>
-              </Box>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+              )}
               <Button
                 variant="contained"
                 type="submit"

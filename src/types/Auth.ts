@@ -4,6 +4,7 @@ export interface AuthUser {
   last_name: string;
   token: string;
   is_superuser: boolean;
+  uuid: string;
 }
 
 export type SendRegister = {
@@ -40,4 +41,8 @@ export type AuthLoginResponse = {
   email: string;
   token: string;
   error?: string;
+  first_name: string;
+  is_superuser?: boolean;
+  last_name: string;
+  uuid: string;
 };

@@ -4,6 +4,6 @@ export interface AiTeamsDetails {
   description: string;
   id?: string;
   code?: string;
-  selectedUser?: string;
+  owner?: string;
 }
 

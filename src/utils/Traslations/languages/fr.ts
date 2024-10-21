@@ -30,7 +30,8 @@ const fr = {
     successCreate: "AiTeam créé avec succès",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     selectUser: "Sélectionner un utilisateur",
-    noUsersAvailable: "Aucun utilisateur disponible"
+    noUsersAvailable: "Aucun utilisateur disponible",
+    currentUser: "Utilisateur actuel"
   },
   aiTeamsList: {
     newAiTeam: "Nouvelle Équipe IA",

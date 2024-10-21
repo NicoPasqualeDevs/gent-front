@@ -30,7 +30,8 @@ const de = {
     successCreate: "Kunde erfolgreich erstellt",
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     selectUser: "Benutzer auswählen",
-    noUsersAvailable: "Keine Benutzer verfügbar"
+    noUsersAvailable: "Keine Benutzer verfügbar",
+    currentUser: "Aktueller Benutzer"
   },
   aiTeamsList: {
     newAiTeam: "Neues KI-Team",

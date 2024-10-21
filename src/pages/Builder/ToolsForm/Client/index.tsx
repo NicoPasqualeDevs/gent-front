@@ -22,7 +22,7 @@ const ToolsForm: React.FC = () => {
   const { language, auth } = useAppContext();
   const { postTool } = useBotsApi();
   const t = languages[language as keyof typeof languages].toolsForm;
-  const { aiTeamId, botId } = useParams<{ aiTeamId: string, botId: string, toolId: string, toolName: string, botName: string }>();
+  const { aiTeamId } = useParams<{ aiTeamId: string, botId: string, toolId: string, toolName: string, botName: string }>();
 
   const [fileError, setFileError] = useState<string>("");
 

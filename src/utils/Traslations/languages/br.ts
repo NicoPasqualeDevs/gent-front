@@ -30,7 +30,8 @@ const br = {
     successCreate: "Cliente criado com sucesso",
     errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
     selectUser: "Selecionar usuário",
-    noUsersAvailable: "Nenhum usuário disponível"
+    noUsersAvailable: "Nenhum usuário disponível",
+    currentUser: "Usuário atual"
   },
   aiTeamsList: {
     newAiTeam: "Nova Equipe IA",

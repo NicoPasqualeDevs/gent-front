@@ -58,6 +58,7 @@ const Login: React.FC = () => {
           last_name: response.data.last_name ?? "Admin",
           token: response.data.token,
           is_superuser: response.data.is_superuser ?? false,
+          uuid: response.data.uuid,
         });
         sessionStorage.setItem("user_email", response.data.email);
         sessionStorage.setItem("user_token", response.data.token);

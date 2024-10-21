@@ -18,7 +18,6 @@ import {
   AiTeam,
 } from "@/types/Bots";
 import { ApiResponseList, ApiResponse } from "@/types/Api";
-import { AiTeamsDetails } from "@/types/AiTeams";
 
 type MessageUp = {
   message: string;

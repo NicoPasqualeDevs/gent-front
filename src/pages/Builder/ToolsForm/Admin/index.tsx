@@ -23,7 +23,7 @@ const ToolForm: React.FC = () => {
     }
 
     try {
-      const response = await postTool(formData);
+      await postTool(formData);
       SuccessToast("Herramienta creada exitosamente");
       // Aquí puedes agregar lógica adicional después de crear la herramienta
     } catch (error) {

@@ -43,7 +43,7 @@ const AiTeamsList: React.FC = () => {
     language,
     auth
   } = useAppContext();
-  const { getMyAiTeams, deleteAiTeamDetails } = useAiTeamsApi();
+  const { getMyAiTeams, deleteAiTeamDetails, getAiTeamsByOwner } = useAiTeamsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
@@ -58,34 +58,62 @@ const AiTeamsList: React.FC = () => {
   const t = languages[language as keyof typeof languages];
 
   const getAiTeamsData = useCallback(() => {
-    setIsLoading(true);
-    getMyAiTeams()
-      .then((response) => {
-        const data: AiTeamsDetails[] = response.data;
-        const paginationData: Metadata = response.metadata;
-        setClientPage(paginationData.current_page || 1);
-        setPageContent(data);
-        setPaginationData(paginationData);
-        setLoaded(true);
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.aiTeamsForm.errorConnection);
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-            }`
-          );
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-        setIsSearching(false);
-        if (searchInputRef.current) {
-          searchInputRef.current.focus();
-        }
-      });
-  }, [getMyAiTeams, setClientPage, t.aiTeamsForm.errorConnection]);
+    if (!auth?.user?.is_superuser) {
+      setIsLoading(true);
+      getAiTeamsByOwner(auth?.user?.uuid || '')
+        .then((response) => {
+          const data: AiTeamsDetails[] = response.data;
+          const paginationData: Metadata = response.metadata;
+          setClientPage(paginationData.current_page || 1);
+          setPageContent(data);
+          setPaginationData(paginationData);
+          setLoaded(true);
+        })
+        .catch((error) => {
+          if (error instanceof Error) {
+            ErrorToast(t.aiTeamsForm.errorConnection);
+          } else {
+            ErrorToast(
+              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
+            );
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+          setIsSearching(false);
+          if (searchInputRef.current) {
+            searchInputRef.current.focus();
+          }
+        });
+    } else {
+      setIsLoading(true);
+      getMyAiTeams()
+        .then((response) => {
+          const data: AiTeamsDetails[] = response.data;
+          const paginationData: Metadata = response.metadata;
+          setClientPage(paginationData.current_page || 1);
+          setPageContent(data);
+          setPaginationData(paginationData);
+          setLoaded(true);
+        })
+        .catch((error) => {
+          if (error instanceof Error) {
+            ErrorToast(t.aiTeamsForm.errorConnection);
+          } else {
+            ErrorToast(
+              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
+            );
+          }
+        })
+        .finally(() => {
+          setIsLoading(false);
+          setIsSearching(false);
+          if (searchInputRef.current) {
+            searchInputRef.current.focus();
+          }
+        });
+    }
+  }, [getMyAiTeams, getAiTeamsByOwner, auth?.user?.uuid, auth?.user?.is_superuser, setClientPage, t.aiTeamsForm.errorConnection]);
 
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
