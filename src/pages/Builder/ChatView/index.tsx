@@ -9,7 +9,6 @@ import { AgentData, ChatHistory, ChatMessage, UpdatedChatHistory as UpdatedChatH
 import { useTheme } from "@mui/material/styles";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
-import apiBase from "@/hooks/useApi";
 import LanguageSelector from "@/components/LanguageSelector";
 
 const MainContainer = styled(Box)(() => ({

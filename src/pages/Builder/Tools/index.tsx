@@ -31,7 +31,7 @@ const Tools: React.FC = () => {
     setIsLoading(true);
     try {
       const [clientToolsResponse, botToolsResponse] = await Promise.all([
-        getClientTools(auth.user.token),
+        getClientTools(auth.user.uuid),
         getBotTools(botId)
       ]);
       

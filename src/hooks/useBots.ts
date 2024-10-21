@@ -40,7 +40,7 @@ type UseBotsApiHook = {
   getAllTools: () => Promise<ToolData[]>;
   getBotTools: (botId: string) => Promise<ToolData[]>;
   getTool: (toolId: string) => Promise<ToolData>;
-  getClientTools: (token: string) => Promise<ApiResponse<ToolData[]>>;
+  getClientTools: (user_id: string) => Promise<ApiResponse<ToolData[]>>;
   getMyClients: () => Promise<ApiResponseList<AiTeam>>;
 
   //Post
@@ -143,8 +143,8 @@ const useBotsApi = (): UseBotsApiHook => {
     const path = `api/tool/modify/${toolId}`;
     return apiGet<ToolData>(path);
   };
-  const getClientTools = (token: string): Promise<ApiResponse<ToolData[]>> => {
-    const path = `api/tool/user/${token}`;
+  const getClientTools = (user_id: string): Promise<ApiResponse<ToolData[]>> => {
+    const path = `api/tool/user/${user_id}`;
     return apiGet<ApiResponse<ToolData[]>>(path);
   };
   const getMyClients = (): Promise<ApiResponseList<AiTeam>> => {
@@ -187,6 +187,7 @@ const useBotsApi = (): UseBotsApiHook => {
   };
   const postTool = (data: FormData): Promise<ToolData> => {
     const path = `api/tool/create`;
+    // Asegúrate de que el FormData incluya el user_id en lugar de aiTeam_id
     return apiPost(path, data, { "Content-Type": "multipart/form-data" });
   };
   const setToolRelationship = (

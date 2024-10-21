@@ -49,7 +49,7 @@ const AiTeamsForm: React.FC = () => {
   });
 
   const onSubmit = (values: AiTeamsDetails) => {
-    let submissionValues = { ...values };
+    const submissionValues = { ...values };
     if (auth?.user?.is_superuser && submissionValues.owner_data?.name === "") {
       submissionValues.owner_data.name = "Admin";
     }

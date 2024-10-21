@@ -1,167 +1,290 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box,
   Button,
   Typography,
-  Container,
   Paper,
-  Grid,
+  Container,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { FileInput, MultilineInput, TextInput } from "@/components/Inputs";
-import { ErrorToast, SuccessToast } from "@/components/Toast";
-import { useAppContext } from "@/context/app";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  ErrorToast,
+  SuccessToast,
+} from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
-import { ToolData } from "@/types/Bots";
+import useAdmin from "@/hooks/useAdmin"; // Importamos el nuevo hook
+import { PageCircularProgress } from "@/components/CircularProgress";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { MultilineInput, TextInput } from "@/components/Inputs";
+import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
+import { ToolData } from "@/types/Bots";
+
+// Definimos el tipo NonSuperUser
+type NonSuperUser = { id: number; username: string; email: string; first_name: string; last_name: string };
 
 const ToolsForm: React.FC = () => {
   const navigate = useNavigate();
+  const { toolId } = useParams();
   const { language, auth } = useAppContext();
-  const { postTool } = useBotsApi();
+  const { postTool, patchTool, getTool } = useBotsApi();
+  const { listNonSuperUsers } = useAdmin(); // Utilizamos el nuevo hook
   const t = languages[language as keyof typeof languages].toolsForm;
-  const { aiTeamId } = useParams<{ aiTeamId: string, botId: string, toolId: string, toolName: string, botName: string }>();
 
-  const [fileError, setFileError] = useState<string>("");
-
-  const initialValues: ToolData = {
+  const [loaded, setLoaded] = useState<boolean>(false);
+  const [isToolDataLoaded, setIsToolDataLoaded] = useState<boolean>(false);
+  const [isUsersDataLoaded, setIsUsersDataLoaded] = useState<boolean>(false);
+  const [initialValues, setInitialValues] = useState<ToolData>({
     tool_name: "",
-    tool_code: "",
     instruction: "",
-    aiTeam_id: aiTeamId || "",  // Usamos aiTeamId del parámetro de la URL
-  };
-
-  const validationSchema = Yup.object({
-    tool_name: Yup.string().required(t.required),
-    tool_code: Yup.mixed()
-      .required(t.required)
-      .test("fileType", t.onlyPyFiles, (value) => {
-        if (!value) return true;
-        if (typeof value === 'string') return value.toLowerCase().endsWith('.py');
-        return value instanceof File && value.name.toLowerCase().endsWith('.py');
-      }),
-    instruction: Yup.string().required(t.required),
-    client_ids: Yup.array().of(Yup.string()).min(1, "Cliente requerido"),
+    tool_code: undefined,
+    user_id: "",
   });
 
-  const createNewTool = (formData: FormData) => {
-    postTool(formData)
-      .then(() => {
-        SuccessToast(t.createSuccess);
-        // Cambio en la navegación
-        navigate(-1);
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.connectionError);
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
-          );
-        }
-      });
-  };
+  const [nonSuperUsers, setNonSuperUsers] = useState<NonSuperUser[]>([]);
+
+  const validationSchema = Yup.object({
+    tool_name: Yup.string().required(t.fieldRequired),
+    instruction: Yup.string().required(t.fieldRequired),
+    tool_code: Yup.mixed().required(t.fieldRequired),
+    user_id: Yup.string().required(t.fieldRequired),
+  });
 
   const onSubmit = (values: ToolData) => {
     const formData = new FormData();
-    formData.append("tool_name", values.tool_name);
-    formData.append("instruction", values.instruction ?? "");
-    if (values.tool_code instanceof File) {
-      formData.append("tool_code", values.tool_code);
-    }
-    if (values.aiTeam_id) {
-      formData.append("aiTeam_id", values.aiTeam_id);
-    }
-    // Agregar user_token al formData
-    formData.append("user_token", auth.user?.token || "");
+    Object.keys(values).forEach((key) => {
+      if (values[key] !== undefined) {
+        formData.append(key, values[key] as string | Blob);
+      }
+    });
 
-    createNewTool(formData);
+    if (toolId) {
+      updateTool(formData, toolId);
+    } else {
+      createNewTool(formData);
+    }
   };
 
-  const { handleSubmit, handleChange, setFieldValue, errors, values } = useFormik({
+  const { values, errors, handleSubmit, handleChange, setFieldValue, setValues } = useFormik({
     initialValues,
     onSubmit,
     validationSchema,
   });
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement> | { target: { name: string; value: File; } }) => {
-    const file = 'files' in event.target ? event.target.files?.[0] : event.target.value;
-    if (file) {
-      if (file.name.toLowerCase().endsWith(".py")) {
-        setFieldValue("tool_code", file);
-        setFileError("");
+  const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSubmit(e);
+  };
+
+  const getToolData = useCallback((toolId: string) => {
+    return getTool(toolId)
+      .then((response) => {
+        setValues({
+          tool_name: response.tool_name,
+          instruction: response.instruction || "",
+          tool_code: response.tool_code,
+          user_id: response.user_id || "",
+        });
+        setInitialValues({
+          tool_name: response.tool_name,
+          instruction: response.instruction || "",
+          tool_code: response.tool_code,
+          user_id: response.user_id || "",
+        });
+        setIsToolDataLoaded(true);
+      })
+      .catch(() => {
+        ErrorToast(t.errorConnection);
+        setIsToolDataLoaded(true);
+      });
+  }, [getTool, setValues, setInitialValues, t.errorConnection]);
+
+  const updateTool = (formData: FormData, toolId: string) => {
+    patchTool(toolId, formData)
+      .then(() => SuccessToast(t.successUpdate))
+      .catch(() => {
+        ErrorToast(t.errorConnection);
+      });
+  };
+
+  const createNewTool = (formData: FormData) => {
+    postTool(formData)
+      .then(() => {
+        SuccessToast(t.successCreate);
+        navigate(`/builder/tools`);
+      })
+      .catch(() => {
+        ErrorToast(t.errorConnection);
+      });
+  };
+
+  const fetchNonSuperUsers = useCallback(() => {
+    return listNonSuperUsers()
+      .then((response) => {
+        setNonSuperUsers(prevUsers => {
+          const newUsers = response.data.map(user => ({
+            ...user,
+            id: Number(user.id)
+          }));
+          
+          let updatedUsers = [...newUsers];
+          if (auth?.user) {
+            const currentUser : NonSuperUser = {
+              id: Number(auth.user.uuid),
+              username: auth.user.first_name,
+              email: auth.user.email,
+              first_name: auth.user.first_name,
+              last_name: auth.user.last_name || ''
+            };
+            updatedUsers = [currentUser, ...updatedUsers];
+          }
+          
+          const uniqueUsers = updatedUsers.filter(newUser => 
+            !prevUsers.some(prevUser => prevUser.id === newUser.id)
+          );
+          
+          return [...prevUsers, ...uniqueUsers];
+        });
+        setIsUsersDataLoaded(true);
+      })
+      .catch((error) => {
+        console.error("Error al obtener usuarios no superusuarios:", error);
+        if (auth?.user) {
+          setNonSuperUsers(prevUsers => {
+            const currentUser: NonSuperUser = {
+              id: Number(auth.user?.uuid || ''),
+              username: auth.user?.first_name || "",
+              email: auth?.user?.email || "",
+              first_name: auth.user?.first_name || "",
+              last_name: auth.user?.last_name || ''
+            };
+            const currentUserExists = prevUsers.some(user => user.id === currentUser.id);
+            if (!currentUserExists) {
+              return [currentUser, ...prevUsers];
+            }
+            return prevUsers;
+          });
+        }
+        setIsUsersDataLoaded(true);
+      });
+  }, [listNonSuperUsers, auth?.user]);
+
+  useEffect(() => {
+    setLoaded(false);
+    setIsToolDataLoaded(false);
+    setIsUsersDataLoaded(false);
+    
+    const loadToolData = async () => {
+      if (toolId) {
+        await getToolData(toolId);
       } else {
-        setFileError(t.onlyPyFiles);
-        if ('files' in event.target) event.target.value = "";
+        setIsToolDataLoaded(true);
+      }
+    };
+
+    const loadUserData = async () => {
+      if (auth.user?.is_superuser && !isUsersDataLoaded) {
+        await fetchNonSuperUsers();
+      } else {
+        setIsUsersDataLoaded(true);
+      }
+    };
+
+    Promise.all([loadToolData(), loadUserData()]).then(() => {
+      setLoaded(true);
+    });
+
+  }, [toolId, getToolData, auth.user, fetchNonSuperUsers, isUsersDataLoaded]);
+
+  useEffect(() => {
+    if (isToolDataLoaded && isUsersDataLoaded) {
+      if (auth?.user && !values.user_id) {
+        setFieldValue('user_id', auth.user.uuid);
       }
     }
-  };
+  }, [isToolDataLoaded, isUsersDataLoaded, auth?.user, values.user_id, setFieldValue]);
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      <Box component="form" onSubmit={handleSubmit}>
-        <Paper elevation={3} sx={{ p: 3, mb: 3 }}>
-          <Typography variant="h5" sx={{ mb: 3 }}>
-            {t.createNewTool}
-          </Typography>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <TextInput
-                name="tool_name"
-                label={t.toolName}
-                value={values.tool_name}
-                helperText={errors.tool_name}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextInput
-                name="type"
-                label={t.toolType}
-                value={values.type}
-                helperText={errors.type}
-                onChange={handleChange}
-                disabled={true}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <MultilineInput
-                name="instruction"
-                label={t.instructions}
-                rows={6}
-                value={values.instruction}
-                helperText={errors.instruction}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <FileInput
-                name="tool_code"
-                label={t.toolFile}
-                onChange={handleFileChange}
-                value={values.tool_code}
-                helperText={fileError || errors.tool_code}
-              />
-            </Grid>
-          </Grid>
-        </Paper>
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button
-            variant="contained"
-            type="submit"
-            sx={{
-              color: 'white',
-              '&:hover': {
-                color: 'white',
-              },
-            }}
-          >
-            {t.create}
-          </Button>
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <Box component={"form"} onSubmit={formSubmit} width={"100%"}>
+          {!loaded ? (
+            <PageCircularProgress />
+          ) : (
+            <>
+              <Typography variant="h4" gutterBottom>
+                {toolId ? t.editTool.replace("{toolName}", values.tool_name) : t.createNewTool}
+              </Typography>
+              <Box marginTop={"20px"}>
+                <TextInput
+                  name="tool_name"
+                  label={t.toolName}
+                  value={values.tool_name}
+                  helperText={errors.tool_name}
+                  onChange={handleChange}
+                />
+              </Box>
+              <Box marginTop={"30px"}>
+                <MultilineInput
+                  name="instruction"
+                  label={t.instructions}
+                  value={values.instruction}
+                  rows={6}
+                  helperText={errors.instruction}
+                  onChange={handleChange}
+                />
+              </Box>
+              <Box marginTop={"20px"}>
+                <input
+                  type="file"
+                  onChange={(event) => {
+                    setFieldValue("tool_code", event.currentTarget.files?.[0]);
+                  }}
+                />
+                {errors.tool_code && <Typography color="error">{errors.tool_code}</Typography>}
+              </Box>
+
+                <Box marginTop={"20px"}>
+                  <FormControl fullWidth>
+                    <InputLabel id="user-select-label">{t.selectUser}</InputLabel>
+                    <Select
+                      labelId="user-select-label"
+                      id="user-select"
+                      value={values.user_id || ''}
+                      label={t.selectUser}
+                      onChange={(e) => {
+                        setFieldValue('user_id', e.target.value);
+                      }}
+                      name="user_id"
+                    >
+                      {nonSuperUsers.map((user) => (
+                        <MenuItem key={user.id} value={user.id.toString()}>
+                          {user.username} - {user.email}
+                          {user.id === Number(auth?.user?.uuid) && ` (${t.currentUser})`}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Box>
+
+              <Button
+                variant="contained"
+                type="submit"
+                sx={{
+                  marginTop: "20px",
+                }}
+              >
+                {toolId ? t.edit : t.create}
+              </Button>
+            </>
+          )}
         </Box>
-      </Box>
+      </Paper>
     </Container>
   );
 };

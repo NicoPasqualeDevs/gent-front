@@ -156,7 +156,13 @@ const fr = {
     toolNotFound: "Outil non trouvé",
     toolNotFoundMessage: "Désolé, l'outil que vous recherchez n'existe pas ou a été supprimé.",
     backToTools: "Retour aux outils",
-    aiTeam: "Client"
+    aiTeam: "Client",
+    fieldRequired: "Ce champ est obligatoire",
+    successUpdate: "Outil mis à jour avec succès",
+    successCreate: "Outil créé avec succès",
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    selectUser: "Sélectionner un utilisateur",
+    currentUser: "Utilisateur actuel"
   }
 };
 

@@ -142,7 +142,15 @@ const br = {
     toolNotFound: "Ferramenta não encontrada",
     toolNotFoundMessage: "Desculpe, a ferramenta que você está procurando não existe ou foi removida.",
     backToTools: "Voltar para Ferramentas",
-    aiTeam: "Cliente"
+    aiTeam: "Cliente",
+    fieldRequired: "Este campo é obrigatório",
+    successUpdate: "Ferramenta atualizada com sucesso",
+    successCreate: "Ferramenta criada com sucesso",
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
+    editTitle: "Editar ferramenta {toolName}",
+    createTitle: "Criar nova ferramenta",
+    selectUser: "Selecionar usuário",
+    currentUser: "Usuário atual"
   },
   tools: {
     libraryTitle: "Biblioteca de Ferramentas",

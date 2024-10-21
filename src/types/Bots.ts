@@ -115,7 +115,7 @@ export interface ToolData {
   type?: string;
   tool_code?: string | File;
   instruction?: string;
-  aiTeam_id?: string;  // Cambiamos client_ids por aiTeam_id
+  user_id?: string;  // Cambiamos aiTeam_id por user_id
 }
 
 export interface ToolRelationshipData {

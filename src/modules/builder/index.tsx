@@ -4,7 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
 import AiTeamsList from "@/pages/AiTeams/AiTeamsList";
 import AiTeamsForm from "@/pages/AiTeams/AiTeamsForm";
-import ToolsForm from "@/pages/Builder/ToolsForm/Client";
+import ToolsForm from "@/pages/Builder/ToolsForm/Admin";
 
 const AgentsDetailsModule = lazy(() => import("./agents"));
 const ProfileModule = lazy(() => import("../../modules/profile")); // Nuevo módulo

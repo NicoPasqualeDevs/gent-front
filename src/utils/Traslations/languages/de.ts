@@ -142,7 +142,15 @@ const de = {
     toolNotFound: "Werkzeug nicht gefunden",
     toolNotFoundMessage: "Entschuldigung, das gesuchte Werkzeug existiert nicht oder wurde entfernt.",
     backToTools: "Zurück zu Werkzeugen",
-    aiTeam: "Kunde"
+    aiTeam: "Kunde",
+    fieldRequired: "Dieses Feld ist erforderlich",
+    successUpdate: "Werkzeug erfolgreich aktualisiert",
+    successCreate: "Werkzeug erfolgreich erstellt",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    editTitle: "Werkzeug {toolName} bearbeiten",
+    createTitle: "Neues Werkzeug erstellen",
+    selectUser: "Benutzer auswählen",
+    currentUser: "Aktueller Benutzer"
   },
 
   tools: {

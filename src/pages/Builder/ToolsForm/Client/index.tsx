@@ -71,9 +71,6 @@ const ToolsForm: React.FC = () => {
     if (values.tool_code instanceof File) {
       formData.append("tool_code", values.tool_code);
     }
-    if (values.aiTeam_id) {
-      formData.append("aiTeam_id", values.aiTeam_id);
-    }
     // Agregar user_token al formData
     formData.append("user_token", auth.user?.token || "");
 

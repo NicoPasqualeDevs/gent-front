@@ -142,7 +142,15 @@ const en = {
     toolNotFound: "Tool not found",
     toolNotFoundMessage: "Sorry, the tool you are looking for does not exist or has been removed.",
     backToTools: "Back to Tools",
-    aiTeam: "AiTeam"
+    aiTeam: "AiTeam",
+    fieldRequired: "This field is required",
+    successUpdate: "Tool updated successfully",
+    successCreate: "Tool created successfully",
+    errorConnection: "Error: Could not establish connection with the server",
+    editTitle: "Edit tool {toolName}",
+    createTitle: "Create new tool",
+    selectUser: "Select user",
+    currentUser: "Current user"
   },
   tools: {
     libraryTitle: "Tools Library",
