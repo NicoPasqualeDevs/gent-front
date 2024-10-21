@@ -30,7 +30,7 @@ const de = {
     successCreate: "Kunde erfolgreich erstellt",
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     selectUser: "Benutzer auswählen",
-    noUsersAvailable: "Keine Benutzer verfügbar",
+    noUsersAvailable: "Keine Benutzer verf��gbar",
     currentUser: "Aktueller Benutzer"
   },
   aiTeamsList: {
@@ -131,18 +131,7 @@ const de = {
     toolNotFound: "Werkzeug nicht gefunden",
     toolNotFoundMessage: "Entschuldigung, das gesuchte Werkzeug existiert nicht oder wurde entfernt.",
     backToTools: "Zurück zu Werkzeugen",
-    aiTeam: "Kunde",
-    libraryTitle: "Werkzeugbibliothek",
-    relatedTitle: "Zugehörige Werkzeuge",
-    type: "Typ",
-    relateButton: "Zuordnen",
-    unrelateButton: "Zuordnung aufheben",
-    successRelate: "Werkzeug erfolgreich zugeordnet",
-    successUnrelate: "Zuordnung des Werkzeugs erfolgreich aufgehoben",
-    errorRelate: "Fehler beim Zuordnen des Werkzeugs",
-    errorUnrelate: "Fehler beim Aufheben der Zuordnung des Werkzeugs",
-    errorToken: "Authentifizierungsfehler",
-    errorLoading: "Fehler beim Laden der Werkzeuge"
+    aiTeam: "Kunde"
   },
 
   tools: {
