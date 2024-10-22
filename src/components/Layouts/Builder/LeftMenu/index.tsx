@@ -35,7 +35,7 @@ const LeftMenu: React.FC = () => {
     {
       navElevation: t.leftMenu.registerUser,
       label: t.leftMenu.registerUser,
-      path: "/auth/register",
+      path: "/auth/register/new-user",
     },
     {
       navElevation: t.leftMenu.tools,

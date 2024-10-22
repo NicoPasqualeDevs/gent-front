@@ -82,150 +82,118 @@ const Register: React.FC = () => {
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 
   return (
-    <MainGridContainer
+    <Grid
+      item
       container
-      alignItems={"center"}
-      justifyContent={"center"}
+      xs={12}
+      sm={12}
+      md={10}
+      lg={8}
       sx={{
-        overflow: "hidden",
-        position: 'relative',
-        minHeight: '100vh',
+        zIndex: 2,
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        backdropFilter: 'blur(5px)',
+        borderRadius: '15px',
+        padding: '2rem',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        maxHeight: '90vh',
+        overflowY: 'auto',
+        margin: '0 auto',
+        mt: 4,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            overflow: 'hidden',
-            zIndex: 1,
-            pointerEvents: 'none',
-          }}
-        >
-          <Snowfall
-            snowflakeCount={200}
-            style={{
-              position: 'absolute',
-              width: '100%',
-              height: '100%',
-              opacity: 0.034,
-            }}
-          />
-        </Box>
-      <Grid
-        item
-        xs={12}
-        sm={8}
-        md={6}
-        lg={4}
+      <Typography
+        variant="h1"
+        textAlign={"center"}
         sx={{
-          zIndex: 2,
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(5px)',
-          borderRadius: '15px',
-          padding: '2rem',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          maxHeight: '90vh',
-          overflowY: 'auto',
+          mb: 1, // Añadido un pequeño margen inferior
+          fontSize: '1rem', // Aumentar el tamaño de la fuente del título
         }}
       >
-        <Typography
-          variant="h1"
-          textAlign={"center"}
+        Gents
+      </Typography>
+      <Typography textAlign={"center"} sx={{ mt: 1, mb: 4 }}>
+        Crea tu cuenta para comenzar
+      </Typography>
+
+      <form onSubmit={handleSubmit}>
+        <TextInput
+          name="email"
+          label="Correo electrónico"
+          value={values.email}
+          onChange={handleChange}
+          error={touched.email && Boolean(errors.email)}
+          helperText={touched.email && errors.email ? errors.email : undefined}
+        />
+        <TextInput
+          name="first_name"
+          label="Nombre"
+          value={values.first_name}
+          onChange={handleChange}
+          error={touched.first_name && Boolean(errors.first_name)}
+          helperText={touched.first_name && errors.first_name ? errors.first_name : undefined}
+        />
+        <TextInput
+          name="last_name"
+          label="Apellido"
+          value={values.last_name}
+          onChange={handleChange}
+          error={touched.last_name && Boolean(errors.last_name)}
+          helperText={touched.last_name && errors.last_name ? errors.last_name : undefined}
+        />
+        <PasswordInput
+          name="password"
+          label="Contraseña"
+          value={values.password}
+          onChange={handleChange}
+          error={touched.password && Boolean(errors.password)}
+          helperText={touched.password && errors.password ? errors.password : undefined}
+        />
+        <PasswordInput
+          name="confirm_password"
+          label="Confirmar contraseña"
+          value={values.confirm_password}
+          onChange={handleChange}
+          error={touched.confirm_password && Boolean(errors.confirm_password)}
+          helperText={touched.confirm_password && errors.confirm_password ? errors.confirm_password : undefined}
+        />
+        <Grid
+          item
+          xs={12}
           sx={{
-            mb: 1, // Añadido un pequeño margen inferior
-            fontSize: '1rem', // Aumentar el tamaño de la fuente del título
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 2,
+            mt: 2,
           }}
         >
-          Gents
-        </Typography>
-        <Typography textAlign={"center"} sx={{ mt: 1, mb: 4 }}>
-          Crea tu cuenta para comenzar
-        </Typography>
-
-        <form onSubmit={handleSubmit}>
-          <TextInput
-            name="email"
-            label="Correo electrónico"
-            value={values.email}
-            onChange={handleChange}
-            error={touched.email && Boolean(errors.email)}
-            helperText={touched.email && errors.email ? errors.email : undefined}
-          />
-          <TextInput
-            name="first_name"
-            label="Nombre"
-            value={values.first_name}
-            onChange={handleChange}
-            error={touched.first_name && Boolean(errors.first_name)}
-            helperText={touched.first_name && errors.first_name ? errors.first_name : undefined}
-          />
-          <TextInput
-            name="last_name"
-            label="Apellido"
-            value={values.last_name}
-            onChange={handleChange}
-            error={touched.last_name && Boolean(errors.last_name)}
-            helperText={touched.last_name && errors.last_name ? errors.last_name : undefined}
-          />
-          <PasswordInput
-            name="password"
-            label="Contraseña"
-            value={values.password}
-            onChange={handleChange}
-            error={touched.password && Boolean(errors.password)}
-            helperText={touched.password && errors.password ? errors.password : undefined}
-          />
-          <PasswordInput
-            name="confirm_password"
-            label="Confirmar contraseña"
-            value={values.confirm_password}
-            onChange={handleChange}
-            error={touched.confirm_password && Boolean(errors.confirm_password)}
-            helperText={touched.confirm_password && errors.confirm_password ? errors.confirm_password : undefined}
-          />
-          <Grid
-            item
-            xs={12}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 2,
-              mt: 2,
+          <motion.div
+            whileHover={{
+              scale: 1.05,
+              transition: { duration: 0.3 }
             }}
+            whileTap={{ scale: 0.95 }}
           >
-            <motion.div
-              whileHover={{
-                scale: 1.05,
-                transition: { duration: 0.3 }
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{
+                paddingTop: "10px",
+                paddingBottom: "10px",
+                width: "200px",
               }}
-              whileTap={{ scale: 0.95 }}
             >
-              <Button
-                variant="contained"
-                type="submit"
-                sx={{
-                  paddingTop: "10px",
-                  paddingBottom: "10px",
-                  width: "200px",
-                }}
-              >
-                Registrarse
-              </Button>
-            </motion.div>
-            <Typography variant="body2" align="center">
-              ¿Ya tienes una cuenta?{' '}
-              <MuiLink component={RouterLink} to="/auth/login">
-                Inicia sesión
-              </MuiLink>
-            </Typography>
-          </Grid>
-        </form>
-      </Grid>
-    </MainGridContainer>
+              Registrarse
+            </Button>
+          </motion.div>
+        </Grid>
+      </form>
+    </Grid>
   );
 };
 
