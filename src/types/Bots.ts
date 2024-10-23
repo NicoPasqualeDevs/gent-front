@@ -20,12 +20,22 @@ export interface UpdatedChatHistory {
   reserve_link?: string;
 }
 
+// Nueva interfaz para ConversationData
+export interface ConversationData {
+  conversation_id: string;
+  customer_bot: string;
+  client_user: string;
+  timestamp: string;
+  messages: ChatMessage[];
+  archived: boolean;
+}
+
 // BOT KDATA
 export interface ContextEntryData {
   name: string;
   description: string;
   prompt_template: string;
-  model_ai: string; // Añadimos este campo
+  model_ai: string;
 }
 
 export interface PromptTemplateData {

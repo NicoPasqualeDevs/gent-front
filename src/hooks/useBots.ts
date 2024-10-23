@@ -16,6 +16,7 @@ import {
   GetCustomGreetingData,
   CustomGreetingData,
   AiTeam,
+  ConversationData,
 } from "@/types/Bots";
 import { ApiResponseList, ApiResponse } from "@/types/Api";
 
@@ -42,6 +43,7 @@ type UseBotsApiHook = {
   getTool: (toolId: string) => Promise<ToolData>;
   getClientTools: (user_id: string) => Promise<ApiResponse<ToolData[]>>;
   getMyClients: () => Promise<ApiResponseList<AiTeam>>;
+  getBotConversations: (botId: string) => Promise<ApiResponseList<ConversationData>>;
 
   //Post
   createBot: (aiTeamId: string, data: AgentMetaData) => Promise<AgentData>;
@@ -272,6 +274,12 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiPost(path, { agent_tool_ids: toolIds });
   };
 
+  // Nuevo método para obtener el historial de conversaciones
+  const getBotConversations = (botId: string): Promise<ApiResponseList<ConversationData>> => {
+    const path = `chat/api/conversations/${botId}`;
+    return apiGet<ApiResponseList<ConversationData>>(path);
+  };
+
   return {
     // Gets
     getKnowledgeTags,
@@ -288,6 +296,7 @@ const useBotsApi = (): UseBotsApiHook => {
     getTool,
     getClientTools,
     getMyClients,
+    getBotConversations,
 
     //Post
     createBot,

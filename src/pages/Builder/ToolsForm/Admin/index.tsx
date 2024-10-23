@@ -43,7 +43,7 @@ const ToolsForm: React.FC = () => {
     tool_name: "",
     instruction: "",
     tool_code: undefined,
-    user_id: "",
+    user_id: auth.user?.uuid,
   });
 
   const [nonSuperUsers, setNonSuperUsers] = useState<NonSuperUser[]>([]);
@@ -88,13 +88,13 @@ const ToolsForm: React.FC = () => {
           tool_name: response.tool_name,
           instruction: response.instruction || "",
           tool_code: response.tool_code,
-          user_id: response.user_id || "",
+          user_id: auth.user?.uuid,
         });
         setInitialValues({
           tool_name: response.tool_name,
           instruction: response.instruction || "",
           tool_code: response.tool_code,
-          user_id: response.user_id || "",
+          user_id: auth.user?.uuid,
         });
         setIsToolDataLoaded(true);
       })
@@ -113,10 +113,11 @@ const ToolsForm: React.FC = () => {
   };
 
   const createNewTool = (formData: FormData) => {
+    formData.append("user_id", auth.user?.uuid ?? "");
     postTool(formData)
       .then(() => {
         SuccessToast(t.successCreate);
-        navigate(`/builder/tools`);
+        navigate(-1);
       })
       .catch(() => {
         ErrorToast(t.errorConnection);

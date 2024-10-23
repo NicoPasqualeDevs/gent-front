@@ -7,7 +7,7 @@ import { WidgetCustomizer } from "@/pages/Builder/WidgetCustomizer";
 import CustomMessages from "@/pages/Builder/CustomMessages";
 import ContextEntry from "@/pages/Builder/ContextEntry";
 import Tools from "@/pages/Builder/Tools";
-import ToolsForm from "@/pages/Builder/ToolsForm/Client";
+import ToolsForm from "@/pages/Builder/ToolsForm/Admin";
 import ToolsRelationship from "@/pages/Builder/ToolsRelationship";
 
 const AgentsDetailsModule: React.FC = () => {
