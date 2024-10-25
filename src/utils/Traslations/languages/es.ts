@@ -25,7 +25,8 @@ const es = {
     logout: "Cerrar Sesión",
     logoutSuccess: "Has cerrado sesión correctamente",
     registerUser: "Nuevo Usuario",
-    tools: "Herramientas"
+    tools: "Herramientas",
+    workShop: "Taller"  // Nueva traducción
   },
   aiTeamsForm: {
     editTitle: "Editar equipo de Equipos IA",

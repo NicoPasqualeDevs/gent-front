@@ -25,7 +25,8 @@ const br = {
     logout: "Sair",
     logoutSuccess: "Você saiu com sucesso",
     registerUser: "Novo Usuário",
-    tools: "Ferramentas"
+    tools: "Ferramentas",
+    workShop: "Oficina"
   },
   aiTeamsForm: {
     editTitle: "Editar equipe de Equipes IA",

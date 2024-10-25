@@ -42,10 +42,14 @@ const LeftMenu: React.FC = () => {
       label: t.leftMenu.tools,
       path: "/builder/admin-tools-form",
     },
+    {
+      navElevation: t.leftMenu.workShop,
+      label: t.leftMenu.workShop,
+      path: "/home",
+    },
   ];
 
   useEffect(() => {
-    console.log('Auth state:', auth);
     if (isInitialRender) {
       setMenu(false);
       setIsInitialRender(false);

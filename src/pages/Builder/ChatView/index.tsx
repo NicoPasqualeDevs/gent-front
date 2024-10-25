@@ -324,7 +324,7 @@ const ChatView: React.FC = () => {
             }}
           >
             <Typography
-              onClick={() => navigate("/builder")}
+              onClick={() => navigate(-1)}
               color={"white"}
               sx={{
                 fontSize: "20px",

@@ -24,7 +24,7 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
   const getAiTeamsList = (
     filterParams: string
   ): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/ai_teams/${filterParams}`;
+    const path = `api/team_details/${filterParams}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
@@ -34,18 +34,18 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
   };
 
   const getMyAiTeams = (): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/ai_teams/my_clients/`;
+    const path = `api/team_details/my_clients/`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
   const getAiTeamsByOwner = (owner: string): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/ai_teams/list_by_owner/?owner=${owner}`;
+    const path = `api/team_details/list_by_owner/?owner=${owner}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
   // POST
   const postAiTeamDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
-    const path = `api/ai_teams/`;
+    const path = `api/team_details/`;
     return apiPost(path, data);
   };
 
@@ -54,13 +54,13 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
     data: AiTeamsDetails,
     aiTeamId: string
   ): Promise<AiTeamsDetails> => {
-    const path = `api/ai_teams/${aiTeamId}/`;
+    const path = `api/team_details/${aiTeamId}/`;
     return apiPut(path, data);
   };
 
   // DELETE
   const deleteAiTeamDetails = (aiTeamId: string): Promise<{ message: string }> => {
-    const path = `api/ai_teams/${aiTeamId}/`;
+    const path = `api/team_details/${aiTeamId}/`;
     return apiDelete(path).then(response => response.json());
   };
 

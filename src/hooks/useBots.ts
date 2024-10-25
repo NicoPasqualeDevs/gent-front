@@ -98,7 +98,7 @@ const useBotsApi = (): UseBotsApiHook => {
     aiTeamId: string,
     filterParams: string
   ): Promise<ApiResponseList<AgentData>> => {
-    const path = `api/ai_teams/bots/${aiTeamId}${filterParams}`;
+    const path = `api/team_details/bots/${aiTeamId}${filterParams}`;
     return apiGet<ApiResponseList<AgentData>>(path);
   };
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
@@ -150,13 +150,13 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiGet<ApiResponse<ToolData[]>>(path);
   };
   const getMyClients = (): Promise<ApiResponseList<AiTeam>> => {
-    const path = `api/ai_teams/my_clients/`;  // Actualizado el endpoint
+    const path = `api/team_details/my_clients/`;  // Actualizado el endpoint
     return apiGet<ApiResponseList<AiTeam>>(path);
   };
 
   // POST
   const createBot = (aiTeamId: string, data: AgentMetaData): Promise<AgentData> => {
-    const path = `api/ai_teams/bots/${aiTeamId}`;
+    const path = `api/team_details/bots/${aiTeamId}`;
     return apiPost(path, data);
   };
   const sendMessage = (

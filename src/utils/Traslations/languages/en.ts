@@ -25,7 +25,8 @@ const en = {
     logout: "Logout",
     logoutSuccess: "You have successfully logged out",
     registerUser: "New User",
-    tools: "Tools"
+    tools: "Tools",
+    workShop: "Workshop"
   },
   aiTeamsForm: {
     editTitle: "Edit AI Teams team",

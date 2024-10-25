@@ -5,11 +5,11 @@ import AuthChecker from "@/components/AuthChecker";
 
 const HomeModule: React.FC = () => {
   return (
-    <AuthChecker>
+   /*  <AuthChecker> */
       <Routes>
           <Route index element={<Home />} />
       </Routes>
-    </AuthChecker>
+   /*  </AuthChecker> */
   );
 };
 

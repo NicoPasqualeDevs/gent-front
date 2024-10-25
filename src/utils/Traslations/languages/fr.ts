@@ -25,7 +25,8 @@ const fr = {
     logout: "Déconnexion",
     logoutSuccess: "Vous vous êtes déconnecté avec succès",
     registerUser: "Nouvel Utilisateur",
-    tools: "Outils"
+    tools: "Outils",
+    workShop: "Atelier"
   },
   aiTeamsForm: {
     editTitle: "Modifier l'équipe d'Équipes IA",

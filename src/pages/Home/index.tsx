@@ -20,11 +20,12 @@ const HomeComponent: React.FC = () => {
   };
 
   return (
-    <>
+/*     <>
       {auth.user?.is_superuser ? ()=> navigate("/builder") : (
         isWellcome ? <WellcomeContainer onStartClick={handleStartClick} /> : <UserPanel />
       )}
-    </>
+    </> */
+    <UserPanel />
   );
 };
 

@@ -26,6 +26,7 @@ const de = {
     logoutSuccess: "Sie haben sich erfolgreich abgemeldet",
     registerUser: "Neuer Benutzer",
     tools: "Werkzeuge",
+    workShop: "Werkstatt"
   },
   aiTeamsForm: {
     editTitle: "KI-Teams-Team bearbeiten",

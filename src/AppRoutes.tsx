@@ -47,7 +47,7 @@ function AppRoutes() {
           <Route path="builder/*" element={BuilderL}>
             <Route path="*" element={<BuilderModule />} />
           </Route>
-          <Route path="" element={UserL}>
+          <Route path="home" element={UserL}>
             <Route index element={<HomeModule />} />
           </Route>
           <Route path="*" element={<NotFoundModule />} />
