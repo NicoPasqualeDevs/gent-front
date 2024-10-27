@@ -45,7 +45,7 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
 
   // POST
   const postAiTeamDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
-    const path = `api/team_details/`;
+    const path = `api/team_details/create_client/`;
     return apiPost(path, data);
   };
 
