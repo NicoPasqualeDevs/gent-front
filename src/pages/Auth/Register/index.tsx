@@ -1,5 +1,5 @@
-import { MainGridContainer } from "@/utils/ContainerUtil";
-import { Button, Grid, Typography, Box } from "@mui/material";
+
+import { Button, Grid, Typography } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { AuthRegisterData } from "@/types/Auth";
@@ -9,9 +9,6 @@ import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
 import { motion } from "framer-motion";
-import Snowfall from 'react-snowfall';
-import { Link as RouterLink } from 'react-router-dom';
-import { Link as MuiLink } from '@mui/material';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();

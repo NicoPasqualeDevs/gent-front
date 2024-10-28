@@ -59,7 +59,7 @@ const AiTeamsList: React.FC = () => {
   const theme = useTheme();
   const t = languages[language as keyof typeof languages];
 
-  const getAiTeamsData = useCallback((filterParams: string = '') => {
+  const getAiTeamsData = useCallback((filterParams: string) => {
     if (!auth?.user?.is_superuser) {
       setIsLoading(true);
       console.log(auth?.user?.uuid, "<--- user id");
@@ -146,7 +146,7 @@ const AiTeamsList: React.FC = () => {
       })
       .finally(() => {
         setIsLoading(false);
-        getAiTeamsData(); // Actualizar la lista después de eliminar
+        getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
       });
   };
 

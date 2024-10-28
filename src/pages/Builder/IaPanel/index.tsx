@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Grid, Typography, Pagination, Card, CardActions, Button, Divider,
@@ -39,9 +39,8 @@ const IaPanel: React.FC = () => {
   const t = languages[language as keyof typeof languages];
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const getBotsData = useCallback((filterParams: string = '') => {
+  const getBotsData = useCallback((filterParams: string) => {
     if (!aiTeamId) {
       ErrorToast("Conflicto en el id del cliente");
       return;

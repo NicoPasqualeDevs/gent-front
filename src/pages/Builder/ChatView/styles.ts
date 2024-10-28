@@ -110,7 +110,7 @@ export const TimeStamp = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing(0.5),
 }));
 
-export const HistoryBubble = styled(Box)(({ theme }) => ({
+export const HistoryBubble = styled(Box)(() => ({
   width: '40px',
   height: '40px',
   borderRadius: '50%',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Box, Grid, Typography, TextField, Button, CircularProgress, Avatar, Tooltip } from "@mui/material";
+import { Box, Grid, Typography, Button, CircularProgress, Avatar, Tooltip } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";

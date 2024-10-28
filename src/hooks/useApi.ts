@@ -114,8 +114,8 @@ const useApi = (): UseApiHook => {
       // Si es FormData, eliminar el Content-Type para que el navegador lo establezca
       if (isFormData) {
         const headersObj = finalHeaders as Record<string, string>;
-        const { 'Content-Type': _, ...restHeaders } = headersObj;
-        finalHeaders = restHeaders;
+        delete headersObj['Content-Type'];
+        finalHeaders = headersObj;
       }
 
       const requestOptions: RequestInit = {
@@ -168,8 +168,10 @@ const useApi = (): UseApiHook => {
     return apiCall<R>("GET", url, undefined, undefined);
   }, [apiCall]);
 
-  const noAuthGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> =>
-    apiCall<R>("GET", path, undefined, { "Content-Type": "application/json" }), [apiCall]);
+  const noAuthGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => {
+    const url = query ? buildUri(path, query) : path;
+    return apiCall<R>("GET", url, undefined, { "Content-Type": "application/json" });
+  }, [apiCall]);
 
   const apiDelete = React.useCallback((path: string): Promise<Response> => 
     apiCall("DELETE", path), [apiCall]);

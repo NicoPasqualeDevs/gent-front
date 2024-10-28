@@ -33,12 +33,12 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
     return apiGet<AiTeamsDetails>(path);
   };
 
-  const getMyAiTeams = (filterParams: string = ''): Promise<ApiResponseList<AiTeamsDetails>> => {
+  const getMyAiTeams = (filterParams: string): Promise<ApiResponseList<AiTeamsDetails>> => {
     const path = `api/team_details/my_clients/${filterParams}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
-  const getAiTeamsByOwner = (owner: string, filterParams: string = ''): Promise<ApiResponseList<AiTeamsDetails>> => {
+  const getAiTeamsByOwner = (owner: string, filterParams: string): Promise<ApiResponseList<AiTeamsDetails>> => {
     // Corregir la construcción de la URL
     const path = `api/team_details/list_by_owner/${filterParams ? `?${filterParams}&` : '?'}owner=${owner}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
