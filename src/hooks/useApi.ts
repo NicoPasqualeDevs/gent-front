@@ -52,6 +52,12 @@ const useApi = (): UseApiHook => {
   const buildUri = <Q = Record<string, string>>(path: string, query?: Q): string => {
     // Removemos la barra inicial de path si existe para evitar doble barra
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    
+    // Si el path ya incluye parámetros de consulta, no añadimos más
+    if (cleanPath.includes('?')) {
+      return `${apiBase}${cleanPath}`;
+    }
+    
     const fullUrl = `${apiBase}${cleanPath}`;
     
     if (!query) return fullUrl;
@@ -146,8 +152,11 @@ const useApi = (): UseApiHook => {
   const apiPatch = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => 
     apiCall<R>("PATCH", path, body, headers), [apiCall]);
 
-  const apiGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => 
-    apiCall<R>("GET", path, undefined, undefined), [apiCall]);
+  // Modificar apiGet para manejar correctamente los query params
+  const apiGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => {
+    const url = query ? buildUri(path, query) : path;
+    return apiCall<R>("GET", url, undefined, undefined);
+  }, [apiCall]);
 
   const noAuthGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> =>
     apiCall<R>("GET", path, undefined, { "Content-Type": "application/json" }), [apiCall]);

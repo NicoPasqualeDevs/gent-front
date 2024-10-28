@@ -59,16 +59,14 @@ const AiTeamsList: React.FC = () => {
   const theme = useTheme();
   const t = languages[language as keyof typeof languages];
 
-  const getAiTeamsData = useCallback(() => {
+  const getAiTeamsData = useCallback((filterParams: string = '') => {
     if (!auth?.user?.is_superuser) {
       setIsLoading(true);
-      getAiTeamsByOwner(auth?.user?.uuid || '')
+      getAiTeamsByOwner(auth?.user?.uuid || '', filterParams)
         .then((response) => {
-          const data: AiTeamsDetails[] = response.data;
-          const paginationData: Metadata = response.metadata;
-          setClientPage(paginationData.current_page || 1);
-          setPageContent(data);
-          setPaginationData(paginationData);
+          setClientPage(response.metadata.current_page || 1);
+          setPageContent(response.data);
+          setPaginationData(response.metadata);
           setLoaded(true);
         })
         .catch((error) => {
@@ -83,19 +81,14 @@ const AiTeamsList: React.FC = () => {
         .finally(() => {
           setIsLoading(false);
           setIsSearching(false);
-          if (searchInputRef.current) {
-            searchInputRef.current.focus();
-          }
         });
     } else {
       setIsLoading(true);
-      getMyAiTeams()
+      getMyAiTeams(filterParams)
         .then((response) => {
-          const data: AiTeamsDetails[] = response.data;
-          const paginationData: Metadata = response.metadata;
-          setClientPage(paginationData.current_page || 1);
-          setPageContent(data);
-          setPaginationData(paginationData);
+          setClientPage(response.metadata.current_page || 1);
+          setPageContent(response.data);
+          setPaginationData(response.metadata);
           setLoaded(true);
         })
         .catch((error) => {
@@ -110,30 +103,26 @@ const AiTeamsList: React.FC = () => {
         .finally(() => {
           setIsLoading(false);
           setIsSearching(false);
-          if (searchInputRef.current) {
-            searchInputRef.current.focus();
-          }
         });
     }
   }, [getMyAiTeams, getAiTeamsByOwner, auth?.user?.uuid, auth?.user?.is_superuser, setClientPage, t.aiTeamsForm.errorConnection]);
 
-  const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
-    event.preventDefault();
-    setAgentsPage(value);
-    setLoaded(false);
-    getAiTeamsData();
-  };
-
-  const handleSearch = useCallback((value: string) => {
+  const handleSearch = (value: string) => {
     setSearchQuery(value);
     setIsSearching(true);
-    // Nota: La búsqueda ahora se realiza en el frontend
-    const filteredContent = pageContent.filter(aiTeam => 
-      aiTeam.name.toLowerCase().includes(value.toLowerCase())
-    );
-    setPageContent(filteredContent);
-    setIsSearching(false);
-  }, [pageContent]);
+    if (value.trim() !== "") {
+      getAiTeamsData(`?name__icontains=${value}&page_size=${contentPerPage}`);
+    } else {
+      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
+    }
+  };
+
+  const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
+    event.preventDefault();
+    setClientPage(value);
+    setLoaded(false);
+    getAiTeamsData(`?page_size=${contentPerPage}&page=${value}`);
+  };
 
   const deleteAction = (aiTeamId: string) => {
     setIsLoading(true);
@@ -171,7 +160,7 @@ const AiTeamsList: React.FC = () => {
     setAgentsPage(1);
     setNavElevation("builder");
     if (!loaded) {
-      getAiTeamsData();
+      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
     }
   }, []);
 
@@ -246,7 +235,7 @@ const AiTeamsList: React.FC = () => {
               onChange={(e: SelectChangeEvent) => {
                 setContentPerPage(e.target.value);
                 setLoaded(false);
-                getAiTeamsData();
+                getAiTeamsData(`?page_size=${e.target.value}&page=${clientPage}`);
               }}
               size="small"
               sx={{ width: { xs: '100%', sm: 'auto' } }}

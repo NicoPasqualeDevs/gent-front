@@ -13,8 +13,8 @@ type UseAiTeamsApiHook = {
     aiTeamId: string
   ) => Promise<AiTeamsDetails>;
   deleteAiTeamDetails: (aiTeamId: string) => Promise<{ message: string }>;
-  getMyAiTeams: () => Promise<ApiResponseList<AiTeamsDetails>>;
-  getAiTeamsByOwner: (owner: string) => Promise<ApiResponseList<AiTeamsDetails>>;
+  getMyAiTeams: (filterParams: string) => Promise<ApiResponseList<AiTeamsDetails>>;
+  getAiTeamsByOwner: (owner: string, filterParams: string) => Promise<ApiResponseList<AiTeamsDetails>>;
 };
 
 const useAiTeamsApi = (): UseAiTeamsApiHook => {
@@ -33,13 +33,13 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
     return apiGet<AiTeamsDetails>(path);
   };
 
-  const getMyAiTeams = (): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/team_details/my_clients/`;
+  const getMyAiTeams = (filterParams: string = ''): Promise<ApiResponseList<AiTeamsDetails>> => {
+    const path = `api/team_details/my_clients/${filterParams}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
-  const getAiTeamsByOwner = (owner: string): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/team_details/list_by_owner/?owner=${owner}`;
+  const getAiTeamsByOwner = (owner: string, filterParams: string = ''): Promise<ApiResponseList<AiTeamsDetails>> => {
+    const path = `api/team_details/list_by_owner/${owner}${filterParams}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 

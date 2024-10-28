@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Grid, Typography, Pagination, Card, CardActions, Button, Divider,
@@ -37,6 +37,34 @@ const IaPanel: React.FC = () => {
   const [contentPerPage, setContentPerPage] = useState("5");
   const { apiBase } = useApi()
   const t = languages[language as keyof typeof languages];
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const getBotsData = useCallback((filterParams: string = '') => {
+    if (!aiTeamId) {
+      ErrorToast("Conflicto en el id del cliente");
+      return;
+    }
+    setIsLoading(true);
+    getBotsList(aiTeamId, filterParams)
+      .then(response => {
+        setAgentsPage(response.metadata.current_page || 1);
+        setPageContent(response.data);
+        setPaginationData(response.metadata);
+        setLoaded(true);
+      })
+      .catch(error => {
+        ErrorToast(error instanceof Error
+          ? "Error: no se pudo establecer conexión con el servidor"
+          : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsSearching(false);
+      });
+  }, [aiTeamId, getBotsList]);
 
   const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
@@ -47,8 +75,11 @@ const IaPanel: React.FC = () => {
 
   const handleSearch = (value: string) => {
     setSearchQuery(value);
+    setIsSearching(true);
     if (value.trim() !== "") {
-      getBotsData(`?name__icontains=${value}`);
+      getBotsData(`?name__icontains=${value}&page_size=${contentPerPage}`);
+    } else {
+      getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
     }
   };
 
@@ -71,27 +102,6 @@ const IaPanel: React.FC = () => {
       ErrorToast("Error al cargar botId al borrar");
     }
   };
-
-  const getBotsData = useCallback((filterParams: string) => {
-    if (!aiTeamId) {
-      ErrorToast("Conflicto en el id del cliente");
-      return;
-    }
-    getBotsList(aiTeamId, filterParams)
-      .then(response => {
-        setAgentsPage(response.metadata.current_page || 1);
-        console.log(response.data, "<-- data")
-        setPageContent(response.data);
-        setPaginationData(response.metadata);
-        setLoaded(true);
-      })
-      .catch(error => {
-        ErrorToast(error instanceof Error
-          ? "Error: no se pudo establecer conexión con el servidor"
-          : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
-        );
-      });
-  }, [aiTeamId, getBotsList]);
 
   useEffect(() => {
     if (aiTeamId && clientName) {
@@ -343,146 +353,148 @@ const IaPanel: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      {!loaded ? (
-        <PageCircularProgress />
-      ) : (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
-            <Box sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: 2,
-            }}>
-              {auth?.user?.is_superuser && (
-                <Button
-                  variant="contained"
-                  onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
-                  fullWidth
-                  sx={{
-                    width: '100%',
-                    maxWidth: { xs: '100%', sm: '200px' },
-                    color: 'white',
-                    '&:hover': {
-                      color: 'white',
-                    },
-                  }}
-                >
-                  {t.iaPanel.createAgent}
-                </Button>
-              )}
-              <Box sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: { xs: 'center', sm: 'flex-end' }
-              }}>
-                <Search sx={{
-                  position: 'relative',
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+          }}>
+            {auth?.user?.is_superuser && (
+              <Button
+                variant="contained"
+                onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
+                fullWidth
+                sx={{
                   width: '100%',
-                  maxWidth: { xs: '100%', sm: '300px' },
-                }}>
-                  <SearchIconWrapper>
-                    <SearchIcon />
-                  </SearchIconWrapper>
-                  <StyledInputBase
-                    placeholder={t.iaPanel.searchPlaceholder}
-                    value={searchQuery}
-                    inputProps={{
-                      "aria-label": "search",
-                      style: { padding: '8px 40px 8px 16px' }
-                    }}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    fullWidth
-                  />
-                </Search>
-              </Box>
-            </Box>
-          </Paper>
-
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Box sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 2,
-            }}>
-              <Typography variant="h5" sx={{ mr: 2 }}>
-                {t.iaPanel.agentsOf.replace("{clientName}", clientName || "")}
-              </Typography>
-              <Select
-                value={contentPerPage}
-                onChange={(e: SelectChangeEvent) => {
-                  setContentPerPage(e.target.value);
-                  setLoaded(false);
-                  getBotsData(`?page_size=${e.target.value}`);
+                  maxWidth: { xs: '100%', sm: '200px' },
+                  color: 'white',
+                  '&:hover': {
+                    color: 'white',
+                  },
                 }}
-                size="small"
-                sx={{ width: { xs: '100%', sm: 'auto' } }}
               >
-                {[5, 10, 20].map((value) => (
-                  <MenuItem key={value} value={value.toString()}>
-                    {value} {t.iaPanel.perPage}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Box>
-          </Paper>
-
-          {pageContent.length > 0 ? (
-            <Paper elevation={3} sx={{
-              p: 2,
-              border: `2px solid transparent`,
-              minHeight: '33vh'
+                {t.iaPanel.createAgent}
+              </Button>
+            )}
+            <Box sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: { xs: 'center', sm: 'flex-end' }
             }}>
-              <Grid container spacing={2} justifyContent="flex-start">
-                {pageContent.map((bot, index) => (
-                  <Grid item xs={12} sm={12} md={6} lg={6} xl={6} key={`bot-${index}`}>
-                    {renderBotCard(bot)}
-                  </Grid>
-                ))}
-              </Grid>
-            </Paper>
-          ) : (
-            <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-              <Typography variant="subtitle1">
-                {searchQuery.trim() !== ""
-                  ? t.iaPanel.noAgentsFound
-                  : t.iaPanel.noAgentsToShow}
-              </Typography>
-            </Paper>
-          )}
-
-          {loaded && pageContent.length > 0 && (
-            <Paper elevation={3} sx={{ p: 2 }}>
-              <Box sx={{
-                display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                gap: 2,
+              <Search sx={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: { xs: '100%', sm: '300px' },
               }}>
-                <Pagination
-                  count={paginationData?.total_pages}
-                  page={agentsPage}
-                  onChange={handlePagination}
-                  color="primary"
-                  size="small"
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder={t.iaPanel.searchPlaceholder}
+                  value={searchQuery}
+                  inputProps={{
+                    "aria-label": "search",
+                    style: { padding: '8px 40px 8px 16px' }
+                  }}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  fullWidth
                 />
-                {paginationData && (
-                  <Typography variant="body2" color="text.secondary">
-                    {`${(agentsPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
-                      agentsPage * (paginationData?.page_size ?? 0),
-                      paginationData?.total_items ?? 0
-                    )} ${t.iaPanel.agentsCount.replace("{total}", paginationData?.total_items?.toString() || "0")}`}
-                  </Typography>
-                )}
-              </Box>
-            </Paper>
-          )}
-        </Box>
-      )}
+              </Search>
+            </Box>
+          </Box>
+        </Paper>
+
+        <Paper elevation={3} sx={{ p: 2 }}>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 2,
+          }}>
+            <Typography variant="h5" sx={{ mr: 2 }}>
+              {t.iaPanel.agentsOf.replace("{clientName}", clientName || "")}
+            </Typography>
+            <Select
+              value={contentPerPage}
+              onChange={(e: SelectChangeEvent) => {
+                setContentPerPage(e.target.value);
+                setLoaded(false);
+                getBotsData(`?page_size=${e.target.value}`);
+              }}
+              size="small"
+              sx={{ width: { xs: '100%', sm: 'auto' } }}
+            >
+              {[5, 10, 20].map((value) => (
+                <MenuItem key={value} value={value.toString()}>
+                  {value} {t.iaPanel.perPage}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+        </Paper>
+
+        {isLoading || isSearching ? (
+          <PageCircularProgress />
+        ) : (
+          <>
+            {pageContent.length > 0 ? (
+              <Paper elevation={3} sx={{
+                p: 2,
+                border: `2px solid transparent`,
+                minHeight: '33vh'
+              }}>
+                <Grid container spacing={2} justifyContent="flex-start">
+                  {pageContent.map((bot, index) => (
+                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6} key={`bot-${index}`}>
+                      {renderBotCard(bot)}
+                    </Grid>
+                  ))}
+                </Grid>
+              </Paper>
+            ) : (
+              <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
+                <Typography variant="subtitle1">
+                  {searchQuery && searchQuery.trim() !== ""
+                    ? t.iaPanel.noAgentsFound
+                    : t.iaPanel.noAgentsToShow}
+                </Typography>
+              </Paper>
+            )}
+
+            {pageContent.length > 0 && (
+              <Paper elevation={3} sx={{ p: 2 }}>
+                <Box sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  gap: 2,
+                }}>
+                  <Pagination
+                    count={paginationData?.total_pages}
+                    page={agentsPage}
+                    onChange={handlePagination}
+                    color="primary"
+                    size="small"
+                  />
+                  {paginationData && (
+                    <Typography variant="body2" color="text.secondary">
+                      {`${(agentsPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
+                        agentsPage * (paginationData?.page_size ?? 0),
+                        paginationData?.total_items ?? 0
+                      )} ${t.iaPanel.agentsCount.replace("{total}", paginationData?.total_items?.toString() || "0")}`}
+                    </Typography>
+                  )}
+                </Box>
+              </Paper>
+            )}
+          </>
+        )}
+      </Box>
       {allowerState && (
         <ActionAllower
           allowerStateCleaner={setAllowerState}
