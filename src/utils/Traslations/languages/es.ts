@@ -96,7 +96,9 @@ const es = {
     errorClosingChat: "No se pudo cerrar el chat: falta el ID de conversación",
     errorCleaningChat: "No se pudo limpiar el chat completamente",
     unexpectedError: "Ocurrió un error inesperado al cerrar el chat",
-    errorLoadingData: "No se pudieron cargar los datos del chat"
+    errorLoadingData: "No se pudieron cargar los datos del chat",
+    historicalView: "Estás viendo un historial de conversación",
+    returnToCurrent: "Volver a la conversación actual"
   },
   notFound: {
     title: "404 - Página no encontrada",

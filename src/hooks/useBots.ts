@@ -44,6 +44,8 @@ type UseBotsApiHook = {
   getClientTools: (user_id: string) => Promise<ApiResponse<ToolData[]>>;
   getMyClients: () => Promise<ApiResponseList<AiTeam>>;
   getBotConversations: (botId: string) => Promise<ApiResponseList<ConversationData>>;
+  getClientConversations: () => Promise<ApiResponseList<ConversationData>>;
+  getClientBotConversations: (botId: string) => Promise<ConversationData[]>;
 
   //Post
   createBot: (aiTeamId: string, data: AgentMetaData) => Promise<AgentData>;
@@ -280,6 +282,18 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiGet<ApiResponseList<ConversationData>>(path);
   };
 
+  // Nuevo método para obtener todas las conversaciones del cliente
+  const getClientConversations = (): Promise<ApiResponseList<ConversationData>> => {
+    const path = `chat/api/conversations/`;
+    return apiGet<ApiResponseList<ConversationData>>(path);
+  };
+
+  // Nuevo método para obtener las conversaciones de un bot específico
+  const getClientBotConversations = (botId: string): Promise<ConversationData[]> => {
+    const path = `chat/api/conversations/${botId}`;
+    return apiGet<ConversationData[]>(path);
+  };
+
   return {
     // Gets
     getKnowledgeTags,
@@ -297,6 +311,8 @@ const useBotsApi = (): UseBotsApiHook => {
     getClientTools,
     getMyClients,
     getBotConversations,
+    getClientConversations,
+    getClientBotConversations,
 
     //Post
     createBot,

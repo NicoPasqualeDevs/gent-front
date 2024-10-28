@@ -96,7 +96,9 @@ const de = {
     errorClosingChat: "Chat konnte nicht geschlossen werden: Fehlende Konversations-ID",
     errorCleaningChat: "Chat konnte nicht vollständig bereinigt werden",
     unexpectedError: "Beim Schließen des Chats ist ein unerwarteter Fehler aufgetreten",
-    errorLoadingData: "Chatdaten konnten nicht geladen werden"
+    errorLoadingData: "Chatdaten konnten nicht geladen werden",
+    historicalView: "Sie sehen einen Konversationsverlauf",
+    returnToCurrent: "Zurück zur aktuellen Konversation"
   },
   notFound: {
     title: "404 - Seite nicht gefunden",

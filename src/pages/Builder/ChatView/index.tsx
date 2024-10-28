@@ -1,125 +1,28 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Box, Grid, Typography, TextField, Button, CircularProgress, Avatar } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box, Grid, Typography, TextField, Button, CircularProgress, Avatar, Tooltip } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import { useParams, useNavigate } from "react-router-dom";
-import { AgentData, ChatHistory, ChatMessage, UpdatedChatHistory as UpdatedChatHistoryType } from "@/types/Bots";
+import { AgentData, ChatHistory, ChatMessage, UpdatedChatHistory as UpdatedChatHistoryType, ConversationData } from "@/types/Bots";
 import { useTheme } from "@mui/material/styles";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
 import LanguageSelector from "@/components/LanguageSelector";
-
-const MainContainer = styled(Box)(() => ({
-  height: '100vh',
-  backgroundColor: '#1e1e1e',
-  color: '#ffffff',
-  display: 'flex',
-}));
-
-const SidebarContainer = styled(Box)(() => ({
-  width: '120px',
-  borderRight: '1px solid #333333',
-  display: 'flex',
-  flexDirection: 'column',
-}));
-
-const ChatContainer = styled(Box)(() => ({
-  flexGrow: 1,
-  display: 'flex',
-  flexDirection: 'column',
-}));
-
-const Header = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderBottom: '1px solid #333333',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-}));
-
-const MessagesContainer = styled(Box)(({ theme }) => ({
-  flexGrow: 1,
-  overflow: 'auto',
-  padding: theme.spacing(3),
-  display: 'flex',
-  flexDirection: 'column',
-  '&::-webkit-scrollbar': {
-    width: '8px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: theme.palette.background.default,
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: theme.palette.grey[600],
-    borderRadius: '4px',
-  },
-  '&::-webkit-scrollbar-thumb:hover': {
-    background: theme.palette.grey[500],
-  },
-}));
-
-const MessageBubble = styled(Box)<{ isAgent: boolean }>(({ theme, isAgent }) => ({
-  maxWidth: '70%',
-  padding: theme.spacing(2),
-  paddingLeft: isAgent ? theme.spacing(1) : 0,
-  paddingRight: isAgent ? 0 : theme.spacing(1),
-  borderRadius: '8px',
-  marginBottom: theme.spacing(2),
-  backgroundColor: isAgent ? '#383838' : '#2b5278',
-  alignSelf: isAgent ? 'flex-start' : 'flex-end',
-  display: 'flex',
-  flexDirection: isAgent ? 'row' : 'row-reverse',
-  alignItems: 'flex-start',
-}));
-
-const MessageContent = styled(Box)<{ isUser: boolean }>(({ theme, isUser }) => ({
-  marginLeft: isUser ? theme.spacing(3) : 0,
-  marginRight: isUser ? 0 : theme.spacing(3),
-  flexGrow: 1,
-  position: 'relative',
-  paddingBottom: theme.spacing(2),
-}));
-
-const InputContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  borderTop: '1px solid #333333',
-}));
-
-const StyledTextField = styled(TextField)(() => ({
-  '& .MuiOutlinedInput-root': {
-    color: '#ffffff',
-    '& fieldset': {
-      borderColor: '#555555',
-    },
-    '&:hover fieldset': {
-      borderColor: '#777777',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: '#4a90e2',
-    },
-  },
-}));
-
-const LogoContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(0, 0.5),
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '60px',
-}));
-
-const TimeStamp = styled(Typography)<{ isUser: boolean }>(({ theme, isUser }) => ({
-  fontSize: '0.7rem',
-  color: theme.palette.text.secondary,
-  opacity: 0.5,
-  position: 'absolute',
-  right: isUser ? 'auto' : 0,
-  left: isUser ? 0 : 'auto',
-  bottom: 0,
-  marginTop: theme.spacing(0.5),
-}));
+import {
+  MainContainer,
+  SidebarContainer,
+  ChatContainer,
+  Header,
+  MessagesContainer,
+  MessageBubble,
+  MessageContent,
+  InputContainer,
+  StyledTextField,
+  LogoContainer,
+  TimeStamp,
+  HistoryBubble
+} from './styles';
 
 const ChatView: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -127,7 +30,13 @@ const ChatView: React.FC = () => {
   const [message, setMessage] = useState<string>("");
   const [isSending, setIsSending] = useState<boolean>(false);
   const [agentData, setAgentData] = useState<AgentData | null>(null);
-  const { getChatHistory, sendMessage, closeChat, getAgentData } = useBotsApi();
+  const {
+    getChatHistory,
+    sendMessage,
+    closeChat,
+    getAgentData,
+    getClientBotConversations  // Agregamos el nuevo hook
+  } = useBotsApi();
   const { botId } = useParams<{ botId: string }>();
   const navigate = useNavigate();
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -138,6 +47,8 @@ const ChatView: React.FC = () => {
   const { language } = useAppContext();
   const t = languages[language as keyof typeof languages].chatView;
   const [agentDataError, setAgentDataError] = useState<boolean>(false);
+  const [conversations, setConversations] = useState<ConversationData[]>([]);
+  const [isHistoricalView, setIsHistoricalView] = useState<boolean>(false);
 
   const handleMouseEnter = () => {
     setShowFullName(true);
@@ -188,10 +99,12 @@ const ChatView: React.FC = () => {
 
   const fetchChatViewData = useCallback(async () => {
     if (!botId) return;
-    setIsLoading(true);
     try {
       const history = await getChatHistory(botId);
       setChatHistory(history);
+      const conversationsResponse = await getClientBotConversations(botId);
+      console.log(conversationsResponse, "<-- conversationsResponse.data")
+      setConversations(conversationsResponse);
 
       if (!agentDataError) {
         try {
@@ -200,7 +113,6 @@ const ChatView: React.FC = () => {
         } catch (agentError) {
           console.error("Error al cargar los datos del agente:", agentError);
           setAgentDataError(true);
-          // Generar datos simulados del agente
           setAgentData({
             id: 'simulated-id',
             name: `${t.defaultAgentName}`,
@@ -218,9 +130,9 @@ const ChatView: React.FC = () => {
       console.error("Error al cargar los datos del chat:", error);
       ErrorToast(t.errorLoadingData);
     } finally {
-      setIsLoading(false);
+      setIsLoading(false); // Cambiado de true a false
     }
-  }, [botId, getChatHistory, getAgentData, t.errorLoadingData, agentDataError]);
+  }, [botId, getChatHistory, getClientBotConversations, getAgentData, t.errorLoadingData, t.defaultAgentName, agentDataError]);
 
   useEffect(() => {
     if (!chatHistory && !agentData && !agentDataError) {
@@ -303,6 +215,21 @@ const ChatView: React.FC = () => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const handleConversationClick = (conversation: ConversationData) => {
+    setIsHistoricalView(true);
+    setChatHistory({
+      conversation: conversation.conversation_id,
+      messages: conversation.messages,
+      customer: chatHistory?.customer || '',
+      customer_bot: chatHistory?.customer_bot || ''
+    });
+  };
+
+  const handleReturnToCurrent = () => {
+    setIsHistoricalView(false);
+    fetchChatViewData();
+  };
+
   if (isLoading) {
     return (
       <Grid container justifyContent="center" alignItems="center" style={{ height: "100vh" }}>
@@ -310,7 +237,6 @@ const ChatView: React.FC = () => {
       </Grid>
     );
   }
-
   return (
     <MainContainer>
       <SidebarContainer>
@@ -343,9 +269,19 @@ const ChatView: React.FC = () => {
         </LogoContainer>
         <Box p={1} textAlign="center" display="flex" flexDirection="column">
           <Typography variant="caption" mb={0.5}>{t.history}</Typography>
-          <Typography variant="caption" color="#888888" sx={{ fontSize: '0.7rem' }}>
-            {t.comingSoon}
-          </Typography>
+          <Box sx={{ overflowY: 'auto', maxHeight: 'calc(100vh - 120px)' }}>
+            {conversations.map((conversation, index) => (
+              <Tooltip
+                key={index}
+                title={conversation.messages[1]?.content || t.noMessages}
+                placement="right"
+              >
+                <HistoryBubble onClick={() => handleConversationClick(conversation)}>
+                  {index + 1}
+                </HistoryBubble>
+              </Tooltip>
+            ))}
+          </Box>
         </Box>
       </SidebarContainer>
       <ChatContainer>
@@ -357,7 +293,7 @@ const ChatView: React.FC = () => {
         </Header>
         <MessagesContainer ref={chatContainerRef}>
           {chatHistory?.messages.map((msg, index) => (
-            <MessageBubble key={index} isAgent={msg.role === "bot"}>
+            <MessageBubble key={index} role={msg.role}>
               <Avatar sx={{
                 bgcolor: msg.role === "bot" ? '#50c878' : '#4a90e2',
                 width: 40,
@@ -367,14 +303,14 @@ const ChatView: React.FC = () => {
               }}>
                 {msg.role === "bot" ? "AI" : "U"}
               </Avatar>
-              <MessageContent isUser={msg.role === "client"}>
+              <MessageContent>
                 <Typography variant="subtitle2" fontWeight="bold" mb={1}>
                   {msg.role === "bot" ? (agentData?.name || t.assistant) : t.user}
                 </Typography>
                 <Typography variant="body1">
                   {renderMessageContent(msg.content)}
                 </Typography>
-                <TimeStamp isUser={msg.role === "client"}>
+                <TimeStamp>
                   {formatTimestamp(msg.timestamp)}
                 </TimeStamp>
               </MessageContent>
@@ -391,29 +327,42 @@ const ChatView: React.FC = () => {
             variant="outlined"
             value={message}
             onChange={handleMessageChange}
-            placeholder={t.inputPlaceholder}
+            placeholder={isHistoricalView ? t.historicalView : t.inputPlaceholder}
             onKeyPress={handleKeyPress}
-            disabled={isSending}
+            disabled={isSending || isHistoricalView}
             multiline
             rows={3}
           />
           <Box display="flex" justifyContent="space-between" mt={2}>
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={handleFinishSession}
-            >
-              {t.finishSession}
-            </Button>
-            <Button
-              variant="contained"
-              sx={{ color: theme.palette.secondary.main }}
-              onClick={handleSendMessage}
-              disabled={isSending}
-              endIcon={isSending ? <CircularProgress size={20} /> : <SendIcon />}
-            >
-              {t.sendButton}
-            </Button>
+            {isHistoricalView ? (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleReturnToCurrent}
+              >
+                {t.returnToCurrent}
+              </Button>
+            ) : (
+              <>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={handleFinishSession}
+                  disabled={isHistoricalView}
+                >
+                  {t.finishSession}
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{ color: theme.palette.secondary.main }}
+                  onClick={handleSendMessage}
+                  disabled={isSending || isHistoricalView}
+                  endIcon={isSending ? <CircularProgress size={20} /> : <SendIcon />}
+                >
+                  {t.sendButton}
+                </Button>
+              </>
+            )}
           </Box>
         </InputContainer>
       </ChatContainer>

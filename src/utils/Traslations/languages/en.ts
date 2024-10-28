@@ -96,7 +96,9 @@ const en = {
     errorClosingChat: "Could not close the chat: missing conversation ID",
     errorCleaningChat: "Could not clean the chat completely",
     unexpectedError: "An unexpected error occurred while closing the chat",
-    errorLoadingData: "Could not load chat data"
+    errorLoadingData: "Could not load chat data",
+    historicalView: "You are viewing a conversation history",
+    returnToCurrent: "Return to current conversation"
   },
   notFound: {
     title: "404 - Page Not Found",

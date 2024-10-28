@@ -96,7 +96,9 @@ const fr = {
     errorClosingChat: "Impossible de fermer le chat : ID de conversation manquant",
     errorCleaningChat: "Impossible de nettoyer complètement le chat",
     unexpectedError: "Une erreur inattendue s'est produite lors de la fermeture du chat",
-    errorLoadingData: "Impossible de charger les données du chat"
+    errorLoadingData: "Impossible de charger les données du chat",
+    historicalView: "Vous consultez un historique de conversation",
+    returnToCurrent: "Retourner à la conversation actuelle"
   },
   notFound: {
     title: "404 - Page Non Trouvée",
