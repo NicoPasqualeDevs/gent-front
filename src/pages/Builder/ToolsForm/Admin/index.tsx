@@ -57,16 +57,36 @@ const ToolsForm: React.FC = () => {
 
   const onSubmit = (values: ToolData) => {
     const formData = new FormData();
-    Object.keys(values).forEach((key) => {
-      if (values[key] !== undefined) {
-        formData.append(key, values[key] as string | Blob);
-      }
-    });
+    
+    // Agregar cada campo al FormData y hacer console.log para debug
+    if (values.tool_name) {
+        formData.append('tool_name', values.tool_name);
+        console.log('Appending tool_name:', values.tool_name);
+    }
+    if (values.instruction) {
+        formData.append('instruction', values.instruction);
+        console.log('Appending instruction:', values.instruction);
+    }
+    if (values.tool_code) {
+        formData.append('tool_code', values.tool_code);
+        console.log('Appending tool_code:', values.tool_code);
+    }
+    if (values.user_id) {
+        // Asegurarnos de que estamos enviando el ID numérico
+        const numericId = Number(values.user_id);
+        formData.append('user_id', numericId.toString());
+        console.log('Appending user_id:', numericId);
+    }
+
+    // Agregar console.log para ver el FormData completo
+    for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+    }
 
     if (toolId) {
-      updateTool(formData, toolId);
+        updateTool(formData, toolId);
     } else {
-      createNewTool(formData);
+        createNewTool(formData);
     }
   };
 
@@ -113,15 +133,17 @@ const ToolsForm: React.FC = () => {
   };
 
   const createNewTool = (formData: FormData) => {
-    formData.append("user_id", auth.user?.uuid ?? "");
+    console.log('Sending form data to server...');
     postTool(formData)
-      .then(() => {
-        SuccessToast(t.successCreate);
-        navigate(-1);
-      })
-      .catch(() => {
-        ErrorToast(t.errorConnection);
-      });
+        .then((response) => {
+            console.log('Server response:', response);
+            SuccessToast(t.successCreate);
+            navigate(-1);
+        })
+        .catch((error) => {
+            console.error('Error creating tool:', error);
+            ErrorToast(error.message || t.errorConnection);
+        });
   };
 
   const fetchNonSuperUsers = useCallback(() => {
@@ -213,7 +235,12 @@ const ToolsForm: React.FC = () => {
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
       <Paper elevation={3} sx={{ p: 3 }}>
-        <Box component={"form"} onSubmit={formSubmit} width={"100%"}>
+        <Box 
+          component="form" 
+          onSubmit={formSubmit} 
+          width="100%" 
+          encType="multipart/form-data"
+        >
           {!loaded ? (
             <PageCircularProgress />
           ) : (
@@ -243,8 +270,13 @@ const ToolsForm: React.FC = () => {
               <Box marginTop={"20px"}>
                 <input
                   type="file"
+                  accept=".py,.js,.ts" // Especificar tipos de archivo permitidos
                   onChange={(event) => {
-                    setFieldValue("tool_code", event.currentTarget.files?.[0]);
+                    const file = event.currentTarget.files?.[0];
+                    if (file) {
+                      console.log('Selected file:', file);
+                      setFieldValue("tool_code", file);
+                    }
                   }}
                 />
                 {errors.tool_code && <Typography color="error">{errors.tool_code}</Typography>}

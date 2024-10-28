@@ -62,6 +62,7 @@ const AiTeamsList: React.FC = () => {
   const getAiTeamsData = useCallback((filterParams: string = '') => {
     if (!auth?.user?.is_superuser) {
       setIsLoading(true);
+      console.log(auth?.user?.uuid, "<--- user id");
       getAiTeamsByOwner(auth?.user?.uuid || '', filterParams)
         .then((response) => {
           setClientPage(response.metadata.current_page || 1);

@@ -77,9 +77,13 @@ const useApi = (): UseApiHook => {
     
     const headers: HeadersInit = {
       'Accept': 'application/json',
-      'Content-Type': 'application/json',
       'X-CSRFToken': csrfToken,
     };
+
+    // Solo agregar Content-Type si no es FormData
+    if (!additionalHeaders || !(additionalHeaders as Record<string, string>)['Content-Type']) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (token) {
       headers['Authorization'] = `Token ${token}`;
@@ -105,7 +109,14 @@ const useApi = (): UseApiHook => {
   const apiCall = React.useCallback(
     async <R>(method: string, path: string, body?: unknown, headers?: HeadersInit): Promise<R> => {
       const isFormData = body instanceof FormData;
-      const finalHeaders = await createHeaders(headers);
+      let finalHeaders = await createHeaders(headers);
+      
+      // Si es FormData, eliminar el Content-Type para que el navegador lo establezca
+      if (isFormData) {
+        const headersObj = finalHeaders as Record<string, string>;
+        const { 'Content-Type': _, ...restHeaders } = headersObj;
+        finalHeaders = restHeaders;
+      }
 
       const requestOptions: RequestInit = {
         method,
@@ -117,7 +128,6 @@ const useApi = (): UseApiHook => {
       try {
         const response = await fetch(buildUri(path), requestOptions);
         if (response.status === 403) {
-          // Si recibimos un 403, intentamos obtener un nuevo token CSRF y reintentamos la petición
           console.warn('CSRF token may be invalid, retrying with new token...');
           const newHeaders = await createHeaders(headers);
           const newRequestOptions = {

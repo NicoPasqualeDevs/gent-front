@@ -191,8 +191,10 @@ const useBotsApi = (): UseBotsApiHook => {
   };
   const postTool = (data: FormData): Promise<ToolData> => {
     const path = `api/tool/create`;
-    // Asegúrate de que el FormData incluya el user_id en lugar de aiTeam_id
-    return apiPost(path, data, { "Content-Type": "multipart/form-data" });
+    console.log('Posting tool to:', path);
+    return apiPost(path, data, {
+        // No establecer Content-Type, dejar que el navegador lo maneje
+    });
   };
   const setToolRelationship = (
     botId: string,
@@ -244,7 +246,7 @@ const useBotsApi = (): UseBotsApiHook => {
   };
   const patchTool = (toolId: string, data: FormData): Promise<ToolData> => {
     const path = `api/tool/modify/${toolId}`;
-    return apiPatch(path, data, { "Content-Type": "multipart/form-data" });
+    return apiPatch(path, data);
   };
 
   // DELETE

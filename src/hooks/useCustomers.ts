@@ -29,7 +29,7 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
   };
 
   const getAiTeamDetails = (aiTeamId: string): Promise<AiTeamsDetails> => {
-    const path = `api/ai_team/${aiTeamId}`;
+    const path = `api/team_details/${aiTeamId}`;
     return apiGet<AiTeamsDetails>(path);
   };
 
@@ -39,7 +39,8 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
   };
 
   const getAiTeamsByOwner = (owner: string, filterParams: string = ''): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/team_details/list_by_owner/${owner}${filterParams}`;
+    // Corregir la construcción de la URL
+    const path = `api/team_details/list_by_owner/${filterParams ? `?${filterParams}&` : '?'}owner=${owner}`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
