@@ -108,10 +108,13 @@ const useApi = (): UseApiHook => {
 
   const apiCall = React.useCallback(
     async <R>(method: string, path: string, body?: unknown, headers?: HeadersInit): Promise<R> => {
+      if (!path) {
+        throw new Error('Path is required');
+      }
+
       const isFormData = body instanceof FormData;
       let finalHeaders = await createHeaders(headers);
       
-      // Si es FormData, eliminar el Content-Type para que el navegador lo establezca
       if (isFormData) {
         const headersObj = finalHeaders as Record<string, string>;
         delete headersObj['Content-Type'];
@@ -127,16 +130,17 @@ const useApi = (): UseApiHook => {
 
       try {
         const response = await fetch(buildUri(path), requestOptions);
+        
         if (response.status === 403) {
           console.warn('CSRF token may be invalid, retrying with new token...');
           const newHeaders = await createHeaders(headers);
-          const newRequestOptions = {
+          const retryResponse = await fetch(buildUri(path), {
             ...requestOptions,
             headers: newHeaders,
-          };
-          const retryResponse = await fetch(buildUri(path), newRequestOptions);
+          });
           return await handleResponse<R>(retryResponse);
         }
+        
         return await handleResponse<R>(response);
       } catch (err) {
         console.error('API call error:', err);

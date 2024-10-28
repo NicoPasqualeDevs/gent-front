@@ -35,86 +35,136 @@ const IaPanel: React.FC = () => {
   const [paginationData, setPaginationData] = useState<Metadata>();
   const [searchQuery, setSearchQuery] = useState("");
   const [contentPerPage, setContentPerPage] = useState("5");
-  const { apiBase } = useApi()
+  const { apiBase } = useApi();
   const t = languages[language as keyof typeof languages];
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
-  const getBotsData = useCallback((filterParams: string) => {
+  const getBotsData = useCallback(async (filterParams: string) => {
     if (!aiTeamId) {
-      ErrorToast("Conflicto en el id del cliente");
+      setIsLoading(false);
       return;
     }
-    setIsLoading(true);
-    getBotsList(aiTeamId, filterParams)
-      .then(response => {
+
+    try {
+      setIsLoading(true);
+      const response = await getBotsList(aiTeamId, filterParams);
+      
+      if (response && response.data) {
+        console.log('Bots data received:', response.data); // Debug log
         setAgentsPage(response.metadata.current_page || 1);
         setPageContent(response.data);
         setPaginationData(response.metadata);
         setLoaded(true);
-      })
-      .catch(error => {
-        ErrorToast(error instanceof Error
-          ? "Error: no se pudo establecer conexión con el servidor"
-          : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
-        );
-      })
-      .finally(() => {
-        setIsLoading(false);
-        setIsSearching(false);
-      });
+      }
+    } catch (error: any) {
+      console.error('Error fetching bots:', error); // Debug log
+      ErrorToast(error instanceof Error
+        ? "Error: no se pudo establecer conexión con el servidor"
+        : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
+      );
+    } finally {
+      setIsLoading(false);
+      setIsSearching(false);
+    }
   }, [aiTeamId, getBotsList]);
 
-  const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
-    event.preventDefault();
-    setAgentsPage(value);
-    setLoaded(false);
-    getBotsData(`?page_size=${contentPerPage}&page=${value}`);
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchQuery(value);
-    setIsSearching(true);
-    if (value.trim() !== "") {
-      getBotsData(`?name__icontains=${value}&page_size=${contentPerPage}`);
-    } else {
-      getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
-    }
-  };
-
-  const deleteAction = (botId: string) => {
-    if (botId) {
-      deleteBot(botId)
-        .then(() => {
-          setPageContent(prev => prev.filter(item => item.id !== botId));
-          setAllowerState(false);
-          setbotToDelete("");
-          SuccessToast("Chatbot eliminado satisfactoriamente");
-        })
-        .catch(error => {
-          ErrorToast(error instanceof Error
-            ? "Error: no se pudo establecer conexión con el servidor"
-            : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
-          );
-        });
-    } else {
-      ErrorToast("Error al cargar botId al borrar");
-    }
-  };
-
+  // Efecto para forzar el renderizado cuando los datos se cargan
   useEffect(() => {
-    if (aiTeamId && clientName) {
+    if (pageContent && pageContent.length > 0) {
+      console.log('Page content updated:', pageContent); // Debug log
+      setLoaded(true);
+    }
+  }, [pageContent]);
+
+  // Efecto inicial para cargar los datos
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const initializeData = async () => {
+      if (!aiTeamId || !clientName) {
+        ErrorToast("Error al cargar aiTeamId en esta vista");
+        return;
+      }
+
       replacePath([
         ...appNavigation.slice(0, 1),
         { label: clientName, current_path: `/builder/agents/${clientName}/${aiTeamId}`, preview_path: "" },
       ]);
-      if (!loaded) {
-        getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
+      
+      if (isSubscribed) {
+        try {
+          await getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
+        } catch (error) {
+          console.error('Error loading bots:', error);
+        }
       }
-    } else {
-      ErrorToast("Error al cargar aiTeamId en esta vista");
+    };
+
+    initializeData();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [aiTeamId, clientName]);
+
+  // Función para forzar una recarga de datos
+  const refreshData = useCallback(() => {
+    if (aiTeamId) {
+      getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
     }
-  }, []);
+  }, [aiTeamId, contentPerPage, agentsPage, getBotsData]);
+
+  const handleSearch = useCallback((value: string) => {
+    if (isSearching) return;
+    
+    setSearchQuery(value);
+    setIsSearching(true);
+    
+    const params = value.trim() !== "" 
+      ? `?name__icontains=${value}&page_size=${contentPerPage}`
+      : `?page_size=${contentPerPage}&page=${agentsPage}`;
+    
+    getBotsData(params);
+  }, [contentPerPage, agentsPage, isSearching, getBotsData]);
+
+  const handlePagination = useCallback((event: React.ChangeEvent<unknown>, value: number) => {
+    event.preventDefault();
+    if (isLoading) return;
+    
+    setAgentsPage(value);
+    getBotsData(`?page_size=${contentPerPage}&page=${value}`);
+  }, [contentPerPage, isLoading, setAgentsPage, getBotsData]);
+
+  const deleteAction = useCallback(async (botId: string) => {
+    if (!botId || isLoading) return;
+
+    try {
+      setIsLoading(true);
+      await deleteBot(botId);
+      
+      setPageContent(prev => prev.filter(item => item.id !== botId));
+      setAllowerState(false);
+      setbotToDelete("");
+      SuccessToast("Chatbot eliminado satisfactoriamente");
+      
+      // Recargar la lista después de eliminar
+      await getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
+    } catch (error: any) {
+      ErrorToast(error instanceof Error
+        ? "Error: no se pudo establecer conexión con el servidor"
+        : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, [deleteBot, contentPerPage, agentsPage, getBotsData]);
+
+  const handleContentPerPageChange = useCallback((event: SelectChangeEvent) => {
+    const newValue = event.target.value;
+    setContentPerPage(newValue);
+    getBotsData(`?page_size=${newValue}&page=1`);
+  }, [getBotsData]);
 
   const renderBotCard = (bot: AgentData) => (
     <Card sx={{
@@ -138,11 +188,11 @@ const IaPanel: React.FC = () => {
       },
       '&::before': {
         top: 0,
-        borderTop: `1px solid transparent`, // Cambiado de 2px a 1px
+        borderTop: `1px solid transparent`,
       },
       '&::after': {
         bottom: 0,
-        borderBottom: `1px solid transparent`, // Cambiado de 2px a 1px
+        borderBottom: `1px solid transparent`,
       },
       '&:hover::before, &:hover::after': {
         height: '50%',
@@ -162,11 +212,11 @@ const IaPanel: React.FC = () => {
           sx={{
             p: 1.5,
             '& .MuiCardHeader-title': {
-              fontSize: '1.1rem', // Aumentado de 1rem
+              fontSize: '1.1rem',
               fontWeight: 'bold',
             },
             '& .MuiCardHeader-subheader': {
-              fontSize: '0.9rem', // Aumentado de 0.8rem
+              fontSize: '0.9rem',
             },
             '& .MuiCardHeader-avatar': {
               marginRight: 1,
@@ -200,8 +250,8 @@ const IaPanel: React.FC = () => {
               borderRadius: '16px',
               fontSize: '0.95rem',
               fontWeight: 'medium',
-              mb: 1, // Reducido de 2 a 1
-              mt: 1, // Añadido margen superior de 1
+              mb: 1,
+              mt: 1,
               minWidth: '200px',
               textAlign: 'center',
             }}>
@@ -219,7 +269,7 @@ const IaPanel: React.FC = () => {
               display: "-webkit-box",
               WebkitLineClamp: 2,
               WebkitBoxOrient: "vertical",
-              fontSize: '0.95rem', // Aumentado de 0.875rem
+              fontSize: '0.95rem',
             }}>
               {bot.description}
             </Typography>
@@ -228,7 +278,7 @@ const IaPanel: React.FC = () => {
               flexDirection: { xs: 'column', md: 'row' },
               justifyContent: 'space-between', 
               alignItems: { xs: 'stretch', md: 'center' },
-              gap: 0.5, // Reducido de 1 a 0.5
+              gap: 0.5,
               mt: 2 
             }}>
               <Button
@@ -241,7 +291,7 @@ const IaPanel: React.FC = () => {
                   flex: 1,
                   padding: '4px 8px',
                   '& .MuiButton-startIcon': {
-                    marginRight: 0.5, // Reducido de 1 a 0.5
+                    marginRight: 0.5,
                   },
                   '& .MuiButton-label': {
                     marginTop: '2px',
@@ -281,7 +331,7 @@ const IaPanel: React.FC = () => {
                   flex: 1,
                   padding: '4px 8px',
                   '& .MuiButton-startIcon': {
-                    marginRight: 0.5, // Reducido de 1 a 0.5
+                    marginRight: 0.5,
                   },
                   '& .MuiButton-label': {
                     marginTop: '2px',
@@ -349,6 +399,10 @@ const IaPanel: React.FC = () => {
       </Box>
     </Card>
   );
+
+  if (!aiTeamId || !clientName) {
+    return null;
+  }
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
@@ -419,11 +473,7 @@ const IaPanel: React.FC = () => {
             </Typography>
             <Select
               value={contentPerPage}
-              onChange={(e: SelectChangeEvent) => {
-                setContentPerPage(e.target.value);
-                setLoaded(false);
-                getBotsData(`?page_size=${e.target.value}`);
-              }}
+              onChange={handleContentPerPageChange}
               size="small"
               sx={{ width: { xs: '100%', sm: 'auto' } }}
             >
@@ -436,19 +486,28 @@ const IaPanel: React.FC = () => {
           </Box>
         </Paper>
 
-        {isLoading || isSearching ? (
+        {isLoading ? (
           <PageCircularProgress />
         ) : (
           <>
-            {pageContent.length > 0 ? (
+            {Array.isArray(pageContent) && pageContent.length > 0 ? (
               <Paper elevation={3} sx={{
                 p: 2,
                 border: `2px solid transparent`,
+                backgroundColor: 'background.paper',
                 minHeight: '33vh'
               }}>
-                <Grid container spacing={2} justifyContent="flex-start">
+                <Grid container spacing={2}>
                   {pageContent.map((bot, index) => (
-                    <Grid item xs={12} sm={12} md={6} lg={6} xl={6} key={`bot-${index}`}>
+                    <Grid 
+                      item 
+                      xs={12} 
+                      sm={12} 
+                      md={6} 
+                      lg={6} 
+                      xl={6} 
+                      key={`bot-${bot.id || index}`}
+                    >
                       {renderBotCard(bot)}
                     </Grid>
                   ))}
@@ -461,10 +520,17 @@ const IaPanel: React.FC = () => {
                     ? t.iaPanel.noAgentsFound
                     : t.iaPanel.noAgentsToShow}
                 </Typography>
+                <Button 
+                  variant="contained" 
+                  onClick={refreshData}
+                  sx={{ mt: 2 }}
+                >
+                  Recargar datos
+                </Button>
               </Paper>
             )}
 
-            {pageContent.length > 0 && (
+            {Array.isArray(pageContent) && pageContent.length > 0 && paginationData && (
               <Paper elevation={3} sx={{ p: 2 }}>
                 <Box sx={{
                   display: 'flex',
@@ -474,7 +540,7 @@ const IaPanel: React.FC = () => {
                   gap: 2,
                 }}>
                   <Pagination
-                    count={paginationData?.total_pages}
+                    count={paginationData.total_pages}
                     page={agentsPage}
                     onChange={handlePagination}
                     color="primary"

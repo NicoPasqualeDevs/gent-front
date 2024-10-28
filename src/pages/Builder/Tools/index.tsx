@@ -25,10 +25,10 @@ const Tools: React.FC = () => {
   const fetchTools = useCallback(async () => {
     if (!auth.user?.token || !botId) {
       ErrorToast(t.errorToken);
+      setIsLoading(false);
       return;
     }
 
-    setIsLoading(true);
     try {
       const [clientToolsResponse, botToolsResponse] = await Promise.all([
         getClientTools(auth.user.uuid),
@@ -46,7 +46,7 @@ const Tools: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [auth.user?.token, botId, getClientTools, getBotTools, t.errorToken, t.errorLoading]);
+  }, [auth.user?.token, botId]);
 
   useEffect(() => {
     const updatePathAndFetchTools = async () => {

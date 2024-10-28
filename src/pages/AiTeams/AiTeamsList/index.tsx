@@ -59,111 +59,125 @@ const AiTeamsList: React.FC = () => {
   const theme = useTheme();
   const t = languages[language as keyof typeof languages];
 
-  const getAiTeamsData = useCallback((filterParams: string) => {
-    if (!auth?.user?.is_superuser) {
-      setIsLoading(true);
-      console.log(auth?.user?.uuid, "<--- user id");
-      getAiTeamsByOwner(auth?.user?.uuid || '', filterParams)
-        .then((response) => {
-          setClientPage(response.metadata.current_page || 1);
-          setPageContent(response.data);
-          setPaginationData(response.metadata);
-          setLoaded(true);
-        })
-        .catch((error) => {
-          if (error instanceof Error) {
-            ErrorToast(t.aiTeamsForm.errorConnection);
-          } else {
-            ErrorToast(
-              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
-            );
-          }
-        })
-        .finally(() => {
-          setIsLoading(false);
-          setIsSearching(false);
-        });
-    } else {
-      setIsLoading(true);
-      getMyAiTeams(filterParams)
-        .then((response) => {
-          setClientPage(response.metadata.current_page || 1);
-          setPageContent(response.data);
-          setPaginationData(response.metadata);
-          setLoaded(true);
-        })
-        .catch((error) => {
-          if (error instanceof Error) {
-            ErrorToast(t.aiTeamsForm.errorConnection);
-          } else {
-            ErrorToast(
-              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
-            );
-          }
-        })
-        .finally(() => {
-          setIsLoading(false);
-          setIsSearching(false);
-        });
+  const getAiTeamsData = useCallback(async (filterParams: string) => {
+    if (!auth?.user?.uuid) {
+      setIsLoading(false);
+      return;
     }
-  }, [getMyAiTeams, getAiTeamsByOwner, auth?.user?.uuid, auth?.user?.is_superuser, setClientPage, t.aiTeamsForm.errorConnection]);
 
-  const handleSearch = (value: string) => {
+    try {
+      setIsLoading(true);
+      let response;
+      
+      if (auth?.user?.is_superuser) {
+        response = await getMyAiTeams(filterParams);
+      } else {
+        response = await getAiTeamsByOwner(auth.user.uuid, filterParams);
+      }
+
+      if (response) {
+        setClientPage(response.metadata.current_page || 1);
+        setPageContent(response.data);
+        setPaginationData(response.metadata);
+      }
+    } catch (error: any) {
+      if (error instanceof Error) {
+        ErrorToast(t.aiTeamsForm.errorConnection);
+      } else {
+        ErrorToast(
+          `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
+        );
+      }
+    } finally {
+      setLoaded(true);
+      setIsLoading(false);
+      setIsSearching(false);
+    }
+  }, [auth?.user, getMyAiTeams, getAiTeamsByOwner, setClientPage]);
+
+  const handleSearch = useCallback((value: string) => {
+    if (isSearching) return;
+    
     setSearchQuery(value);
     setIsSearching(true);
-    if (value.trim() !== "") {
-      getAiTeamsData(`?name__icontains=${value}&page_size=${contentPerPage}`);
-    } else {
-      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
-    }
-  };
+    
+    const params = value.trim() !== "" 
+      ? `?name__icontains=${value}&page_size=${contentPerPage}`
+      : `?page_size=${contentPerPage}&page=${clientPage}`;
+    
+    getAiTeamsData(params);
+  }, [contentPerPage, clientPage, isSearching, getAiTeamsData]);
 
-  const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePagination = useCallback((event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
+    if (isLoading) return;
+    
     setClientPage(value);
-    setLoaded(false);
     getAiTeamsData(`?page_size=${contentPerPage}&page=${value}`);
-  };
+  }, [contentPerPage, isLoading, setClientPage, getAiTeamsData]);
 
-  const deleteAction = (aiTeamId: string) => {
-    setIsLoading(true);
-    deleteAiTeamDetails(aiTeamId)
-      .then((response) => {
-        setPageContent(prevContent => prevContent.filter(item => item.id !== aiTeamId));
-        setAllowerState(false);
-        setClientToDelete("");
-        SuccessToast(response.message || t.aiTeamsList.successDelete);
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.aiTeamsForm.errorConnection);
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-            }`
-          );
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-        getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
-      });
-  };
+  const deleteAction = useCallback(async (aiTeamId: string) => {
+    if (!aiTeamId || isLoading) return;
 
-  useEffect(() => {
-    replacePath([
-      {
-        label: t.aiTeamsList.yourAiTeams,
-        current_path: "/builder",
-        preview_path: "/builder",
-      },
-    ]);
-    setAgentsPage(1);
-    setNavElevation("builder");
-    if (!loaded) {
-      getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
+    try {
+      setIsLoading(true);
+      await deleteAiTeamDetails(aiTeamId);
+      
+      setPageContent(prevContent => prevContent.filter(item => item.id !== aiTeamId));
+      setAllowerState(false);
+      setClientToDelete("");
+      SuccessToast(t.aiTeamsList.successDelete);
+      
+      // Recargar la lista después de eliminar
+      await getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
+    } catch (error: any) {
+      ErrorToast(error instanceof Error
+        ? t.aiTeamsForm.errorConnection
+        : `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
+      );
+    } finally {
+      setIsLoading(false);
     }
-  }, []);
+  }, [deleteAiTeamDetails, contentPerPage, clientPage, getAiTeamsData]);
+
+  const handleContentPerPageChange = useCallback((event: SelectChangeEvent) => {
+    const newValue = event.target.value;
+    setContentPerPage(newValue);
+    getAiTeamsData(`?page_size=${newValue}&page=1`);
+  }, [getAiTeamsData]);
+
+  // Efecto inicial para cargar los datos
+  useEffect(() => {
+    let isSubscribed = true;
+
+    const initializeData = async () => {
+      if (!auth?.user?.uuid) return;
+
+      replacePath([
+        {
+          label: t.aiTeamsList.yourAiTeams,
+          current_path: "/builder",
+          preview_path: "/builder",
+        },
+      ]);
+      setAgentsPage(1);
+      setNavElevation("builder");
+      
+      if (isSubscribed) {
+        await getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
+      }
+    };
+
+    initializeData();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [auth?.user?.uuid]); // Solo se ejecuta cuando cambia el usuario
+
+  if (!auth?.user?.uuid) {
+    return null;
+  }
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
@@ -248,7 +262,7 @@ const AiTeamsList: React.FC = () => {
           </Box>
         </Paper>
 
-        {isLoading || isSearching ? (
+        {isLoading ? (
           <PageCircularProgress />
         ) : (
           <>

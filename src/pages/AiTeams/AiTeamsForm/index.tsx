@@ -75,74 +75,11 @@ const AiTeamsForm: React.FC = () => {
     handleSubmit(e);
   };
 
-  const getAiTeamData = useCallback((aiTeamId: string) => {
-    getAiTeamDetails(aiTeamId)
-      .then((response) => {
-        setValues({
-          name: response.name,
-          address: response.address,
-          description: response.description,
-          owner_data: response.owner_data,
-        });
-        setInitialValues({
-          name: response.name,
-          address: response.address,
-          description: response.description,
-          owner_data: response.owner_data,
-        });
-        setIsTeamDataLoaded(true);
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.errorConnection);
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-            }`
-          );
-        }
-        setIsTeamDataLoaded(true); // Asegurarse de que se marque como cargado incluso en caso de error
-      });
-  }, [getAiTeamDetails, setValues, setInitialValues, t.errorConnection]);
-
-  const updateClient = (values: AiTeamsDetails, aiTeamId: string) => {
-    putAiTeamDetails(values, aiTeamId)
-      .then(() => SuccessToast(t.successUpdate))
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.errorConnection);
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-            }`
-          );
-        }
-      });
-  };
-
-  const createNewClient = (values: AiTeamsDetails) => {
-    if (auth?.user?.email) {
-      const dataWithEmail = { ...values, email: auth.user.email };
-      postAiTeamDetails(dataWithEmail)
-        .then(() => {
-          SuccessToast(t.successCreate);
-          navigate(`/builder`);
-        })
-        .catch((error) => {
-          if (error instanceof Error) {
-            ErrorToast(t.errorConnection);
-          } else {
-            ErrorToast(
-              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-              }`
-            );
-          }
-        });
-    }
-  }
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchNonSuperUsers = useCallback(() => {
-    listNonSuperUsers()
+    setIsLoading(true);
+    return listNonSuperUsers()
       .then((response) => {
         setNonSuperUsers(prevUsers => {
           const newUsers = response.data.map(user => ({
@@ -193,8 +130,83 @@ const AiTeamsForm: React.FC = () => {
           });
         }
         setIsUsersDataLoaded(true);
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsUsersDataLoaded(true);
       });
   }, [listNonSuperUsers, auth?.user]);
+
+  const getAiTeamData = useCallback((aiTeamId: string) => {
+    setIsLoading(true);
+    return getAiTeamDetails(aiTeamId)
+      .then((response) => {
+        setValues({
+          name: response.name,
+          address: response.address,
+          description: response.description,
+          owner_data: response.owner_data,
+        });
+        setInitialValues({
+          name: response.name,
+          address: response.address,
+          description: response.description,
+          owner_data: response.owner_data,
+        });
+        setIsTeamDataLoaded(true);
+      })
+      .catch((error) => {
+        if (error instanceof Error) {
+          ErrorToast(t.errorConnection);
+        } else {
+          ErrorToast(
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
+            }`
+          );
+        }
+        setIsTeamDataLoaded(true); // Asegurarse de que se marque como cargado incluso en caso de error
+      })
+      .finally(() => {
+        setIsLoading(false);
+        setIsTeamDataLoaded(true);
+      });
+  }, []);
+
+  const updateClient = (values: AiTeamsDetails, aiTeamId: string) => {
+    putAiTeamDetails(values, aiTeamId)
+      .then(() => SuccessToast(t.successUpdate))
+      .catch((error) => {
+        if (error instanceof Error) {
+          ErrorToast(t.errorConnection);
+        } else {
+          ErrorToast(
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
+            }`
+          );
+        }
+      });
+  };
+
+  const createNewClient = (values: AiTeamsDetails) => {
+    if (auth?.user?.email) {
+      const dataWithEmail = { ...values, email: auth.user.email };
+      postAiTeamDetails(dataWithEmail)
+        .then(() => {
+          SuccessToast(t.successCreate);
+          navigate(`/builder`);
+        })
+        .catch((error) => {
+          if (error instanceof Error) {
+            ErrorToast(t.errorConnection);
+          } else {
+            ErrorToast(
+              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
+              }`
+            );
+          }
+        });
+    }
+  }
 
   useEffect(() => {
     const initializeForm = () => {

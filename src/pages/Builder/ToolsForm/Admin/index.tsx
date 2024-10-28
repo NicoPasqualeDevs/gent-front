@@ -101,7 +101,10 @@ const ToolsForm: React.FC = () => {
     handleSubmit(e);
   };
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
   const getToolData = useCallback((toolId: string) => {
+    setIsLoading(true);
     return getTool(toolId)
       .then((response) => {
         setValues({
@@ -120,15 +123,22 @@ const ToolsForm: React.FC = () => {
       })
       .catch(() => {
         ErrorToast(t.errorConnection);
+      })
+      .finally(() => {
+        setIsLoading(false);
         setIsToolDataLoaded(true);
       });
   }, [getTool, setValues, setInitialValues, t.errorConnection]);
 
   const updateTool = (formData: FormData, toolId: string) => {
+    setIsLoading(true);
     patchTool(toolId, formData)
       .then(() => SuccessToast(t.successUpdate))
       .catch(() => {
         ErrorToast(t.errorConnection);
+      })
+      .finally(() => {
+        setIsLoading(false);
       });
   };
 
