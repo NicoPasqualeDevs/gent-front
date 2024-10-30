@@ -3,7 +3,7 @@ import { Card, CardContent, CardActions, Divider, styled } from "@mui/material";
 export const BasicCard = styled(Card)(({ theme }) => ({
   alignItems: "start",
   justifyContent: "start",
-  background: theme.palette.secondary.dark,
+  background: theme.palette.divider,
   border: `1px solid ${theme.palette.primary.main}`,
   marginBottom: "24px",
 }));

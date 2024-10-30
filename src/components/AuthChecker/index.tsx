@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
+import { useEffect } from "react"
 import { useAppContext } from "@/context/app";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, } from "react-router-dom";
 
 type Props = {
   children: React.ReactNode | React.ReactNode[];
@@ -10,7 +11,7 @@ const AuthChecker: React.FC<Props> = ({ children }) => {
   const { auth } = useAppContext();
   useEffect(() => {
     if (!auth.user) {
-      navigate("/auth/admLogin");
+      navigate("/auth/login");
     }
   }, [auth]);
 

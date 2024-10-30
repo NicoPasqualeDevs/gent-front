@@ -1,0 +1,177 @@
+const randomGreeting = (): string => {
+  const grüße = [
+    "Hallo! Wie geht es Ihnen?",
+    "Willkommen! Wie kann ich Ihnen helfen?",
+    "Grüß Gott! Wie läuft Ihr Tag?",
+    "Schön Sie zu sehen! Wie geht es Ihnen?"
+  ];
+  return grüße[Math.floor(Math.random() * grüße.length)];
+};
+
+const de = {
+  greeting: "Hallo",
+  farewell: "Auf Wiedersehen",
+  actionAllower: {
+    fieldRequired: "Dieses Feld ist erforderlich",
+    confirmAction: "Aktion bestätigen",
+    confirmation: "Bestätigung",
+    write: "Schreiben Sie",
+    confirm: "Bestätigen",
+    cancel: "Abbrechen"
+  },
+  leftMenu: {
+    aiTeams: "KI-Teams",
+    registerTeam: "Neues Team",
+    logout: "Abmelden",
+    logoutSuccess: "Sie haben sich erfolgreich abgemeldet",
+    registerUser: "Neuer Benutzer",
+    tools: "Werkzeuge",
+    workShop: "Werkstatt"
+  },
+  aiTeamsForm: {
+    editTitle: "KI-Teams-Team bearbeiten",
+    createTitle: "Neues KI-Teams-Team registrieren",
+    teamName: "Teamname",
+    address: "Adresse",
+    description: "Beschreibung",
+    edit: "Bearbeiten",
+    register: "Registrieren",
+    fieldRequired: "Dieses Feld ist erforderlich",
+    successUpdate: "Kunde erfolgreich aktualisiert",
+    successCreate: "Kunde erfolgreich erstellt",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    selectUser: "Benutzer auswählen",
+    noUsersAvailable: "Keine Benutzer verfügbar",
+    currentUser: "Aktueller Benutzer"
+  },
+  aiTeamsList: {
+    newAiTeam: "Neues KI-Team",
+    searchPlaceholder: "KI-Team suchen",
+    yourAiTeams: "Ihre KI-Teams",
+    perPage: "pro Seite",
+    manageTeam: "Team verwalten",
+    edit: "Bearbeiten",
+    noTeamsFound: "Keine KI-Teams mit diesem Namen gefunden",
+    noTeamsToShow: "Keine KI-Teams zum Anzeigen",
+    teamsCount: "von {total} KI-Teams",
+    successDelete: "Kunde erfolgreich gelöscht",
+    owner: "Eigentümer"
+  },
+  iaPanel: {
+    createAgent: "Agent erstellen",
+    searchPlaceholder: "KI-Agent suchen",
+    agentsOf: "Agenten von {clientName}",
+    perPage: "pro Seite",
+    noAgentsFound: "Keine KI-Agenten mit diesem Namen gefunden",
+    noAgentsToShow: "Keine KI-Agenten zum Anzeigen",
+    agentsCount: "von {total} KI-Agenten",
+    testAgent: "Testen",
+    useAPI: "API verwenden",
+    widget: "Widget",
+    configuration: "Konfiguration",
+    data: "Daten",
+    customization: "Anpassung",
+    tools: "Werkzeuge",
+    deleteSuccess: "Chatbot erfolgreich gelöscht",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    errorLoadingClient: "Fehler beim Laden der aiTeamId in dieser Ansicht",
+    errorDeletingBot: "Fehler beim Laden der botId zum Löschen",
+    edit: "Bearbeiten",
+    created: "Erstellt am: {date}",
+    implementation: "Implementierung"
+  },
+  chatView: {
+    agentPanel: "Panel von {agentName}",
+    defaultAgentName: "KI-Agent",
+    history: "Verlauf",
+    comingSoon: "(Demnächst verfügbar)",
+    noMessages: randomGreeting(),
+    inputPlaceholder: "Geben Sie Ihre Nachricht für den KI-Agenten ein...",
+    sendButton: "Senden",
+    finishSession: "Sitzung beenden",
+    assistant: "KI-Assistent",
+    user: "Benutzer",
+    errorLoadingAgent: "Agentendaten konnten nicht geladen werden",
+    errorLoadingHistory: "Chatverlauf konnte nicht geladen werden",
+    errorSendingMessage: "Nachricht konnte nicht gesendet werden",
+    errorClosingChat: "Chat konnte nicht geschlossen werden: Fehlende Konversations-ID",
+    errorCleaningChat: "Chat konnte nicht vollständig bereinigt werden",
+    unexpectedError: "Beim Schließen des Chats ist ein unerwarteter Fehler aufgetreten",
+    errorLoadingData: "Chatdaten konnten nicht geladen werden",
+    historicalView: "Sie sehen einen Konversationsverlauf",
+    returnToCurrent: "Zurück zur aktuellen Konversation"
+  },
+  notFound: {
+    title: "404 - Seite nicht gefunden",
+    message: "Entschuldigung, die gesuchte Seite existiert nicht.",
+    redirectMessage: "Sie werden in {countdown} Sekunden zur vorherigen Seite weitergeleitet."
+  },
+  login: {
+    title: "Gents",
+    subtitle: "KI-basiertes Projekt von Nicolas Pasquale",
+    version: "v 0.1",
+    rotatingTexts: [
+      "Erstellen und teilen Sie KI-Agenten",
+      "Implementieren Sie schnell und einfach",
+      "Vermarkten Sie KI-Lösungen",
+      "Importieren und veröffentlichen Sie Ihre Lösung",
+    ],
+    emailLabel: "E-Mail-Adresse",
+    passwordLabel: "Passwort",
+    loginButton: "Anmelden",
+    registerPrompt: "Noch kein Konto?",
+    registerLink: "Registrieren",
+    startButton: "Beginnen",
+    invalidEmail: "Ungültige E-Mail-Adresse",
+    invalidCredentials: "Ungültige Anmeldedaten",
+    fieldRequired: "Dieses Feld ist erforderlich",
+    connectionError: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
+  },
+  toolsForm: {
+    required: "Dieses Feld ist erforderlich",
+    onlyPyFiles: "Nur .py-Dateien sind erlaubt",
+    createSuccess: "Werkzeug erfolgreich erstellt",
+    updateSuccess: "Werkzeug erfolgreich aktualisiert",
+    connectionError: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    fileError: "Fehler beim Laden der Datei",
+    editTool: "Werkzeug {toolName} bearbeiten",
+    createNewTool: "Neues Werkzeug erstellen",
+    toolName: "Werkzeugname",
+    toolType: "Werkzeugtyp",
+    instructions: "Anweisungen",
+    toolFile: "Werkzeugdatei",
+    update: "Aktualisieren",
+    create: "Erstellen",
+    edit: "Bearbeiten",
+    toolNotFound: "Werkzeug nicht gefunden",
+    toolNotFoundMessage: "Entschuldigung, das gesuchte Werkzeug existiert nicht oder wurde entfernt.",
+    backToTools: "Zurück zu Werkzeugen",
+    aiTeam: "Kunde",
+    fieldRequired: "Dieses Feld ist erforderlich",
+    successUpdate: "Werkzeug erfolgreich aktualisiert",
+    successCreate: "Werkzeug erfolgreich erstellt",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    editTitle: "Werkzeug {toolName} bearbeiten",
+    createTitle: "Neues Werkzeug erstellen",
+    selectUser: "Benutzer auswählen",
+    currentUser: "Aktueller Benutzer"
+  },
+
+  tools: {
+    errorToken: "Authentifizierungsfehler",
+    errorLoading: "Fehler beim Laden der Werkzeuge",
+    tools: "Werkzeuge",
+    libraryTitle: "Werkzeugbibliothek",
+    relatedTitle: "Zugehörige Werkzeuge",
+    type: "Typ",
+    relateButton: "Zuordnen",
+    unrelateButton: "Zuordnung aufheben",
+    successRelate: "Werkzeug erfolgreich zugeordnet",
+    successUnrelate: "Zuordnung des Werkzeugs erfolgreich aufgehoben",
+    errorRelate: "Fehler beim Zuordnen des Werkzeugs",
+    errorUnrelate: "Fehler beim Aufheben der Zuordnung des Werkzeugs",
+    createToolButton: "Werkzeug erstellen"
+  }
+};
+
+export default de;

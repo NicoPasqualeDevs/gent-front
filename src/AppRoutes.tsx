@@ -1,23 +1,61 @@
 import { lazy } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Box } from "@mui/material";
+import { Outlet, Routes, Route } from "react-router-dom";
+import BackgroundLines from "./styles/components/BackgroundLines"; // Importamos el componente
+import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
+import UserLayout from "./components/Layouts/User/UserLayout";
+
+const ChatViewModule = lazy(() => import("./pages/Builder/ChatView"));/* import AuthChecker from "./components/AuthChecker"; */
 
 const HomeModule = lazy(() => import("./modules/home"));
 const AuthModule = lazy(() => import("./modules/auth"));
-const BotsDetailsModule = lazy(() => import("./modules/bots"));
-const ClientsModule = lazy(() => import("./modules/clients"));
-const ChatViewModule = lazy(() => import("./modules/chatView"));
-//const KnowledgeBaseModule = lazy(() => import("./modules/knowledgeBase"));
+const BuilderModule = lazy(() => import("./modules/builder"));
+const NotFoundModule = lazy(() => import("./modules/notFound"));
 
-function App() {
+const BuilderL = (
+  <BuilderLayout>
+    <Outlet />
+  </BuilderLayout>
+);
+
+const UserL = (
+  <UserLayout>
+    <Outlet />
+  </UserLayout>
+);
+
+function AppRoutes() {
   return (
-    <Routes>
-        <Route path={"/*"} index element={<HomeModule />} />
-        <Route path={"/bots/*"} index element={<BotsDetailsModule />} />
-        <Route path={"/clients/*"} index element={<ClientsModule />} />
-        <Route path={"/auth/*"} element={<AuthModule />} />
-      <Route path={"/bots/chat/:botId"} element={<ChatViewModule />} />
-    </Routes>
+    <>
+      <BackgroundLines />
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0, // Cambiado de height a bottom para cubrir toda la pantalla
+          overflow: 'hidden',
+          zIndex: -1,
+          pointerEvents: 'none', // Permite que los clics pasen a través de la nieve
+        }}
+      >
+      </Box>
+      <Routes>
+        <Route path="/">
+          <Route path="auth/*" element={<AuthModule />} />
+          <Route path="builder/*" element={BuilderL}>
+            <Route path="*" element={<BuilderModule />} />
+          </Route>
+          <Route path="home" element={UserL}>
+            <Route index element={<HomeModule />} />
+          </Route>
+          <Route path="*" element={<NotFoundModule />} />
+          <Route path="builder/agents/chat/:botId" element={<ChatViewModule />} />
+        </Route>
+      </Routes>
+    </>
   );
 }
 
-export default App;
+export default AppRoutes;

@@ -1,0 +1,178 @@
+const randomGreeting = (): string => {
+  const saudacoes = [
+    "Olá! Como você está?",
+    "Bem-vindo! Em que posso ajudar?",
+    "Saudações! Como está seu dia?",
+    "Que bom ver você! Como vai?"
+  ];
+  return saudacoes[Math.floor(Math.random() * saudacoes.length)];
+};
+
+const br = {
+  greeting: "Olá",
+  farewell: "Tchau",
+  actionAllower: {
+    fieldRequired: "Este campo é obrigatório",
+    confirmAction: "Confirme a Ação",
+    confirmation: "Confirmação",
+    write: "Escreva",
+    confirm: "Confirmar",
+    cancel: "Cancelar"
+  },
+  leftMenu: {
+    aiTeams: "Equipes de IA",
+    registerTeam: "Nova equipe",
+    logout: "Sair",
+    logoutSuccess: "Você saiu com sucesso",
+    registerUser: "Novo Usuário",
+    tools: "Ferramentas",
+    workShop: "Oficina"
+  },
+  aiTeamsForm: {
+    editTitle: "Editar equipe de Equipes IA",
+    createTitle: "Registrar nova equipe de Equipes IA",
+    teamName: "Nome da Equipe",
+    address: "Endereço",
+    description: "Descrição",
+    edit: "Editar",
+    register: "Registrar",
+    fieldRequired: "Este campo é obrigatório",
+    successUpdate: "Cliente atualizado com sucesso",
+    successCreate: "Cliente criado com sucesso",
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
+    selectUser: "Selecionar usuário",
+    noUsersAvailable: "Nenhum usuário disponível",
+    currentUser: "Usuário atual"
+  },
+  aiTeamsList: {
+    newAiTeam: "Nova Equipe IA",
+    searchPlaceholder: "Buscar Equipe IA",
+    yourAiTeams: "Suas equipes de IA",
+    perPage: "por página",
+    manageTeam: "Gerenciar Equipe",
+    edit: "Editar",
+    noTeamsFound: "Nenhuma Equipe IA encontrada com esse nome",
+    noTeamsToShow: "Nenhuma Equipe IA para mostrar",
+    teamsCount: "de {total} Equipes IA",
+    successDelete: "Cliente excluído com sucesso",
+    owner: "Proprietário",
+  },
+  iaPanel: {
+    createAgent: "Criar Agente",
+    searchPlaceholder: "Buscar Agente IA",
+    agentsOf: "Agentes de {clientName}",
+    perPage: "por página",
+    noAgentsFound: "Nenhum Agente IA encontrado com esse nome",
+    noAgentsToShow: "Nenhum Agente IA para mostrar",
+    agentsCount: "de {total} Agentes IA",
+    testAgent: "Testar",
+    useAPI: "Usar API",
+    widget: "Widget",
+    configuration: "Configuração",
+    data: "Dados",
+    customization: "Personalização",
+    tools: "Ferramentas",
+    deleteSuccess: "Chatbot excluído com sucesso",
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
+    errorLoadingClient: "Erro ao carregar aiTeamId nesta visualização",
+    errorDeletingBot: "Erro ao carregar botId para exclusão",
+    edit: "Editar",
+    created: "Criado em: {date}",
+    implementation: "Implementação"
+  },
+  chatView: {
+    agentPanel: "Painel de {agentName}",
+    defaultAgentName: "Agente IA",
+    history: "Histórico",
+    comingSoon: "(Em breve)",
+    noMessages: randomGreeting(),
+    inputPlaceholder: "Digite sua mensagem para o agente IA...",
+    sendButton: "Enviar",
+    finishSession: "Finalizar Sessão",
+    assistant: "Assistente IA",
+    user: "Usuário",
+    errorLoadingAgent: "Não foi possível carregar os dados do agente",
+    errorLoadingHistory: "Não foi possível carregar o histórico do chat",
+    errorSendingMessage: "Não foi possível enviar a mensagem",
+    errorClosingChat: "Não foi possível fechar o chat: ID de conversa ausente",
+    errorCleaningChat: "Não foi possível limpar o chat completamente",
+    unexpectedError: "Ocorreu um erro inesperado ao fechar o chat",
+    errorLoadingData: "Não foi possível carregar os dados do chat",
+    historicalView: "Você está visualizando um histórico de conversa",
+    returnToCurrent: "Retornar à conversa atual"
+  },
+  notFound: {
+    title: "404 - Página Não Encontrada",
+    message: "Desculpe, a página que você está procurando não existe.",
+    redirectMessage: "Você será redirecionado para a página anterior em {countdown} segundos."
+  },
+  login: {
+    title: "Gents",
+    subtitle: "Projeto baseado em IA por Nicolas Pasquale",
+    version: "v 0.1",
+    rotatingTexts: [
+      "Crie e compartilhe agentes de IA",
+      "Implemente rápido e fácil",
+      "Comercialize soluções de IA",
+      "Importe e publique sua soluço",
+    ],
+    emailLabel: "E-mail",
+    passwordLabel: "Senha",
+    loginButton: "Entrar",
+    registerPrompt: "Ainda não tem uma conta?",
+    registerLink: "Registre-se",
+    startButton: "Começar",
+    invalidEmail: "E-mail inválido",
+    invalidCredentials: "Credenciais inválidas",
+    fieldRequired: "Este campo é obrigatório",
+    connectionError: "Erro: Não foi possível estabelecer conexão com o servidor"
+  },
+  toolsForm: {
+    required: "Este campo é obrigatório",
+    onlyPyFiles: "Apenas arquivos .py são permitidos",
+    createSuccess: "Ferramenta criada com sucesso",
+    updateSuccess: "Ferramenta atualizada com sucesso",
+    connectionError: "Erro: Não foi possível estabelecer conexão com o servidor",
+    fileError: "Erro ao carregar o arquivo",
+    editTool: "Editar ferramenta {toolName}",
+    createNewTool: "Criar nova ferramenta",
+    toolName: "Nome da ferramenta",
+    toolType: "Tipo de ferramenta",
+    instructions: "Instruções",
+    toolFile: "Arquivo da ferramenta",
+    update: "Atualizar",
+    create: "Criar",
+    edit: "Editar",
+    toolNotFound: "Ferramenta não encontrada",
+    toolNotFoundMessage: "Desculpe, a ferramenta que você está procurando não existe ou foi removida.",
+    backToTools: "Voltar para Ferramentas",
+    aiTeam: "Cliente",
+    fieldRequired: "Este campo é obrigatório",
+    successUpdate: "Ferramenta atualizada com sucesso",
+    successCreate: "Ferramenta criada com sucesso",
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
+    editTitle: "Editar ferramenta {toolName}",
+    createTitle: "Criar nova ferramenta",
+    selectUser: "Selecionar usuário",
+    currentUser: "Usuário atual"
+  },
+  tools: {
+    libraryTitle: "Biblioteca de Ferramentas",
+    relatedTitle: "Ferramentas Relacionadas",
+    type: "Tipo",
+    relateButton: "Relacionar",
+    unrelateButton: "Desvincular",
+    successRelate: "Ferramenta relacionada com sucesso",
+    successUnrelate: "Ferramenta desvinculada com sucesso",
+    errorRelate: "Erro ao relacionar ferramenta",
+    errorUnrelate: "Erro ao desvincular ferramenta",
+    errorToken: "Erro de autenticação",
+    errorLoading: "Erro ao carregar ferramentas",
+    createToolButton: "Criar Ferramenta"
+  }
+};
+
+export default br;
+
+
+

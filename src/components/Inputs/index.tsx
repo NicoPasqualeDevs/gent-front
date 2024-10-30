@@ -9,6 +9,7 @@ import {
   styled,
   TextField,
   Typography,
+  Select,
 } from "@mui/material";
 import { useState } from "react";
 import { ErrorToast } from "../Toast";
@@ -19,6 +20,7 @@ import {
   MultilineInputProps,
   PasswordInputProps,
   TextInputProps,
+  SelectInputProps,
 } from "@/types/Inputs";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -61,7 +63,7 @@ const StyledMultilineTextField = styled(TextField)(({ theme }) => ({
     color: theme.palette.primary.main,
     fontSize: "100%",
     paddingRight: "1%",
-    backgroundColor: "#0c0c22",
+    backgroundColor: "transparent",
   },
   "& label.Mui-focused": {
     color: theme.palette.primary.main,
@@ -143,6 +145,22 @@ const StyledPasswordIconButton = styled(Button)(({ theme }) => ({
 
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
   color: theme.palette.primary.main,
+}));
+
+const StyledSelect = styled(Select)(({ theme }) => ({
+  color: "white",
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "white",
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: theme.palette.primary.main,
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: theme.palette.primary.main,
+  },
+  "& .MuiSelect-icon": {
+    color: theme.palette.primary.main,
+  },
 }));
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -332,10 +350,10 @@ export const FileInput: React.FC<FileInputProps> = ({
   value,
 }) => {
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const allowedFileTypes = ["text/x-python"];
+    const allowedFileTypes = ["text/x-python", "application/x-python-code", "text/plain"];
     const files = (e.target as HTMLInputElement).files;
     if (files && files.length > 0) {
-      if (allowedFileTypes.includes(files[0].type)) {
+      if (allowedFileTypes.includes(files[0].type) || files[0].name.endsWith('.py')) {
         onChange({
           target: {
             name,
@@ -427,6 +445,49 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
         <StyledCheckbox name={name} onChange={onChange} defaultChecked />
       ) : (
         <StyledCheckbox name={name} onChange={onChange} />
+      )}
+    </Box>
+  );
+};
+
+export const SelectInput: React.FC<SelectInputProps> = ({
+  name,
+  label,
+  value,
+  onChange,
+  children,
+  helperText,
+}) => {
+  return (
+    <Box>
+      <Typography
+        sx={{
+          color: theme.palette.primary.main,
+          marginBottom: "8px",
+          fontSize: "16px",
+        }}
+      >
+        {label}
+      </Typography>
+      <StyledSelect
+        name={name}
+        value={value}
+        onChange={onChange}
+        fullWidth
+        displayEmpty
+      >
+        {children}
+      </StyledSelect>
+      {helperText && (
+        <Typography
+          sx={{
+            color: theme.palette.error.main,
+            fontSize: "12px",
+            marginTop: "4px",
+          }}
+        >
+          {helperText}
+        </Typography>
       )}
     </Box>
   );

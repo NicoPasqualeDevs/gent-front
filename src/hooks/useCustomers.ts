@@ -1,63 +1,79 @@
 import useApi from "@/hooks/useApi.ts";
-import { ClientDetails } from "@/types/Clients";
+import { AiTeamsDetails } from "@/types/AiTeams";
 import { ApiResponseList } from "@/types/Api";
 
-type UseCustomersApiHook = {
-  getCustomerList: (
+type UseAiTeamsApiHook = {
+  getAiTeamsList: (
     filterParams: string
-  ) => Promise<ApiResponseList<ClientDetails>>;
-  getClientDetails: (clientId: string) => Promise<ClientDetails>;
-  postClientDetails: (data: ClientDetails) => Promise<ClientDetails>;
-  putClientDetails: (
-    data: ClientDetails,
-    clientId: string
-  ) => Promise<ClientDetails>;
-  deleteClientDetails: (clientId: string) => Promise<Response>;
+  ) => Promise<ApiResponseList<AiTeamsDetails>>;
+  getAiTeamDetails: (aiTeamId: string) => Promise<AiTeamsDetails>;
+  postAiTeamDetails: (data: AiTeamsDetails) => Promise<AiTeamsDetails>;
+  putAiTeamDetails: (
+    data: AiTeamsDetails,
+    aiTeamId: string
+  ) => Promise<AiTeamsDetails>;
+  deleteAiTeamDetails: (aiTeamId: string) => Promise<{ message: string }>;
+  getMyAiTeams: (filterParams: string) => Promise<ApiResponseList<AiTeamsDetails>>;
+  getAiTeamsByOwner: (owner: string, filterParams: string) => Promise<ApiResponseList<AiTeamsDetails>>;
 };
 
-const useCustomersApi = (): UseCustomersApiHook => {
+const useAiTeamsApi = (): UseAiTeamsApiHook => {
   const { apiPut, apiPost, apiGet, apiDelete } = useApi();
 
   // GETS
-  const getCustomerList = (
+  const getAiTeamsList = (
     filterParams: string
-  ): Promise<ApiResponseList<ClientDetails>> => {
-    const path = `api/client/actions/${filterParams}`;
-    return apiGet<ApiResponseList<ClientDetails>>(path);
+  ): Promise<ApiResponseList<AiTeamsDetails>> => {
+    const path = `api/team_details/${filterParams}`;
+    return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
-  const getClientDetails = (clientId: string): Promise<ClientDetails> => {
-    const path = `api/client/actions/${clientId}/`;
-    return apiGet<ClientDetails>(path);
+  const getAiTeamDetails = (aiTeamId: string): Promise<AiTeamsDetails> => {
+    const path = `api/team_details/${aiTeamId}`;
+    return apiGet<AiTeamsDetails>(path);
+  };
+
+  const getMyAiTeams = (filterParams: string): Promise<ApiResponseList<AiTeamsDetails>> => {
+    const path = `api/team_details/my_clients/${filterParams}`;
+    return apiGet<ApiResponseList<AiTeamsDetails>>(path);
+  };
+
+  const getAiTeamsByOwner = (owner: string, filterParams: string): Promise<ApiResponseList<AiTeamsDetails>> => {
+    // Corregir la construcción de la URL
+    const path = `api/team_details/list_by_owner/${filterParams ? `?${filterParams}&` : '?'}owner=${owner}`;
+    return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
   // POST
-  const postClientDetails = (data: ClientDetails): Promise<ClientDetails> => {
-    const path = "api/client/actions/";
+  const postAiTeamDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
+    const path = `api/team_details/create_client/`;
     return apiPost(path, data);
   };
 
   // PUTS
-  const putClientDetails = (
-    data: ClientDetails,
-    clientId: string
-  ): Promise<ClientDetails> => {
-    const path = `api/client/actions/${clientId}/`;
+  const putAiTeamDetails = (
+    data: AiTeamsDetails,
+    aiTeamId: string
+  ): Promise<AiTeamsDetails> => {
+    const path = `api/team_details/${aiTeamId}/`;
     return apiPut(path, data);
   };
 
-  const deleteClientDetails = (clientId: string): Promise<Response> => {
-    const path = `api/client/actions/${clientId}/`;
-    return apiDelete(path);
+  // DELETE
+  const deleteAiTeamDetails = (aiTeamId: string): Promise<{ message: string }> => {
+    const path = `api/team_details/${aiTeamId}/`;
+    return apiDelete(path).then(response => response.json());
   };
 
   return {
-    getCustomerList,
-    getClientDetails,
-    postClientDetails,
-    putClientDetails,
-    deleteClientDetails,
+    getAiTeamsList,
+    getAiTeamDetails,
+    postAiTeamDetails,
+    putAiTeamDetails,
+    deleteAiTeamDetails,
+    getMyAiTeams,
+    getAiTeamsByOwner,
   };
 };
 
-export default useCustomersApi;
+export default useAiTeamsApi;

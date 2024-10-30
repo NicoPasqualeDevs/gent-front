@@ -1,4 +1,5 @@
 import { BaseSyntheticEvent } from "react";
+import { SelectProps } from "@mui/material";
 
 export interface InputProps {
   name: string;
@@ -41,4 +42,10 @@ export interface FileInputProps {
 
 export interface CheckboxInputProps extends InputProps {
   value?: boolean;
+}
+
+export interface SelectInputProps extends Omit<SelectProps, "variant"> {
+  name: string;
+  label: string;
+  helperText?: string;
 }

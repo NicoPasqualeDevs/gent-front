@@ -1,8 +1,8 @@
+import theme from "@/styles/theme";
 import React from "react";
 import AppRoutes from "./AppRoutes.tsx";
 import { AppProvider } from "@/context/app";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import theme from "@/styles/theme";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";

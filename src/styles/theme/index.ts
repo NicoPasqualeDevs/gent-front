@@ -1,60 +1,49 @@
-import { createTheme, responsiveFontSizes } from "@mui/material";
+import { createTheme as createThemeDefault, responsiveFontSizes } from "@mui/material/styles";
 
-let theme = createTheme({
+let theme = createThemeDefault({
   typography: {
     fontFamily: "Nunito",
     fontSize: 13,
     h1: {
-      color: "#8BE067", //primary.main.
+      color: "#EACBDF", // Magenta pastel con toque de lila y más brillo
     },
-    h2: {
-      color: "#8BE067", //primary.main.
-    },
-    h3: {
-      color: "#8BE067", //primary.main.
-    },
-    h4: {
-      color: "#8BE067", //primary.main.
-    },
-    h5: {
-      color: "#8BE067", //primary.main.
-    },
-    h6: {
-      color: "#8BE067", //primary.main.
-    },
+    // ... aplicar el mismo color magenta pastel a h2-h6 ...
     body1: {
-      color: "#FFFFFF",
+      color: "#8CCBC8", // Mantenemos el turquesa como está
       textAlign: "justify",
     },
     body2: {
-      color: "#8BE067", //primary.main
+      color: "#FFFFFF", // Gris medio-oscuro
       textAlign: "justify",
     },
     subtitle1: {
-      color: "#8BE067", //primary.main.
+      color: "#E2BFD3", // Magenta pastel con toque de lila y más brillo
     },
     subtitle2: {
       color: "#FFFFFF",
     },
   },
   palette: {
+    mode: "dark", // Cambiamos el modo a oscuro
     primary: {
-      main: "#8BE067",
-      light: "#A2E685",
-      dark: "#619C48",
-      contrastText: "#15163B", //secondary.dark.
+      main: "#D27B9A", // Magenta pastel principal con toque de lila y más brillo
+      light: "#EACBDF", // Magenta claro pastel con toque de lila y más brillo
+      dark: "#DAB3C7", // Magenta oscuro pastel con toque de lila y más brillo
+      contrastText: "#000000", // Negro
     },
     secondary: {
-      main: "#303287",
-      light: "#546A83",
-      dark: "#15163B",
-      contrastText: "#8BE067", //primary.main.
+      main: "#F5F5F5", // Blanco ahumado
+      light: "#A0E6EC", // Turquesa más claro y brillante
+      dark: "#4A9396", // Turquesa más oscuro y pastel
+      contrastText: "#1A1A1A", // Gris muy oscuro para contraste (sin cambios)
     },
-    info: {
-      main: "#FFFFFF",
-      light: "#F2F4F4",
-      dark: "#F2FAFA",
-      contrastText: "#000000",
+    background: {
+      default: "#101010", // Gris muy oscuro (fondo principal)
+      paper: "#151515", // Gris muy oscuro (elementos de papel)
+    },
+    text: {
+      primary: "#FFFFFF", // Blanco
+      secondary: "#8CCBC8", // Mantenemos el turquesa como está
     },
     error: {
       main: "#F44336",
@@ -67,10 +56,6 @@ let theme = createTheme({
       light: "#E57373",
       dark: "#D32F2F",
       contrastText: "#FFFFFF",
-    },
-    background: {
-      default: "#0C0C22",
-      paper: "#15163B",
     },
   },
   breakpoints: {
@@ -87,7 +72,7 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           fontSize: "1rem",
-          borderRadius: "5px",
+          borderRadius: "20px", // Botones redondeados
           width: "100%",
           height: "100%",
           maxHeight: "50px",
@@ -126,7 +111,9 @@ let theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          border: "1px solid #8BE067", //primary.main.
+          backgroundColor: "#1A1A1A", // Gris muy oscuro para las tarjetas
+          border: "1px solid #E2BFD3", // Borde magenta pastel con toque de lila y más brillo
+          boxShadow: "0 4px 8px rgba(226, 191, 211, 0.2)", // Sombra magenta pastel con toque de lila y más brillo
           marginTop: "0px",
           marginBottom: "20px",
           marginRight: "0px,",
@@ -151,7 +138,7 @@ let theme = createTheme({
     MuiDivider: {
       styleOverrides: {
         root: {
-          borderColor: "#8BE067", //primary.color.
+          borderColor: "#252525", // Divisor gris oscuro
           width: "95%",
           margin: "0 auto",
         },
@@ -161,8 +148,8 @@ let theme = createTheme({
       styleOverrides: {
         root: {
           marginRight: "10px",
-          backgroundColor: "#8BE067", //primary.color
-          color: "#15163B", //primary.contrastText
+          backgroundColor: "#E2BFD3", // Fondo magenta pastel con toque de lila y más brillo
+          color: "#000000", // Texto negro
         },
       },
     },
@@ -173,6 +160,45 @@ let theme = createTheme({
         },
       },
     },
+    MuiCssBaseline: {
+      styleOverrides: `
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        textarea:-webkit-autofill:hover,
+        textarea:-webkit-autofill:focus,
+        select:-webkit-autofill,
+        select:-webkit-autofill:hover,
+        select:-webkit-autofill:focus {
+          -webkit-text-fill-color: #8CCBC8;
+          -webkit-box-shadow: 0 0 0px 1000px rgba(16, 16, 16, 0.01) inset;
+          transition: background-color 5000s ease-in-out 0s;
+        }
+      `,
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        input: {
+          '&:-webkit-autofill': {
+            WebkitBoxShadow: '0 0 0px 1000px rgba(16, 16, 16, 0.01) inset',
+            WebkitTextFillColor: '#8CCBC8',
+          },
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        input: {
+          '&:-webkit-autofill': {
+            WebkitBoxShadow: '0 0 0px 1000px rgba(16, 16, 16, 0.01) inset',
+            WebkitTextFillColor: '#ffffff',
+            borderRadius: 'inherit',
+          },
+        },
+      },
+    },
+  
   },
   transitions: {
     duration: {

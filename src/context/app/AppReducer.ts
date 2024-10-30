@@ -1,13 +1,13 @@
 import { AppContextState, INITIAL_STATE, AppDevice } from "./AppContext.ts";
 import { Breakpoint } from "@mui/material";
 import { AuthUser } from "@/types/Auth.ts";
-import { ClientDetails } from "@/types/Clients.ts";
+import { AiTeamsDetails } from "@/types/AiTeams.ts";
 import { PathData } from "@/types/Pathbar.ts";
 
 type AppContextActions =
-  | { type: "setAuthUser"; payload: AuthUser | null }
+  | { type: "setAuth"; payload: AuthUser | null }
   | { type: "setLoaded"; payload: boolean }
-  | { type: "setCustomersList"; payload: ClientDetails[] }
+  | { type: "setCustomersList"; payload: AiTeamsDetails[] }
   | { type: "setMenu"; payload: boolean }
   | { type: "setBreakPoint"; payload: Breakpoint }
   | { type: "setDevice"; payload: AppDevice }
@@ -17,17 +17,18 @@ type AppContextActions =
   | { type: "setClientPage"; payload: number }
   | { type: "setToolsPage"; payload: number }
   | { type: "setAgentsPage"; payload: number }
-  | { type: "cleanState" };
+  | { type: "cleanState" }
+  | { type: "setLanguage"; payload: string };
 
 export const AppReducer = (
   state: AppContextState,
   action: AppContextActions
 ): AppContextState => {
   switch (action.type) {
-    case "setAuthUser":
+    case "setAuth":
       return {
         ...state,
-        auth: { ...state.auth, user: action.payload },
+        auth: { user: action.payload },
       };
 
     case "cleanState": {
@@ -46,7 +47,7 @@ export const AppReducer = (
     case "setCustomersList": {
       return {
         ...state,
-        clientsList: action.payload,
+        aiTeams: action.payload,
       };
     }
 
@@ -113,6 +114,11 @@ export const AppReducer = (
         agentsPage: action.payload,
       };
     }
+    case "setLanguage":
+      return {
+        ...state,
+        language: action.payload,
+      };
     default:
       return state;
   }

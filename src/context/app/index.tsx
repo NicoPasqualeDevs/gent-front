@@ -2,10 +2,11 @@ import React, { useContext, useReducer } from "react";
 import { AppContext, AppContextState, INITIAL_STATE } from "./AppContext.ts";
 import { AppReducer } from "./AppReducer.ts";
 import { useWidth } from "@/hooks/useWidth.ts";
-import { isWidthDown } from "@mui/material/Hidden/withWidth";
+import { useMediaQuery } from '@mui/material';
 import { AuthUser } from "@/types/Auth.ts";
-import { ClientDetails } from "@/types/Clients.ts";
+import { AiTeamsDetails } from "@/types/AiTeams.ts";
 import { PathData } from "@/types/Pathbar.ts";
+import theme from "@/styles/theme";
 
 interface AppProviderProps {
   children: React.ReactNode | Array<React.ReactNode>;
@@ -17,42 +18,46 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       menu,
       layout,
       loaded,
-      clientsList,
+      aiTeams,
       auth,
       navElevation,
       appNavigation,
       clientPage,
       toolsPage,
       agentsPage,
+      language,
     },
     dispatch,
   ] = useReducer(AppReducer, INITIAL_STATE);
 
   const width = useWidth();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+
   React.useEffect(() => {
     dispatch({ type: "setBreakPoint", payload: width });
 
-    if (isWidthDown("sm", width)) {
+    if (isMobile) {
       dispatch({ type: "setDevice", payload: "mobile" });
-    } else if (isWidthDown("md", width)) {
+    } else if (isTablet) {
       dispatch({ type: "setDevice", payload: "tablet" });
     } else {
       dispatch({ type: "setDevice", payload: "pc" });
     }
-  }, [width]);
+  }, [width, isMobile, isTablet]);
 
-  const setAuthUser = (value: AuthUser | null) => {
-    dispatch({ type: "setAuthUser", payload: value });
+  const setAuth = (value: AuthUser | null) => {
+    dispatch({ type: "setAuth", payload: value });
   };
   const setLogin = (value: AuthUser) => {
-    dispatch({ type: "setAuthUser", payload: value });
+    dispatch({ type: "setAuth", payload: value });
   };
 
   const setLoaded = (value: boolean) => {
     dispatch({ type: "setLoaded", payload: value });
   };
 
-  const setCustomersList = (value: ClientDetails[]) => {
+  const setCustomersList = (value: AiTeamsDetails[]) => {
     dispatch({ type: "setCustomersList", payload: value });
   };
 
@@ -88,24 +93,29 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     dispatch({ type: "setAgentsPage", payload: value });
   };
 
+  const setLanguage = (lang: string) => {
+    dispatch({ type: "setLanguage", payload: lang });
+  };
+
   return (
     <AppContext.Provider
       value={{
         menu,
         layout,
         loaded,
-        clientsList,
+        aiTeams,
         auth,
         navElevation,
         appNavigation,
         clientPage,
         toolsPage,
         agentsPage,
+        language,
         setCustomersList,
         setLogin,
         setLoaded,
         setMenu,
-        setAuthUser,
+        setAuth,
         setNavElevation,
         setAppNavigation,
         replacePath,
@@ -113,6 +123,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         setClientPage,
         setToolsPage,
         setAgentsPage,
+        setLanguage,
       }}
     >
       {children}

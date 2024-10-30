@@ -2,7 +2,7 @@
 
 export interface ChatMessage {
   content: string;
-  role: "user" | "bot";
+  role: "client" | "bot";
   timestamp: string;
 }
 
@@ -10,6 +10,7 @@ export interface ChatHistory {
   customer: string;
   customer_bot: string;
   messages: ChatMessage[];
+  conversation: string;
 }
 
 export interface UpdatedChatHistory {
@@ -19,11 +20,22 @@ export interface UpdatedChatHistory {
   reserve_link?: string;
 }
 
+// Nueva interfaz para ConversationData
+export interface ConversationData {
+  conversation_id: string;
+  customer_bot: string;
+  client_user: string;
+  timestamp: string;
+  messages: ChatMessage[];
+  archived: boolean;
+}
+
 // BOT KDATA
 export interface ContextEntryData {
   name: string;
   description: string;
   prompt_template: string;
+  model_ai: string;
 }
 
 export interface PromptTemplateData {
@@ -43,9 +55,9 @@ export interface Ktag {
   customer_bot: string;
 }
 
-export interface BotData {
-  [propKey: string]: string | undefined | Ktag[];
-  api_bot: string;
+export interface AgentData {
+  [propKey: string]: string | undefined | Ktag[] | null;
+  api_bot: string | null;
   api_details: string;
   description: string;
   id: string;
@@ -53,13 +65,15 @@ export interface BotData {
   labels: Ktag[];
   name: string;
   widget_url: string;
+  model_ai: string 
 }
 
-export interface BotMetaData {
+export interface AgentMetaData {
   [propKey: string]: string | undefined;
   id?: string;
   name: string;
   description: string;
+  model_ai: string 
 }
 
 export interface WidgetData {
@@ -105,14 +119,25 @@ export interface GetCustomGreetingData {
 }
 
 export interface ToolData {
-  [propKey: string]: string | File | undefined;
+  [propKey: string]: string | File | undefined | string[];
   id?: string;
   tool_name: string;
   type?: string;
   tool_code?: string | File;
   instruction?: string;
+  user_id?: string;  // Cambiamos aiTeam_id por user_id
 }
 
 export interface ToolRelationshipData {
   agent_tool_ids: number[];
+}
+
+export interface AiTeam {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  code: string;
+  user_email: string;
+  // Añade cualquier otro campo que pueda tener un cliente
 }

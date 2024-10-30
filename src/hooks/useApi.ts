@@ -4,305 +4,181 @@ import { useAppContext } from "@/context/app";
 type UseApiHook = {
   token?: string | null;
   apiBase: string;
-  buildUri: <Q = Record<string, string>>(
-    path: string,
-    query?: Q,
-    headers?: HeadersInit
-  ) => string;
-  apiPost: <B = unknown, R = unknown>(
-    path: string,
-    body: B,
-    headers?: HeadersInit
-  ) => Promise<R>;
-  noBodyApiPost: <R = unknown>(
-    path: string,
-    headers?: HeadersInit
-  ) => Promise<R>;
-  apiPut: <B = unknown, R = unknown>(
-    path: string,
-    body: B,
-    headers?: HeadersInit
-  ) => Promise<R>;
-  apiPatch: <B = unknown, R = unknown>(
-    path: string,
-    body: B,
-    headers?: HeadersInit
-  ) => Promise<R>;
-  apiGet: <R = unknown, Q = Record<string, string>>(
-    path: string,
-    query?: Q,
-    headers?: HeadersInit
-  ) => Promise<R>;
-  noAuthGet: <R = unknown, Q = Record<string, string>>(
-    path: string,
-    query?: Q,
-    headers?: HeadersInit
-  ) => Promise<R>;
+  buildUri: <Q = Record<string, string>>(path: string, query?: Q) => string;
+  apiPost: <B = unknown, R = unknown>(path: string, body: B, headers?: HeadersInit) => Promise<R>;
+  noAuthPost: <B = unknown, R = unknown>(path: string, body: B, headers?: HeadersInit) => Promise<R>;
+  noBodyApiPost: <R = unknown>(path: string) => Promise<R>;
+  apiPut: <B = unknown, R = unknown>(path: string, body: B) => Promise<R>;
+  apiPatch: <B = unknown, R = unknown>(path: string, body: B, headers?: HeadersInit) => Promise<R>;
+  apiGet: <R = unknown, Q = Record<string, string>>(path: string, query?: Q) => Promise<R>;
+  noAuthGet: <R = unknown, Q = Record<string, string>>(path: string, query?: Q) => Promise<R>;
   apiDelete: (path: string) => Promise<Response>;
 };
 
 const useApi = (): UseApiHook => {
-  const {
-    auth: { user },
-  } = useAppContext();
-  const token = user?.token; // || sessionStorage.getItem("user_token");
-  const apiBase =  "https://helpiabot.com/";
+  const { auth: { user } } = useAppContext();
+  const token = user?.token;
+  const apiBase = "http://127.0.0.1:8000/";
 
-  const buildUri = <Q = Record<string, string>>(
-    path: string,
-    query?: Q
-  ): string => {
-    const fullUrl = `${apiBase}${path}`;
-    const keys: Array<keyof Q> = query
-      ? (Object.keys(query) as Array<keyof Q>)
-      : [];
-    if (query && keys.length > 0) {
-      const params = new URLSearchParams();
-
-      for (const k of keys) {
-        if (query[k]) {
-          params.append(String(k), String(query[k]));
+  // Función para obtener el token CSRF
+  const getCsrfToken = async (): Promise<string | null> => {
+    try {
+      const response = await fetch(`${apiBase}api/csrf/`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
         }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch CSRF token');
       }
-      return fullUrl.concat(`?${params.toString()}`);
+
+      const data = await response.json();
+      // Usamos el token que viene en el JSON en lugar de buscar en las cookies
+      if (data && data.csrfToken) {
+        return data.csrfToken;
+      }
+      
+      throw new Error('No CSRF token in response');
+    } catch (error) {
+      console.error('Error getting CSRF token:', error);
+      return null;
     }
-    return fullUrl;
   };
 
-  const noBodyApiPost = React.useCallback(
-    <R>(path: string): Promise<R> => {
-      return new Promise((resolve, reject) => {
-        fetch(buildUri(path), {
-          method: "POST",
-          headers: {
-            //...(token && {Authorization: `Bearer ${token}`}),
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-          .then(async (resp) => {
-            if (resp.status === 200 || resp.status === 201) {
-              return resolve(await resp.json());
-            }
-            return reject(
-              new Error(`Status: [${resp.status}] ${await resp.json()}`)
-            );
-          })
-          .catch((err) => reject(err));
-      });
-    },
-    [
-      /* token */
-    ]
-  );
+  const buildUri = <Q = Record<string, string>>(path: string, query?: Q): string => {
+    // Removemos la barra inicial de path si existe para evitar doble barra
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    
+    // Si el path ya incluye parámetros de consulta, no añadimos más
+    if (cleanPath.includes('?')) {
+      return `${apiBase}${cleanPath}`;
+    }
+    
+    const fullUrl = `${apiBase}${cleanPath}`;
+    
+    if (!query) return fullUrl;
 
-  const apiPost = React.useCallback(
-    <B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => {
-      return new Promise((resolve, reject) => {
-        const fetch_header: HeadersInit = {
-          Authorization: `Token ${token}`,
-        };
-        if (!headers) {
-          fetch_header["Content-Type"] = "application/json";
-        }
-        const isFormData = body instanceof FormData;
-        fetch(buildUri(path), {
-          method: "POST",
-          body: isFormData ? (body as FormData) : JSON.stringify(body),
-          headers: fetch_header,
-          //{
-          //...(token && {Authorization: `Bearer ${token}`}),
-          //Authorization: `Token ${token}`,
-          //"Content-Type": "application/json",
-          //},
-        })
-          .then(async (resp) => {
-            if (resp.status === 200 || resp.status === 201) {
-              return resolve(await resp.json());
-            }
-            return reject({
-              status: resp.status,
-              error: resp.statusText,
-              data: await resp.json(),
-            });
-          })
-          .catch((err) => reject(err));
-      });
-    },
-    [
-      /* token */
-    ]
-  );
+    const params = new URLSearchParams();
+    Object.entries(query).forEach(([key, value]) => {
+      if (value) params.append(key, String(value));
+    });
+    return `${fullUrl}?${params.toString()}`;
+  };
 
-  const apiPut = React.useCallback(
-    <B, R>(path: string, body: B /* headers?: HeadersInit */): Promise<R> => {
-      return new Promise((resolve, reject) => {
-        fetch(buildUri(path), {
-          method: "PUT",
-          body: JSON.stringify(body),
-          headers: {
-            //...(token && {Authorization: `Bearer ${token}`}),
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-            //...(headers && { ...headers }),
-          },
-        })
-          .then(async (resp) => {
-            if (resp.status === 200 || resp.status === 201) {
-              return resolve(await resp.json());
-            }
-            return reject(
-              new Error(`Status: [${resp.status}] ${await resp.json()}`)
-            );
-          })
-          .catch((err) => {
-            reject(err);
+  const createHeaders = async (additionalHeaders?: HeadersInit): Promise<HeadersInit> => {
+    const csrfToken = await getCsrfToken();
+    if (!csrfToken) {
+      throw new Error('No se pudo obtener el token CSRF');
+    }
+    
+    const headers: HeadersInit = {
+      'Accept': 'application/json',
+      'X-CSRFToken': csrfToken,
+    };
+
+    // Solo agregar Content-Type si no es FormData
+    if (!additionalHeaders || !(additionalHeaders as Record<string, string>)['Content-Type']) {
+      headers['Content-Type'] = 'application/json';
+    }
+
+    if (token) {
+      headers['Authorization'] = `Token ${token}`;
+    }
+
+    return {
+      ...headers,
+      ...additionalHeaders,
+    };
+  };
+
+  const handleResponse = async <R>(response: Response): Promise<R> => {
+    if (response.ok) {
+      return await response.json();
+    }
+    throw {
+      status: response.status,
+      error: response.statusText,
+      data: await response.json(),
+    };
+  };
+
+  const apiCall = React.useCallback(
+    async <R>(method: string, path: string, body?: unknown, headers?: HeadersInit): Promise<R> => {
+      if (!path) {
+        throw new Error('Path is required');
+      }
+
+      const isFormData = body instanceof FormData;
+      let finalHeaders = await createHeaders(headers);
+      
+      if (isFormData) {
+        const headersObj = finalHeaders as Record<string, string>;
+        delete headersObj['Content-Type'];
+        finalHeaders = headersObj;
+      }
+
+      const requestOptions: RequestInit = {
+        method,
+        headers: finalHeaders,
+        body: isFormData ? body : body ? JSON.stringify(body) : undefined,
+        credentials: 'include',
+      };
+
+      try {
+        const response = await fetch(buildUri(path), requestOptions);
+        
+        if (response.status === 403) {
+          console.warn('CSRF token may be invalid, retrying with new token...');
+          const newHeaders = await createHeaders(headers);
+          const retryResponse = await fetch(buildUri(path), {
+            ...requestOptions,
+            headers: newHeaders,
           });
-      });
-    },
-    [
-      /* token */
-    ]
-  );
-
-  const apiPatch = React.useCallback(
-    <B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => {
-      return new Promise((resolve, reject) => {
-        const fetch_header: HeadersInit = {
-          Authorization: `Token ${token}`,
-        };
-        if (!headers) {
-          fetch_header["Content-Type"] = "application/json";
+          return await handleResponse<R>(retryResponse);
         }
-        const isFormData = body instanceof FormData;
-        fetch(buildUri(path), {
-          method: "PATCH",
-          body: isFormData ? (body as FormData) : JSON.stringify(body),
-          headers: fetch_header,
-          //{
-          //...(token && {Authorization: `Bearer ${token}`}),
-          //Authorization: `Token ${token}`,
-          //"Content-Type": "application/json",
-          //...(headers && { ...headers }),
-          //},
-        })
-          .then(async (resp) => {
-            if (resp.status === 200 || resp.status === 201) {
-              return resolve(await resp.json());
-            }
-            return reject({
-              status: resp.status,
-              error: resp.statusText,
-              data: await resp.json(),
-            });
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
+        
+        return await handleResponse<R>(response);
+      } catch (err) {
+        console.error('API call error:', err);
+        throw err;
+      }
     },
-    [
-      /* token */
-    ]
+    [token]
   );
 
-  const noAuthGet = React.useCallback(
-    <R, Q = Record<string, string>>(
-      path: string,
-      query?: Q
-      //headers?: HeadersInit
-    ): Promise<R> => {
-      return new Promise((resolve, reject) => {
-        fetch(buildUri(path, query), {
-          method: "GET",
-          headers: {
-            /*...(token && { Authorization: `Bearer ${token}` }),*/
-            "Content-Type": "application/json",
-            /*   "Accept" : "/", */
-            /*   "Access-Control-Allow-Origin": "*" */
-            /*...(headers && { ...headers }), */
-          },
-        })
-          .then(async (resp) => {
-            if (resp.status === 200 || resp.status === 201) {
-              return resolve(await resp.json());
-            }
-            return reject({
-              status: resp.status,
-              error: resp.statusText,
-              data: await resp.json(),
-            });
-          })
-          .catch((err) => reject(err));
-      });
-    },
-    [
-      /* token */
-    ]
-  );
-  const apiGet = React.useCallback(
-    <R, Q = Record<string, string>>(
-      path: string,
-      query?: Q
-      //headers?: HeadersInit
-    ): Promise<R> => {
-      return new Promise((resolve, reject) => {
-        fetch(buildUri(path, query), {
-          method: "GET",
-          headers: {
-            /*...(token && { Authorization: `Bearer ${token}` }),*/
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-            /*   "Accept" : "/", */
-            /*   "Access-Control-Allow-Origin": "*" */
-            /*...(headers && { ...headers }), */
-          },
-        })
-          .then(async (resp) => {
-            if (resp.status === 200 || resp.status === 201) {
-              return resolve(await resp.json());
-            }
-            return reject({
-              status: resp.status,
-              error: resp.statusText,
-              data: await resp.json(),
-            });
-          })
-          .catch((err) => reject(err));
-      });
-    },
-    [
-      /* token */
-    ]
-  );
+  // Modificamos los métodos para que no llamen a buildUri
+  const noBodyApiPost = React.useCallback(<R>(path: string): Promise<R> => 
+    apiCall<R>("POST", path), [apiCall]);
 
-  const apiDelete = React.useCallback(
-    (path: string /* headers?: HeadersInit */): Promise<Response> => {
-      return new Promise((resolve, reject) => {
-        fetch(buildUri(path), {
-          method: "DELETE",
-          headers: {
-            Authorization: `Token ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-          .then(async (resp) => {
-            if (resp.ok) {
-              return resolve(await resp);
-            }
-            return reject({
-              status: resp.status,
-              error: resp.statusText,
-              data: await resp.json(),
-            });
-          })
-          .catch((err) => reject(err));
-      });
-    },
-    [
-      /* token */
-    ]
-  );
+  const apiPost = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => 
+    apiCall<R>("POST", path, body, headers), [apiCall]);
+
+  const noAuthPost = React.useCallback(<B, R>(path: string, body: B,): Promise<R> => 
+    apiCall<R>("POST", path, body, { "Content-Type": "application/json" }), [apiCall]);
+
+  const apiPut = React.useCallback(<B, R>(path: string, body: B): Promise<R> => 
+    apiCall<R>("PUT", path, body), [apiCall]);
+
+  const apiPatch = React.useCallback(<B, R>(path: string, body: B, headers?: HeadersInit): Promise<R> => 
+    apiCall<R>("PATCH", path, body, headers), [apiCall]);
+
+  // Modificar apiGet para manejar correctamente los query params
+  const apiGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => {
+    const url = query ? buildUri(path, query) : path;
+    return apiCall<R>("GET", url, undefined, undefined);
+  }, [apiCall]);
+
+  const noAuthGet = React.useCallback(<R, Q = Record<string, string>>(path: string, query?: Q): Promise<R> => {
+    const url = query ? buildUri(path, query) : path;
+    return apiCall<R>("GET", url, undefined, { "Content-Type": "application/json" });
+  }, [apiCall]);
+
+  const apiDelete = React.useCallback((path: string): Promise<Response> => 
+    apiCall("DELETE", path), [apiCall]);
 
   return {
     token,
@@ -310,6 +186,7 @@ const useApi = (): UseApiHook => {
     buildUri,
     apiPost,
     noBodyApiPost,
+    noAuthPost,
     apiPut,
     apiPatch,
     apiGet,
