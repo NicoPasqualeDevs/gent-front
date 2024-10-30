@@ -100,7 +100,7 @@ const useBotsApi = (): UseBotsApiHook => {
     aiTeamId: string,
     filterParams: string
   ): Promise<ApiResponseList<AgentData>> => {
-    const path = `api/team_details/bots/${aiTeamId}${filterParams}`;
+    const path = `api/team_details/bots/${aiTeamId}${filterParams}/`;
     return apiGet<ApiResponseList<AgentData>>(path);
   };
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
@@ -112,43 +112,43 @@ const useBotsApi = (): UseBotsApiHook => {
     return noAuthGet<AgentData>(path);
   };
   const getChatHistory = (botId: string): Promise<ChatHistory> => {
-    const path = `chat/api/${botId}`;
+    const path = `chat/api/${botId}/`;
     return apiGet<ChatHistory>(path);
   };
   const getKnowledgeTags = (aiTeamId: string): Promise<Ktag[]> => {
-    const path = `api/ktag/${aiTeamId}`;
+    const path = `api/ktag/${aiTeamId}/`;
     return apiGet<Ktag[]>(path);
   };
   const getKtags = (botId: string): Promise<Ktag[]> => {
-    const path = `api/ktag/${botId}`;
+    const path = `api/ktag/${botId}/`;
     return apiGet<Ktag[]>(path);
   };
   const getWidget = (botId: string): Promise<WidgetData> => {
-    const path = `api/widget/${botId}`;
+    const path = `api/widget/${botId}/`;
     return apiGet<WidgetData>(path);
   };
   const getCustomMessages = (botId: string): Promise<GetCustomGreetingData> => {
-    const path = `api/greetings/list-bot/${botId}`;
+    const path = `api/greetings/list-bot/${botId}/`;
     return apiGet<GetCustomGreetingData>(path);
   };
   const getPromptTemplate = (botId: string): Promise<PromptTemplateData> => {
-    const path = `api/bot/prompt/${botId}`;
+    const path = `api/bot/prompt/${botId}/`;
     return apiGet<PromptTemplateData>(path);
   };
   const getAllTools = (): Promise<ToolData[]> => {
-    const path = `api/tool/all`;
+    const path = `api/tool/all/`;
     return apiGet<ToolData[]>(path);
   };
   const getBotTools = (botId: string): Promise<ToolData[]> => {
-    const path = `api/tool/list/${botId}`;
+    const path = `api/tool/list/${botId}/`;
     return apiGet<ApiResponse<ToolData[]>>(path).then(response => response.data);
   };
   const getTool = (toolId: string): Promise<ToolData> => {
-    const path = `api/tool/modify/${toolId}`;
+    const path = `api/tool/modify/${toolId}/`;
     return apiGet<ToolData>(path);
   };
   const getClientTools = (user_id: string): Promise<ApiResponse<ToolData[]>> => {
-    const path = `api/tool/user/${user_id}`;
+    const path = `api/tool/user/${user_id}/`;
     return apiGet<ApiResponse<ToolData[]>>(path);
   };
   const getMyClients = (): Promise<ApiResponseList<AiTeam>> => {
@@ -165,32 +165,32 @@ const useBotsApi = (): UseBotsApiHook => {
     botId: string,
     data: MessageUp
   ): Promise<UpdatedChatHistory> => {
-    const path = `chat/api/${botId}`;
+    const path = `chat/api/${botId}/`;
     return apiPost(path, data);
   };
   const saveKtag = (botId: string, data: Ktag): Promise<Ktag> => {
-    const path = `api/ktag/${botId}`;
+    const path = `api/ktag/${botId}/`;
     return apiPost(path, data);
   };
   const postWidget = (botId: string, data: WidgetData): Promise<WidgetData> => {
-    const path = `api/widget/${botId}`;
+    const path = `api/widget/${botId}/`;
     return apiPost(path, data);
   };
   const postCustomMessages = (
     data: NewGreetingData
   ): Promise<CustomGreetingData> => {
-    const path = `api/greetings/create`;
+    const path = `api/greetings/create/`;
     return apiPost(path, data);
   };
   const postPromptTemplate = (
     botId: string,
     data: PromptTemplatePost
   ): Promise<PromptTemplateData> => {
-    const path = `api/bot/prompt/${botId}`;
+    const path = `api/bot/prompt/${botId}/`;
     return apiPost(path, data);
   };
   const postTool = (data: FormData): Promise<ToolData> => {
-    const path = `api/tool/create`;
+    const path = `api/tool/create/`;
     console.log('Posting tool to:', path);
     return apiPost(path, data, {
         // No establecer Content-Type, dejar que el navegador lo maneje
@@ -200,14 +200,14 @@ const useBotsApi = (): UseBotsApiHook => {
     botId: string,
     data: ToolRelationshipData
   ): Promise<unknown> => {
-    const path = `api/bot/tools/${botId}`;
+    const path = `api/bot/tools/${botId}/`;
     return apiPost(path, data);
   };
   const removeToolRelationship = (
     botId: string,
     data: ToolRelationshipData
   ): Promise<unknown> => {
-    const path = `api/bot/remove-tools/${botId}`;
+    const path = `api/bot/remove-tools/${botId}/`;
     return apiPost(path, data);
   };
   const closeChat = (conversation_id: string): Promise<void> => {
@@ -217,22 +217,22 @@ const useBotsApi = (): UseBotsApiHook => {
 
   // PUT
   const updateBot = (botId: string, data: AgentMetaData): Promise<AgentData> => {
-    const path = `api/bot/modify/${botId}`;
+    const path = `api/bot/modify/${botId}/`;
     return apiPut(path, data);
   };
   const editKtag = (tagId: string, data: Ktag): Promise<void> => {
-    const path = `api/ktag/modify/${tagId}`;
+    const path = `api/ktag/modify/${tagId}/`;
     return apiPut(path, data);
   };
   const putWidget = (botId: string, data: WidgetData): Promise<WidgetData> => {
-    const path = `api/widget/modify/${botId}`;
+    const path = `api/widget/modify/${botId}/`;
     return apiPut(path, data);
   };
   const putCustomMessage = (
     messageId: string,
     data: CustomGreetingData
   ): Promise<CustomGreetingData> => {
-    const path = `api/greetings/${messageId}`;
+    const path = `api/greetings/${messageId}/`;
     return apiPut(path, data);
   };
 
@@ -241,46 +241,46 @@ const useBotsApi = (): UseBotsApiHook => {
     widgetId: string,
     data: WidgetData
   ): Promise<WidgetData> => {
-    const path = `api/widget/modify/${widgetId}`;
+    const path = `api/widget/modify/${widgetId}/`;
     return apiPatch(path, data);
   };
   const patchTool = (toolId: string, data: FormData): Promise<ToolData> => {
-    const path = `api/tool/modify/${toolId}`;
+    const path = `api/tool/modify/${toolId}/`;
     return apiPatch(path, data);
   };
 
   // DELETE
   const deleteBot = (botId: string): Promise<Response> => {
-    const path = `api/bot/modify/${botId}`;
+    const path = `api/bot/modify/${botId}/`;
     return apiDelete(path);
   };
   const deleteKtag = (KtagId: string): Promise<Response> => {
-    const path = `api/ktag/modify/${KtagId}`;
+    const path = `api/ktag/modify/${KtagId}/`;
     return apiDelete(path);
   };
   const deleteCustomMessage = (messageId: string): Promise<Response> => {
-    const path = `api/greetings/${messageId}`;
+    const path = `api/greetings/${messageId}/`;
     return apiDelete(path);
   };
   const deleteTool = (toolId: string): Promise<Response> => {
-    const path = `api/tool/modify/${toolId}`;
+    const path = `api/tool/modify/${toolId}/`;
     return apiDelete(path);
   };
 
   // Nuevos métodos para herramientas
   const addToolToBot = (botId: string, toolIds: number[]): Promise<ApiResponse<unknown>> => {
-    const path = `api/bot/tools/${botId}`;
+    const path = `api/bot/tools/${botId}/`;
     return apiPost(path, { agent_tool_ids: toolIds });
   };
 
   const removeToolFromBot = (botId: string, toolIds: number[]): Promise<ApiResponse<unknown>> => {
-    const path = `api/bot/remove-tools/${botId}`;
+    const path = `api/bot/remove-tools/${botId}/`;
     return apiPost(path, { agent_tool_ids: toolIds });
   };
 
   // Nuevo método para obtener el historial de conversaciones
   const getBotConversations = (botId: string): Promise<ApiResponseList<ConversationData>> => {
-    const path = `chat/api/conversations/${botId}`;
+    const path = `chat/api/conversations/${botId}/`;
     return apiGet<ApiResponseList<ConversationData>>(path);
   };
 
@@ -292,7 +292,7 @@ const useBotsApi = (): UseBotsApiHook => {
 
   // Nuevo método para obtener las conversaciones de un bot específico
   const getClientBotConversations = (botId: string): Promise<ConversationData[]> => {
-    const path = `chat/api/conversations/${botId}`;
+    const path = `chat/api/conversations/${botId}/`;
     return apiGet<ConversationData[]>(path);
   };
 

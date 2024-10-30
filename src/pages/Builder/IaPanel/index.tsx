@@ -50,13 +50,11 @@ const IaPanel: React.FC = () => {
       const response = await getBotsList(aiTeamId, filterParams);
       
       if (response && response.data) {
-        console.log('Bots data received:', response.data); // Debug log
         setAgentsPage(response.metadata.current_page || 1);
         setPageContent(response.data);
         setPaginationData(response.metadata);
       }
     } catch (error: any) {
-      console.error('Error fetching bots:', error); // Debug log
       ErrorToast(error instanceof Error
         ? "Error: no se pudo establecer conexión con el servidor"
         : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
