@@ -28,7 +28,6 @@ const IaPanel: React.FC = () => {
   const navigate = useNavigate();
   const { replacePath, appNavigation, agentsPage, setAgentsPage, language, auth } = useAppContext();
   const { getBotsList, deleteBot } = useBotsApi();
-  const [loaded, setLoaded] = useState(false);
   const [allowerState, setAllowerState] = useState(false);
   const [botToDelete, setbotToDelete] = useState("");
   const [pageContent, setPageContent] = useState<AgentData[]>([]);
@@ -55,7 +54,6 @@ const IaPanel: React.FC = () => {
         setAgentsPage(response.metadata.current_page || 1);
         setPageContent(response.data);
         setPaginationData(response.metadata);
-        setLoaded(true);
       }
     } catch (error: any) {
       console.error('Error fetching bots:', error); // Debug log
@@ -72,8 +70,7 @@ const IaPanel: React.FC = () => {
   // Efecto para forzar el renderizado cuando los datos se cargan
   useEffect(() => {
     if (pageContent && pageContent.length > 0) {
-      console.log('Page content updated:', pageContent); // Debug log
-      setLoaded(true);
+      console.log('Page content updated:', pageContent); // Debug log;
     }
   }, [pageContent]);
 
@@ -175,32 +172,15 @@ const IaPanel: React.FC = () => {
       border: `1px solid ${theme.palette.divider}`,
       borderRadius: '12px',
       overflow: 'hidden',
-      position: 'relative',
-      '&::before, &::after': {
-        content: '""',
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        height: '0%',
-        backgroundColor: 'transparent',
-        transition: 'height 0.3s ease-in-out',
-        zIndex: 1,
-      },
-      '&::before': {
-        top: 0,
-        borderTop: `1px solid transparent`,
-      },
-      '&::after': {
-        bottom: 0,
-        borderBottom: `1px solid transparent`,
-      },
-      '&:hover::before, &:hover::after': {
-        height: '50%',
-        backgroundColor: `${theme.palette.secondary.light}05`,
-        borderColor: theme.palette.secondary.light,
-      },
+      position: 'relative'
     }}>
-      <Box sx={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ 
+        position: 'relative', 
+        zIndex: 2, 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column' 
+      }}>
         <CardHeader
           avatar={
             <Avatar aria-label="bot">
@@ -259,19 +239,11 @@ const IaPanel: React.FC = () => {
             </Typography>
           </Box>
           
+          <Divider />
+          
           <Box sx={{ p: 2 }}>
-            <Typography variant="body2" sx={{
-              color: theme.palette.text.secondary,
-              mb: 2,
-              height: '3em',
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              display: "-webkit-box",
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: "vertical",
-              fontSize: '0.95rem',
-            }}>
-              {bot.description}
+            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
+              {t.iaPanel.implementation}
             </Typography>
             <Box sx={{ 
               display: 'flex', 
@@ -355,7 +327,8 @@ const IaPanel: React.FC = () => {
               flexDirection: 'row',
               justifyContent: 'flex-start',
               gap: 1,
-              flexWrap: 'wrap'
+              flexWrap: 'wrap',
+              ml: '-4px'
             }}>
               {[t.iaPanel.data, t.iaPanel.customization, t.iaPanel.tools].map((action) => (
                 <Button

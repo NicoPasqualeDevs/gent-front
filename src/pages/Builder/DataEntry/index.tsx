@@ -47,10 +47,8 @@ const DataEntryComponent: React.FC = () => {
   const [enableAdd, setEnableAdd] = useState<boolean>(false);
   const [KTagToEdit, setKTagToEdit] = useState<string>("");
   const { saveKtag, editKtag, getKtags, deleteKtag } = useBotsApi();
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const Ktags = useCallback((botId: string): Promise<void> => {
-    setIsLoading(true);
     return new Promise((resolve, reject) => {
       getKtags(botId)
         .then((r) => {
@@ -59,10 +57,6 @@ const DataEntryComponent: React.FC = () => {
           resolve();
         })
         .catch((err) => reject(err))
-        .finally(() => {
-          setIsLoading(false);
-          setLoading(true);
-        });
     });
   }, []);
 

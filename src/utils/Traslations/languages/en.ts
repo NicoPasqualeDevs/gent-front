@@ -77,7 +77,8 @@ const en = {
     errorLoadingClient: "Error loading aiTeamId in this view",
     errorDeletingBot: "Error loading botId for deletion",
     edit: "Edit",
-    created: "Created: {date}"
+    created: "Created: {date}",
+    implementation: "Implementation"
   },
   chatView: {
     agentPanel: "Panel of {agentName}",

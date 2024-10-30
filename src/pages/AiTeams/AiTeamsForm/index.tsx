@@ -75,10 +75,7 @@ const AiTeamsForm: React.FC = () => {
     handleSubmit(e);
   };
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const fetchNonSuperUsers = useCallback(() => {
-    setIsLoading(true);
     return listNonSuperUsers()
       .then((response) => {
         setNonSuperUsers(prevUsers => {
@@ -132,13 +129,11 @@ const AiTeamsForm: React.FC = () => {
         setIsUsersDataLoaded(true);
       })
       .finally(() => {
-        setIsLoading(false);
         setIsUsersDataLoaded(true);
       });
   }, [listNonSuperUsers, auth?.user]);
 
   const getAiTeamData = useCallback((aiTeamId: string) => {
-    setIsLoading(true);
     return getAiTeamDetails(aiTeamId)
       .then((response) => {
         setValues({
@@ -167,7 +162,6 @@ const AiTeamsForm: React.FC = () => {
         setIsTeamDataLoaded(true); // Asegurarse de que se marque como cargado incluso en caso de error
       })
       .finally(() => {
-        setIsLoading(false);
         setIsTeamDataLoaded(true);
       });
   }, []);

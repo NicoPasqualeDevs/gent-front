@@ -46,7 +46,6 @@ const AiTeamsList: React.FC = () => {
     auth
   } = useAppContext();
   const { getMyAiTeams, deleteAiTeamDetails, getAiTeamsByOwner } = useAiTeamsApi();
-  const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
   const [pageContent, setPageContent] = useState<AiTeamsDetails[]>([]);
@@ -89,7 +88,6 @@ const AiTeamsList: React.FC = () => {
         );
       }
     } finally {
-      setLoaded(true);
       setIsLoading(false);
       setIsSearching(false);
     }
@@ -140,12 +138,12 @@ const AiTeamsList: React.FC = () => {
     }
   }, [deleteAiTeamDetails, contentPerPage, clientPage, getAiTeamsData]);
 
-  const handleContentPerPageChange = useCallback((event: SelectChangeEvent) => {
+/*   const handleContentPerPageChange = useCallback((event: SelectChangeEvent) => {
     const newValue = event.target.value;
     setContentPerPage(newValue);
     getAiTeamsData(`?page_size=${newValue}&page=1`);
   }, [getAiTeamsData]);
-
+ */
   // Efecto inicial para cargar los datos
   useEffect(() => {
     let isSubscribed = true;
@@ -249,7 +247,6 @@ const AiTeamsList: React.FC = () => {
               value={contentPerPage}
               onChange={(e: SelectChangeEvent) => {
                 setContentPerPage(e.target.value);
-                setLoaded(false);
                 getAiTeamsData(`?page_size=${e.target.value}&page=${clientPage}`);
               }}
               size="small"
