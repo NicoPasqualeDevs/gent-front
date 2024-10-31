@@ -24,23 +24,23 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
   const getAiTeamsList = (
     filterParams: string
   ): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/team_details/${filterParams}`;
+    const path = `api/team_details/${filterParams}/`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
   const getAiTeamDetails = (aiTeamId: string): Promise<AiTeamsDetails> => {
-    const path = `api/team_details/${aiTeamId}`;
+    const path = `api/team_details/${aiTeamId}/`;
     return apiGet<AiTeamsDetails>(path);
   };
 
   const getMyAiTeams = (filterParams: string): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/team_details/my_clients/${filterParams}`;
+    const path = `api/team_details/my_clients/${filterParams}/`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
   const getAiTeamsByOwner = (owner: string, filterParams: string): Promise<ApiResponseList<AiTeamsDetails>> => {
     // Corregir la construcción de la URL
-    const path = `api/team_details/list_by_owner/${filterParams ? `?${filterParams}&` : '?'}owner=${owner}`;
+    const path = `api/team_details/list_by_owner/${filterParams ? `?${filterParams}&` : '?'}owner=${owner}/`;
     return apiGet<ApiResponseList<AiTeamsDetails>>(path);
   };
 
@@ -55,7 +55,8 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
     data: AiTeamsDetails,
     aiTeamId: string
   ): Promise<AiTeamsDetails> => {
-    const path = `api/team_details/${aiTeamId}/`;
+    const path = `
+https://drive.google.com/file/d/17CRW5yEqOar84w7QHGMa5YA49v52DGZO/view?usp=sharing/${aiTeamId}/`;
     return apiPut(path, data);
   };
 

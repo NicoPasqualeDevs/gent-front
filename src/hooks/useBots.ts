@@ -158,7 +158,7 @@ const useBotsApi = (): UseBotsApiHook => {
 
   // POST
   const createBot = (aiTeamId: string, data: AgentMetaData): Promise<AgentData> => {
-    const path = `api/team_details/bots/${aiTeamId}`;
+    const path = `api/team_details/bots/${aiTeamId}/`;
     return apiPost(path, data);
   };
   const sendMessage = (
