@@ -20,11 +20,11 @@ const AgentsDetailsModule: React.FC = () => {
           element={<ContextEntry />}
         />
         <Route path="dataEntry/:botId?" element={<DataEntryComponent />} />
-        <Route
+{/*         <Route
           path="widgetCustomizer/:botId?"
           element={<WidgetCustomizer />}
-        />
-        <Route path="customMessages/:botId?" element={<CustomMessages />} />
+        /> */}
+        <Route path="widgetCustomizer/:botId?" element={<WidgetCustomizer />} />
         <Route path="tools/:aiTeamId?/:botName?/:botId?/:toolName?/:toolId?" element={<Tools />} />
         <Route
           path="tools-form/:aiTeamId?/:botName?/:botId?/:toolName?/:toolId?" 

@@ -336,15 +336,14 @@ const IaPanel: React.FC = () => {
                   onClick={() => {
                     const routes: { [key: string]: string } = {
                       [t.iaPanel.data]: `/builder/agents/dataEntry/${bot.id}`,
-                      [t.iaPanel.customization]: `/builder/agents/customMessages/${bot.id}`,
+                      [t.iaPanel.customization]: `/builder/agents/widgetCustomizer/${bot.id}`,
                       [t.iaPanel.tools]: `/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`,
                     };
                     navigate(routes[action]);
                   }}
-                  disabled={action === t.iaPanel.customization}
                   sx={{ 
                     textTransform: 'none',
-                    color: action === t.iaPanel.customization ? theme.palette.text.disabled : theme.palette.primary.main,
+                    color: theme.palette.primary.main,
                     fontSize: '0.9rem',
                   }}
                 >
