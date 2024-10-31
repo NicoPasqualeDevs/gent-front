@@ -1,5 +1,6 @@
 import { Grid, Box, Stack, Divider, Typography, styled } from "@mui/material";
-import { LongInput, ShortInput } from "./Inputs";
+import { LongInput } from "@/components/Inputs/LongInput";
+import { ShortInput } from "@/components/Inputs/ShortInput";  
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { useParams, useNavigate } from "react-router-dom";
 import { Ktag } from "@/types/Bots";
@@ -42,7 +43,7 @@ const DataEntryComponent: React.FC = () => {
   const { botId } = useParams();
   const navigate = useNavigate();
   const { replacePath, appNavigation } = useAppContext();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [customTags, setCustomTags] = useState<Ktag[]>(emptyKtagsList);
   const [enableAdd, setEnableAdd] = useState<boolean>(false);
   const [KTagToEdit, setKTagToEdit] = useState<string>("");
@@ -50,13 +51,18 @@ const DataEntryComponent: React.FC = () => {
 
   const Ktags = useCallback((botId: string): Promise<void> => {
     return new Promise((resolve, reject) => {
+      setLoading(true);
       getKtags(botId)
         .then((r) => {
           setCustomTags(r);
           emptyKtagsList = r;
+          setLoading(false);
           resolve();
         })
-        .catch((err) => reject(err))
+        .catch((err) => {
+          setLoading(false);
+          reject(err);
+        });
     });
   }, []);
 
@@ -93,21 +99,20 @@ const DataEntryComponent: React.FC = () => {
   const handleSaveKTag = () => {
     const lastKtag: Ktag = emptyKtagsList[emptyKtagsList.length - 1];
     if (lastKtag.description && lastKtag.name && lastKtag.value) {
-      setLoading(false);
+      setLoading(true);
       if (botId) {
         saveKtag(botId, lastKtag)
           .then((r) => {
             lastKtag.id = r.id;
             setCustomTags(emptyKtagsList);
-            setLoading(true);
             setEnableAdd(false);
             SuccessToast("Etiqueta de conocimiento agregada");
           })
           .catch(() => {
-            setCustomTags(emptyKtagsList);
-            setLoading(true);
-            setEnableAdd(false);
             ErrorToast("Algo salio mal intente de nuevo..");
+          })
+          .finally(() => {
+            setLoading(false);
           });
       }
       KTagToEdit !== "" ? setKTagToEdit("") : "";
@@ -119,38 +124,40 @@ const DataEntryComponent: React.FC = () => {
     setKTagToEdit(item.id ? item.id : "");
   };
   const handleDeleteKtag = (KtagId: string | undefined, index: number) => {
-    if (confirm(`Estas seguro que desea eliminar la KTag N°: ${index}`))
-      if (KtagId)
+    if (confirm(`Estas seguro que desea eliminar la KTag N°: ${index}`)) {
+      if (KtagId) {
+        setLoading(true);
         deleteKtag(KtagId)
           .then(() => {
             navigate(-1);
             SuccessToast("KTag eliminado exitosamente");
           })
           .catch(() => {
-            ErrorToast(
-              "Ups algo salio mal actualice la pagina e intente nuevamente"
-            );
+            ErrorToast("Ups algo salio mal actualice la pagina e intente nuevamente");
+          })
+          .finally(() => {
+            setLoading(false);
           });
+      }
+    }
   };
 
   const handleSaveEditKtag = (tagId: string | undefined, index: number) => {
     const KtagToEdit: Ktag = emptyKtagsList[index];
     if (tagId) {
-      setLoading(false);
+      setLoading(true);
       editKtag(tagId, KtagToEdit)
         .then(() => {
           setCustomTags(emptyKtagsList);
-          setLoading(true);
           setEnableAdd(false);
           setKTagToEdit("");
           SuccessToast("Etiqueta de conocimiento editada");
         })
         .catch(() => {
-          setCustomTags(emptyKtagsList);
-          setLoading(true);
-          setEnableAdd(false);
-          setKTagToEdit("");
           ErrorToast("Algo salio mal intente de nuevo..");
+        })
+        .finally(() => {
+          setLoading(false);
         });
     }
   };
@@ -163,7 +170,7 @@ const DataEntryComponent: React.FC = () => {
 
   return (
     <>
-      {loading ? (
+      {!loading ? (
         <>
           <StyledPageTitle
             fontSize={"24px"}

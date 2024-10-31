@@ -13,7 +13,7 @@ import {
   ImageInput,
   CheckboxInput,
 } from "@/components/Inputs";
-import { ShortInput } from "../CustomMessages/Inputs";
+import { ShortInput } from "@/components/Inputs/ShortInput";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useAppContext } from "@/context/app";
@@ -183,7 +183,7 @@ export const WidgetCustomizer: React.FC = () => {
           badge_color: response.badge_color || theme.palette.primary.light,
           badge_contrast: response.badge_contrast || theme.palette.primary.contrastText,
         };
-
+        
         setWidgetData(defaultedResponse);
         setValues({
           ...values,
@@ -201,7 +201,7 @@ export const WidgetCustomizer: React.FC = () => {
           badge_color: theme.palette.primary.light,
           badge_contrast: theme.palette.primary.contrastText,
         };
-
+        
         setWidgetData(fallbackData);
         setValues({
           ...values,
@@ -250,7 +250,7 @@ export const WidgetCustomizer: React.FC = () => {
           preview_path: "",
         },
       ]);
-
+      
       // Primero cargar los datos del widget
       getWidgetData(botId);
       // Luego cargar los mensajes personalizados
@@ -266,30 +266,30 @@ export const WidgetCustomizer: React.FC = () => {
   // Modificar el handleChange para actualizar widgetData inmediatamente
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    
 
-
-
+    
     // Limpiar el timeout anterior si existe
     if (colorUpdateTimeout.current) {
       clearTimeout(colorUpdateTimeout.current);
     }
-
+    
     // Crear nuevo timeout para actualizar widgetData
     colorUpdateTimeout.current = setTimeout(() => {
-      handleChange(e);
+    handleChange(e);
       setWidgetData(prevData => ({
         ...prevData,
         [name]: value
       }));
-    }, 250);
+    }, 125);
   };
 
   return (
     <>
       {!isLoaded ? (
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'center',
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
           alignItems: 'center',
           height: '100%'
         }}>
@@ -300,7 +300,7 @@ export const WidgetCustomizer: React.FC = () => {
           <StyledPageTitle sx={{ mb: 0 }}>Widget Customizer</StyledPageTitle>
 
           {/* Contenedor principal con background */}
-          <Box sx={{
+          <Box sx={{ 
             flex: 1,
             bgcolor: 'background.paper',
             borderRadius: 1,
@@ -322,7 +322,7 @@ export const WidgetCustomizer: React.FC = () => {
             </Box>
 
             {/* Contenedor del contenido */}
-            <Box sx={{
+            <Box sx={{ 
               display: 'flex',
               gap: 4,
               flex: 1,
@@ -330,7 +330,7 @@ export const WidgetCustomizer: React.FC = () => {
               minHeight: 0
             }}>
               {/* Panel izquierdo - Widget Preview */}
-              <Box sx={{
+              <Box sx={{ 
                 width: '40%',
                 display: 'flex',
                 justifyContent: 'center',
@@ -354,14 +354,14 @@ export const WidgetCustomizer: React.FC = () => {
               </Box>
 
               {/* Panel derecho - Opciones de configuración */}
-              <Box sx={{
+              <Box sx={{ 
                 width: '60%',
                 display: 'flex',
                 flexDirection: 'column',
                 overflow: 'hidden',
               }}>
                 {/* Contenedor scrolleable de opciones */}
-                <Box sx={{
+                <Box sx={{ 
                   flex: 1,
                   overflow: 'auto',
                   '& .MuiTabPanel-root': {
@@ -565,8 +565,8 @@ export const WidgetCustomizer: React.FC = () => {
                           >
                             <ShortInput
                               propKey="text"
-                              emptyTemplate={emptyMessagesTemplate[index]}
-                              baseDetails={item}
+                              emptyData={emptyMessagesTemplate[index]}
+                              data={item}
                             />
                             <StyledDefaultButton onClick={() => handleUpdate(index)}>
                               Actualizar
@@ -583,8 +583,8 @@ export const WidgetCustomizer: React.FC = () => {
                         <Box display={"flex"} gap={1} marginTop={"10px"}>
                           <ShortInput
                             propKey="text"
-                            emptyTemplate={newMessage}
-                            baseDetails={newMessage}
+                            emptyData={newMessage}
+                            data={newMessage}
                           />
                           <StyledDefaultButton onClick={handleNew}>
                             Crear
@@ -594,18 +594,18 @@ export const WidgetCustomizer: React.FC = () => {
                     </Box>
                   </TabPanel>
                 </Box>
-                <StyledDefaultButton
-                  onClick={() => {
-                    setHelperText();
-                    handleSubmit();
-                  }}
-                  type="submit"
-                  sx={{ mt: 1, alignSelf: 'flex-end' }}
-                >
-                  Guardar Cambios
-                </StyledDefaultButton>
+                  <StyledDefaultButton
+                    onClick={() => {
+                      setHelperText();
+                      handleSubmit();
+                    }}
+                    type="submit"
+                    sx={{ mt: 1 , alignSelf: 'flex-end'}}
+                  >
+                    Guardar Cambios
+                  </StyledDefaultButton>
+                </Box>
               </Box>
-            </Box>
           </Box>
         </Box>
       )}

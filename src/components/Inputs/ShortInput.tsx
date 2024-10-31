@@ -2,7 +2,7 @@ import theme from "@/styles/theme";
 import { CustomGreetingData, NewGreetingData } from "@/types/Bots";
 import { StyledTextField } from "@/utils/StyledInputUtils";
 import { BaseSyntheticEvent, useState } from "react";
-
+import { Ktag } from "@/types/Bots";
 const getInputNameUtil = (propKey: string) => {
     switch (propKey) {
       case "text":
@@ -52,23 +52,23 @@ const ShortInputField: React.FC<ShortInputFieldProps> = ({
   
 type ShortInputProp = {
     propKey: string;
-    emptyTemplate: CustomGreetingData | NewGreetingData;
-    baseDetails: CustomGreetingData | NewGreetingData;
+    emptyData: CustomGreetingData | NewGreetingData | Ktag;
+    data: CustomGreetingData | NewGreetingData | Ktag;
 };
   
 export const ShortInput: React.FC<ShortInputProp> = ({
     propKey,
-    emptyTemplate,
-    baseDetails,
+    emptyData,
+    data,
 }) => {
-    const [value, setValue] = useState(baseDetails[propKey]);
+    const [value, setValue] = useState(data[propKey]);
     return (
       <ShortInputField
         value={value}
         propKey={propKey}
         onChange={(event: BaseSyntheticEvent) => {
           setValue(event.target.value);
-          emptyTemplate[propKey] = event.target.value;
+          emptyData[propKey] = event.target.value;
         }}
       />
     );
