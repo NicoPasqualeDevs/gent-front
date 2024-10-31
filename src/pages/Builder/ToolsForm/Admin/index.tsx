@@ -38,7 +38,6 @@ const ToolsForm: React.FC = () => {
 
   const [loaded, setLoaded] = useState<boolean>(false);
   const [isToolDataLoaded, setIsToolDataLoaded] = useState<boolean>(false);
-  const [isUsersDataLoaded, setIsUsersDataLoaded] = useState<boolean>(false);
   const [initialValues, setInitialValues] = useState<ToolData>({
     tool_name: "",
     instruction: "",
@@ -104,27 +103,76 @@ const ToolsForm: React.FC = () => {
   const getToolData = useCallback((toolId: string) => {
     return getTool(toolId)
       .then((response) => {
-        setValues({
+        const newValues = {
           tool_name: response.tool_name,
           instruction: response.instruction || "",
           tool_code: response.tool_code,
           user_id: auth.user?.uuid,
-        });
-        setInitialValues({
-          tool_name: response.tool_name,
-          instruction: response.instruction || "",
-          tool_code: response.tool_code,
-          user_id: auth.user?.uuid,
-        });
-        setIsToolDataLoaded(true);
+        };
+        setValues(newValues);
+        setInitialValues(newValues);
       })
       .catch(() => {
         ErrorToast(t.errorConnection);
-      })
-      .finally(() => {
-        setIsToolDataLoaded(true);
       });
-  }, [getTool, setValues, setInitialValues, t.errorConnection]);
+  }, [getTool, t.errorConnection]);
+
+  const initializeUsers = useCallback(() => {
+    if (!auth.user) return;
+    
+    const currentUser = {
+      id: Number(auth.user.uuid),
+      username: auth.user.first_name,
+      email: auth.user.email,
+      first_name: auth.user.first_name,
+      last_name: auth.user.last_name || ''
+    };
+
+    if (!auth.user.is_superuser) {
+      setNonSuperUsers([currentUser]);
+      return;
+    }
+
+    listNonSuperUsers()
+      .then((response) => {
+        const newUsers = response.data.map(user => ({
+          ...user,
+          id: Number(user.id)
+        }));
+        setNonSuperUsers([currentUser, ...newUsers]);
+      })
+      .catch((error) => {
+        console.error("Error al obtener usuarios no superusuarios:", error);
+        setNonSuperUsers([currentUser]);
+      });
+  }, [listNonSuperUsers]);
+
+  // Efecto principal para la carga inicial
+  useEffect(() => {
+    const initializeData = async () => {
+      setLoaded(false);
+      setIsToolDataLoaded(false);
+
+      try {
+        if (toolId) {
+          await getToolData(toolId);
+        }
+        await initializeUsers();
+      } finally {
+        setIsToolDataLoaded(true);
+        setLoaded(true);
+      }
+    };
+
+    initializeData();
+  }, [toolId]);
+
+  // Efecto separado para manejar el user_id
+  useEffect(() => {
+    if (auth?.user?.uuid && !values.user_id) {
+      setFieldValue('user_id', auth.user.uuid);
+    }
+  }, [auth?.user?.uuid]);
 
   const updateTool = (formData: FormData, toolId: string) => {
     patchTool(toolId, formData)
@@ -147,92 +195,6 @@ const ToolsForm: React.FC = () => {
             ErrorToast(error.message || t.errorConnection);
         });
   };
-
-  const fetchNonSuperUsers = useCallback(() => {
-    return listNonSuperUsers()
-      .then((response) => {
-        setNonSuperUsers(prevUsers => {
-          const newUsers = response.data.map(user => ({
-            ...user,
-            id: Number(user.id)
-          }));
-          
-          let updatedUsers = [...newUsers];
-          if (auth?.user) {
-            const currentUser : NonSuperUser = {
-              id: Number(auth.user.uuid),
-              username: auth.user.first_name,
-              email: auth.user.email,
-              first_name: auth.user.first_name,
-              last_name: auth.user.last_name || ''
-            };
-            updatedUsers = [currentUser, ...updatedUsers];
-          }
-          
-          const uniqueUsers = updatedUsers.filter(newUser => 
-            !prevUsers.some(prevUser => prevUser.id === newUser.id)
-          );
-          
-          return [...prevUsers, ...uniqueUsers];
-        });
-        setIsUsersDataLoaded(true);
-      })
-      .catch((error) => {
-        console.error("Error al obtener usuarios no superusuarios:", error);
-        if (auth?.user) {
-          setNonSuperUsers(prevUsers => {
-            const currentUser: NonSuperUser = {
-              id: Number(auth.user?.uuid || ''),
-              username: auth.user?.first_name || "",
-              email: auth?.user?.email || "",
-              first_name: auth.user?.first_name || "",
-              last_name: auth.user?.last_name || ''
-            };
-            const currentUserExists = prevUsers.some(user => user.id === currentUser.id);
-            if (!currentUserExists) {
-              return [currentUser, ...prevUsers];
-            }
-            return prevUsers;
-          });
-        }
-        setIsUsersDataLoaded(true);
-      });
-  }, [listNonSuperUsers, auth?.user]);
-
-  useEffect(() => {
-    setLoaded(false);
-    setIsToolDataLoaded(false);
-    setIsUsersDataLoaded(false);
-    
-    const loadToolData = async () => {
-      if (toolId) {
-        await getToolData(toolId);
-      } else {
-        setIsToolDataLoaded(true);
-      }
-    };
-
-    const loadUserData = async () => {
-      if (auth.user?.is_superuser && !isUsersDataLoaded) {
-        await fetchNonSuperUsers();
-      } else {
-        setIsUsersDataLoaded(true);
-      }
-    };
-
-    Promise.all([loadToolData(), loadUserData()]).then(() => {
-      setLoaded(true);
-    });
-
-  }, [toolId, getToolData, auth.user, fetchNonSuperUsers, isUsersDataLoaded]);
-
-  useEffect(() => {
-    if (isToolDataLoaded && isUsersDataLoaded) {
-      if (auth?.user && !values.user_id) {
-        setFieldValue('user_id', auth.user.uuid);
-      }
-    }
-  }, [isToolDataLoaded, isUsersDataLoaded, auth?.user, values.user_id, setFieldValue]);
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
