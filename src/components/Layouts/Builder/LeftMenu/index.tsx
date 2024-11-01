@@ -6,15 +6,13 @@ import { SuccessToast } from "@/components/Toast";
 import { LogoutSharp } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
-import { useEffect, useState } from "react";
 import { languages } from "@/utils/Traslations";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, navElevation, setNavElevation, setAuth, setMenu, language, auth } = useAppContext();
+  const { menu, navElevation, setNavElevation, setAuth, setMenu, language, auth, replacePath } = useAppContext();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
-  const [isInitialRender, setIsInitialRender] = useState(true);
   const t = languages[language as keyof typeof languages];
 
   const options = [
@@ -48,13 +46,6 @@ const LeftMenu: React.FC = () => {
       path: "/home",
     },
   ];
-
-  useEffect(() => {
-    if (isInitialRender) {
-      setMenu(false);
-      setIsInitialRender(false);
-    }
-  }, [isInitialRender, setMenu, auth]);
 
   return (
     <>
@@ -131,6 +122,13 @@ const LeftMenu: React.FC = () => {
                 }}
                 onClick={() => {
                   setNavElevation(option.navElevation);
+                  replacePath([
+                    {
+                      label: option.label,
+                      current_path: option.path,
+                      preview_path: "/",
+                    },
+                  ]);
                   navigate(option.path);
                 }}
               >
@@ -159,6 +157,13 @@ const LeftMenu: React.FC = () => {
               }}
               onClick={() => {
                 setNavElevation(option.navElevation);
+                replacePath([
+                  {
+                    label: option.label,
+                    current_path: option.path,
+                    preview_path: "/",
+                  },
+                ]);
                 navigate(option.path);
               }}
             >
