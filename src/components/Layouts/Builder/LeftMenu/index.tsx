@@ -18,6 +18,7 @@ const LeftMenu: React.FC = () => {
   const options = [
     {
       navElevation: t.leftMenu.aiTeams,
+      translationKey: "aiTeams",
       label: t.leftMenu.aiTeams,
       path: "/builder",
     }
@@ -27,21 +28,25 @@ const LeftMenu: React.FC = () => {
   const superUserOptions = [
     {
       navElevation: t.leftMenu.registerTeam,
+      translationKey: "registerTeam",
       label: t.leftMenu.registerTeam,
       path: "/builder/form",
     },
     {
       navElevation: t.leftMenu.registerUser,
+      translationKey: "registerUser",
       label: t.leftMenu.registerUser,
       path: "/auth/register/new-user",
     },
     {
       navElevation: t.leftMenu.tools,
+      translationKey: "tools",
       label: t.leftMenu.tools,
       path: "/builder/admin-tools-form",
     },
     {
       navElevation: t.leftMenu.workShop,
+      translationKey: "workShop",
       label: t.leftMenu.workShop,
       path: "/home",
     },
@@ -125,6 +130,7 @@ const LeftMenu: React.FC = () => {
                   replacePath([
                     {
                       label: option.label,
+                      translationKey: option.translationKey,
                       current_path: option.path,
                       preview_path: "/",
                     },
@@ -160,6 +166,7 @@ const LeftMenu: React.FC = () => {
                 replacePath([
                   {
                     label: option.label,
+                    translationKey: option.translationKey,
                     current_path: option.path,
                     preview_path: "/",
                   },
