@@ -13,12 +13,12 @@ const useAuth = (): AuthHook => {
   const { noAuthPost } = useApi();
 
   const registerUser = (data: AuthRegisterData): Promise<ApiResponse<AuthUser>> => {
-    const path = "api/register/";
+    const path = "auth/register/";
     return noAuthPost(path, data);
   };
 
   const loginUser = (data: AuthLoginData): Promise<ApiResponse<AuthUser>> => {
-    const path = "api/login/";
+    const path = "auth/login/";
     return noAuthPost(path, data);
   };
 

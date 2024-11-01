@@ -104,15 +104,15 @@ const useBotsApi = (): UseBotsApiHook => {
     return apiGet<ApiResponseList<AgentData>>(path);
   };
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
-    const path = `api/bot/modify/${botId}`;
+    const path = `api/bot/modify/${botId}/`;
     return apiGet<ApiResponse<AgentData>>(path);
   };
   const getNoAuthAgentData = (botId: string): Promise<AgentData> => {
-    const path = `api/bot/modify/${botId}`;
+    const path = `api/bot/modify/${botId}/`;
     return noAuthGet<AgentData>(path);
   };
   const getChatHistory = (botId: string): Promise<ChatHistory> => {
-    const path = `chat/api/${botId}/`;
+    const path = `api/chat/${botId}/`;
     return apiGet<ChatHistory>(path);
   };
   const getKnowledgeTags = (aiTeamId: string): Promise<Ktag[]> => {
@@ -165,7 +165,7 @@ const useBotsApi = (): UseBotsApiHook => {
     botId: string,
     data: MessageUp
   ): Promise<UpdatedChatHistory> => {
-    const path = `chat/api/${botId}/`;
+    const path = `/api/chat/${botId}/`;
     return apiPost(path, data);
   };
   const saveKtag = (botId: string, data: Ktag): Promise<Ktag> => {
@@ -200,14 +200,14 @@ const useBotsApi = (): UseBotsApiHook => {
     botId: string,
     data: ToolRelationshipData
   ): Promise<unknown> => {
-    const path = `api/bot/tools/${botId}/`;
+    const path = `api/tool/relate/${botId}/`;
     return apiPost(path, data);
   };
   const removeToolRelationship = (
     botId: string,
     data: ToolRelationshipData
   ): Promise<unknown> => {
-    const path = `api/bot/remove-tools/${botId}/`;
+    const path = `api/tool/remove/${botId}/`;
     return apiPost(path, data);
   };
   const closeChat = (conversation_id: string): Promise<void> => {
@@ -269,30 +269,30 @@ const useBotsApi = (): UseBotsApiHook => {
 
   // Nuevos métodos para herramientas
   const addToolToBot = (botId: string, toolIds: number[]): Promise<ApiResponse<unknown>> => {
-    const path = `api/bot/tools/${botId}/`;
+    const path = `api/tool/relate/${botId}/`;
     return apiPost(path, { agent_tool_ids: toolIds });
   };
 
   const removeToolFromBot = (botId: string, toolIds: number[]): Promise<ApiResponse<unknown>> => {
-    const path = `api/bot/remove-tools/${botId}/`;
+    const path = `api/tool/remove/${botId}/`;
     return apiPost(path, { agent_tool_ids: toolIds });
   };
 
   // Nuevo método para obtener el historial de conversaciones
   const getBotConversations = (botId: string): Promise<ApiResponseList<ConversationData>> => {
-    const path = `chat/api/conversations/${botId}/`;
+    const path = `api/chat/conversations/${botId}/`;
     return apiGet<ApiResponseList<ConversationData>>(path);
   };
 
   // Nuevo método para obtener todas las conversaciones del cliente
   const getClientConversations = (): Promise<ApiResponseList<ConversationData>> => {
-    const path = `chat/api/conversations/`;
+    const path = `api/chat/conversations/`;
     return apiGet<ApiResponseList<ConversationData>>(path);
   };
 
   // Nuevo método para obtener las conversaciones de un bot específico
   const getClientBotConversations = (botId: string): Promise<ConversationData[]> => {
-    const path = `chat/api/conversations/${botId}/`;
+    const path = `api/chat/conversations/${botId}/`;
     return apiGet<ConversationData[]>(path);
   };
 
