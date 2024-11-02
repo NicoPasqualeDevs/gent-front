@@ -8,7 +8,7 @@ interface DelayedSuspenseProps {
 
 const DelayedSuspense: React.FC<DelayedSuspenseProps> = ({ 
   children, 
-  minimumDelay = 1000 
+  minimumDelay = 750 
 }) => {
   const [shouldRender, setShouldRender] = useState(false);
 

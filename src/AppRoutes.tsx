@@ -1,4 +1,4 @@
-import { lazy, Suspense, ReactNode } from "react";
+import React, { lazy, ReactNode } from "react";
 import { Box } from "@mui/material";
 import { Outlet, Routes, Route, Navigate } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines";
@@ -6,10 +6,8 @@ import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
 import { useAppContext } from '@/context/app';
 import { useLocation } from 'react-router-dom';
-import Login from '@/pages/Auth/Login';
-import Register from '@/pages/Auth/Register';
-import LoadingFallback from "@/components/LoadingFallback";
 import DelayedSuspense from '@/components/DelayedSuspense';
+import { useAuthStorage } from "@/hooks/useAuthStorage";
 
 // Interfaces
 interface ProtectedRouteProps {
@@ -32,16 +30,24 @@ const UserL = (
 
 // Protected Route Component
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = true }) => {
-  const { auth } = useAppContext();
+  const { auth, setAuth } = useAppContext();
+  const { getAuth } = useAuthStorage();
   const location = useLocation();
 
+  React.useEffect(() => {
+    if (requireAuth && !auth?.token) {
+      const savedAuth = getAuth();
+      if (savedAuth?.token) {
+        setAuth(savedAuth);
+      }
+    }
+  }, [auth, requireAuth, setAuth]);
+
   if (requireAuth && !auth?.token) {
-    // Redirigir a login si se requiere autenticación y no hay token
     return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
   }
 
   if (!requireAuth && auth?.token) {
-    // Redirigir a builder si ya está autenticado y trata de acceder a rutas públicas
     return <Navigate to="/builder" replace />;
   }
 
