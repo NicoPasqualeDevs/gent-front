@@ -30,7 +30,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
-import PersonIcon from '@mui/icons-material/Person';
+
 import ActionAllower from "@/components/ActionAllower";
 import { SuccessToast } from "@/components/Toast";
 import { 
@@ -44,7 +44,7 @@ import {
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 
 // Componente AiTeamCard
-const AiTeamCard = lazy(() => import("@/components/AiTeams/AiTeamCard"));
+const AiTeamCard = lazy(() => import("@/components/AiTeamCard"));
 
 interface AiTeamsListState extends PaginatedPageState {
   pageContent: AiTeamsDetails[];
@@ -251,7 +251,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
           <Paper elevation={3} sx={{ p: 2, flexGrow: 1}}>
             <Grid container spacing={3}>
               {[...Array(parseInt(state.contentPerPage))].map((_, index) => (
-                <Grid item xs={12} sm={6} md={4} key={`skeleton-${index}`}>
+                <Grid item xs={12} md={6} xl={4} key={`skeleton-${index}`}>
                   <SkeletonCard />
                 </Grid>
               ))}
@@ -260,26 +260,14 @@ const AiTeamsList: React.FC<PageProps> = () => {
         ) : (
           <>
             {state.pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{ p: 2, flexGrow: 1, overflow: 'auto' }}>
+              <Paper elevation={3} sx={{ p: 2, flexGrow: 1, overflow: 'auto', scrollbarColor: "auto", ...commonStyles.scrollableContent }}>
                 <Grid container spacing={3}>
                   {state.pageContent.map((aiTeam, index) => (
-                    <Grid item xs={12} sm={6} md={4} key={`aiTeam-${index}`}>
-                      <Card sx={{
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        backgroundColor: 'transparent',
-                        border: `1px solid ${theme.palette.divider}`,
-                        boxShadow: 'none',
-                        width: '100%',
-                      }}>
+                    <Grid item xs={12} md={6} xl={4} key={`aiTeam-${index}`}>
+                      <Card sx={commonStyles.card}>
                         <CardContent sx={{
-                          flexGrow: 1,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
-                          p: 3,
-                          '&:last-child': { pb: 3 },
+                          ...commonStyles.cardContent,
+                          pb: 2,
                         }}>
                           <AiTeamCard 
                             aiTeam={aiTeam}
@@ -287,18 +275,9 @@ const AiTeamsList: React.FC<PageProps> = () => {
                             onEdit={() => navigate(`/builder/form/${aiTeam.name}/${aiTeam.id}`)}
                             onManage={() => navigate(`/builder/agents/${aiTeam.name}/${aiTeam.id}`)}
                           />
-                          
-                          {aiTeam.owner_data && (
-                            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-                              <Tooltip title={t.aiTeamsList.owner}>
-                                <PersonIcon sx={{ mr: 1, fontSize: 'small', color: theme.palette.text.secondary }} />
-                              </Tooltip>
-                              <Typography variant="body2" color="text.secondary">
-                                {aiTeam.owner_data.name} ({aiTeam.owner_data.email})
-                              </Typography>
-                            </Box>
-                          )}
                         </CardContent>
+                        
+
                       </Card>
                     </Grid>
                   ))}

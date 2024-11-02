@@ -53,6 +53,9 @@ export type TranslationType = {
     teamsCount: string;
     successDelete: string;
     owner: string;
+    noDescription: string;
+    manage: string;
+    comingSoon: string;
   };
   iaPanel: {
     createAgent: string;

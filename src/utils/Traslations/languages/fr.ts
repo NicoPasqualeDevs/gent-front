@@ -54,7 +54,10 @@ const fr: TranslationType = {
     noTeamsToShow: "Aucune Équipe IA à afficher",
     teamsCount: "sur {total} Équipes IA",
     successDelete: "AiTeam supprimé avec succès",
-    owner: "Propriétaire"
+    owner: "Propriétaire",
+    noDescription: "Pas de description",
+    manage: "Gérer",
+    comingSoon: "Bientôt disponible"
   },
   iaPanel: {
     createAgent: "Créer un Agent",

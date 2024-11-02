@@ -54,7 +54,10 @@ const de: TranslationType = {
     noTeamsToShow: "Keine KI-Teams zum Anzeigen",
     teamsCount: "von {total} KI-Teams",
     successDelete: "Team erfolgreich gelöscht",
-    owner: "Eigentümer"
+    owner: "Eigentümer",
+    noDescription: "Keine Beschreibung",
+    manage: "Verwalten",
+    comingSoon: "Demnächst verfügbar"
   },
   iaPanel: {
     createAgent: "Agent erstellen",

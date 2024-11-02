@@ -7,7 +7,7 @@ import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useAiTeamsApi from "@/hooks/useAiTeams";
 import { Container, Box, Paper, TextField, Button } from '@mui/material';
-import { AiTeamsFormState } from './types';
+import { AiTeamsFormState } from '@/types/AiTeams';
 
 const AiTeamsForm: React.FC<PageProps> = () => {
   const navigate = useNavigate();
@@ -25,6 +25,7 @@ const AiTeamsForm: React.FC<PageProps> = () => {
     formData: {
       name: '',
       description: '',
+      address: '',
     }
   });
   const t = languages[language as keyof typeof languages];
@@ -45,11 +46,13 @@ const AiTeamsForm: React.FC<PageProps> = () => {
         label: t.leftMenu.aiTeams,
         current_path: "/builder",
         preview_path: "/builder",
+        translationKey: "aiTeams"
       },
       {
         label: state.isEditing ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
         current_path: currentPath,
         preview_path: "",
+        translationKey: state.isEditing ? "editTeam" : "createTeam"
       },
     ]);
 
@@ -68,6 +71,7 @@ const AiTeamsForm: React.FC<PageProps> = () => {
           formData: {
             name: teamDetails.data.name,
             description: teamDetails.data.description || '',
+            address: teamDetails.data.address || '',
             owner: teamDetails.data.owner
           },
           isLoading: false
@@ -155,6 +159,13 @@ const AiTeamsForm: React.FC<PageProps> = () => {
               onChange={handleInputChange}
               multiline
               rows={4}
+              fullWidth
+            />
+            <TextField
+              name="address"
+              label={t.aiTeamsForm.address}
+              value={state.formData.address}
+              onChange={handleInputChange}
               fullWidth
             />
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>

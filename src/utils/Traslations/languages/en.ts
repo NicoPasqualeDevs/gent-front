@@ -54,7 +54,10 @@ const en: TranslationType = {
     noTeamsToShow: "No AI Teams to show",
     teamsCount: "of {total} AI Teams",
     successDelete: "AiTeam deleted successfully",
-    owner: "Owner"
+    owner: "Owner",
+    noDescription: "No description",
+    manage: "Manage",
+    comingSoon: "Coming Soon"
   },
   iaPanel: {
     createAgent: "Create Agent",
