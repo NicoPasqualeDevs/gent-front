@@ -13,6 +13,7 @@ import { useTheme } from '@mui/material/styles';
 import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
 import { languages } from "@/utils/Traslations";
+import GlowingText from '@/components/GlowingText';
 
 interface LoginInputError {
   email: string;
@@ -111,45 +112,38 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Grid 
-    container
-    alignItems={"center"}
-    justifyContent={"center"}
-    sx={{
-      justifyContent: "center",
+    <Box sx={{
+      textAlign: "center",
       height: "100vh",
-      width: "100vw",
-      overflow: "hidden",
-      overflowY: "scroll",
-      scrollBehavior: "smooth",
-      scrollbarGutter: "none",
-      scrollbarWidth: "thin",
-      scrollbarColor: `${theme.palette.primary.main} transparent`,
+      width: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
       position: 'relative',
-      minHeight: '100vh',
+      overflow: 'hidden'
     }}>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 16,
-          right: 16,
-          zIndex: 3,
-        }}
-      >
+      {/* Language Selector */}
+      <Box sx={{
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        zIndex: 3,
+      }}>
         <LanguageSelector />
       </Box>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          overflow: 'hidden',
-          zIndex: 1,
-          pointerEvents: 'none',
-        }}
-      >
+
+      {/* Snowfall Effect */}
+      <Box sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: 'hidden',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }}>
         <Snowfall
           snowflakeCount={200}
           style={{
@@ -160,80 +154,32 @@ const Login: React.FC = () => {
           }}
         />
       </Box>
-      <Grid
-        item
-        xs={12}
-        sm={8}
-        md={6}
-        lg={4}
-        sx={{
-          zIndex: 2,
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          backdropFilter: 'blur(5px)',
-          borderRadius: '15px',
-          padding: '2rem',
-          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          maxHeight: '80vh',
-          overflowY: 'auto',
-        }}
-      >
-        <Grid item xs={12}>
-          <Typography
-            variant="h1"
-            textAlign={"center"}
-            sx={{
-              mb: 1,
-              fontSize: '3rem',
-            }}
-          >
-            {t.title}
-          </Typography>
-          {showLoginForm ? (
-            <>
-              <Typography textAlign={"center"} sx={{ mt: 1 }}>
-                {t.subtitle}
-              </Typography>
-              <Typography
-                fontSize={"75%"}
-                textAlign={"center"}
-                sx={{
-                  mt: 0.5,
-                  mb: 4,
-                }}
-              >
-                {t.version}
-              </Typography>
-            </>
-          ) : (
-            <motion.div
-              key={rotatingText}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Typography
-                textAlign={"center"}
-                variant="h5"
-                sx={{
-                  mt: 1,
-                  mb: -2,
-                  fontWeight: 'normal',
-                  color: theme.palette.text.secondary,
-                  textShadow: '0 0 5px rgba(0,0,0,0.3)',
-                  minHeight: '3em',
-                  lineHeight: '3em',
-                  fontSize: '1.2rem',
-                }}
-              >
-                {t.rotatingTexts[rotatingText]}
-              </Typography>
-            </motion.div>
-          )}
-        </Grid>
+
+      {/* Main Content */}
+      <Box sx={{
+        zIndex: 2,
+        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+        backdropFilter: 'blur(5px)',
+        borderRadius: '15px',
+        padding: '2rem',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        maxHeight: '80vh',
+        overflowY: 'auto',
+        width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' }
+      }}>
+        <Box sx={{mb: "-152px"}}>
+          <GlowingText>Gents</GlowingText>
+        </Box>
 
         {showLoginForm ? (
-          <Grid item xs={12} sx={{ mt: 2 }}>
+          <>
+            <Typography textAlign="center" sx={{ mt: 1 }}>
+              {t.subtitle}
+            </Typography>
+            <Typography fontSize="75%" textAlign="center" sx={{ mt: 0.5, mb: 4 }}>
+              {t.version}
+            </Typography>
+            {/* Login Form */}
             <form onSubmit={formSubmit}>
               <TextInput
                 name="email"
@@ -279,42 +225,69 @@ const Login: React.FC = () => {
                 </Button>
               </Grid>
             </form>
-          </Grid>
+          </>
         ) : (
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+          <>
             <motion.div
-              whileHover={{
-                scale: 1.1,
-                rotate: [0, -1, 1, -1, 0],
-                transition: { duration: 0.3 }
-              }}
-              whileTap={{ scale: 0.95 }}
+              key={rotatingText}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
             >
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => setShowLoginForm(true)}
+              <Typography
+                textAlign="center"
+                variant="h5"
                 sx={{
-                  mb: 1,
-                  fontSize: '1.5rem',
-                  padding: '20px 40px',
-                  borderRadius: '50px',
-                  boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
-                  backgroundColor: theme.palette.secondary.main,
-                  color: theme.palette.secondary.contrastText,
-                  '&:hover': {
-                    color: "white",
-                    backgroundColor: theme.palette.secondary.dark,
-                  },
+                  mt: 1,
+                  mb: -2,
+                  fontWeight: 'normal',
+                  color: theme.palette.text.secondary,
+                  textShadow: '0 0 5px rgba(0,0,0,0.3)',
+                  minHeight: '3em',
+                  lineHeight: '3em',
+                  fontSize: '1.2rem',
                 }}
               >
-                {t.startButton}
-              </Button>
+                {t.rotatingTexts[rotatingText]}
+              </Typography>
             </motion.div>
-          </Grid>
+            {/* Start Button */}
+            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+              <motion.div
+                whileHover={{
+                  scale: 1.1,
+                  rotate: [0, -1, 1, -1, 0],
+                  transition: { duration: 0.3 }
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  variant="contained"
+                  size="large"
+                  onClick={() => setShowLoginForm(true)}
+                  sx={{
+                    mb: 1,
+                    fontSize: '1.5rem',
+                    padding: '20px 40px',
+                    borderRadius: '50px',
+                    boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
+                    backgroundColor: theme.palette.secondary.main,
+                    color: theme.palette.secondary.contrastText,
+                    '&:hover': {
+                      color: "white",
+                      backgroundColor: theme.palette.secondary.dark,
+                    },
+                  }}
+                >
+                  {t.startButton}
+                </Button>
+              </motion.div>
+            </Grid>
+          </>
         )}
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 };
 
