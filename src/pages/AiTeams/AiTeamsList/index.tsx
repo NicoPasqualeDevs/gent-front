@@ -222,7 +222,10 @@ const AiTeamsList: React.FC<PageProps> = () => {
             gap: 2,
             width: { xs: '100%', sm: 'auto' }
           }}>
-            <Search sx={commonStyles.searchContainer}>
+            <Search sx={{
+              ...commonStyles.searchContainer,
+              width: { xs: '83.33%', sm: '200px' }
+            }}>
               <SearchIconWrapper>
                 <SearchIcon />
               </SearchIconWrapper>
@@ -236,7 +239,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
               value={state.contentPerPage}
               onChange={handleContentPerPageChange}
               size="small"
-              sx={{ width: { xs: '100%', sm: 'auto' } }}
+              sx={{ width: { xs: '83.33%', sm: 'auto' } }}
             >
               <MenuItem value="5">5 {t.aiTeamsList.perPage}</MenuItem>
               <MenuItem value="10">10 {t.aiTeamsList.perPage}</MenuItem>
@@ -307,7 +310,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
             width: '100%'
           }}>
             {/* Paginación a la izquierda */}
-            <Box>
+            <Box sx={{ width: { xs: '83.33%', sm: 'auto' } }}>
               <Pagination
                 count={state.paginationData.total_pages}
                 page={state.currentPage}
@@ -319,7 +322,10 @@ const AiTeamsList: React.FC<PageProps> = () => {
 
             {/* Contador de páginas a la derecha */}
             {state.paginationData?.total_items !== undefined && (
-              <Box sx={{ textAlign: { xs: 'center', sm: 'right' } }}>
+              <Box sx={{ 
+                textAlign: { xs: 'center', sm: 'right' },
+                width: { xs: '83.33%', sm: 'auto' }
+              }}>
                 <Typography variant="body2" color="text.secondary">
                   {`${(state.currentPage - 1) * parseInt(state.contentPerPage) + 1} - ${Math.min(
                     state.currentPage * parseInt(state.contentPerPage),

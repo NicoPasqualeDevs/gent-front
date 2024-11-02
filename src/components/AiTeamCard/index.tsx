@@ -53,7 +53,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
           variant="h6"
           component="h2"
           sx={{
-            mb: 1,
+            mb: 2,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -72,7 +72,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: 0.5,
-              mb: 1
+              mb: 2
             }}
           >
             <LocationOnIcon
@@ -97,7 +97,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
         )}
 
         {/* LLM Key Badge */}
-        <Box sx={{ mb: 1 }}>
+        <Box sx={{ mb: 2 }}>
           <Chip
             icon={<KeyIcon sx={{ fontSize: '0.9rem' }} />}
             label={`LLM Key (${t.aiTeamsList.comingSoon})`}
@@ -117,7 +117,6 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
         {/* Descripción */}
         <Typography
           variant="body2"
-          color="text.secondary"
           sx={{
             overflow: 'hidden',
             display: '-webkit-box',
@@ -125,7 +124,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
             WebkitBoxOrient: 'vertical',
             lineHeight: '1.4em',
             height: '2.8em',
-            mb: 1
+            mb: 2
           }}
         >
           {aiTeam.description || t.aiTeamsList.noDescription}
@@ -135,11 +134,14 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
       {/* Área de acciones y footer */}
       <Box sx={{
         display: 'flex',
-        flexDirection: 'column',
-        gap: 0.5,
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: 1,
         mt: 'auto',
         pt: 0.5,
+        pb: 0,
         borderTop: `1px solid ${theme.palette.divider}`,
+        minHeight: '32px',
       }}>
         {/* Información del propietario */}
         {aiTeam.owner_data && (
@@ -147,12 +149,17 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: 1,
-            width: '100%',
+            minWidth: 0,
+            height: '100%',
+            mt: '16px',
           }}>
             <Tooltip title={t.aiTeamsList.owner}>
               <PersonIcon sx={{
                 fontSize: 'small',
-                color: theme.palette.text.secondary
+                color: theme.palette.text.secondary,
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center'
               }} />
             </Tooltip>
             <Typography
@@ -162,7 +169,8 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
                 whiteSpace: 'nowrap',
-                flex: 1
+                display: 'flex',
+                alignItems: 'center'
               }}
             >
               {truncateText(aiTeam.owner_data.email, 30)}
@@ -173,18 +181,25 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
         {/* Botones de acción */}
         <Box sx={{
           display: 'flex',
-          justifyContent: 'flex-end',
+          alignItems: 'center',
           gap: 1,
-          width: '100%'
+          flexShrink: 0,
+          height: '100%',
+          mt: '16px',
         }}>
           <Tooltip title={t.aiTeamsList.manage}>
             <IconButton
               onClick={onManage}
               size="small"
               sx={{
-                color: theme.palette.primary.main,
+                color: '#fff',
+                backgroundColor: theme.palette.primary.main,
                 '&:hover': {
-                  backgroundColor: alpha(theme.palette.primary.main, 0.1)
+                  backgroundColor: alpha(theme.palette.primary.main, 0.8)
+                },
+                padding: '4px',
+                '& .MuiSvgIcon-root': {
+                  fontSize: '1.1rem'
                 }
               }}
             >
@@ -196,9 +211,14 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
               onClick={onEdit}
               size="small"
               sx={{
-                color: theme.palette.info.main,
+                color: '#fff',
+                backgroundColor: theme.palette.primary.main,
                 '&:hover': {
-                  backgroundColor: alpha(theme.palette.info.main, 0.1)
+                  backgroundColor: alpha(theme.palette.primary.main, 0.8)
+                },
+                padding: '4px',
+                '& .MuiSvgIcon-root': {
+                  fontSize: '1.1rem'
                 }
               }}
             >
@@ -210,9 +230,14 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
               onClick={onDelete}
               size="small"
               sx={{
-                color: theme.palette.error.main,
+                color: '#fff',
+                backgroundColor: theme.palette.error.main,
                 '&:hover': {
-                  backgroundColor: alpha(theme.palette.error.main, 0.1)
+                  backgroundColor: alpha(theme.palette.error.main, 0.8)
+                },
+                padding: '4px',
+                '& .MuiSvgIcon-root': {
+                  fontSize: '1.1rem'
                 }
               }}
             >
