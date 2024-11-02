@@ -12,6 +12,7 @@ import {
     alpha
 } from '@mui/material';
 import { SxProps } from '@mui/system';
+import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
 
 // Tipos comunes
 interface DashboardContainerProps {
@@ -20,11 +21,7 @@ interface DashboardContainerProps {
     sx?: SxProps<Theme>;
 }
 
-interface DashboardHeaderProps {
-    title: string;
-    actions?: React.ReactNode;
-    sx?: SxProps<Theme>;
-}
+interface DashboardHeaderProps extends HeaderBaseProps {}
 
 interface DashboardContentProps {
     children: React.ReactNode;
@@ -72,32 +69,16 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
     <Paper
         elevation={3}
         sx={{
-            p: 2,
-            mb: 2,
-            flexShrink: 0,
+            ...headerStyles.container,
             ...sx
         }}
     >
-        <Box sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 2,
-        }}>
-            <Typography variant="h5" sx={{
-                fontSize: { xs: '2rem', sm: '1.5rem' }
-            }}>
+        <Box sx={headerStyles.wrapper}>
+            <Typography variant="h5" sx={headerStyles.title}>
                 {title}
             </Typography>
             {actions && (
-                <Box sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    alignItems: 'center',
-                    gap: 2,
-                    width: { xs: '100%', sm: 'auto' }
-                }}>
+                <Box sx={headerStyles.actionsContainer}>
                     {actions}
                 </Box>
             )}
@@ -205,7 +186,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
         );
     }
 
-    // Variant team (default)
+    // Variant team (default) - Actualizando para coincidir con el diseño real
     return (
         <Card sx={{
             height: '100%',
@@ -215,7 +196,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
             border: `1px solid ${theme.palette.divider}`,
             boxShadow: 'none',
         }}>
-            <CardContent sx={{ 
+            <CardContent sx={{
                 p: '24px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -223,73 +204,64 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
                 '&:last-child': { pb: '24px' },
             }}>
                 {/* Contenido principal */}
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mb: 2 }}>
                     {/* Título */}
-                    <Skeleton variant="text" width="50%" height={24} sx={{ mb: 2 }} />
-                    
+                    <Skeleton variant="text" width="60%" height={28} sx={{ mb: 2 }} />
+
                     {/* Dirección */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 2 }}>
-                        <Skeleton variant="circular" width={14} height={14} />
-                        <Skeleton variant="text" width="30%" height={16} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                        <Skeleton variant="circular" width={16} height={16} />
+                        <Skeleton variant="text" width="40%" height={20} />
                     </Box>
 
                     {/* LLM Key Badge */}
                     <Box sx={{ mb: 2 }}>
-                        <Skeleton 
-                            variant="rectangular" 
-                            width={120} 
-                            height={20} 
-                            sx={{ borderRadius: '12px' }}
+                        <Skeleton
+                            variant="rectangular"
+                            width={140}
+                            height={28}
+                            sx={{ borderRadius: '14px' }}
                         />
                     </Box>
 
                     {/* Descripción */}
                     <Box sx={{ mb: 'auto' }}>
-                        <Skeleton variant="text" width="100%" height={16} />
-                        <Skeleton variant="text" width="80%" height={16} />
+                        <Skeleton variant="text" width="100%" height={20} />
+                        <Skeleton variant="text" width="90%" height={20} />
+                        <Skeleton variant="text" width="60%" height={20} />
                     </Box>
                 </Box>
 
-                {/* Footer - Ahora con posición correcta */}
+                {/* Footer */}
                 <Box sx={{
                     display: 'flex',
-                    justifyContent: 'space-between',
                     alignItems: 'center',
+                    justifyContent: 'space-between',
                     pt: 2,
-                    mt: 2,
                     borderTop: `1px solid ${theme.palette.divider}`,
-                    minHeight: '32px',
                 }}>
                     {/* Owner info */}
-                    <Box sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: 1
-                    }}>
-                        <Skeleton 
-                            variant="circular" 
-                            width={14} 
-                            height={14} 
-                        />
-                        <Skeleton 
-                            variant="text" 
-                            width={100} 
-                            height={16}
-                        />
-                    </Box>
-                    
-                    {/* Action buttons */}
-                    <Box sx={{ 
-                        display: 'flex', 
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
                         gap: 1,
-                        alignItems: 'center'
+                    }}>
+                        <Skeleton variant="circular" width={24} height={24} />
+                        <Skeleton variant="text" width={120} height={20} />
+                    </Box>
+
+                    {/* Action buttons */}
+                    <Box sx={{
+                        display: 'flex',
+                        gap: 1,
+                        alignItems: 'center',
                     }}>
                         {[...Array(3)].map((_, index) => (
-                            <Skeleton 
+                            <Skeleton
                                 key={index}
-                                variant="circular" 
-                                width={22} 
-                                height={22}
+                                variant="circular"
+                                width={32}
+                                height={32}
                             />
                         ))}
                     </Box>

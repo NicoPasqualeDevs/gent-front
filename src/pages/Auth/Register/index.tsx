@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Paper, Container } from "@mui/material";
+import { Box, Button, Paper, Container } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { AuthRegisterData } from "@/types/Auth";
@@ -7,6 +7,7 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
 import { motion } from "framer-motion";
+import { FormHeader } from "@/utils/FormsViewUtils";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -64,12 +65,10 @@ const Register: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
+      <FormHeader title="Registro de Usuario" />
+      
       <Paper elevation={3} sx={{ p: 3 }}>
         <Box component="form" onSubmit={handleSubmit} width="100%">
-          <Typography variant="h4" gutterBottom>
-            Registro de Usuario
-          </Typography>
-          
           <Box marginTop="20px">
             <TextInput
               name="email"

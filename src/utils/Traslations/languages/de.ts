@@ -57,7 +57,10 @@ const de: TranslationType = {
     owner: "Eigentümer",
     noDescription: "Keine Beschreibung",
     manage: "Verwalten",
-    comingSoon: "Demnächst verfügbar"
+    comingSoon: "Demnächst verfügbar",
+    noAddress: "Keine Adresse",
+    llmKeyBadge: "Team mit LLM Key",
+    noOwner: "Kein Besitzer"
   },
   iaPanel: {
     createAgent: "Agent erstellen",

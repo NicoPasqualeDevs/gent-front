@@ -8,6 +8,8 @@ import { PageCircularProgress } from "@/components/CircularProgress";
 import AuthChecker from "./components/AuthChecker";
 import { useAppContext } from '@/context/app';
 import { useLocation } from 'react-router-dom';
+import Login from '@/pages/Auth/Login';
+import Register from '@/pages/Auth/Register';
 
 // Interfaces
 interface ProtectedRouteProps {
@@ -71,14 +73,26 @@ const AppRoutes = () => {
       <Suspense fallback={<PageCircularProgress />}>
         <Routes>
           <Route path="/">
-            <Route 
-              path="auth/*" 
-              element={
-                <ProtectedRoute requireAuth={false}>
-                  <AuthModule />
-                </ProtectedRoute>
-              } 
-            />
+            <Route path="auth">
+              <Route 
+                path="login" 
+                element={
+                  <ProtectedRoute requireAuth={false}>
+                    <Login />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="register/new-user" 
+                element={
+                  <ProtectedRoute>
+                    <BuilderLayout>
+                      <Register />
+                    </BuilderLayout>
+                  </ProtectedRoute>
+                } 
+              />
+            </Route>
             <Route 
               path="builder/*" 
               element={

@@ -56,6 +56,9 @@ export type TranslationType = {
     noDescription: string;
     manage: string;
     comingSoon: string;
+    noAddress: string;
+    llmKeyBadge: string;
+    noOwner: string;
   };
   iaPanel: {
     createAgent: string;
