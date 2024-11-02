@@ -6,8 +6,18 @@ import { PageProps } from '@/types/Page';
 import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useAiTeamsApi from "@/hooks/useAiTeams";
-import { Container, Box, Paper, TextField, Button } from '@mui/material';
+import { Container, Box, Paper, Button } from '@mui/material';
 import { AiTeamsFormState } from '@/types/AiTeams';
+import { 
+  FormLayout, 
+  FormHeader, 
+  FormContent, 
+  FormInputGroup,
+  FormButton,
+  FormActions,
+  FormCancelButton,
+  FormTextField
+} from "@/utils/FormsViewUtils";
 
 const AiTeamsForm: React.FC<PageProps> = () => {
   const navigate = useNavigate();
@@ -140,58 +150,63 @@ const AiTeamsForm: React.FC<PageProps> = () => {
   }
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <form onSubmit={handleSubmit}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <TextField
-              name="name"
-              label={t.aiTeamsForm.teamName}
-              value={state.formData.name}
-              onChange={handleInputChange}
-              required
-              fullWidth
-            />
-            <TextField
-              name="description"
-              label={t.aiTeamsForm.description}
-              value={state.formData.description}
-              onChange={handleInputChange}
-              multiline
-              rows={4}
-              fullWidth
-            />
-            <TextField
-              name="address"
-              label={t.aiTeamsForm.address}
-              value={state.formData.address}
-              onChange={handleInputChange}
-              fullWidth
-            />
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-              <Button
-                variant="outlined"
-                onClick={() => navigate('/builder')}
-                disabled={state.isSubmitting}
-              >
-                {t.aiTeamsForm.cancel}
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={state.isSubmitting}
-              >
-                {state.isSubmitting 
-                  ? t.aiTeamsForm.saving 
-                  : state.isEditing 
-                    ? t.aiTeamsForm.update 
-                    : t.aiTeamsForm.create}
-              </Button>
-            </Box>
-          </Box>
-        </form>
-      </Paper>
-    </Container>
+    <FormLayout>
+      <FormHeader 
+        title={state.isEditing ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle}
+      />
+      
+      <FormContent onSubmit={handleSubmit}>
+        <FormInputGroup>
+          <FormTextField
+            name="name"
+            label={t.aiTeamsForm.teamName}
+            value={state.formData.name}
+            onChange={handleInputChange}
+            required
+          />
+        </FormInputGroup>
+
+        <FormInputGroup>
+          <FormTextField
+            name="description"
+            label={t.aiTeamsForm.description}
+            value={state.formData.description}
+            onChange={handleInputChange}
+            multiline
+            rows={4}
+          />
+        </FormInputGroup>
+
+        <FormInputGroup>
+          <FormTextField
+            name="address"
+            label={t.aiTeamsForm.address}
+            value={state.formData.address}
+            onChange={handleInputChange}
+          />
+        </FormInputGroup>
+
+        <FormActions>
+          <FormCancelButton
+            onClick={() => navigate('/builder')}
+            disabled={state.isSubmitting}
+          >
+            {t.aiTeamsForm.cancel}
+          </FormCancelButton>
+          <FormButton
+            type="submit"
+            variant="contained"
+            disabled={state.isSubmitting}
+          >
+            {state.isSubmitting 
+              ? t.aiTeamsForm.saving 
+              : state.isEditing 
+                ? t.aiTeamsForm.update 
+                : t.aiTeamsForm.create}
+          </FormButton>
+        </FormActions>
+      </FormContent>
+    </FormLayout>
   );
 };
 

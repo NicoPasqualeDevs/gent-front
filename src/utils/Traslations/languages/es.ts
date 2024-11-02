@@ -169,7 +169,8 @@ const es: TranslationType = {
     editTitle: "Editar herramienta {toolName}",
     createTitle: "Crear nueva herramienta",
     selectUser: "Seleccionar usuario",
-    currentUser: "Usuario actual"
+    currentUser: "Usuario actual",
+    cancel: "Cancelar"
   },
   tools: {
     libraryTitle: "Biblioteca de Herramientas",

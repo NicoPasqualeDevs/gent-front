@@ -1,13 +1,19 @@
-import { Box, Button, Paper, Container } from "@mui/material";
-import * as Yup from "yup";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 import { AuthRegisterData } from "@/types/Auth";
 import useAuth from "@/hooks/useAuth";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
-import { PasswordInput, TextInput } from "@/components/Inputs";
-import { motion } from "framer-motion";
-import { FormHeader } from "@/utils/FormsViewUtils";
+import { 
+  FormLayout, 
+  FormHeader, 
+  FormContent, 
+  FormInputGroup,
+  FormButton,
+  FormActions,
+  FormCancelButton,
+  FormTextField
+} from "@/utils/FormsViewUtils";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -64,89 +70,82 @@ const Register: React.FC = () => {
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 
   return (
-    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
+    <FormLayout>
       <FormHeader title="Registro de Usuario" />
       
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <Box component="form" onSubmit={handleSubmit} width="100%">
-          <Box marginTop="20px">
-            <TextInput
-              name="email"
-              label="Correo electrónico"
-              value={values.email}
-              onChange={handleChange}
-              error={touched.email && Boolean(errors.email)}
-              helperText={touched.email && errors.email ? errors.email : undefined}
-            />
-          </Box>
+      <FormContent onSubmit={handleSubmit}>
+        <FormInputGroup>
+          <FormTextField
+            name="email"
+            label="Correo electrónico"
+            value={values.email}
+            onChange={handleChange}
+            error={touched.email && Boolean(errors.email)}
+            helperText={touched.email && errors.email ? errors.email : undefined}
+          />
+        </FormInputGroup>
 
-          <Box marginTop="20px">
-            <TextInput
-              name="first_name"
-              label="Nombre"
-              value={values.first_name}
-              onChange={handleChange}
-              error={touched.first_name && Boolean(errors.first_name)}
-              helperText={touched.first_name && errors.first_name ? errors.first_name : undefined}
-            />
-          </Box>
+        <FormInputGroup>
+          <FormTextField
+            name="first_name"
+            label="Nombre"
+            value={values.first_name}
+            onChange={handleChange}
+            error={touched.first_name && Boolean(errors.first_name)}
+            helperText={touched.first_name && errors.first_name ? errors.first_name : undefined}
+          />
+        </FormInputGroup>
 
-          <Box marginTop="20px">
-            <TextInput
-              name="last_name"
-              label="Apellido"
-              value={values.last_name}
-              onChange={handleChange}
-              error={touched.last_name && Boolean(errors.last_name)}
-              helperText={touched.last_name && errors.last_name ? errors.last_name : undefined}
-            />
-          </Box>
+        <FormInputGroup>
+          <FormTextField
+            name="last_name"
+            label="Apellido"
+            value={values.last_name}
+            onChange={handleChange}
+            error={touched.last_name && Boolean(errors.last_name)}
+            helperText={touched.last_name && errors.last_name ? errors.last_name : undefined}
+          />
+        </FormInputGroup>
 
-          <Box marginTop="20px">
-            <PasswordInput
-              name="password"
-              label="Contraseña"
-              value={values.password}
-              onChange={handleChange}
-              error={touched.password && Boolean(errors.password)}
-              helperText={touched.password && errors.password ? errors.password : undefined}
-            />
-          </Box>
+        <FormInputGroup>
+          <FormTextField
+            name="password"
+            label="Contraseña"
+            value={values.password}
+            onChange={handleChange}
+            error={touched.password && Boolean(errors.password)}
+            helperText={touched.password && errors.password ? errors.password : undefined}
+            type="password"
+          />
+        </FormInputGroup>
 
-          <Box marginTop="20px">
-            <PasswordInput
-              name="confirm_password"
-              label="Confirmar contraseña"
-              value={values.confirm_password}
-              onChange={handleChange}
-              error={touched.confirm_password && Boolean(errors.confirm_password)}
-              helperText={touched.confirm_password && errors.confirm_password ? errors.confirm_password : undefined}
-            />
-          </Box>
+        <FormInputGroup>
+          <FormTextField
+            name="confirm_password"
+            label="Confirmar contraseña"
+            value={values.confirm_password}
+            onChange={handleChange}
+            error={touched.confirm_password && Boolean(errors.confirm_password)}
+            helperText={touched.confirm_password && errors.confirm_password ? errors.confirm_password : undefined}
+            type="password"
+          />
+        </FormInputGroup>
 
-          <motion.div
-            whileHover={{
-              scale: 1.05,
-              transition: { duration: 0.3 }
-            }}
-            whileTap={{ scale: 0.95 }}
+        <FormActions>
+          <FormCancelButton
+            onClick={() => navigate('/auth/login')}
           >
-            <Button
-              variant="contained"
-              type="submit"
-              sx={{
-                marginTop: "20px",
-                paddingTop: "10px",
-                paddingBottom: "10px",
-                width: "200px",
-              }}
-            >
-              Registrarse
-            </Button>
-          </motion.div>
-        </Box>
-      </Paper>
-    </Container>
+            Cancelar
+          </FormCancelButton>
+          <FormButton
+            type="submit"
+            variant="contained"
+          >
+            Registrarse
+          </FormButton>
+        </FormActions>
+      </FormContent>
+    </FormLayout>
   );
 };
 

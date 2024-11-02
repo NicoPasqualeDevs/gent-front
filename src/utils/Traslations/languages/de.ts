@@ -169,7 +169,8 @@ const de: TranslationType = {
     editTitle: "Werkzeug {toolName} bearbeiten",
     createTitle: "Neues Werkzeug erstellen",
     selectUser: "Benutzer auswählen",
-    currentUser: "Aktueller Benutzer"
+    currentUser: "Aktueller Benutzer",
+    cancel: "Abbrechen"
   },
   tools: {
     libraryTitle: "Werkzeugbibliothek",

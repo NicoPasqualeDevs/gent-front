@@ -163,6 +163,7 @@ export type TranslationType = {
     createTitle: string;
     selectUser: string;
     currentUser: string;
+    cancel: string;
   };
   tools: {
     libraryTitle: string;

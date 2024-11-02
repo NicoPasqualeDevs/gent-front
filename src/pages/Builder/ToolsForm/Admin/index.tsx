@@ -25,9 +25,40 @@ import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
 import { ToolData } from "@/types/Bots";
 import useTools from "@/hooks/useTools"; // Importar el nuevo hook
+import { 
+  FormLayout, 
+  FormHeader, 
+  FormContent, 
+  FormInputGroup,
+  FormButton,
+  FormActions,
+  FormFileInput,
+  FormCancelButton,
+  FormTextField,
+  FormSelect
+} from "@/utils/FormsViewUtils";
 
-// Definimos el tipo NonSuperUser
-type NonSuperUser = { id: number; username: string; email: string; first_name: string; last_name: string };
+// Definir interfaz para el usuario autenticado
+interface AuthUser {
+  uuid: string;
+  first_name: string;
+  email: string;
+  last_name?: string;
+  is_superuser: boolean;
+}
+
+interface AuthContextExtended {
+  user: AuthUser | null;
+}
+
+// Actualizar el tipo NonSuperUser
+type NonSuperUser = {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+};
 
 const ToolsForm: React.FC = () => {
   const navigate = useNavigate();
@@ -43,7 +74,7 @@ const ToolsForm: React.FC = () => {
     tool_name: "",
     instruction: "",
     tool_code: undefined,
-    user_id: auth.user?.uuid,
+    user_id: auth?.uuid || "",
   });
 
   const [nonSuperUsers, setNonSuperUsers] = useState<NonSuperUser[]>([]);
@@ -103,33 +134,35 @@ const ToolsForm: React.FC = () => {
 
   const getToolData = useCallback((toolId: string) => {
     return getTool(toolId)
-      .then((response: ToolData) => {
-        const newValues = {
-          tool_name: response.tool_name,
-          instruction: response.instruction || "",
-          tool_code: response.tool_code,
-          user_id: auth.user?.uuid,
-        };
-        setValues(newValues);
-        setInitialValues(newValues);
+      .then((response) => {
+        if (response?.data) {
+          const newValues = {
+            tool_name: response.data.tool_name,
+            instruction: response.data.instruction || "",
+            tool_code: response.data.tool_code,
+            user_id: auth?.uuid || "",
+          };
+          setValues(newValues);
+          setInitialValues(newValues);
+        }
       })
       .catch(() => {
         ErrorToast(t.errorConnection);
       });
-  }, [getTool, t.errorConnection]);
+  }, [getTool, t.errorConnection, auth?.uuid]);
 
   const initializeUsers = useCallback(() => {
-    if (!auth.user) return;
+    if (!auth?.uuid) return;
     
     const currentUser = {
-      id: Number(auth.user.uuid),
-      username: auth.user.first_name,
-      email: auth.user.email,
-      first_name: auth.user.first_name,
-      last_name: auth.user.last_name || ''
+      id: Number(auth.uuid),
+      username: auth.first_name,
+      email: auth.email,
+      first_name: auth.first_name,
+      last_name: auth.last_name || ''
     };
 
-    if (!auth.user.is_superuser) {
+    if (!auth.is_superuser) {
       setNonSuperUsers([currentUser]);
       return;
     }
@@ -146,7 +179,7 @@ const ToolsForm: React.FC = () => {
         console.error("Error al obtener usuarios no superusuarios:", error);
         setNonSuperUsers([currentUser]);
       });
-  }, [listNonSuperUsers]);
+  }, [listNonSuperUsers, auth]);
 
   // Efecto principal para la carga inicial
   useEffect(() => {
@@ -170,10 +203,10 @@ const ToolsForm: React.FC = () => {
 
   // Efecto separado para manejar el user_id
   useEffect(() => {
-    if (auth?.user?.uuid && !values.user_id) {
-      setFieldValue('user_id', auth.user.uuid);
+    if (auth?.uuid && !values.user_id) {
+      setFieldValue('user_id', auth.uuid);
     }
-  }, [auth?.user?.uuid]);
+  }, [auth?.uuid]);
 
   const updateTool = (formData: FormData, toolId: string) => {
     patchTool(toolId, formData)
@@ -198,92 +231,92 @@ const ToolsForm: React.FC = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <Box 
-          component="form" 
-          onSubmit={formSubmit} 
-          width="100%" 
-          encType="multipart/form-data"
-        >
-          {!loaded ? (
-            <PageCircularProgress />
-          ) : (
-            <>
-              <Typography variant="h4" gutterBottom>
-                {toolId ? t.editTool.replace("{toolName}", values.tool_name) : t.createNewTool}
-              </Typography>
-              <Box marginTop={"20px"}>
-                <TextInput
-                  name="tool_name"
-                  label={t.toolName}
-                  value={values.tool_name}
-                  helperText={errors.tool_name}
-                  onChange={handleChange}
-                />
-              </Box>
-              <Box marginTop={"30px"}>
-                <MultilineInput
-                  name="instruction"
-                  label={t.instructions}
-                  value={values.instruction}
-                  rows={6}
-                  helperText={errors.instruction}
-                  onChange={handleChange}
-                />
-              </Box>
-              <Box marginTop={"20px"}>
-                <input
-                  type="file"
-                  accept=".py,.js,.ts" // Especificar tipos de archivo permitidos
-                  onChange={(event) => {
-                    const file = event.currentTarget.files?.[0];
-                    if (file) {
-                      console.log('Selected file:', file);
-                      setFieldValue("tool_code", file);
-                    }
-                  }}
-                />
-                {errors.tool_code && <Typography color="error">{errors.tool_code}</Typography>}
-              </Box>
+    <FormLayout>
+      <FormHeader 
+        title={toolId ? t.editTool.replace("{toolName}", values.tool_name) : t.createNewTool}
+      />
 
-                <Box marginTop={"20px"}>
-                  <FormControl fullWidth>
-                    <InputLabel id="user-select-label">{t.selectUser}</InputLabel>
-                    <Select
-                      labelId="user-select-label"
-                      id="user-select"
-                      value={values.user_id || ''}
-                      label={t.selectUser}
-                      onChange={(e) => {
-                        setFieldValue('user_id', e.target.value);
-                      }}
-                      name="user_id"
-                    >
-                      {nonSuperUsers.map((user) => (
-                        <MenuItem key={user.id} value={user.id.toString()}>
-                          {user.username} - {user.email}
-                          {user.id === Number(auth?.user?.uuid) && ` (${t.currentUser})`}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Box>
+      <FormContent 
+        onSubmit={formSubmit}
+        encType="multipart/form-data"
+      >
+        {!loaded ? (
+          <PageCircularProgress />
+        ) : (
+          <>
+            <FormInputGroup>
+              <FormTextField
+                name="tool_name"
+                label={t.toolName}
+                value={values.tool_name}
+                onChange={handleChange}
+                error={Boolean(errors.tool_name)}
+                helperText={errors.tool_name}
+              />
+            </FormInputGroup>
 
-              <Button
-                variant="contained"
-                type="submit"
-                sx={{
-                  marginTop: "20px",
+            <FormInputGroup>
+              <FormTextField
+                name="instruction"
+                label={t.instructions}
+                value={values.instruction}
+                onChange={handleChange}
+                multiline
+                rows={6}
+                error={Boolean(errors.instruction)}
+                helperText={errors.instruction}
+              />
+            </FormInputGroup>
+
+            <FormInputGroup>
+              <FormFileInput
+                accept=".py,.js,.ts"
+                onChange={(file) => {
+                  console.log('Selected file:', file);
+                  setFieldValue("tool_code", file);
                 }}
+                error={errors.tool_code}
+              />
+            </FormInputGroup>
+
+            <FormInputGroup>
+              <FormSelect
+                labelId="user-select-label"
+                label={t.selectUser}
+                value={values.user_id || ''}
+                onChange={(e) => {
+                  setFieldValue('user_id', e.target.value);
+                }}
+                name="user_id"
+              >
+                {nonSuperUsers.map((user) => (
+                  <MenuItem key={user.id} value={user.id.toString()}>
+                    {user.username} - {user.email}
+                    {user.id === Number(auth?.uuid) && ` (${t.currentUser})`}
+                  </MenuItem>
+                ))}
+              </FormSelect>
+            </FormInputGroup>
+
+            <FormActions>
+              <FormCancelButton
+                onClick={() => navigate(-1)}
+                disabled={!isToolDataLoaded}
+              >
+                {t.cancel}
+              </FormCancelButton>
+              <FormButton
+                type="submit"
+                variant="contained"
+                disabled={!isToolDataLoaded}
               >
                 {toolId ? t.edit : t.create}
-              </Button>
-            </>
-          )}
-        </Box>
-      </Paper>
-    </Container>
+              </FormButton>
+            </FormActions>
+          </>
+        )}
+      </FormContent>
+    </FormLayout>
   );
 };
 
