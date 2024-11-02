@@ -73,3 +73,10 @@ export const common = {
         third: '60%'
     }
 } as const;
+
+export const commonStyles = {
+    scrollableContent: {
+        overflow: 'auto',
+        scrollbarColor: "auto",
+    }
+} as const;

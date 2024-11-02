@@ -155,13 +155,14 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
             }}>
                 <CardContent sx={{
                     p: spacing.cardPadding,
+                    py: 1,
                     display: 'flex',
                     flexDirection: 'column',
                     height: '100%',
                     '&:last-child': { pb: spacing.cardPadding },
                 }}>
                     {/* Contenido principal */}
-                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mb: 2 }}>
+                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mb: 0 }}>
                         {/* Título */}
                         <Skeleton 
                             variant="text" 
@@ -203,7 +204,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
                         </Box>
 
                         {/* Descripción */}
-                        <Box sx={{ mb: 'auto' }}>
+                        <Box sx={{ mb: 0 }}>
                             <Skeleton variant="text" width={common.descriptionSkeletonWidths.first} height={dimensions.lineHeight} />
                             <Skeleton variant="text" width={common.descriptionSkeletonWidths.second} height={dimensions.lineHeight} />
                             <Skeleton variant="text" width={common.descriptionSkeletonWidths.third} height={dimensions.lineHeight} />
@@ -328,6 +329,7 @@ export const commonStyles = {
         flexDirection: 'column',
         justifyContent: 'space-between',
         p: '24px',
+        py: '8px',
         '&:last-child': { pb: '24px' },
     },
     searchContainer: {

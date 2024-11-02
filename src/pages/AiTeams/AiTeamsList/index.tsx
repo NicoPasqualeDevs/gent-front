@@ -271,6 +271,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
                         <CardContent sx={{
                           ...commonStyles.cardContent,
                           pb: 2,
+                          py: 1,
                         }}>
                           <AiTeamCard 
                             aiTeam={aiTeam}

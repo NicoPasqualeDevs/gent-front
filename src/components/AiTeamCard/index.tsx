@@ -43,7 +43,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
 
     return (
         <>
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mb: spacing.sectionMarginBottom }}>
+            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mb: 0 }}>
                 <Typography 
                     variant="h6" 
                     sx={{ 
@@ -93,7 +93,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                     </Box>
                 </Box>
 
-                <Box sx={{ mb: 'auto' }}>
+                <Box sx={{ mb: 0 }}>
                     <Typography 
                         variant="body2" 
                         color="text.secondary"
