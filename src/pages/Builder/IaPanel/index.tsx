@@ -540,7 +540,13 @@ const IaPanel: React.FC<PageProps> = () => {
         ) : (
           <>
             {state.pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{ p: 2, flexGrow: 1, overflow: 'auto', ...commonStyles.scrollableContent }}>
+              <Paper elevation={3} sx={{ 
+                p: 2, 
+                flexGrow: 1, 
+                overflow: 'auto',
+                scrollbarColor: "auto",
+                ...commonStyles.scrollableContent
+              }}>
                 <Grid container spacing={3}>
                   {state.pageContent.map((bot, index) => (
                     <Grid item xs={12} md={6} xl={4} sx={{p: 0}} key={`bot-${bot.id || index}`}>
