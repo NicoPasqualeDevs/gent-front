@@ -42,7 +42,11 @@ const en = {
     errorConnection: "Error: Could not establish connection with the server",
     selectUser: "Select user",
     noUsersAvailable: "No users available",
-    currentUser: "Current user"
+    currentUser: "Current user",
+    saving: "Saving...",
+    update: "Update",
+    create: "Create",
+    cancel: "Cancel"
   },
   aiTeamsList: {
     newAiTeam: "New AI Team",
@@ -169,6 +173,42 @@ const en = {
     errorToken: "Authentication error",
     errorLoading: "Error loading tools",
     createToolButton: "Create Tool"
+  },
+  contextEntry: {
+    title: "Create Agent",
+    editTitle: "Edit Agent",
+    createTitle: "Create Agent",
+    name: "Agent Name",
+    description: "Description",
+    modelAI: "AI Model",
+    saving: "Saving...",
+    update: "Update",
+    create: "Create",
+    cancel: "Cancel",
+    successUpdate: "Agent updated successfully",
+    successCreate: "Agent created successfully",
+    errorConnection: "Error: Could not establish connection with server",
+    fieldRequired: "This field is required"
+  },
+  dataEntry: {
+    title: "Agent Data",
+    editTitle: "Edit Agent Data",
+    context: "Context",
+    documents: "Documents",
+    upload: "Upload",
+    saving: "Saving...",
+    update: "Update",
+    cancel: "Cancel",
+    successUpdate: "Data updated successfully",
+    errorConnection: "Error: Could not establish connection with server",
+    fieldRequired: "This field is required",
+    dragAndDrop: "Drag and drop files here or click to select",
+    maxSize: "Maximum file size: {size}MB",
+    invalidType: "Invalid file type",
+    uploadError: "Error uploading file",
+    uploadProgress: "Upload progress: {progress}%",
+    removeFile: "Remove file",
+    uploadSuccess: "File uploaded successfully"
   }
 };
 

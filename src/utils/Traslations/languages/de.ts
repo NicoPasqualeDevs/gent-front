@@ -42,7 +42,11 @@ const de = {
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     selectUser: "Benutzer auswählen",
     noUsersAvailable: "Keine Benutzer verfügbar",
-    currentUser: "Aktueller Benutzer"
+    currentUser: "Aktueller Benutzer",
+    saving: "Speichern...",
+    update: "Aktualisieren",
+    create: "Erstellen",
+    cancel: "Abbrechen"
   },
   aiTeamsList: {
     newAiTeam: "Neues KI-Team",
@@ -171,6 +175,44 @@ const de = {
     errorRelate: "Fehler beim Zuordnen des Werkzeugs",
     errorUnrelate: "Fehler beim Aufheben der Zuordnung des Werkzeugs",
     createToolButton: "Werkzeug erstellen"
+  },
+
+  contextEntry: {
+    title: "Agent erstellen",
+    editTitle: "Agent bearbeiten",
+    createTitle: "Agent erstellen",
+    name: "Agent Name",
+    description: "Beschreibung",
+    modelAI: "KI-Modell",
+    saving: "Speichern...",
+    update: "Aktualisieren",
+    create: "Erstellen",
+    cancel: "Abbrechen",
+    successUpdate: "Agent erfolgreich aktualisiert",
+    successCreate: "Agent erfolgreich erstellt",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    fieldRequired: "Dieses Feld ist erforderlich"
+  },
+
+  dataEntry: {
+    title: "Agentendaten",
+    editTitle: "Agentendaten bearbeiten",
+    context: "Kontext",
+    documents: "Dokumente",
+    upload: "Hochladen",
+    saving: "Speichern...",
+    update: "Aktualisieren",
+    cancel: "Abbrechen",
+    successUpdate: "Daten erfolgreich aktualisiert",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    fieldRequired: "Dieses Feld ist erforderlich",
+    dragAndDrop: "Dateien hier ablegen oder zum Auswählen klicken",
+    maxSize: "Maximale Dateigröße: {size}MB",
+    invalidType: "Ungültiger Dateityp",
+    uploadError: "Fehler beim Hochladen der Datei",
+    uploadProgress: "Upload-Fortschritt: {progress}%",
+    removeFile: "Datei entfernen",
+    uploadSuccess: "Datei erfolgreich hochgeladen"
   }
 };
 

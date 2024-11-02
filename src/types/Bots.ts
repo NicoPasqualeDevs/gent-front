@@ -56,16 +56,17 @@ export interface Ktag {
 }
 
 export interface AgentData {
-  [propKey: string]: string | undefined | Ktag[] | null;
-  api_bot: string | null;
-  api_details: string;
-  description: string;
   id: string;
-  iframe_code: string;
-  labels: Ktag[];
   name: string;
-  widget_url: string;
-  model_ai: string 
+  description?: string;
+  model_ai: string;
+  context: string;
+  owner?: string;
+  owner_data?: {
+    name: string;
+    email: string;
+  };
+  widget_url?: string;
 }
 
 export interface AgentMetaData {

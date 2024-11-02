@@ -42,7 +42,11 @@ const br = {
     errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
     selectUser: "Selecionar usuário",
     noUsersAvailable: "Nenhum usuário disponível",
-    currentUser: "Usuário atual"
+    currentUser: "Usuário atual",
+    saving: "Salvando...",
+    update: "Atualizar",
+    create: "Criar",
+    cancel: "Cancelar"
   },
   aiTeamsList: {
     newAiTeam: "Nova Equipe IA",
@@ -169,6 +173,42 @@ const br = {
     errorToken: "Erro de autenticação",
     errorLoading: "Erro ao carregar ferramentas",
     createToolButton: "Criar Ferramenta"
+  },
+  contextEntry: {
+    title: "Criar Agente",
+    editTitle: "Editar Agente",
+    createTitle: "Criar Agente",
+    name: "Nome do Agente",
+    description: "Descrição",
+    modelAI: "Modelo de IA",
+    saving: "Salvando...",
+    update: "Atualizar",
+    create: "Criar",
+    cancel: "Cancelar",
+    successUpdate: "Agente atualizado com sucesso",
+    successCreate: "Agente criado com sucesso",
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
+    fieldRequired: "Este campo é obrigatório"
+  },
+  dataEntry: {
+    title: "Dados do Agente",
+    editTitle: "Editar Dados do Agente",
+    context: "Contexto",
+    documents: "Documentos",
+    upload: "Enviar",
+    saving: "Salvando...",
+    update: "Atualizar",
+    cancel: "Cancelar",
+    successUpdate: "Dados atualizados com sucesso",
+    errorConnection: "Erro: N��o foi possível estabelecer conexão com o servidor",
+    fieldRequired: "Este campo é obrigatório",
+    dragAndDrop: "Arraste e solte arquivos aqui ou clique para selecionar",
+    maxSize: "Tamanho máximo por arquivo: {size}MB",
+    invalidType: "Tipo de arquivo inválido",
+    uploadError: "Erro ao enviar o arquivo",
+    uploadProgress: "Progresso do upload: {progress}%",
+    removeFile: "Remover arquivo",
+    uploadSuccess: "Arquivo enviado com sucesso"
   }
 };
 

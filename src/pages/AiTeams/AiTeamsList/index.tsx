@@ -1,185 +1,242 @@
-import { useEffect, useCallback, useState, useRef } from "react";
-import { useAppContext } from "@/context/app";
-import DeleteIcon from "@mui/icons-material/Delete";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import SearchIcon from "@mui/icons-material/Search";
-import AddIcon from '@mui/icons-material/Add';
-import PersonIcon from '@mui/icons-material/Person'; // Nuevo ícono para el propietario
+import { useEffect, useState, useCallback, lazy, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Button,
-  Card,
-  CardActions,
-  CardContent,
-  Divider,
-  Grid,
-  MenuItem,
-  Pagination,
-  Select,
-  SelectChangeEvent,
-  Typography,
-  Box,
-  Paper,
-  Container,
-  IconButton,
-  Tooltip
-} from "@mui/material";
+import { useAppContext } from "@/context/app";
 import { PageCircularProgress } from "@/components/CircularProgress";
-import useAiTeamsApi from "@/hooks/useCustomers";
-import { ErrorToast, SuccessToast } from "@/components/Toast";
-import ActionAllower from "@/components/ActionAllower";
+import { PageProps, PaginatedPageState } from "@/types/Page";
+import { ErrorToast } from "@/components/Toast";
+import { languages } from "@/utils/Traslations";
+import useAiTeamsApi from "@/hooks/useAiTeams";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
-import { useTheme } from "@mui/material/styles";
-import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
-import { languages } from "@/utils/Traslations";
+import { 
+  Container, 
+  Box, 
+  Paper, 
+  Grid, 
+  Typography, 
+  Button, 
+  Select, 
+  MenuItem, 
+  Pagination,
+  SelectChangeEvent,
+  useTheme,
+  InputBase,
+  styled,
+  alpha,
+  Card,
+  CardContent,
+  Tooltip
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import PersonIcon from '@mui/icons-material/Person';
+import ActionAllower from "@/components/ActionAllower";
+import { SuccessToast } from "@/components/Toast";
 
-const AiTeamsList: React.FC = () => {
+// Componentes de búsqueda estilizados
+const Search = styled('div')(({ theme }) => ({
+  position: 'relative',
+  borderRadius: theme.shape.borderRadius,
+  backgroundColor: alpha(theme.palette.common.white, 0.15),
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.common.white, 0.25),
+  },
+  marginLeft: 0,
+  width: '100%',
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(0, 2),
+  height: '100%',
+  position: 'absolute',
+  pointerEvents: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: 'inherit',
+  width: '100%',
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1, 1, 0),
+    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+    transition: theme.transitions.create('width'),
+    width: '100%',
+  },
+}));
+
+// Componente AiTeamCard
+const AiTeamCard = lazy(() => import("@/components/AiTeams/AiTeamCard"));
+
+interface AiTeamsListState extends PaginatedPageState {
+  pageContent: AiTeamsDetails[];
+  paginationData?: Metadata;
+  allowerState: boolean;
+  clientToDelete: string;
+}
+
+const AiTeamsList: React.FC<PageProps> = () => {
   const navigate = useNavigate();
-  const {
-    setNavElevation,
-    replacePath,
-    clientPage,
-    setClientPage,
-    setAgentsPage,
-    language,
-    auth
-  } = useAppContext();
-  const { getMyAiTeams, deleteAiTeamDetails, getAiTeamsByOwner } = useAiTeamsApi();
-  const [allowerState, setAllowerState] = useState<boolean>(false);
-  const [clientToDelete, setClientToDelete] = useState<string>("");
-  const [pageContent, setPageContent] = useState<AiTeamsDetails[]>([]);
-  const [paginationData, setPaginationData] = useState<Metadata>();
-  const [searchQuery, setSearchQuery] = useState<string>("");
-  const [contentPerPage, setContentPerPage] = useState<string>("5");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-  const theme = useTheme();
+  const { auth, language, setClientPage } = useAppContext();
+  const { getMyAiTeams, getAiTeamsByOwner, deleteAiTeamDetails } = useAiTeamsApi();
+  const [state, setState] = useState<AiTeamsListState>({
+    isLoading: true,
+    isError: false,
+    searchQuery: "",
+    contentPerPage: "5",
+    currentPage: 1,
+    isSearching: false,
+    pageContent: [],
+    allowerState: false,
+    clientToDelete: ""
+  });
   const t = languages[language as keyof typeof languages];
+  const theme = useTheme();
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const initializeAuth = () => {
+      if (!auth) {
+        console.log('No auth found, redirecting to login');
+        navigate('/auth/login');
+        return;
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  useEffect(() => {
+    console.log('Auth state changed:', auth);
+    
+    const loadData = async () => {
+      if (!auth?.uuid) {
+        console.log('No auth UUID found, skipping data load');
+        return;
+      }
+
+      try {
+        console.log('Loading AI teams data...');
+        const filterParams = `?page_size=${state.contentPerPage}&page=${state.currentPage}`;
+        await getAiTeamsData(filterParams);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        setState(prev => ({ 
+          ...prev,
+          isLoading: false,
+          isError: true,
+          errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        }));
+        ErrorToast(t.actionAllower.fieldRequired);
+      }
+    };
+
+    if (auth?.uuid) {
+      loadData();
+    }
+  }, [auth, state.contentPerPage, state.currentPage]);
 
   const getAiTeamsData = useCallback(async (filterParams: string) => {
-    if (!auth?.user?.uuid) {
-      setIsLoading(false);
+    if (!auth?.uuid) {
+      console.log('No auth UUID in getAiTeamsData, aborting');
       return;
     }
 
+    console.log('Fetching AI teams with params:', filterParams);
+    console.log('Auth state:', auth);
+
     try {
-      setIsLoading(true);
-      let response;
+      setState(prev => ({ ...prev, isLoading: true }));
       
-      if (auth?.user?.is_superuser) {
+      let response;
+      if (auth.is_superuser) {
+        console.log('Fetching as superuser');
         response = await getMyAiTeams(filterParams);
       } else {
-        response = await getAiTeamsByOwner(auth.user.uuid, filterParams);
+        console.log('Fetching as regular user');
+        response = await getAiTeamsByOwner(auth.uuid, filterParams);
       }
 
-      if (response) {
-        setClientPage(response.metadata.current_page || 1);
-        setPageContent(response.data);
-        setPaginationData(response.metadata);
+      console.log('API response:', response);
+
+      if (response?.data) {
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          isSearching: false,
+          currentPage: response.metadata?.current_page || 1,
+          pageContent: Array.isArray(response.data) ? response.data : [],
+          paginationData: response.metadata
+        }));
+        setClientPage(response.metadata?.current_page || 1);
       }
-    } catch (error: any) {
-      if (error instanceof Error) {
-        ErrorToast(t.aiTeamsForm.errorConnection);
-      } else {
-        ErrorToast(
-          `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
-        );
-      }
-    } finally {
-      setIsLoading(false);
-      setIsSearching(false);
+    } catch (error) {
+      console.error('Error fetching AI teams:', error);
+      setState(prev => ({ 
+        ...prev, 
+        isLoading: false,
+        isError: true,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        pageContent: []
+      }));
+      ErrorToast(t.aiTeamsForm.errorConnection);
     }
-  }, [auth?.user, getMyAiTeams, getAiTeamsByOwner, setClientPage]);
+  }, [auth, getMyAiTeams, getAiTeamsByOwner, setClientPage]);
 
-  const handleSearch = useCallback((value: string) => {
-    if (isSearching) return;
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setState(prev => ({ ...prev, searchQuery: e.target.value }));
     
-    setSearchQuery(value);
-    setIsSearching(true);
-    
-    const params = value.trim() !== "" 
-      ? `?name__icontains=${value}&page_size=${contentPerPage}`
-      : `?page_size=${contentPerPage}&page=${clientPage}`;
-    
-    getAiTeamsData(params);
-  }, [contentPerPage, clientPage, isSearching, getAiTeamsData]);
+    if (e.target.value.trim() === "") {
+      getAiTeamsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+    } else {
+      getAiTeamsData(`?name__icontains=${e.target.value}&page_size=${state.contentPerPage}`);
+    }
+  };
 
-  const handlePagination = useCallback((event: React.ChangeEvent<unknown>, value: number) => {
-    event.preventDefault();
-    if (isLoading) return;
-    
-    setClientPage(value);
-    getAiTeamsData(`?page_size=${contentPerPage}&page=${value}`);
-  }, [contentPerPage, isLoading, setClientPage, getAiTeamsData]);
+  const handleContentPerPageChange = (event: SelectChangeEvent<string>) => {
+    const newValue = event.target.value;
+    setState(prev => ({ ...prev, contentPerPage: newValue }));
+    getAiTeamsData(`?page_size=${newValue}&page=1`);
+  };
 
-  const deleteAction = useCallback(async (aiTeamId: string) => {
-    if (!aiTeamId || isLoading) return;
+  const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
+    setState(prev => ({ ...prev, currentPage: value }));
+    getAiTeamsData(`?page_size=${state.contentPerPage}&page=${value}`);
+  };
+
+  const handleDelete = async (aiTeamId: string) => {
+    if (!aiTeamId) return;
 
     try {
-      setIsLoading(true);
+      setState(prev => ({ ...prev, isLoading: true }));
       await deleteAiTeamDetails(aiTeamId);
       
-      setPageContent(prevContent => prevContent.filter(item => item.id !== aiTeamId));
-      setAllowerState(false);
-      setClientToDelete("");
+      setState(prev => ({
+        ...prev,
+        pageContent: prev.pageContent.filter(item => item.id !== aiTeamId),
+        allowerState: false,
+        clientToDelete: "",
+        isLoading: false
+      }));
+      
       SuccessToast(t.aiTeamsList.successDelete);
-      
-      // Recargar la lista después de eliminar
-      await getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
-    } catch (error: any) {
-      ErrorToast(error instanceof Error
-        ? t.aiTeamsForm.errorConnection
-        : `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
-      );
-    } finally {
-      setIsLoading(false);
+      await getAiTeamsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+    } catch (error) {
+      setState(prev => ({ 
+        ...prev, 
+        isLoading: false,
+        isError: true,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      }));
+      ErrorToast(t.aiTeamsForm.errorConnection);
     }
-  }, [deleteAiTeamDetails, contentPerPage, clientPage, getAiTeamsData]);
-
-/*   const handleContentPerPageChange = useCallback((event: SelectChangeEvent) => {
-    const newValue = event.target.value;
-    setContentPerPage(newValue);
-    getAiTeamsData(`?page_size=${newValue}&page=1`);
-  }, [getAiTeamsData]);
- */
-  // Efecto inicial para cargar los datos
-  useEffect(() => {
-    let isSubscribed = true;
-
-    const initializeData = async () => {
-      if (!auth?.user?.uuid) return;
-
-      replacePath([
-        {
-          label: t.aiTeamsList.yourAiTeams,
-          current_path: "/builder",
-          preview_path: "/builder",
-        },
-      ]);
-      setAgentsPage(1);
-      setNavElevation("builder");
-      
-      if (isSubscribed) {
-        await getAiTeamsData(`?page_size=${contentPerPage}&page=${clientPage}`);
-      }
-    };
-
-    initializeData();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [auth?.user?.uuid]); // Solo se ejecuta cuando cambia el usuario
-
-  if (!auth?.user?.uuid) {
-    return null;
-  }
+  };
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {/* Header con búsqueda y botón de nuevo equipo */}
         <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
           <Box sx={{
             display: 'flex',
@@ -188,7 +245,7 @@ const AiTeamsList: React.FC = () => {
             alignItems: 'center',
             gap: 2,
           }}>
-            {auth?.user?.is_superuser && (
+            {auth?.is_superuser && (
               <Button
                 variant="contained"
                 startIcon={<AddIcon />}
@@ -208,30 +265,22 @@ const AiTeamsList: React.FC = () => {
               display: 'flex',
               justifyContent: { xs: 'center', sm: 'flex-end' }
             }}>
-              <Search sx={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: { xs: '100%', sm: '300px' },
-              }}>
+              <Search>
                 <SearchIconWrapper>
                   <SearchIcon />
                 </SearchIconWrapper>
                 <StyledInputBase
                   placeholder={t.aiTeamsList.searchPlaceholder}
-                  value={searchQuery}
-                  inputProps={{
-                    "aria-label": "search",
-                    style: { padding: '8px 40px 8px 16px' }
-                  }}
-                  onChange={(e) => handleSearch(e.target.value)}
+                  value={state.searchQuery}
+                  onChange={handleSearch}
                   fullWidth
-                  inputRef={searchInputRef}
                 />
               </Search>
             </Box>
           </Box>
         </Paper>
 
+        {/* Título y selector de items por página */}
         <Paper elevation={3} sx={{ p: 2 }}>
           <Box sx={{
             display: 'flex',
@@ -244,11 +293,8 @@ const AiTeamsList: React.FC = () => {
               {t.aiTeamsList.yourAiTeams}
             </Typography>
             <Select
-              value={contentPerPage}
-              onChange={(e: SelectChangeEvent) => {
-                setContentPerPage(e.target.value);
-                getAiTeamsData(`?page_size=${e.target.value}&page=${clientPage}`);
-              }}
+              value={state.contentPerPage}
+              onChange={handleContentPerPageChange}
               size="small"
               sx={{ width: { xs: '100%', sm: 'auto' } }}
             >
@@ -259,19 +305,15 @@ const AiTeamsList: React.FC = () => {
           </Box>
         </Paper>
 
-        {isLoading ? (
+        {/* Lista de equipos */}
+        {state.isLoading ? (
           <PageCircularProgress />
         ) : (
           <>
-            {pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{
-                p: 2,
-                border: `2px solid transparent`,
-                backgroundColor: 'background.paper',
-                minHeight: '33vh'
-              }}>
+            {state.pageContent.length > 0 ? (
+              <Paper elevation={3} sx={{ p: 2, minHeight: '33vh' }}>
                 <Grid container spacing={3}>
-                  {pageContent.map((aiTeam, index) => (
+                  {state.pageContent.map((aiTeam, index) => (
                     <Grid item xs={12} sm={6} md={4} key={`aiTeam-${index}`}>
                       <Card sx={{
                         height: '100%',
@@ -290,77 +332,24 @@ const AiTeamsList: React.FC = () => {
                           p: 3,
                           '&:last-child': { pb: 3 },
                         }}>
-                          <Box>
-                            <Typography sx={{color: theme.palette.secondary.light}} variant="h6" component="div" gutterBottom noWrap>
-                              {aiTeam.name}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              color="text.primary"
-                              sx={{
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                display: '-webkit-box',
-                                WebkitLineClamp: 3,
-                                WebkitBoxOrient: 'vertical',
-                                minHeight: '3.6em',
-                                mb: 2,
-                              }}
-                            >
-                              {aiTeam.description}
-                            </Typography>
-                            
-                            {/* Nueva sección para mostrar owner_data */}
-                            {aiTeam.owner_data && (
-                              <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
-                                <Tooltip title={t.aiTeamsList.owner}>
-                                  <PersonIcon sx={{ mr: 1, fontSize: 'small', color: theme.palette.text.secondary }} />
-                                </Tooltip>
-                                <Typography variant="body2" color="text.secondary">
-                                  {aiTeam.owner_data.name} ({aiTeam.owner_data.email})
-                                </Typography>
-                              </Box>
-                            )}
-                          </Box>
-                          <Box sx={{ mt: 2 }}>
-                            <Button
-                              variant="text"
-                              size="small"
-                              onClick={() => navigate(`/builder/agents/${aiTeam.name}/${aiTeam.id}`)}
-                              sx={{
-                                color: "text.secondary",
-                                justifyContent: "flex-start",
-                                pl: 0,
-                                "&:hover": {
-                                  backgroundColor: "transparent",
-                                  color: "white",
-                                },
-                              }}
-                              endIcon={<ArrowForwardIcon />}
-                            >
-                              {t.aiTeamsList.manageTeam}
-                            </Button>
-                          </Box>
+                          <AiTeamCard 
+                            aiTeam={aiTeam}
+                            onDelete={() => handleDelete(aiTeam.id)}
+                            onEdit={() => navigate(`/builder/form/${aiTeam.name}/${aiTeam.id}`)}
+                            onManage={() => navigate(`/builder/agents/${aiTeam.name}/${aiTeam.id}`)}
+                          />
+                          
+                          {aiTeam.owner_data && (
+                            <Box sx={{ mt: 2, display: 'flex', alignItems: 'center' }}>
+                              <Tooltip title={t.aiTeamsList.owner}>
+                                <PersonIcon sx={{ mr: 1, fontSize: 'small', color: theme.palette.text.secondary }} />
+                              </Tooltip>
+                              <Typography variant="body2" color="text.secondary">
+                                {aiTeam.owner_data.name} ({aiTeam.owner_data.email})
+                              </Typography>
+                            </Box>
+                          )}
                         </CardContent>
-                        <Divider />
-                        <CardActions sx={{ pl: 2, pr: 2, pt: 1, pb: 1, justifyContent: 'space-between' }}>
-                          <Button
-                            size="small"
-                            onClick={() => navigate(`/builder/form/${aiTeam.name}/${aiTeam.id}`)}
-                          >
-                            {t.aiTeamsList.edit}
-                          </Button>
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={() => {
-                              setAllowerState(true);
-                              setClientToDelete(aiTeam.id || '');
-                            }}
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        </CardActions>
                       </Card>
                     </Grid>
                   ))}
@@ -369,7 +358,7 @@ const AiTeamsList: React.FC = () => {
             ) : (
               <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
                 <Typography variant="subtitle1">
-                  {searchQuery && searchQuery.trim() !== ""
+                  {state.searchQuery
                     ? t.aiTeamsList.noTeamsFound
                     : t.aiTeamsList.noTeamsToShow}
                 </Typography>
@@ -378,7 +367,8 @@ const AiTeamsList: React.FC = () => {
           </>
         )}
 
-        {pageContent.length > 0 && (
+        {/* Paginación */}
+        {state.pageContent.length > 0 && state.paginationData && (
           <Paper elevation={3} sx={{ p: 2 }}>
             <Box sx={{
               display: 'flex',
@@ -388,29 +378,30 @@ const AiTeamsList: React.FC = () => {
               gap: 2,
             }}>
               <Pagination
-                count={paginationData?.total_pages}
-                page={clientPage}
+                count={state.paginationData.total_pages}
+                page={state.currentPage}
                 onChange={handlePagination}
                 color="primary"
                 size="small"
               />
-              {paginationData && (
+              {state.paginationData?.total_items !== undefined && (
                 <Typography variant="body2" color="text.secondary">
-                  {`${(clientPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
-                  clientPage * (paginationData?.page_size ?? 0),
-                  paginationData?.total_items ?? 0
-                )} ${t.aiTeamsList.teamsCount.replace("{total}", paginationData?.total_items?.toString() ?? "0")}`}
+                  {`${(state.currentPage - 1) * parseInt(state.contentPerPage) + 1} - ${Math.min(
+                    state.currentPage * parseInt(state.contentPerPage),
+                    state.paginationData.total_items
+                  )} ${t.aiTeamsList.teamsCount.replace("{total}", state.paginationData.total_items.toString())}`}
                 </Typography>
               )}
             </Box>
           </Paper>
         )}
       </Box>
-      {allowerState && (
+
+      {state.allowerState && (
         <ActionAllower
-          allowerStateCleaner={setAllowerState}
-          actionToDo={deleteAction}
-          actionParams={clientToDelete}
+          allowerStateCleaner={(value: boolean) => setState(prev => ({ ...prev, allowerState: value }))}
+          actionToDo={handleDelete}
+          actionParams={state.clientToDelete}
         />
       )}
     </Container>

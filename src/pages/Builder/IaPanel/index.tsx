@@ -22,142 +22,168 @@ import { modelAIOptions } from "@/utils/LargeModelsUtils";
 import ApiIcon from '@mui/icons-material/Api'; // Añade esta importación
 import EditIcon from '@mui/icons-material/Edit';
 import { languages } from "@/utils/Traslations";
+import { PageProps } from '@/types/Page';
+import { IaPanelState } from './types';
+import AddIcon from "@mui/icons-material/Add";
 
-const IaPanel: React.FC = () => {
-  const { clientName, aiTeamId } = useParams();
+const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
-  const { replacePath, appNavigation, agentsPage, setAgentsPage, language, auth } = useAppContext();
+  const { aiTeamId, aiTeamName } = useParams();
+  const { auth, language, replacePath } = useAppContext();
   const { getBotsList, deleteBot } = useBotsApi();
-  const [allowerState, setAllowerState] = useState(false);
-  const [botToDelete, setbotToDelete] = useState("");
-  const [pageContent, setPageContent] = useState<AgentData[]>([]);
-  const [paginationData, setPaginationData] = useState<Metadata>();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [contentPerPage, setContentPerPage] = useState("5");
-  const { apiBase } = useApi();
+  const [state, setState] = useState<IaPanelState>({
+    isLoading: true,
+    isError: false,
+    searchQuery: '',
+    contentPerPage: '5',
+    currentPage: 1,
+    isSearching: false,
+    pageContent: [],
+    aiTeamName: aiTeamName,
+    allowerState: false,
+    botToDelete: "",
+    isDeleting: false
+  });
   const t = languages[language as keyof typeof languages];
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const { apiBase } = useApi();
 
   const getBotsData = useCallback(async (filterParams: string) => {
     if (!aiTeamId) {
-      setIsLoading(false);
+      setState(prev => ({ ...prev, isLoading: false }));
       return;
     }
 
     try {
-      setIsLoading(true);
-      const response = await getBotsList(aiTeamId, filterParams);
+      setState(prev => ({ ...prev, isLoading: true }));
       
-      if (response && response.data) {
-        setAgentsPage(response.metadata.current_page || 1);
-        setPageContent(response.data);
-        setPaginationData(response.metadata);
+      const response = await getBotsList(aiTeamId, filterParams);
+
+      if (response) {
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          isSearching: false,
+          currentPage: response.metadata.current_page || 1,
+          pageContent: response.data,
+          paginationData: response.metadata
+        }));
       }
-    } catch (error: any) {
-      ErrorToast(error instanceof Error
-        ? "Error: no se pudo establecer conexión con el servidor"
-        : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
-      );
-    } finally {
-      setIsLoading(false);
-      setIsSearching(false);
+    } catch (error) {
+      setState(prev => ({ 
+        ...prev, 
+        isLoading: false,
+        isError: true,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+      }));
+      ErrorToast(t.actionAllower.fieldRequired);
     }
-  }, [aiTeamId, getBotsList]);
+  }, [aiTeamId, getBotsList, t]);
 
-  // Efecto para forzar el renderizado cuando los datos se cargan
-  useEffect(() => {
-    if (pageContent && pageContent.length > 0) {
-      console.log('Page content updated:', pageContent); // Debug log;
-    }
-  }, [pageContent]);
-
-  // Efecto inicial para cargar los datos
   useEffect(() => {
     let isSubscribed = true;
 
-    const initializeData = async () => {
-      if (!aiTeamId || !clientName) {
-        ErrorToast("Error al cargar aiTeamId en esta vista");
-        return;
-      }
+    const initializePage = async () => {
+      try {
+        if (!auth?.user?.uuid) {
+          throw new Error('User not authenticated');
+        }
 
-      replacePath([
-        ...appNavigation.slice(0, 1),
-        { label: clientName, current_path: `/builder/agents/${clientName}/${aiTeamId}`, preview_path: "" },
-      ]);
-      
-      if (isSubscribed) {
-        try {
-          await getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
-        } catch (error) {
-          console.error('Error loading bots:', error);
+        if (!aiTeamId) {
+          throw new Error('AI Team ID is required');
+        }
+
+        // Configurar navegación
+        replacePath([
+          {
+            label: t.leftMenu.aiTeams,
+            current_path: "/builder",
+            preview_path: "/builder",
+          },
+          {
+            label: state.aiTeamName || '',
+            current_path: `/builder/agents/${aiTeamName}/${aiTeamId}`,
+            preview_path: "",
+          },
+        ]);
+
+        if (isSubscribed) {
+          await getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+        }
+      } catch (error) {
+        if (isSubscribed) {
+          setState(prev => ({ 
+            ...prev,
+            isLoading: false,
+            isError: true,
+            errorMessage: error instanceof Error ? error.message : 'Unknown error'
+          }));
+          ErrorToast(t.actionAllower.fieldRequired);
+          navigate('/builder');
         }
       }
     };
 
-    initializeData();
+    initializePage();
 
     return () => {
       isSubscribed = false;
     };
-  }, [aiTeamId, clientName]);
-
-  // Función para forzar una recarga de datos
-  const refreshData = useCallback(() => {
-    if (aiTeamId) {
-      getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
-    }
-  }, [aiTeamId, contentPerPage, agentsPage, getBotsData]);
+  }, [auth?.user?.uuid, aiTeamId, aiTeamName, state.contentPerPage, state.currentPage, state.aiTeamName, getBotsData, navigate, replacePath, t]);
 
   const handleSearch = useCallback((value: string) => {
-    if (isSearching) return;
+    if (state.isSearching) return;
     
-    setSearchQuery(value);
-    setIsSearching(true);
+    setState(prev => ({ ...prev, searchQuery: value, isSearching: true }));
     
     const params = value.trim() !== "" 
-      ? `?name__icontains=${value}&page_size=${contentPerPage}`
-      : `?page_size=${contentPerPage}&page=${agentsPage}`;
+      ? `?name__icontains=${value}&page_size=${state.contentPerPage}`
+      : `?page_size=${state.contentPerPage}&page=${state.currentPage}`;
     
     getBotsData(params);
-  }, [contentPerPage, agentsPage, isSearching, getBotsData]);
+  }, [state.contentPerPage, state.currentPage, state.isSearching, getBotsData]);
 
   const handlePagination = useCallback((event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
-    if (isLoading) return;
+    if (state.isLoading) return;
     
-    setAgentsPage(value);
-    getBotsData(`?page_size=${contentPerPage}&page=${value}`);
-  }, [contentPerPage, isLoading, setAgentsPage, getBotsData]);
+    setState(prev => ({ ...prev, currentPage: value }));
+    getBotsData(`?page_size=${state.contentPerPage}&page=${value}`);
+  }, [state.contentPerPage, state.isLoading, getBotsData]);
 
-  const deleteAction = useCallback(async (botId: string) => {
-    if (!botId || isLoading) return;
+  const handleDelete = useCallback(async (botId: string) => {
+    if (!botId || state.isLoading || state.isDeleting) return;
 
     try {
-      setIsLoading(true);
+      setState(prev => ({ ...prev, isDeleting: true }));
       await deleteBot(botId);
       
-      setPageContent(prev => prev.filter(item => item.id !== botId));
-      setAllowerState(false);
-      setbotToDelete("");
-      SuccessToast("Chatbot eliminado satisfactoriamente");
+      setState(prev => ({ 
+        ...prev, 
+        pageContent: prev.pageContent.filter(item => item.id !== botId),
+        allowerState: false,
+        botToDelete: "",
+        isDeleting: false
+      }));
+      SuccessToast(t.iaPanel.deleteSuccess);
       
-      // Recargar la lista después de eliminar
-      await getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
+      await getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
     } catch (error: any) {
       ErrorToast(error instanceof Error
-        ? "Error: no se pudo establecer conexión con el servidor"
+        ? t.iaPanel.errorConnection
         : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
       );
     } finally {
-      setIsLoading(false);
+      setState(prev => ({ ...prev, isDeleting: false }));
     }
-  }, [deleteBot, contentPerPage, agentsPage, getBotsData]);
+  }, [deleteBot, state.contentPerPage, state.currentPage, getBotsData, t]);
+
+  const refreshData = useCallback(() => {
+    getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+  }, [state.contentPerPage, state.currentPage, getBotsData]);
 
   const handleContentPerPageChange = useCallback((event: SelectChangeEvent) => {
     const newValue = event.target.value;
-    setContentPerPage(newValue);
+    setState(prev => ({ ...prev, contentPerPage: newValue }));
     getBotsData(`?page_size=${newValue}&page=1`);
   }, [getBotsData]);
 
@@ -359,8 +385,11 @@ const IaPanel: React.FC = () => {
             size="small"
             color="error"
             onClick={() => {
-              setAllowerState(true);
-              setbotToDelete(bot.id);
+              setState(prev => ({
+                ...prev,
+                allowerState: true,
+                botToDelete: bot.id
+              }));
             }}
           >
             <DeleteIcon fontSize="small" />
@@ -370,8 +399,20 @@ const IaPanel: React.FC = () => {
     </Card>
   );
 
-  if (!aiTeamId || !clientName) {
+  const handleAllowerStateChange = (value: boolean) => {
+    setState(prev => ({ 
+      ...prev, 
+      allowerState: value,
+      botToDelete: value ? prev.botToDelete : "" 
+    }));
+  };
+
+  if (!aiTeamId || !aiTeamName) {
     return null;
+  }
+
+  if (state.isLoading) {
+    return <PageCircularProgress />;
   }
 
   return (
@@ -417,7 +458,7 @@ const IaPanel: React.FC = () => {
                 </SearchIconWrapper>
                 <StyledInputBase
                   placeholder={t.iaPanel.searchPlaceholder}
-                  value={searchQuery}
+                  value={state.searchQuery}
                   inputProps={{
                     "aria-label": "search",
                     style: { padding: '8px 40px 8px 16px' }
@@ -439,10 +480,10 @@ const IaPanel: React.FC = () => {
             gap: 2,
           }}>
             <Typography variant="h5" sx={{ mr: 2 }}>
-              {t.iaPanel.agentsOf.replace("{clientName}", clientName || "")}
+              {t.iaPanel.agentsOf.replace("{clientName}", aiTeamName || "")}
             </Typography>
             <Select
-              value={contentPerPage}
+              value={state.contentPerPage}
               onChange={handleContentPerPageChange}
               size="small"
               sx={{ width: { xs: '100%', sm: 'auto' } }}
@@ -456,11 +497,11 @@ const IaPanel: React.FC = () => {
           </Box>
         </Paper>
 
-        {isLoading ? (
+        {state.isLoading ? (
           <PageCircularProgress />
         ) : (
           <>
-            {Array.isArray(pageContent) && pageContent.length > 0 ? (
+            {Array.isArray(state.pageContent) && state.pageContent.length > 0 ? (
               <Paper elevation={3} sx={{
                 p: 2,
                 border: `2px solid transparent`,
@@ -468,7 +509,7 @@ const IaPanel: React.FC = () => {
                 minHeight: '33vh'
               }}>
                 <Grid container spacing={2}>
-                  {pageContent.map((bot, index) => (
+                  {state.pageContent.map((bot, index) => (
                     <Grid 
                       item 
                       xs={12} 
@@ -486,7 +527,7 @@ const IaPanel: React.FC = () => {
             ) : (
               <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
                 <Typography variant="subtitle1">
-                  {searchQuery && searchQuery.trim() !== ""
+                  {state.searchQuery && state.searchQuery.trim() !== ""
                     ? t.iaPanel.noAgentsFound
                     : t.iaPanel.noAgentsToShow}
                 </Typography>
@@ -500,7 +541,7 @@ const IaPanel: React.FC = () => {
               </Paper>
             )}
 
-            {Array.isArray(pageContent) && pageContent.length > 0 && paginationData && (
+            {Array.isArray(state.pageContent) && state.pageContent.length > 0 && state.paginationData && (
               <Paper elevation={3} sx={{ p: 2 }}>
                 <Box sx={{
                   display: 'flex',
@@ -510,18 +551,18 @@ const IaPanel: React.FC = () => {
                   gap: 2,
                 }}>
                   <Pagination
-                    count={paginationData.total_pages}
-                    page={agentsPage}
+                    count={state.paginationData.total_pages}
+                    page={state.currentPage}
                     onChange={handlePagination}
                     color="primary"
                     size="small"
                   />
-                  {paginationData && (
+                  {state.paginationData && (
                     <Typography variant="body2" color="text.secondary">
-                      {`${(agentsPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
-                        agentsPage * (paginationData?.page_size ?? 0),
-                        paginationData?.total_items ?? 0
-                      )} ${t.iaPanel.agentsCount.replace("{total}", paginationData?.total_items?.toString() || "0")}`}
+                      {`${(state.currentPage - 1) * (state.paginationData?.page_size ?? 0) + 1} - ${Math.min(
+                        state.currentPage * (state.paginationData?.page_size ?? 0),
+                        state.paginationData?.total_items ?? 0
+                      )} ${t.iaPanel.agentsCount.replace("{total}", state.paginationData?.total_items?.toString() || "0")}`}
                     </Typography>
                   )}
                 </Box>
@@ -530,11 +571,11 @@ const IaPanel: React.FC = () => {
           </>
         )}
       </Box>
-      {allowerState && (
+      {state.allowerState && (
         <ActionAllower
-          allowerStateCleaner={setAllowerState}
-          actionToDo={deleteAction}
-          actionParams={botToDelete}
+          allowerStateCleaner={handleAllowerStateChange}
+          actionToDo={handleDelete}
+          actionParams={state.botToDelete}
         />
       )}
     </Container>

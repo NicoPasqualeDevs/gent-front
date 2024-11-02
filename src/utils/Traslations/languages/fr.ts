@@ -42,7 +42,11 @@ const fr = {
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     selectUser: "Sélectionner un utilisateur",
     noUsersAvailable: "Aucun utilisateur disponible",
-    currentUser: "Utilisateur actuel"
+    currentUser: "Utilisateur actuel",
+    saving: "Enregistrement...",
+    update: "Mettre à jour",
+    create: "Créer",
+    cancel: "Annuler"
   },
   aiTeamsList: {
     newAiTeam: "Nouvelle Équipe IA",
@@ -167,6 +171,42 @@ const fr = {
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     selectUser: "Sélectionner un utilisateur",
     currentUser: "Utilisateur actuel"
+  },
+  contextEntry: {
+    title: "Créer un Agent",
+    editTitle: "Modifier l'Agent",
+    createTitle: "Créer un Agent",
+    name: "Nom de l'Agent",
+    description: "Description",
+    modelAI: "Modèle d'IA",
+    saving: "Enregistrement...",
+    update: "Mettre à jour",
+    create: "Créer",
+    cancel: "Annuler",
+    successUpdate: "Agent mis à jour avec succès",
+    successCreate: "Agent créé avec succès",
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    fieldRequired: "Ce champ est obligatoire"
+  },
+  dataEntry: {
+    title: "Données de l'Agent",
+    editTitle: "Modifier les Données de l'Agent",
+    context: "Contexte",
+    documents: "Documents",
+    upload: "Télécharger",
+    saving: "Enregistrement...",
+    update: "Mettre à jour",
+    cancel: "Annuler",
+    successUpdate: "Données mises à jour avec succès",
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    fieldRequired: "Ce champ est obligatoire",
+    dragAndDrop: "Glissez et déposez des fichiers ici ou cliquez pour sélectionner",
+    maxSize: "Taille maximale par fichier : {size}MB",
+    invalidType: "Type de fichier invalide",
+    uploadError: "Erreur lors du téléchargement du fichier",
+    uploadProgress: "Progression du téléchargement : {progress}%",
+    removeFile: "Supprimer le fichier",
+    uploadSuccess: "Fichier téléchargé avec succès"
   }
 };
 

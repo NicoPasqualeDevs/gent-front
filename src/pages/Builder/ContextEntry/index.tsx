@@ -1,314 +1,211 @@
-import { Button, Grid, Typography, MenuItem } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { ContextEntryData } from "@/types/Bots";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAppContext } from '@/context/app';
+import { PageCircularProgress } from '@/components/CircularProgress';
+import { PageProps } from '@/types/Page';
+import { ErrorToast, SuccessToast } from '@/components/Toast';
+import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
-import { useEffect, useState, useCallback } from "react";
-import { PageCircularProgress } from "@/components/CircularProgress";
-import { ErrorToast, SuccessToast } from "@/components/Toast";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { MultilineInput, TextInput, SelectInput } from "@/components/Inputs";
-import { useAppContext } from "@/context/app";
+import { Container, Box, Paper, TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { ContextEntryState, ContextEntryFormData } from './types';
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
+import { SelectChangeEvent } from '@mui/material/Select';
 
-const ContextEntry: React.FC = () => {
-  const { aiTeamId, botId } = useParams();
+const ContextEntry: React.FC<PageProps> = () => {
   const navigate = useNavigate();
-  const { replacePath, appNavigation } = useAppContext();
-  const {
-    getAgentData,
-    getPromptTemplate,
-    createBot,
-    updateBot,
-    postPromptTemplate,
-  } = useBotsApi();
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [inputError, setInputError] = useState<ContextEntryData>({
-    name: "",
-    description: "",
-    prompt_template: "",
-    model_ai: "",
+  const { aiTeamId, botId } = useParams();
+  const { auth, language, replacePath } = useAppContext();
+  const { getBotDetails, createBot, updateBot } = useBotsApi();
+  const [state, setState] = useState<ContextEntryState>({
+    isLoading: true,
+    isError: false,
+    isSubmitting: false,
+    isEditing: Boolean(botId),
+    searchQuery: '',
+    contentPerPage: '5',
+    isSearching: false,
+    formData: {
+      name: '',
+      description: '',
+      model_ai: modelAIOptions[0].value
+    }
   });
-
-  const [initialValues, setInitialValues] = useState<ContextEntryData>({
-    description: "",
-    name: "",
-    prompt_template: "",
-    model_ai: "claude-3-5-sonnet-20240620", // Valor por defecto
-  });
-
-  const validationSchema = Yup.object({
-    description: Yup.string().required("Descripción es un campo requerido"),
-    name: Yup.string().required("Nombre es un campo requerido"),
-    prompt_template: botId
-      ? Yup.string().required("Prompt Template es un campo requerido")
-      : Yup.string().optional(),
-    model_ai: Yup.string().required("Modelo AI es un campo requerido"),
-  });
-
-  const onSubmit = (values: ContextEntryData) => {
-    if (botId) {
-      updateAgentData(values);
-    } else {
-      createNewBot(values);
-    }
-  };
-
-  const { values, errors, handleSubmit, handleChange, setValues } = useFormik({
-    initialValues,
-    onSubmit,
-    validationSchema,
-  });
-
-  const loadPromptTemplateData = useCallback(
-    (name: string, description: string, model_ai: string) => {
-      if (botId) {
-        getPromptTemplate(botId)
-          .then((response) => {
-            setInitialValues({
-              name: name,
-              description: description,
-              prompt_template: response.data,
-              model_ai: model_ai || "claude-3-5-sonnet-20240620", // Usar Claude 3.5 si no hay valor
-            });
-            setValues({
-              name: name,
-              description: description,
-              prompt_template: response.data,
-              model_ai: model_ai || "claude-3-5-sonnet-20240620", // Usar Claude 3.5 si no hay valor
-            });
-            setLoaded(true);
-          })
-          .catch((error) => {
-            ErrorToast(
-              `${error.status} - ${error.error} ${
-                error.data ? ": " + error.data : ""
-              }`
-            );
-            setTimeout(() => {
-              navigate(-1);
-            }, 1000);
-          });
-      }
-    },
-    []
-  );
-
-  const updatePromptTemplateData = (prompt_template: string) => {
-    if (botId) {
-      postPromptTemplate(botId, { prompt_template })
-        .then(() => SuccessToast("Información actualizada satisfactoriamente"))
-        .catch((error) => {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
-          setTimeout(() => {
-            navigate(-1);
-          }, 1000);
-        });
-    }
-  };
-
-  const loadAgentData = useCallback(() => {
-    if (botId) {
-      getAgentData(botId)
-        .then((response) => {
-          loadPromptTemplateData(
-            response.data.name ?? '',
-            response.data.description ?? '',
-            Array.isArray(response.data.model_ai) ? response.data.model_ai.join(', ') : (response.data.model_ai ?? '')
-          );
-        })
-        .catch((error) => {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
-          setTimeout(() => {
-            navigate(-1);
-          }, 1000);
-        });
-    }
-  }, []);
-
-  const createNewBot = (values: ContextEntryData) => {
-    if (aiTeamId) {
-      createBot(aiTeamId, {
-        name: values.name,
-        description: values.description,
-        model_ai: values.model_ai 
-      })
-        .then((response) => {
-          SuccessToast("Bot creado satisfactoriamente");
-          setTimeout(() => {
-            navigate(`/builder/agents/contextEntry/${aiTeamId}/${response.id}`);
-          }, 1000);
-        })
-        .catch((error) => {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
-          setTimeout(() => {
-            navigate(-1);
-          }, 1000);
-        });
-    } else {
-      ErrorToast(
-        "Error al cargar aiTeamId en la vista. No se puede crear el bot."
-      );
-      setTimeout(() => {
-        navigate(-1);
-      }, 1000);
-    }
-  };
-
-  const updateAgentData = (values: ContextEntryData) => {
-    if (aiTeamId && botId) {
-      updateBot(botId, { name: values.name, description: values.description, model_ai: values.model_ai })
-        .then(() => {
-          updatePromptTemplateData(values.prompt_template);
-        })
-        .catch((error) => {
-          ErrorToast(
-            `${error.status} - ${error.error} ${
-              error.data ? ": " + error.data : ""
-            }`
-          );
-          setTimeout(() => {
-            navigate(-1);
-          }, 1000);
-        });
-    } else {
-      ErrorToast(
-        "Error al cargar botId o aiTeamId en la vista. No se pueden actualizar los datos."
-      );
-      setTimeout(() => {
-        navigate(-1);
-      }, 1000);
-    }
-  };
+  const t = languages[language as keyof typeof languages];
 
   useEffect(() => {
-    if (aiTeamId) {
-      if (botId) {
-        /*setAppNavigation({
-          label: "Editar Agente",
-          current_path: `/builder/agents/contextEntry/${aiTeamId}/${botId}`,
-          preview_path: `/builder/agents/contextEntry/${aiTeamId}`,
-        });*/
+    let isSubscribed = true;
+
+    const initializePage = async () => {
+      try {
+        if (!auth?.user?.uuid) {
+          throw new Error('User not authenticated');
+        }
+
+        if (!aiTeamId) {
+          throw new Error('AI Team ID is required');
+        }
+
+        // Configurar navegación
         replacePath([
-          ...appNavigation.slice(0, 2),
           {
-            label: "Editar Agente",
-            current_path: `/builder/agents/contextEntry/${aiTeamId}/${botId}`,
-            preview_path: `/builder/agents/contextEntry/${aiTeamId}`,
+            label: t.leftMenu.aiTeams,
+            current_path: "/builder",
+            preview_path: "/builder",
+          },
+          {
+            label: state.isEditing ? t.contextEntry.editTitle : t.contextEntry.createTitle,
+            current_path: `/builder/agents/contextEntry/${aiTeamId}`,
+            preview_path: "",
           },
         ]);
-        loadAgentData();
-      } else {
-        replacePath([
-          ...appNavigation.slice(0, 2),
-          {
-            label: "Crear Agente",
-            current_path: `/builder/agents/contextEntry/${aiTeamId}/`,
-            preview_path: `/builder/agents/contextEntry/${aiTeamId}`,
-          },
-        ]);
-        setLoaded(true);
+
+        // Si estamos editando, cargar datos del bot
+        if (state.isEditing && botId) {
+          const botDetails = await getBotDetails(botId);
+          
+          if (!isSubscribed) return;
+
+          if (botDetails?.data) {
+            setState(prev => ({
+              ...prev,
+              formData: {
+                name: botDetails.data.name,
+                description: botDetails.data.description || '',
+                model_ai: botDetails.data.model_ai
+              }
+            }));
+          }
+        }
+
+        if (isSubscribed) {
+          setState(prev => ({ ...prev, isLoading: false }));
+        }
+      } catch (error) {
+        if (isSubscribed) {
+          setState(prev => ({ 
+            ...prev, 
+            isLoading: false, 
+            isError: true,
+            errorMessage: error instanceof Error ? error.message : 'Unknown error'
+          }));
+          ErrorToast(t.actionAllower.fieldRequired);
+          navigate('/builder');
+        }
       }
-    } else {
-      ErrorToast("Error al cargar aiTeamId en el vista");
-      setTimeout(() => {
-        navigate(-1);
-      }, 1000);
+    };
+
+    initializePage();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [auth?.user?.uuid, aiTeamId, botId, state.isEditing, navigate, replacePath, getBotDetails, t]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      setState(prev => ({ ...prev, isSubmitting: true }));
+
+      if (state.isEditing && !botId) {
+        throw new Error('Bot ID is required for editing');
+      }
+
+      const response = state.isEditing && botId
+        ? await updateBot(state.formData, botId)
+        : await createBot(state.formData);
+
+      if (response?.data) {
+        SuccessToast(state.isEditing ? t.contextEntry.successUpdate : t.contextEntry.successCreate);
+        navigate(`/builder/agents/${response.data.name}/${response.data.id}`);
+      }
+    } catch (error) {
+      ErrorToast(t.contextEntry.errorConnection);
+    } finally {
+      setState(prev => ({ ...prev, isSubmitting: false }));
     }
-  }, []);
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
+  ) => {
+    const { name, value } = e.target;
+    setState(prev => ({
+      ...prev,
+      formData: { ...prev.formData, [name]: value }
+    }));
+  };
+
+  if (state.isLoading) {
+    return <PageCircularProgress />;
+  }
+
+  if (state.isError) {
+    return null;
+  }
 
   return (
-    <>
-      {!loaded ? (
-        <PageCircularProgress />
-      ) : (
-        <Grid
-          container
-          component={"form"}
-          onSubmit={(e) => {
-            setInputError({
-              name: errors.name || "",
-              description: errors.description || "",
-              prompt_template: errors.prompt_template || "",
-              model_ai: errors.model_ai || "",
-            });
-            handleSubmit(e);
-          }}
-          gap={2}
-        >
-          <Grid item xs={12}>
-            <Typography variant="h4">
-              {botId ? "Editar" : "Crear Agente"}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <TextInput
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <TextField
               name="name"
-              label="Nombre"
-              value={values.name}
-              helperText={inputError.name}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <MultilineInput
-              name="description"
-              label="Descripción"
-              value={values.description}
-              rows={6}
-              helperText={inputError.description}
-              onChange={handleChange}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <SelectInput
-              name="model_ai"
-              label="Modelo AI"
-              value={values.model_ai}
-              onChange={handleChange}
-              helperText={inputError.model_ai}
+              label={t.contextEntry.name}
+              value={state.formData.name}
+              onChange={handleInputChange}
               required
-            >
-              {modelAIOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </SelectInput>
-          </Grid>
-          {botId ? (
-            <Grid item xs={12}>
-              <MultilineInput
-                name="prompt_template"
-                label="Prompt Template"
-                value={values.prompt_template}
-                rows={17}
-                helperText={inputError.prompt_template}
-                onChange={handleChange}
-              />
-            </Grid>
-          ) : null}
-          <Grid item xs={12} sx={{ mt: 2 }}>
-            <Button variant="contained" type="submit">
-              Guardar
-            </Button>
-          </Grid>
-        </Grid>
-      )}
-    </>
+              fullWidth
+            />
+            <TextField
+              name="description"
+              label={t.contextEntry.description}
+              value={state.formData.description}
+              onChange={handleInputChange}
+              multiline
+              rows={4}
+              fullWidth
+            />
+            <FormControl fullWidth required>
+              <InputLabel id="model-ai-label">{t.contextEntry.modelAI}</InputLabel>
+              <Select
+                labelId="model-ai-label"
+                name="model_ai"
+                value={state.formData.model_ai}
+                onChange={handleInputChange}
+                label={t.contextEntry.modelAI}
+              >
+                {modelAIOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+              <Button
+                variant="outlined"
+                onClick={() => navigate('/builder')}
+                disabled={state.isSubmitting}
+              >
+                {t.contextEntry.cancel}
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={state.isSubmitting}
+              >
+                {state.isSubmitting 
+                  ? t.contextEntry.saving 
+                  : state.isEditing 
+                    ? t.contextEntry.update 
+                    : t.contextEntry.create}
+              </Button>
+            </Box>
+          </Box>
+        </form>
+      </Paper>
+    </Container>
   );
 };
 

@@ -10,9 +10,8 @@ import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
 import AddIcon from "@mui/icons-material/Add";
 
-
 const Tools: React.FC = () => {
-  const { aiTeamId, clientName, botName, botId } = useParams();
+  const { aiTeamId, clientName, botName, botId } = useParams<{ aiTeamId: string; clientName: string; botName: string; botId: string }>();
   const { getClientTools, addToolToBot, removeToolFromBot, getBotTools } = useBotsApi();
   const [tools, setTools] = useState<ToolData[]>([]);
   const [agentTools, setAgentTools] = useState<ToolData[]>([]);
@@ -42,11 +41,11 @@ const Tools: React.FC = () => {
       setAgentTools(botTools);
     } catch (error) {
       ErrorToast(t.errorLoading);
-      console.error(error);
+      console.error("Error fetching tools:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [auth.user?.token, botId]);
+  }, [auth.user?.token, botId, getClientTools, getBotTools, t.errorLoading, t.errorToken]);
 
   useEffect(() => {
     const updatePathAndFetchTools = async () => {
@@ -62,7 +61,7 @@ const Tools: React.FC = () => {
     };
 
     updatePathAndFetchTools();
-  }, [aiTeamId, clientName, botName]);
+  }, [aiTeamId, clientName, botName, fetchTools, replacePath, appNavigation, t.type]);
 
   const handleToolAction = async (toolId: number, action: 'relate' | 'unrelate') => {
     if (!botId) return;
@@ -79,7 +78,7 @@ const Tools: React.FC = () => {
       await fetchTools(); // Refetch tools after action
     } catch (error) {
       ErrorToast(action === 'relate' ? t.errorRelate : t.errorUnrelate);
-      console.error(error);
+      console.error(`Error during tool ${action}:`, error);
     }
   };
 

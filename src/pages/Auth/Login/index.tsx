@@ -3,7 +3,7 @@ import { MainGridContainer } from "@/utils/ContainerUtil";
 import { Button, Grid, Typography, Box } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { AuthLoginData } from "@/types/Auth";
+import { AuthLoginData, AuthUser } from "@/types/Auth";
 import useAuth from "@/hooks/useAuth";
 import { ErrorToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
@@ -15,13 +15,18 @@ import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
 import { languages } from "@/utils/Traslations";
 
+interface LoginInputError {
+  email: string;
+  password: string;
+}
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { setAuth, setNavElevation, language } = useAppContext();
   const { loginUser } = useAuth();
-  const [inputError, setInputError] = useState<AuthLoginData>({
+  const [inputError, setInputError] = useState<LoginInputError>({
     email: " ",
-    code: " ",
+    password: " ",
   });
   const [showLoginForm, setShowLoginForm] = useState(false);
   const theme = useTheme();
@@ -37,7 +42,7 @@ const Login: React.FC = () => {
   }, [t.rotatingTexts.length]);
 
   const initialValues: AuthLoginData = {
-    code: "",
+    password: "",
     email: "",
   };
 
@@ -45,43 +50,48 @@ const Login: React.FC = () => {
     email: Yup.string()
       .email(t.invalidEmail)
       .required(t.fieldRequired),
-    code: Yup.string().required(t.fieldRequired),
+    password: Yup.string().required(t.fieldRequired),
   });
 
-  const onSubmit = (values: AuthLoginData) => {
-    loginUser(values)
-      .then((response) => {
-        console.log(response.data, "<-- loguin");
-        setAuth({
-          email: response.data.email,
-          first_name: response.data.first_name ?? "Admin",
-          last_name: response.data.last_name ?? "Admin",
-          token: response.data.token,
-          is_superuser: response.data.is_superuser ?? false,
-          uuid: response.data.uuid,
+  const onSubmit = async (values: AuthLoginData) => {
+    try {
+      const response = await loginUser(values);
+      const userData = response.data;
+      
+      if (!userData.token || !userData.email) {
+        throw new Error('Respuesta de servidor inválida');
+      }
+
+      const authData: AuthUser = {
+        email: userData.email,
+        first_name: userData.first_name ?? "Admin",
+        last_name: userData.last_name ?? "Admin",
+        token: userData.token,
+        is_superuser: userData.is_superuser ?? false,
+        uuid: userData.uuid,
+      };
+
+      sessionStorage.setItem("user_email", userData.email);
+      sessionStorage.setItem("user_token", userData.token);
+
+      await Promise.all([
+        setAuth(authData),
+        setNavElevation("builder")
+      ]);
+
+      navigate("/builder", { replace: true });
+      
+    } catch (error) {
+      if (error instanceof Error) {
+        ErrorToast(t.connectionError);
+      } else {
+        ErrorToast(error.data.message);
+        setInputError({
+          email: error.data.message === t.invalidEmail ? t.invalidEmail : "",
+          password: error.data.message === t.invalidCredentials ? t.invalidCredentials : "",
         });
-        sessionStorage.setItem("user_email", response.data.email);
-        sessionStorage.setItem("user_token", response.data.token);
-        setNavElevation("builder");
-        navigate("/builder");
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.connectionError);
-        } else {
-          ErrorToast(error.data.message);
-          setInputError({
-            email:
-              error.data.message === t.invalidEmail
-                ? t.invalidEmail
-                : "",
-            code:
-              error.data.message === t.invalidCredentials
-                ? t.invalidCredentials
-                : "",
-          });
-        }
-      });
+      }
+    }
   };
 
   const formik = useFormik({
@@ -96,7 +106,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     setInputError({
       email: formik.errors.email || "",
-      code: formik.errors.code || "",
+      password: formik.errors.password || "",
     });
     formik.handleSubmit(e);
   };
@@ -230,12 +240,12 @@ const Login: React.FC = () => {
                 onChange={handleChange}
               />
               <PasswordInput
-                name="code"
+                name="password"
                 label={t.passwordLabel}
-                value={values.code}
-                helperText={inputError.code}
+                value={values.password}
+                helperText={inputError.password}
                 error={
-                  inputError.code && inputError.code.trim() !== "" ? true : false
+                  inputError.password && inputError.password.trim() !== "" ? true : false
                 }
                 onChange={handleChange}
               />

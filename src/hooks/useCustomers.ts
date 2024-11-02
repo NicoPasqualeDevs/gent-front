@@ -1,79 +1,44 @@
-import useApi from "@/hooks/useApi.ts";
-import { AiTeamsDetails } from "@/types/AiTeams";
-import { ApiResponseList } from "@/types/Api";
+import { ApiResponse } from "@/types/Api";
+import { AiTeamsDetails, AiTeamsFormData } from "@/types/AiTeams";
+import useApi from "./useApi";
 
-type UseAiTeamsApiHook = {
-  getAiTeamsList: (
-    filterParams: string
-  ) => Promise<ApiResponseList<AiTeamsDetails>>;
-  getAiTeamDetails: (aiTeamId: string) => Promise<AiTeamsDetails>;
-  postAiTeamDetails: (data: AiTeamsDetails) => Promise<AiTeamsDetails>;
-  putAiTeamDetails: (
-    data: AiTeamsDetails,
-    aiTeamId: string
-  ) => Promise<AiTeamsDetails>;
-  deleteAiTeamDetails: (aiTeamId: string) => Promise<{ message: string }>;
-  getMyAiTeams: (filterParams: string) => Promise<ApiResponseList<AiTeamsDetails>>;
-  getAiTeamsByOwner: (owner: string, filterParams: string) => Promise<ApiResponseList<AiTeamsDetails>>;
-};
+interface UseAiTeamsApiHook {
+  getMyAiTeams: (filterParams: string) => Promise<ApiResponse<AiTeamsDetails[]>>;
+  getAiTeamsByOwner: (ownerId: string, filterParams: string) => Promise<ApiResponse<AiTeamsDetails[]>>;
+  getAiTeamDetails: (aiTeamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
+  createAiTeam: (data: AiTeamsFormData) => Promise<ApiResponse<AiTeamsDetails>>;
+  updateAiTeam: (data: AiTeamsFormData, aiTeamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
+}
 
 const useAiTeamsApi = (): UseAiTeamsApiHook => {
-  const { apiPut, apiPost, apiGet, apiDelete } = useApi();
+  const { apiGet, apiPost, apiPut } = useApi();
 
-  // GETS
-  const getAiTeamsList = (
-    filterParams: string
-  ): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/team_details/${filterParams}/`;
-    return apiGet<ApiResponseList<AiTeamsDetails>>(path);
+  const getMyAiTeams = (filterParams: string): Promise<ApiResponse<AiTeamsDetails[]>> => {
+    return apiGet(`ai-teams/${filterParams}`);
   };
 
-  const getAiTeamDetails = (aiTeamId: string): Promise<AiTeamsDetails> => {
-    const path = `api/team_details/${aiTeamId}/`;
-    return apiGet<AiTeamsDetails>(path);
+  const getAiTeamsByOwner = (ownerId: string, filterParams: string): Promise<ApiResponse<AiTeamsDetails[]>> => {
+    return apiGet(`ai-teams/owner/${ownerId}${filterParams}`);
   };
 
-  const getMyAiTeams = (filterParams: string): Promise<ApiResponseList<AiTeamsDetails>> => {
-    const path = `api/team_details/my_clients/${filterParams}/`;
-    return apiGet<ApiResponseList<AiTeamsDetails>>(path);
+  const getAiTeamDetails = (aiTeamId: string): Promise<ApiResponse<AiTeamsDetails>> => {
+    return apiGet(`ai-teams/${aiTeamId}/`);
   };
 
-  const getAiTeamsByOwner = (owner: string, filterParams: string): Promise<ApiResponseList<AiTeamsDetails>> => {
-    // Corregir la construcción de la URL
-    const path = `api/team_details/list_by_owner/${filterParams ? `?${filterParams}&` : '?'}owner=${owner}/`;
-    return apiGet<ApiResponseList<AiTeamsDetails>>(path);
+  const createAiTeam = (data: AiTeamsFormData): Promise<ApiResponse<AiTeamsDetails>> => {
+    return apiPost('ai-teams/', data);
   };
 
-  // POST
-  const postAiTeamDetails = (data: AiTeamsDetails): Promise<AiTeamsDetails> => {
-    const path = `api/team_details/create_client/`;
-    return apiPost(path, data);
-  };
-
-  // PUTS
-  const putAiTeamDetails = (
-    data: AiTeamsDetails,
-    aiTeamId: string
-  ): Promise<AiTeamsDetails> => {
-    const path = `
-https://drive.google.com/file/d/17CRW5yEqOar84w7QHGMa5YA49v52DGZO/view?usp=sharing/${aiTeamId}/`;
-    return apiPut(path, data);
-  };
-
-  // DELETE
-  const deleteAiTeamDetails = (aiTeamId: string): Promise<{ message: string }> => {
-    const path = `api/team_details/${aiTeamId}/`;
-    return apiDelete(path).then(response => response.json());
+  const updateAiTeam = (data: AiTeamsFormData, aiTeamId: string): Promise<ApiResponse<AiTeamsDetails>> => {
+    return apiPut(`ai-teams/${aiTeamId}/`, data);
   };
 
   return {
-    getAiTeamsList,
-    getAiTeamDetails,
-    postAiTeamDetails,
-    putAiTeamDetails,
-    deleteAiTeamDetails,
     getMyAiTeams,
     getAiTeamsByOwner,
+    getAiTeamDetails,
+    createAiTeam,
+    updateAiTeam
   };
 };
 

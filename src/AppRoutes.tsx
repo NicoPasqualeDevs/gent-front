@@ -1,17 +1,27 @@
-import { lazy } from "react";
+import { lazy, Suspense, ReactNode } from "react";
 import { Box } from "@mui/material";
-import { Outlet, Routes, Route } from "react-router-dom";
-import BackgroundLines from "./styles/components/BackgroundLines"; // Importamos el componente
+import { Outlet, Routes, Route, Navigate } from "react-router-dom";
+import BackgroundLines from "./styles/components/BackgroundLines";
 import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
+import { PageCircularProgress } from "@/components/CircularProgress";
+import AuthChecker from "./components/AuthChecker";
+import { useAppContext } from '@/context/app';
+import { useLocation } from 'react-router-dom';
 
-const ChatViewModule = lazy(() => import("./pages/Builder/ChatView"));/* import AuthChecker from "./components/AuthChecker"; */
+// Interfaces
+interface ProtectedRouteProps {
+  children: ReactNode;
+  requireAuth?: boolean;
+}
 
+// Lazy loaded components
 const HomeModule = lazy(() => import("./modules/home"));
 const AuthModule = lazy(() => import("./modules/auth"));
 const BuilderModule = lazy(() => import("./modules/builder"));
 const NotFoundModule = lazy(() => import("./modules/notFound"));
 
+// Layout components with Suspense
 const BuilderL = (
   <BuilderLayout>
     <Outlet />
@@ -24,7 +34,25 @@ const UserL = (
   </UserLayout>
 );
 
-function AppRoutes() {
+// Protected Route Component
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = true }) => {
+  const { auth } = useAppContext();
+  const location = useLocation();
+
+  if (requireAuth && !auth?.token) {
+    // Redirigir a login si se requiere autenticación y no hay token
+    return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
+  }
+
+  if (!requireAuth && auth?.token) {
+    // Redirigir a builder si ya está autenticado y trata de acceder a rutas públicas
+    return <Navigate to="/builder" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+const AppRoutes = () => {
   return (
     <>
       <BackgroundLines />
@@ -34,26 +62,48 @@ function AppRoutes() {
           top: 0,
           left: 0,
           right: 0,
-          bottom: 0, // Cambiado de height a bottom para cubrir toda la pantalla
+          bottom: 0,
           overflow: 'hidden',
           zIndex: -1,
-          pointerEvents: 'none', // Permite que los clics pasen a través de la nieve
+          pointerEvents: 'none',
         }}
-      >
-      </Box>
-      <Routes>
-        <Route path="/">
-          <Route path="auth/*" element={<AuthModule />} />
-          <Route path="builder/*" element={BuilderL}>
-            <Route path="*" element={<BuilderModule />} />
+      />
+      <Suspense fallback={<PageCircularProgress />}>
+        <Routes>
+          <Route path="/">
+            <Route 
+              path="auth/*" 
+              element={
+                <ProtectedRoute requireAuth={false}>
+                  <AuthModule />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="builder/*" 
+              element={
+                <ProtectedRoute>
+                  <BuilderLayout>
+                    <BuilderModule />
+                  </BuilderLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="home" 
+              element={
+                <ProtectedRoute>
+                  {UserL}
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<HomeModule />} />
+            </Route>
+            <Route index element={<Navigate to="/home" replace />} />
+            <Route path="*" element={<NotFoundModule />} />
           </Route>
-          <Route path="home" element={UserL}>
-            <Route index element={<HomeModule />} />
-          </Route>
-          <Route path="*" element={<NotFoundModule />} />
-          <Route path="builder/agents/chat/:botId" element={<ChatViewModule />} />
-        </Route>
-      </Routes>
+        </Routes>
+      </Suspense>
     </>
   );
 }

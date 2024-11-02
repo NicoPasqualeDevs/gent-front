@@ -10,7 +10,7 @@ export const languages = {
   es,
   fr,
   de
-};
+} as const;
 
 export type LanguageKey = keyof typeof languages;
 

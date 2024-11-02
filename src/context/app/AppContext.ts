@@ -1,58 +1,57 @@
 import { createContext } from "react";
-import { Breakpoint } from "@mui/material";
-import { AuthUser } from "@/types/Auth.ts";
+import { AuthUser } from "@/types/Auth";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
-
-export type AppDevice = "mobile" | "tablet" | "pc";
+import { Breakpoint } from "@mui/material";
 
 export interface AppContextState {
-  auth: { 
-    user: AuthUser | null; 
-  };
-  layout: {
-    breakpoint: Breakpoint;
-    device: "mobile" | "tablet" | "pc";
-  };
   menu: boolean;
+  layout: {
+    breakpoint: Breakpoint | undefined;
+    device: string | undefined;
+  };
   loaded: boolean;
-  aiTeams: AiTeamsDetails[] | undefined;
+  aiTeams: AiTeamsDetails[];
+  auth: AuthUser | null;
   navElevation: string;
   appNavigation: PathData[];
-  clientPage: number;
-  toolsPage: number;
-  agentsPage: number;
-  setCustomersList: (value: AiTeamsDetails[]) => void;
-  setLogin: (value: AuthUser) => void;
-  setAuth: (value: AuthUser | null) => void;
-  setMenu: (value: boolean) => void;
-  setLoaded: (value: boolean) => void;
-  setNavElevation: (value: string) => void;
-  cleanState: () => void;
-  setAppNavigation: (value: PathData) => void;
-  replacePath: (value: PathData[]) => void;
-  setClientPage: (value: number) => void;
-  setToolsPage: (value: number) => void;
-  setAgentsPage: (value: number) => void;
   language: string;
-  setLanguage: (lang: string) => void;
+  clientPage: number;
+  setAiTeams: React.Dispatch<React.SetStateAction<AiTeamsDetails[]>>;
+  setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+  setMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  setAuth: (value: AuthUser | null) => void;
+  setNavElevation: React.Dispatch<React.SetStateAction<string>>;
+  setAppNavigation: React.Dispatch<React.SetStateAction<PathData[]>>;
+  replacePath: (value: PathData[]) => void;
+  cleanState: () => void;
+  setLanguage: React.Dispatch<React.SetStateAction<string>>;
+  setClientPage: (page: number) => void;
 }
 
 export const INITIAL_STATE: AppContextState = {
-  auth: { user: null },
+  menu: false,
   layout: {
-    breakpoint: "lg",
-    device: "pc",
+    breakpoint: undefined,
+    device: undefined
   },
-  menu: true,
-  navElevation: "",
   loaded: false,
-  aiTeams: undefined,
-  appNavigation: [] as PathData[],
+  aiTeams: [],
+  auth: null,
+  navElevation: "0",
+  appNavigation: [],
+  language: "es",
   clientPage: 1,
-  toolsPage: 1,
-  agentsPage: 1,
-  language: 'en', // Cambiado de 'es' a 'en'
-} as AppContextState;
+  setAiTeams: () => {},
+  setLoaded: () => {},
+  setMenu: () => {},
+  setAuth: () => {},
+  setNavElevation: () => {},
+  setAppNavigation: () => {},
+  replacePath: () => {},
+  cleanState: () => {},
+  setLanguage: () => {},
+  setClientPage: () => {},
+};
 
-export const AppContext = createContext(INITIAL_STATE);
+export const AppContext = createContext<AppContextState | undefined>(undefined);

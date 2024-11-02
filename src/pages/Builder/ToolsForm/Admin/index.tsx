@@ -24,6 +24,7 @@ import { MultilineInput, TextInput } from "@/components/Inputs";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
 import { ToolData } from "@/types/Bots";
+import useTools from "@/hooks/useTools"; // Importar el nuevo hook
 
 // Definimos el tipo NonSuperUser
 type NonSuperUser = { id: number; username: string; email: string; first_name: string; last_name: string };
@@ -32,7 +33,7 @@ const ToolsForm: React.FC = () => {
   const navigate = useNavigate();
   const { toolId } = useParams();
   const { language, auth } = useAppContext();
-  const { postTool, patchTool, getTool } = useBotsApi();
+  const { postTool, patchTool, getTool } = useTools(); // Usar el nuevo hook
   const { listNonSuperUsers } = useAdmin(); // Utilizamos el nuevo hook
   const t = languages[language as keyof typeof languages].toolsForm;
 
@@ -102,7 +103,7 @@ const ToolsForm: React.FC = () => {
 
   const getToolData = useCallback((toolId: string) => {
     return getTool(toolId)
-      .then((response) => {
+      .then((response: ToolData) => {
         const newValues = {
           tool_name: response.tool_name,
           instruction: response.instruction || "",
@@ -185,12 +186,12 @@ const ToolsForm: React.FC = () => {
   const createNewTool = (formData: FormData) => {
     console.log('Sending form data to server...');
     postTool(formData)
-        .then((response) => {
+        .then((response: any) => {
             console.log('Server response:', response);
             SuccessToast(t.successCreate);
             navigate(-1);
         })
-        .catch((error) => {
+        .catch((error: any) => {
             console.error('Error creating tool:', error);
             ErrorToast(error.message || t.errorConnection);
         });

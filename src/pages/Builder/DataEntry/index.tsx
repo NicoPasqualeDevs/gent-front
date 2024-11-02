@@ -1,363 +1,295 @@
-import { Grid, Box, Stack, Divider, Typography, styled } from "@mui/material";
-import { LongInput } from "@/components/Inputs/LongInput";
-import { ShortInput } from "@/components/Inputs/ShortInput";  
-import { PageCircularProgress } from "@/components/CircularProgress";
-import { useParams, useNavigate } from "react-router-dom";
-import { Ktag } from "@/types/Bots";
-import {
-  StyledDefaultButton,
-  StyledLinkButton,
-} from "@/components/styledComponents/Buttons";
-import { SuccessToast, ErrorToast } from "@/components/Toast";
-import {
-  StyledPageTitle,
-  CardSubTitle,
-} from "@/components/styledComponents/Typography";
+import { useEffect, useState, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAppContext } from '@/context/app';
+import { PageCircularProgress } from '@/components/CircularProgress';
+import { PageProps } from '@/types/Page';
+import { ErrorToast, SuccessToast } from '@/components/Toast';
+import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
-import {
-  BasicCard,
-  BasicCardContent,
-  BasicCardAction,
-  BasicCardDivider,
-} from "@/components/styledComponents/Cards";
-import { useEffect, useState, useCallback } from "react";
-import { useAppContext } from "@/context/app";
-import { Button } from "@mui/material";
+import { Container, Box, Paper, TextField, Button, Typography, LinearProgress } from '@mui/material';
+import { DataEntryState, DataEntryFormData } from './types';
 
-const KTagContent = styled(Typography)(({ theme }) => ({
-  "&.MuiTypography-root": {
-    color: theme.palette.primary.main,
-    fontSize: "14px",
-    textAlign: "left",
-    lineHeight: "32px",
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-  },
-}));
+const MAX_FILE_SIZE = 10; // MB
 
-// INITIAL STATE TEMPLATES
-
-let emptyKtagsList: Ktag[] = [];
-
-const DataEntryComponent: React.FC = () => {
-  const { botId } = useParams();
+const DataEntry: React.FC<PageProps> = () => {
   const navigate = useNavigate();
-  const { replacePath, appNavigation } = useAppContext();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [customTags, setCustomTags] = useState<Ktag[]>(emptyKtagsList);
-  const [enableAdd, setEnableAdd] = useState<boolean>(false);
-  const [KTagToEdit, setKTagToEdit] = useState<string>("");
-  const { saveKtag, editKtag, getKtags, deleteKtag } = useBotsApi();
-
-  const Ktags = useCallback((botId: string): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      setLoading(true);
-      getKtags(botId)
-        .then((r) => {
-          setCustomTags(r);
-          emptyKtagsList = r;
-          setLoading(false);
-          resolve();
-        })
-        .catch((err) => {
-          setLoading(false);
-          reject(err);
-        });
-    });
-  }, []);
+  const { botId } = useParams();
+  const { auth, language, replacePath } = useAppContext();
+  const { getBotDetails, updateBotData, uploadDocument } = useBotsApi();
+  const [state, setState] = useState<DataEntryState>({
+    isLoading: true,
+    isError: false,
+    isSubmitting: false,
+    isEditing: Boolean(botId),
+    searchQuery: '',
+    contentPerPage: '5',
+    isSearching: false,
+    dragActive: false,
+    uploadProgress: 0,
+    formData: {
+      context: '',
+      documents: []
+    }
+  });
+  const t = languages[language as keyof typeof languages];
 
   useEffect(() => {
-    if (botId) {
-      replacePath([
-        ...appNavigation.slice(0, 2),
-        {
-          label: "Ktags",
-          current_path: `bots/dataEntry/${botId}`,
-          preview_path: "",
-        },
-      ]);
-      Ktags(botId);
-    }
-  }, [botId]);
+    let isSubscribed = true;
 
-  const handleAddKTag = () => {
-    if (customTags.length === emptyKtagsList.length) {
-      if (botId) {
-        const newTag: Ktag = {
-          name: `Nueva etiqueta ${customTags.length + 1}`,
-          description: " ",
-          value: "",
-          customer_bot: botId,
-        };
-        emptyKtagsList.push(newTag);
-        setCustomTags([...emptyKtagsList]);
-        setEnableAdd(true);
+    const initializePage = async () => {
+      try {
+        if (!auth?.user?.uuid) {
+          throw new Error('User not authenticated');
+        }
+
+        if (!botId) {
+          throw new Error('Bot ID is required');
+        }
+
+        // Obtener detalles del bot
+        const botDetails = await getBotDetails(botId);
+        
+        if (!isSubscribed) return;
+
+        if (!botDetails?.data) {
+          throw new Error('Bot not found');
+        }
+
+        // Configurar navegación
+        replacePath([
+          {
+            label: t.leftMenu.aiTeams,
+            current_path: "/builder",
+            preview_path: "/builder",
+          },
+          {
+            label: botDetails.data.name,
+            current_path: `/builder/agents/dataEntry/${botId}`,
+            preview_path: "",
+          },
+        ]);
+
+        // Cargar datos existentes si hay
+        setState(prev => ({
+          ...prev,
+          formData: {
+            context: botDetails.data.context || '',
+            documents: []
+          }
+        }));
+
+        if (isSubscribed) {
+          setState(prev => ({ ...prev, isLoading: false }));
+        }
+      } catch (error) {
+        if (isSubscribed) {
+          setState(prev => ({ 
+            ...prev, 
+            isLoading: false, 
+            isError: true,
+            errorMessage: error instanceof Error ? error.message : 'Unknown error'
+          }));
+          ErrorToast(t.actionAllower.fieldRequired);
+          navigate('/builder');
+        }
       }
-    }
-  };
+    };
 
-  const handleSaveKTag = () => {
-    const lastKtag: Ktag = emptyKtagsList[emptyKtagsList.length - 1];
-    if (lastKtag.description && lastKtag.name && lastKtag.value) {
-      setLoading(true);
-      if (botId) {
-        saveKtag(botId, lastKtag)
-          .then((r) => {
-            lastKtag.id = r.id;
-            setCustomTags(emptyKtagsList);
-            setEnableAdd(false);
-            SuccessToast("Etiqueta de conocimiento agregada");
-          })
-          .catch(() => {
-            ErrorToast("Algo salio mal intente de nuevo..");
-          })
-          .finally(() => {
-            setLoading(false);
+    initializePage();
+
+    return () => {
+      isSubscribed = false;
+    };
+  }, [auth?.user?.uuid, botId, navigate, replacePath, getBotDetails, t]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      setState(prev => ({ ...prev, isSubmitting: true }));
+
+      if (!botId) {
+        throw new Error('Bot ID is required');
+      }
+
+      // Primero actualizamos el contexto
+      const response = await updateBotData({
+        context: state.formData.context,
+        documents: []
+      }, botId);
+
+      // Si hay archivos, los subimos uno por uno
+      if (state.formData.documents.length > 0) {
+        for (const file of state.formData.documents) {
+          await uploadDocument(file, botId, (progress) => {
+            setState(prev => ({ ...prev, uploadProgress: progress }));
           });
+        }
       }
-      KTagToEdit !== "" ? setKTagToEdit("") : "";
+
+      if (response?.data) {
+        SuccessToast(t.dataEntry.successUpdate);
+        navigate(`/builder/agents/${response.data.name}/${response.data.id}`);
+      }
+    } catch (error) {
+      ErrorToast(t.dataEntry.errorConnection);
+    } finally {
+      setState(prev => ({ ...prev, isSubmitting: false, uploadProgress: 0 }));
     }
   };
 
-  const handleEditKtag = (item: Ktag) => {
-    setEnableAdd(true);
-    setKTagToEdit(item.id ? item.id : "");
-  };
-  const handleDeleteKtag = (KtagId: string | undefined, index: number) => {
-    if (confirm(`Estas seguro que desea eliminar la KTag N°: ${index}`)) {
-      if (KtagId) {
-        setLoading(true);
-        deleteKtag(KtagId)
-          .then(() => {
-            navigate(-1);
-            SuccessToast("KTag eliminado exitosamente");
-          })
-          .catch(() => {
-            ErrorToast("Ups algo salio mal actualice la pagina e intente nuevamente");
-          })
-          .finally(() => {
-            setLoading(false);
-          });
-      }
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setState(prev => ({
+      ...prev,
+      formData: { ...prev.formData, [name]: value }
+    }));
   };
 
-  const handleSaveEditKtag = (tagId: string | undefined, index: number) => {
-    const KtagToEdit: Ktag = emptyKtagsList[index];
-    if (tagId) {
-      setLoading(true);
-      editKtag(tagId, KtagToEdit)
-        .then(() => {
-          setCustomTags(emptyKtagsList);
-          setEnableAdd(false);
-          setKTagToEdit("");
-          SuccessToast("Etiqueta de conocimiento editada");
-        })
-        .catch(() => {
-          ErrorToast("Algo salio mal intente de nuevo..");
-        })
-        .finally(() => {
-          setLoading(false);
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    setState(prev => ({ ...prev, dragActive: true }));
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setState(prev => ({ ...prev, dragActive: false }));
+  };
+
+  const handleFileUpload = async (files: File[]) => {
+    if (!botId) return;
+
+    try {
+      setState(prev => ({ ...prev, isSubmitting: true }));
+
+      for (const file of files) {
+        await uploadDocument(file, botId, (progress) => {
+          setState(prev => ({ ...prev, uploadProgress: progress }));
         });
+      }
+
+      SuccessToast(t.dataEntry.uploadSuccess);
+      setState(prev => ({
+        ...prev,
+        formData: {
+          ...prev.formData,
+          documents: []
+        },
+        uploadProgress: 0
+      }));
+    } catch (error) {
+      ErrorToast(t.dataEntry.uploadError);
+      setState(prev => ({ 
+        ...prev, 
+        uploadError: t.dataEntry.uploadError,
+        uploadProgress: 0
+      }));
+    } finally {
+      setState(prev => ({ ...prev, isSubmitting: false }));
     }
   };
 
-  const closeTag = () => {
-    emptyKtagsList.pop();
-    setCustomTags(emptyKtagsList);
-    setEnableAdd(false);
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setState(prev => ({ ...prev, dragActive: false }));
+    
+    if (e.dataTransfer.files && botId) {
+      const validFiles = Array.from(e.dataTransfer.files).filter(file => {
+        const isValidSize = file.size <= MAX_FILE_SIZE * 1024 * 1024;
+        if (!isValidSize) {
+          ErrorToast(t.dataEntry.maxSize.replace("{size}", MAX_FILE_SIZE.toString()));
+        }
+        return isValidSize;
+      });
+
+      if (validFiles.length > 0) {
+        await handleFileUpload(validFiles);
+      }
+    }
   };
 
   return (
-    <>
-      {!loading ? (
-        <>
-          <StyledPageTitle
-            fontSize={"24px"}
-            color="primary.main"
-            variant="h4"
-            textAlign="left"
-            gap={2}
-          >
-            Actualizar datos del agente
-          </StyledPageTitle>
-          <Stack id="ktag-wrapper">
-            {customTags &&
-              customTags.map((item, index) =>
-                item.id ? (
-                  //KTAG TO EDIT
-                  item.id === KTagToEdit ? (
-                    <Grid
-                      container
-                      gap={2}
-                      sx={{ marginBottom: "24px" }}
-                      key={`${item.field_name}-${index}-tagBox`}
-                    >
-                      <Grid xs={12} item display={"flex"}>
-                        <ShortInput
-                          emptyData={emptyKtagsList[index]}
-                          data={item}
-                          propKey="name"
-                        />
-                      </Grid>
-                      {/*                         <Grid xs={12} item display={"flex"}>
-                          <ShortInput
-                            emptyData={emptyKtagsList[index]}
-                            data={item}
-                            propKey="description"
-                          />
-                        </Grid> */}
-                      <Grid xs={12} item display={"flex"}>
-                        <LongInput
-                          emptyData={emptyKtagsList[index]}
-                          data={item}
-                          propKey="value"
-                        />
-                      </Grid>
-                      <Grid container justifyContent={"right"}>
-                        <Box display={"flex"}>
-                          <StyledDefaultButton
-                            onClick={() => handleSaveEditKtag(item.id, index)}
-                          >
-                            Save Edit
-                          </StyledDefaultButton>
-                        </Box>
-                      </Grid>
-                      <Divider
-                        sx={{
-                          border: "1px solid rgba(50,50,50, 0.1)",
-                          width: "100%",
-                        }}
-                      />
-                    </Grid>
-                  ) : (
-                    // KTAG VIEW
-                    <BasicCard key={`${item.field_name}-${index}-tagBox`}>
-                      <BasicCardContent sx={{ padding: (theme) => theme.spacing(2) }}>
-                        <Box display={"flex"} justifyContent={"right"}>
-                          <Typography
-                            fontSize={10}
-                            color="primary.main"
-                            textAlign={"center"}
-                            maxWidth={"72px"}
-                          >{`N° : ${index + 1}`}</Typography>
-                        </Box>
-                        <CardSubTitle sx={{ paddingLeft: 2, paddingRight: 0 }}>Palabras Clave :</CardSubTitle>
-                        <KTagContent>{`${item.name}`}</KTagContent>
-
-                        <CardSubTitle sx={{ paddingLeft: 2, paddingRight: 2 }}>Conocimiento Agregado :</CardSubTitle>
-                        <KTagContent>{`${item.value}`}</KTagContent>
-                      </BasicCardContent>
-                      <BasicCardDivider />
-                      <BasicCardAction sx={{ 
-                        padding: (theme) => theme.spacing(2),
-                        paddingTop: (theme) => theme.spacing(1),
-                        paddingBottom: (theme) => theme.spacing(1),
-                        paddingLeft: (theme) => theme.spacing(4)
-                      }}>
-                          <StyledLinkButton
-                            onClick={() => handleEditKtag(item)}
-                          >
-                            Edit
-                          </StyledLinkButton>
-                          <StyledLinkButton
-                            sx={{ marginLeft: (theme) => theme.spacing(1.5) }}
-                            onClick={() => handleDeleteKtag(item.id, index + 1)}
-                          >
-                            Delete
-                          </StyledLinkButton>
-                      </BasicCardAction>
-                    </BasicCard>
-                  )
-                ) : (
-                  // KTAG INPUT
-                  <Grid
-                    container
-                    gap={2}
-                    sx={{ marginBottom: "24px" }}
-                    key={`${item.field_name}-${index}-tagBox`}
-                  >
-                    <Grid xs={12} item display={"flex"}>
-                      <ShortInput
-                        emptyData={emptyKtagsList[index]}
-                        data={item}
-                        propKey="name"
-                      />
-                    </Grid>
-                    <Grid xs={12} item display={"flex"}>
-                      <LongInput
-                        emptyData={emptyKtagsList[index]}
-                        data={item}
-                        propKey="value"
-                      />
-                    </Grid>
-                    <Grid container justifyContent={"right"}>
-                      <Box display={"flex"}>
-                        <StyledDefaultButton onClick={() => handleSaveKTag()}>
-                          Save Tag
-                        </StyledDefaultButton>
-                        <StyledDefaultButton
-                          sx={{ marginLeft: "15px" }}
-                          onClick={() => closeTag()}
-                        >
-                          Close Tag
-                        </StyledDefaultButton>
-                      </Box>
-                    </Grid>
-                    <Divider
-                      sx={{
-                        border: "1px solid rgba(50,50,50, 0.1)",
-                        width: "100%",
-                      }}
-                    />
-                  </Grid>
-                )
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Paper elevation={3} sx={{ p: 3 }}>
+        <form onSubmit={handleSubmit}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <TextField
+              name="context"
+              label={t.dataEntry.context}
+              value={state.formData.context}
+              onChange={handleInputChange}
+              multiline
+              rows={6}
+              fullWidth
+              required
+            />
+            
+            <Box
+              onDragEnter={handleDragEnter}
+              onDragOver={handleDragEnter}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+              sx={{
+                border: '2px dashed',
+                borderColor: state.dragActive ? 'primary.main' : 'divider',
+                borderRadius: 1,
+                p: 3,
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: 'border-color 0.2s',
+                '&:hover': {
+                  borderColor: 'primary.main',
+                },
+              }}
+            >
+              <Typography>{t.dataEntry.dragAndDrop}</Typography>
+              <Typography variant="caption" color="text.secondary">
+                {t.dataEntry.maxSize.replace("{size}", MAX_FILE_SIZE.toString())}
+              </Typography>
+              {state.uploadProgress !== undefined && state.uploadProgress > 0 && (
+                <Box sx={{ width: '100%', mt: 2 }}>
+                  <LinearProgress variant="determinate" value={state.uploadProgress} />
+                  <Typography variant="caption" color="text.secondary">
+                    {t.dataEntry.uploadProgress.replace("{progress}", state.uploadProgress.toString())}
+                  </Typography>
+                </Box>
               )}
-          </Stack>
+            </Box>
 
-          <Box textAlign={"right"} marginBottom={"20px"}>
-            <>
-              {customTags.length !== 300 ? (
-                <StyledDefaultButton
-                  disabled={enableAdd}
-                  sx={{
-                    background: enableAdd ? "rgb(155,155,155) !important" : "",
-                    width: "150px",
-                  }}
-                  onClick={() => handleAddKTag()}
-                >
-                  Nueva etiqueta
-                </StyledDefaultButton>
-              ) : (
-                <></>
-              )}
+            {state.formData.documents.length > 0 && (
+              <Box>
+                <Typography variant="subtitle2" gutterBottom>
+                  {t.dataEntry.documents}:
+                </Typography>
+                {state.formData.documents.map((file, index) => (
+                  <Typography key={index} variant="body2">
+                    {file.name}
+                  </Typography>
+                ))}
+              </Box>
+            )}
 
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
               <Button
-                variant="contained"
-                sx={{
-                  marginLeft: "16px",
-                  width: "150px",
-                  lineHeight: "20px",
-                  fontSize: "14px",
-                  backgroundColor: "secondary.dark",
-                  color: "white",
-                  "&:hover": {
-                    backgroundColor: "secondary.dark",
-                    opacity: 0.9,
-                  },
-                }}
-                onClick={() => navigate(`/builder/agents/chat/${botId}`)}
+                variant="outlined"
+                onClick={() => navigate('/builder')}
+                disabled={state.isSubmitting}
               >
-                Probar Bot
+                {t.dataEntry.cancel}
               </Button>
-            </>
+              <Button
+                type="submit"
+                variant="contained"
+                disabled={state.isSubmitting}
+              >
+                {state.isSubmitting ? t.dataEntry.saving : t.dataEntry.update}
+              </Button>
+            </Box>
           </Box>
-        </>
-      ) : (
-        <PageCircularProgress />
-      )}
-    </>
+        </form>
+      </Paper>
+    </Container>
   );
 };
 
-export default DataEntryComponent;
+export default DataEntry;

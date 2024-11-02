@@ -36,13 +36,17 @@ const es = {
     description: "Descripción",
     edit: "Editar",
     register: "Registrar",
-    fieldRequired: "Este es un campo requerido",
+    fieldRequired: "Este campo es requerido",
     successUpdate: "Cliente actualizado satisfactoriamente",
     successCreate: "Cliente creado satisfactoriamente",
     errorConnection: "Error: no se pudo establecer conexión con el servidor",
     selectUser: "Seleccionar usuario",
     noUsersAvailable: "No hay usuarios disponibles",
-    currentUser: "Usuario actual"
+    currentUser: "Usuario actual",
+    saving: "Guardando...",
+    update: "Actualizar",
+    create: "Crear",
+    cancel: "Cancelar"
   },
   aiTeamsList: {
     newAiTeam: "Nuevo Equipo IA",
@@ -78,7 +82,17 @@ const es = {
     errorDeletingBot: "Error al cargar botId al borrar",
     edit: "Editar",
     created: "Creado: {date}",
-    implementation: "Implementación"
+    implementation: "Implementación",
+    reloadData: "Recargar datos",
+    deleteConfirmation: "¿Está seguro de que desea eliminar este agente?",
+    deletingAgent: "Eliminando agente...",
+    deleteButton: "Eliminar",
+    manageButton: "Gestionar",
+    reloadButton: "Recargar",
+    configureButton: "Configurar",
+    copyWidget: "Copiar código del widget",
+    widgetCopied: "Código copiado al portapapeles",
+    modelAI: "Modelo de IA: {model}"  // Nueva traducción
   },
   chatView: {
     agentPanel: "Panel de {agentName}",
@@ -169,6 +183,42 @@ const es = {
     errorToken: "Error de autenticación",
     errorLoading: "Error al cargar las herramientas",
     createToolButton: "Crear Herramienta"
+  },
+  contextEntry: {
+    title: "Crear Agente",
+    editTitle: "Editar Agente",
+    createTitle: "Crear Agente",
+    name: "Nombre del Agente",
+    description: "Descripción",
+    modelAI: "Modelo de IA",
+    saving: "Guardando...",
+    update: "Actualizar",
+    create: "Crear",
+    cancel: "Cancelar",
+    successUpdate: "Agente actualizado correctamente",
+    successCreate: "Agente creado correctamente",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    fieldRequired: "Este campo es requerido"
+  },
+  dataEntry: {
+    title: "Datos del Agente",
+    editTitle: "Editar Datos del Agente",
+    context: "Contexto",
+    documents: "Documentos",
+    upload: "Subir",
+    saving: "Guardando...",
+    update: "Actualizar",
+    cancel: "Cancelar",
+    successUpdate: "Datos actualizados correctamente",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    fieldRequired: "Este campo es requerido",
+    dragAndDrop: "Arrastra y suelta archivos aquí o haz clic para seleccionar",
+    maxSize: "Tamaño máximo por archivo: {size}MB",
+    invalidType: "Tipo de archivo no válido",
+    uploadError: "Error al subir el archivo",
+    uploadProgress: "Progreso de carga: {progress}%",
+    removeFile: "Eliminar archivo",
+    uploadSuccess: "Archivo subido correctamente"
   }
 };
 

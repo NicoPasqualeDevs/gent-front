@@ -1,14 +1,17 @@
 export interface AiTeamsDetails {
-  id?: string;
+  id: string;
   name: string;
-  address: string;
-  description: string;
-  code?: string;
-  user_email?: string;
+  description?: string;
+  owner?: string;
   owner_data?: {
-    id: string;
     name: string;
     email: string;
   };
+}
+
+export interface AiTeamsFormData {
+  name: string;
+  description: string;
+  owner?: string;
 }
 
