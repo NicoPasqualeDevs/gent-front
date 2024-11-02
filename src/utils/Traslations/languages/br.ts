@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const saudacoes = [
-    "Olá! Como você está?",
-    "Bem-vindo! Em que posso ajudar?",
-    "Saudações! Como está seu dia?",
-    "Que bom ver você! Como vai?"
-  ];
-  return saudacoes[Math.floor(Math.random() * saudacoes.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const br = {
+const br: TranslationType = {
   greeting: "Olá",
   farewell: "Tchau",
   actionAllower: {
@@ -55,11 +47,14 @@ const br = {
     perPage: "por página",
     manageTeam: "Gerenciar Equipe",
     edit: "Editar",
+    delete: "Excluir",
+    confirmDelete: "Tem certeza que deseja excluir esta equipe?",
+    deleteTeam: "Excluir Equipe",
     noTeamsFound: "Nenhuma Equipe IA encontrada com esse nome",
     noTeamsToShow: "Nenhuma Equipe IA para mostrar",
     teamsCount: "de {total} Equipes IA",
     successDelete: "Cliente excluído com sucesso",
-    owner: "Proprietário",
+    owner: "Proprietário"
   },
   iaPanel: {
     createAgent: "Criar Agente",
@@ -82,14 +77,24 @@ const br = {
     errorDeletingBot: "Erro ao carregar botId para exclusão",
     edit: "Editar",
     created: "Criado em: {date}",
-    implementation: "Implementação"
+    implementation: "Implementação",
+    reloadData: "Recarregar dados",
+    deleteConfirmation: "Tem certeza que deseja excluir este agente?",
+    deletingAgent: "Excluindo agente...",
+    deleteButton: "Excluir",
+    manageButton: "Gerenciar",
+    reloadButton: "Recarregar",
+    configureButton: "Configurar",
+    copyWidget: "Copiar código do widget",
+    widgetCopied: "Código copiado para a área de transferência",
+    modelAI: "Modelo de IA: {model}"
   },
   chatView: {
     agentPanel: "Painel de {agentName}",
     defaultAgentName: "Agente IA",
     history: "Histórico",
     comingSoon: "(Em breve)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('br'),
     inputPlaceholder: "Digite sua mensagem para o agente IA...",
     sendButton: "Enviar",
     finishSession: "Finalizar Sessão",
@@ -118,7 +123,7 @@ const br = {
       "Crie e compartilhe agentes de IA",
       "Implemente rápido e fácil",
       "Comercialize soluções de IA",
-      "Importe e publique sua soluço",
+      "Importe e publique sua solução",
     ],
     emailLabel: "E-mail",
     passwordLabel: "Senha",
@@ -200,7 +205,7 @@ const br = {
     update: "Atualizar",
     cancel: "Cancelar",
     successUpdate: "Dados atualizados com sucesso",
-    errorConnection: "Erro: N��o foi possível estabelecer conexão com o servidor",
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
     fieldRequired: "Este campo é obrigatório",
     dragAndDrop: "Arraste e solte arquivos aqui ou clique para selecionar",
     maxSize: "Tamanho máximo por arquivo: {size}MB",

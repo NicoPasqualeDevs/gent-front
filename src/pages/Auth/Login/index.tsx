@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { MainGridContainer } from "@/utils/ContainerUtil";
 import { Button, Grid, Typography, Box } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -57,7 +56,7 @@ const Login: React.FC = () => {
     try {
       const response = await loginUser(values);
       const userData = response.data;
-      
+
       if (!userData.token || !userData.email) {
         throw new Error('Respuesta de servidor inválida');
       }
@@ -80,15 +79,15 @@ const Login: React.FC = () => {
       ]);
 
       navigate("/builder", { replace: true });
-      
+
     } catch (error) {
       if (error instanceof Error) {
         ErrorToast(t.connectionError);
       } else {
-        ErrorToast(error.data.message);
+        ErrorToast(error.message);
         setInputError({
-          email: error.data.message === t.invalidEmail ? t.invalidEmail : "",
-          password: error.data.message === t.invalidCredentials ? t.invalidCredentials : "",
+          email: error.message === t.invalidEmail ? t.invalidEmail : "",
+          password: error.message === t.invalidCredentials ? t.invalidCredentials : "",
         });
       }
     }
@@ -112,16 +111,23 @@ const Login: React.FC = () => {
   };
 
   return (
-    <MainGridContainer
-      container
-      alignItems={"center"}
-      justifyContent={"center"}
-      sx={{
-        overflow: "hidden",
-        position: 'relative',
-        minHeight: '100vh',
-      }}
-    >
+    <Grid 
+    container
+    alignItems={"center"}
+    justifyContent={"center"}
+    sx={{
+      justifyContent: "center",
+      height: "100vh",
+      width: "100vw",
+      overflow: "hidden",
+      overflowY: "scroll",
+      scrollBehavior: "smooth",
+      scrollbarGutter: "none",
+      scrollbarWidth: "thin",
+      scrollbarColor: `${theme.palette.primary.main} transparent`,
+      position: 'relative',
+      minHeight: '100vh',
+    }}>
       <Box
         sx={{
           position: 'absolute',
@@ -308,7 +314,7 @@ const Login: React.FC = () => {
           </Grid>
         )}
       </Grid>
-    </MainGridContainer>
+    </Grid>
   );
 };
 

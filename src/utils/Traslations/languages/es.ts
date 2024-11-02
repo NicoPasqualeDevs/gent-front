@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const saludos = [
-    "¡Hola! ¿Cómo estás?",
-    "¡Bienvenido! ¿En qué puedo ayudarte?",
-    "¡Saludos! ¿Qué tal tu día?",
-    "¡Qué gusto verte! ¿Cómo te va?"
-  ];
-  return saludos[Math.floor(Math.random() * saludos.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const es = {
+const es: TranslationType = {
   greeting: "Hola",
   farewell: "Adiós",
   actionAllower: {
@@ -55,6 +47,9 @@ const es = {
     perPage: "por página",
     manageTeam: "Administrar Equipo",
     edit: "Editar",
+    delete: "Eliminar",
+    confirmDelete: "¿Está seguro que desea eliminar este equipo?",
+    deleteTeam: "Eliminar Equipo",
     noTeamsFound: "No se encontraron Equipos IA con ese nombre",
     noTeamsToShow: "No hay Equipos IA para mostrar",
     teamsCount: "de {total} Equipos IA",
@@ -99,7 +94,7 @@ const es = {
     defaultAgentName: "Agente IA",
     history: "Historial",
     comingSoon: "(Próximamente)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('es'),
     inputPlaceholder: "Escribe tu mensaje para el agente IA...",
     sendButton: "Enviar",
     finishSession: "Finalizar sesión",

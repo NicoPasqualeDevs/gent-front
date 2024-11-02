@@ -39,7 +39,7 @@ interface ConversationData {
   }>;
 }
 
-interface UseBotsApiHook {
+interface UseBotsApi {
   getBotDetails: (botId: string) => Promise<ApiResponse<AgentData>>;
   getBotsList: (aiTeamId: string, filterParams: string) => Promise<ApiResponse<AgentData[]>>;
   createBot: (data: BotFormData) => Promise<ApiResponse<AgentData>>;
@@ -48,37 +48,37 @@ interface UseBotsApiHook {
   deleteBot: (botId: string) => Promise<ApiResponse<void>>;
   uploadDocument: (file: File, botId: string, onProgress?: (progress: number) => void) => Promise<ApiResponse<void>>;
   getChatHistory: (botId: string) => Promise<ApiResponse<ChatHistory>>;
-  sendMessage: (botId: string, data: { message: string }): Promise<ApiResponse<UpdatedChatHistoryType>>;
+  sendMessage: (botId: string, data: { message: string }) => Promise<ApiResponse<UpdatedChatHistoryType>>;
   closeChat: (conversationId: string) => Promise<void>;
   getAgentData: (botId: string) => Promise<ApiResponse<AgentData>>;
   getClientBotConversations: (botId: string) => Promise<ConversationData[]>;
 }
 
-const useBotsApi = (): UseBotsApiHook => {
+const useBotsApi = (): UseBotsApi => {
   const { apiGet, apiPost, apiPut, apiDelete } = useApi();
 
   const getBotDetails = (botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiGet(`bots/${botId}/`);
+    return apiGet(`api/bots/${botId}/`);
   };
 
   const getBotsList = (aiTeamId: string, filterParams: string): Promise<ApiResponse<AgentData[]>> => {
-    return apiGet(`team_details/bots/${aiTeamId}/${filterParams}`);
+    return apiGet(`api/team_details/bots/${aiTeamId}${filterParams}`);
   };
 
   const createBot = (data: BotFormData): Promise<ApiResponse<AgentData>> => {
-    return apiPost('bots/', data);
+    return apiPost('api/bots/', data);
   };
 
   const updateBot = (data: BotFormData, botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiPut(`bots/${botId}/`, data);
+    return apiPut(`api/bots/${botId}/`, data);
   };
 
   const updateBotData = (data: BotDataFormData, botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiPut(`bots/${botId}/data/`, data);
+    return apiPut(`api/bots/${botId}/data/`, data);
   };
 
   const deleteBot = (botId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`bots/${botId}/`);
+    return apiDelete(`api/bots/${botId}/`);
   };
 
   const uploadDocument = async (
@@ -98,28 +98,28 @@ const useBotsApi = (): UseBotsApiHook => {
       }
     };
 
-    return apiPost(`bots/${botId}/upload/`, formData, config);
+    return apiPost(`api/bots/${botId}/upload/`, formData, config);
   };
 
   const getChatHistory = (botId: string): Promise<ApiResponse<ChatHistory>> => {
-    return apiGet(`bots/${botId}/chat-history/`);
+    return apiGet(`api/bots/${botId}/chat-history/`);
   };
 
-  const sendMessage = (botId: string, data: { message: string }): Promise<ApiResponse<UpdatedChatHistoryType>> => {
-    return apiPost(`bots/${botId}/send-message/`, data);
+  const sendMessage = async (botId: string, data: { message: string }): Promise<ApiResponse<UpdatedChatHistoryType>> => {
+    return apiPost(`api/bots/${botId}/send-message/`, data);
   };
 
   const closeChat = async (conversationId: string): Promise<void> => {
-    const response = await apiDelete(`bots/close-chat/${conversationId}/`);
+    const response = await apiDelete(`api/bots/close-chat/${conversationId}/`);
     return;
   };
 
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiGet(`bots/${botId}/agent-data/`);
+    return apiGet(`api/bots/${botId}/agent-data/`);
   };
 
   const getClientBotConversations = async (botId: string): Promise<ConversationData[]> => {
-    const response = await apiGet(`bots/${botId}/client-bot-conversations/`);
+    const response = await apiGet(`api/bots/${botId}/client-bot-conversations/`);
     return response.data as ConversationData[];
   };
 

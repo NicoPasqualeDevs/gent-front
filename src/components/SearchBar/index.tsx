@@ -1,5 +1,4 @@
-import { styled, alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
+import { styled, alpha, InputBase } from '@mui/material';
 
 export const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -10,6 +9,12 @@ export const Search = styled('div')(({ theme }) => ({
   },
   marginLeft: 0,
   width: '100%',
+  transition: theme.transitions.create('width'),
+  [theme.breakpoints.up('lg')]: {
+    '&:focus-within': {
+      width: '300px',
+    }
+  }
 }));
 
 export const SearchIconWrapper = styled('div')(({ theme }) => ({

@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const greetings = [
-    "Hello! How are you?",
-    "Welcome! How can I help you?",
-    "Greetings! How's your day going?",
-    "Nice to see you! How are you doing?"
-  ];
-  return greetings[Math.floor(Math.random() * greetings.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const en = {
+const en: TranslationType = {
   greeting: "Hello",
   farewell: "Goodbye",
   actionAllower: {
@@ -55,6 +47,9 @@ const en = {
     perPage: "per page",
     manageTeam: "Manage Team",
     edit: "Edit",
+    delete: "Delete",
+    confirmDelete: "Are you sure you want to delete this team?",
+    deleteTeam: "Delete Team",
     noTeamsFound: "No AI Teams found with that name",
     noTeamsToShow: "No AI Teams to show",
     teamsCount: "of {total} AI Teams",
@@ -82,14 +77,24 @@ const en = {
     errorDeletingBot: "Error loading botId for deletion",
     edit: "Edit",
     created: "Created: {date}",
-    implementation: "Implementation"
+    implementation: "Implementation",
+    reloadData: "Reload data",
+    deleteConfirmation: "Are you sure you want to delete this agent?",
+    deletingAgent: "Deleting agent...",
+    deleteButton: "Delete",
+    manageButton: "Manage",
+    reloadButton: "Reload",
+    configureButton: "Configure",
+    copyWidget: "Copy widget code",
+    widgetCopied: "Code copied to clipboard",
+    modelAI: "AI Model: {model}"
   },
   chatView: {
     agentPanel: "Panel of {agentName}",
     defaultAgentName: "AI Agent",
     history: "History",
     comingSoon: "(Coming Soon)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('en'),
     inputPlaceholder: "Type your message for the AI agent...",
     sendButton: "Send",
     finishSession: "Finish Session",
@@ -150,7 +155,7 @@ const en = {
     toolNotFound: "Tool not found",
     toolNotFoundMessage: "Sorry, the tool you are looking for does not exist or has been removed.",
     backToTools: "Back to Tools",
-    aiTeam: "AiTeam",
+    aiTeam: "Client",
     fieldRequired: "This field is required",
     successUpdate: "Tool updated successfully",
     successCreate: "Tool created successfully",

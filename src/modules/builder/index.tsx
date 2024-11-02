@@ -38,6 +38,7 @@ const BuilderModule: React.FC<ModuleProps> = () => {
             label: t.leftMenu.aiTeams,
             current_path: "/builder",
             preview_path: "",
+            translationKey: "leftMenu.aiTeams"
           },
         ]);
 
@@ -70,7 +71,6 @@ const BuilderModule: React.FC<ModuleProps> = () => {
       <Route path="/profile/*" element={<ProfileModule />} />
       <Route path="/agents/*" element={<AgentsDetailsModule />} />
       <Route path="/admin-tools-form" element={<ToolsForm />} />
-      <Route path="/agents/chat/:botId" element={<ChatViewModule />} />
     </Routes>
   );
 };

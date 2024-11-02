@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Navigate } from "react-router-dom";
 import {
   Grid, Typography, Pagination, Card, CardActions, Button, Divider,
-  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent, IconButton, CardHeader, Avatar, Tooltip
+  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent, IconButton, CardHeader, Avatar, Tooltip, Skeleton
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
@@ -25,12 +25,23 @@ import { languages } from "@/utils/Traslations";
 import { PageProps } from '@/types/Page';
 import { IaPanelState } from './types';
 import AddIcon from "@mui/icons-material/Add";
+import { 
+  DashboardContainer, 
+  DashboardHeader, 
+  DashboardContent, 
+  DashboardFooter,
+  commonStyles,
+  SkeletonCard
+} from "@/utils/DashboardsUtils";
 
 const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
   const { aiTeamId, aiTeamName } = useParams();
   const { auth, language, replacePath } = useAppContext();
   const { getBotsList, deleteBot } = useBotsApi();
+  const { apiBase } = useApi();
+  const t = languages[language as keyof typeof languages];
+  
   const [state, setState] = useState<IaPanelState>({
     isLoading: true,
     isError: false,
@@ -44,103 +55,113 @@ const IaPanel: React.FC<PageProps> = () => {
     botToDelete: "",
     isDeleting: false
   });
-  const t = languages[language as keyof typeof languages];
-  const { apiBase } = useApi();
+
+  useEffect(() => {
+    const initializeAuth = () => {
+      if (!auth) {
+        console.log('No auth found, redirecting to login');
+        navigate('/auth/login');
+        return;
+      }
+
+      if (!aiTeamId || !aiTeamName) {
+        console.log('Missing required params:', { aiTeamId, aiTeamName });
+        return;
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  useEffect(() => {
+    if (aiTeamId && aiTeamName) {
+      replacePath([
+        {
+          label: t.leftMenu.aiTeams,
+          current_path: "/builder",
+          preview_path: "/builder",
+          translationKey: "leftMenu.aiTeams"
+        },
+        {
+          label: aiTeamName,
+          current_path: `/builder/agents/${aiTeamName}/${aiTeamId}`,
+          preview_path: "",
+          translationKey: "aiTeamName"
+        },
+      ]);
+    }
+  }, [aiTeamId, aiTeamName, replacePath, t]);
 
   const getBotsData = useCallback(async (filterParams: string) => {
-    if (!aiTeamId) {
-      setState(prev => ({ ...prev, isLoading: false }));
+    if (!aiTeamId || !auth?.uuid) {
+      console.log('Missing required data:', { aiTeamId, authUuid: auth?.uuid });
       return;
     }
 
     try {
       setState(prev => ({ ...prev, isLoading: true }));
-      
       const response = await getBotsList(aiTeamId, filterParams);
 
-      if (response) {
+      if (response?.data) {
         setState(prev => ({
           ...prev,
           isLoading: false,
           isSearching: false,
-          currentPage: response.metadata.current_page || 1,
-          pageContent: response.data,
+          currentPage: response.metadata?.current_page || 1,
+          pageContent: Array.isArray(response.data) ? response.data : [],
           paginationData: response.metadata
         }));
       }
     } catch (error) {
+      console.error('Error fetching bots:', error);
       setState(prev => ({ 
         ...prev, 
         isLoading: false,
         isError: true,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        pageContent: []
       }));
-      ErrorToast(t.actionAllower.fieldRequired);
+      ErrorToast(t.iaPanel.errorConnection);
     }
-  }, [aiTeamId, getBotsList, t]);
+  }, [aiTeamId, auth?.uuid, getBotsList, t]);
 
   useEffect(() => {
-    let isSubscribed = true;
+    const loadData = async () => {
+      if (!auth?.uuid || !aiTeamId) {
+        console.log('No auth UUID or aiTeamId found, skipping data load');
+        return;
+      }
 
-    const initializePage = async () => {
       try {
-        if (!auth?.user?.uuid) {
-          throw new Error('User not authenticated');
-        }
-
-        if (!aiTeamId) {
-          throw new Error('AI Team ID is required');
-        }
-
-        // Configurar navegación
-        replacePath([
-          {
-            label: t.leftMenu.aiTeams,
-            current_path: "/builder",
-            preview_path: "/builder",
-          },
-          {
-            label: state.aiTeamName || '',
-            current_path: `/builder/agents/${aiTeamName}/${aiTeamId}`,
-            preview_path: "",
-          },
-        ]);
-
-        if (isSubscribed) {
-          await getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
-        }
+        console.log('Loading bots data...');
+        const filterParams = `?page_size=${state.contentPerPage}&page=${state.currentPage}`;
+        await getBotsData(filterParams);
       } catch (error) {
-        if (isSubscribed) {
-          setState(prev => ({ 
-            ...prev,
-            isLoading: false,
-            isError: true,
-            errorMessage: error instanceof Error ? error.message : 'Unknown error'
-          }));
-          ErrorToast(t.actionAllower.fieldRequired);
-          navigate('/builder');
-        }
+        console.error('Error loading data:', error);
+        setState(prev => ({ 
+          ...prev,
+          isLoading: false,
+          isError: true,
+          errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        }));
+        ErrorToast(t.actionAllower.fieldRequired);
       }
     };
 
-    initializePage();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [auth?.user?.uuid, aiTeamId, aiTeamName, state.contentPerPage, state.currentPage, state.aiTeamName, getBotsData, navigate, replacePath, t]);
+    if (auth?.uuid && aiTeamId) {
+      loadData();
+    }
+  }, [auth?.uuid, aiTeamId, state.contentPerPage, state.currentPage]);
 
   const handleSearch = useCallback((value: string) => {
-    if (state.isSearching) return;
+    setState(prev => ({ ...prev, searchQuery: value }));
     
-    setState(prev => ({ ...prev, searchQuery: value, isSearching: true }));
-    
-    const params = value.trim() !== "" 
-      ? `?name__icontains=${value}&page_size=${state.contentPerPage}`
-      : `?page_size=${state.contentPerPage}&page=${state.currentPage}`;
-    
-    getBotsData(params);
-  }, [state.contentPerPage, state.currentPage, state.isSearching, getBotsData]);
+    if (value.trim() === "") {
+      getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+    } else {
+      getBotsData(`?name__icontains=${value}&page_size=${state.contentPerPage}`);
+    }
+  }, [state.contentPerPage, state.currentPage, getBotsData]);
 
   const handlePagination = useCallback((event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
@@ -407,118 +428,60 @@ const IaPanel: React.FC<PageProps> = () => {
     }));
   };
 
-  if (!aiTeamId || !aiTeamName) {
-    return null;
-  }
-
-  if (state.isLoading) {
-    return <PageCircularProgress />;
-  }
-
   return (
-    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
-          }}>
-            {auth?.user?.is_superuser && (
-              <Button
-                variant="contained"
-                onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
-                fullWidth
-                sx={{
-                  width: '100%',
-                  maxWidth: { xs: '100%', sm: '200px' },
-                  color: 'white',
-                  '&:hover': {
-                    color: 'white',
-                  },
-                }}
-              >
-                {t.iaPanel.createAgent}
-              </Button>
-            )}
-            <Box sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: { xs: 'center', sm: 'flex-end' }
-            }}>
-              <Search sx={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: { xs: '100%', sm: '300px' },
-              }}>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder={t.iaPanel.searchPlaceholder}
-                  value={state.searchQuery}
-                  inputProps={{
-                    "aria-label": "search",
-                    style: { padding: '8px 40px 8px 16px' }
-                  }}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  fullWidth
-                />
-              </Search>
-            </Box>
-          </Box>
-        </Paper>
-
-        <Paper elevation={3} sx={{ p: 2 }}>
+    <DashboardContainer>
+      <DashboardHeader 
+        title={t.iaPanel.agentsOf.replace("{clientName}", aiTeamName || "")}
+        actions={
           <Box sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             alignItems: 'center',
-            justifyContent: 'space-between',
             gap: 2,
+            width: { xs: '100%', sm: 'auto' }
           }}>
-            <Typography variant="h5" sx={{ mr: 2 }}>
-              {t.iaPanel.agentsOf.replace("{clientName}", aiTeamName || "")}
-            </Typography>
+            <Search sx={commonStyles.searchContainer}>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder={t.iaPanel.searchPlaceholder}
+                value={state.searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </Search>
             <Select
               value={state.contentPerPage}
               onChange={handleContentPerPageChange}
               size="small"
               sx={{ width: { xs: '100%', sm: 'auto' } }}
             >
-              {[5, 10, 20].map((value) => (
-                <MenuItem key={value} value={value.toString()}>
-                  {value} {t.iaPanel.perPage}
-                </MenuItem>
-              ))}
+              <MenuItem value="5">5 {t.iaPanel.perPage}</MenuItem>
+              <MenuItem value="10">10 {t.iaPanel.perPage}</MenuItem>
+              <MenuItem value="20">20 {t.iaPanel.perPage}</MenuItem>
             </Select>
           </Box>
-        </Paper>
+        }
+      />
 
+      <DashboardContent>
         {state.isLoading ? (
-          <PageCircularProgress />
+          <Paper elevation={3} sx={{ p: 2, flexGrow: 1 }}>
+            <Grid container spacing={3}>
+              {[...Array(parseInt(state.contentPerPage))].map((_, index) => (
+                <Grid item xs={12} sm={6} key={`skeleton-${index}`}>
+                  <SkeletonCard />
+                </Grid>
+              ))}
+            </Grid>
+          </Paper>
         ) : (
           <>
-            {Array.isArray(state.pageContent) && state.pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{
-                p: 2,
-                border: `2px solid transparent`,
-                backgroundColor: 'background.paper',
-                minHeight: '33vh'
-              }}>
-                <Grid container spacing={2}>
+            {state.pageContent.length > 0 ? (
+              <Paper elevation={3} sx={{ p: 2, flexGrow: 1, overflow: 'auto' }}>
+                <Grid container spacing={3}>
                   {state.pageContent.map((bot, index) => (
-                    <Grid 
-                      item 
-                      xs={12} 
-                      sm={12} 
-                      md={6} 
-                      lg={6} 
-                      xl={6} 
-                      key={`bot-${bot.id || index}`}
-                    >
+                    <Grid item xs={12} sm={6} key={`bot-${bot.id || index}`}>
                       {renderBotCard(bot)}
                     </Grid>
                   ))}
@@ -526,59 +489,105 @@ const IaPanel: React.FC<PageProps> = () => {
               </Paper>
             ) : (
               <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-                <Typography variant="subtitle1">
-                  {state.searchQuery && state.searchQuery.trim() !== ""
+                <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                  {state.searchQuery
                     ? t.iaPanel.noAgentsFound
                     : t.iaPanel.noAgentsToShow}
                 </Typography>
-                <Button 
-                  variant="contained" 
-                  onClick={refreshData}
-                  sx={{ mt: 2 }}
-                >
-                  Recargar datos
-                </Button>
-              </Paper>
-            )}
-
-            {Array.isArray(state.pageContent) && state.pageContent.length > 0 && state.paginationData && (
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Box sx={{
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 2,
-                }}>
-                  <Pagination
-                    count={state.paginationData.total_pages}
-                    page={state.currentPage}
-                    onChange={handlePagination}
-                    color="primary"
-                    size="small"
-                  />
-                  {state.paginationData && (
-                    <Typography variant="body2" color="text.secondary">
-                      {`${(state.currentPage - 1) * (state.paginationData?.page_size ?? 0) + 1} - ${Math.min(
-                        state.currentPage * (state.paginationData?.page_size ?? 0),
-                        state.paginationData?.total_items ?? 0
-                      )} ${t.iaPanel.agentsCount.replace("{total}", state.paginationData?.total_items?.toString() || "0")}`}
-                    </Typography>
-                  )}
-                </Box>
+                {auth?.is_superuser && !state.searchQuery && (
+                  <Button
+                    variant="contained"
+                    onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
+                    startIcon={<AddIcon />}
+                    sx={{
+                      color: 'white',
+                      '&:hover': {
+                        color: 'white',
+                      },
+                      mb: 2
+                    }}
+                  >
+                    {t.iaPanel.createAgent}
+                  </Button>
+                )}
+                {state.searchQuery && (
+                  <Button 
+                    variant="contained" 
+                    onClick={refreshData}
+                    sx={{ mb: 2 }}
+                  >
+                    {t.iaPanel.reloadData}
+                  </Button>
+                )}
               </Paper>
             )}
           </>
         )}
-      </Box>
+      </DashboardContent>
+
+      {state.pageContent.length > 0 && (
+        <DashboardFooter>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+            width: '100%'
+          }}>
+            {/* Paginación a la izquierda */}
+            <Box>
+              <Pagination
+                count={state.paginationData?.total_pages || 1}
+                page={state.currentPage}
+                onChange={handlePagination}
+                color="primary"
+                size="small"
+              />
+            </Box>
+
+            {/* Botón de acción en el centro */}
+            {auth?.is_superuser && (
+              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                <Button
+                  variant="contained"
+                  onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
+                  startIcon={<AddIcon />}
+                  sx={{
+                    color: 'white',
+                    '&:hover': {
+                      color: 'white',
+                    },
+                  }}
+                >
+                  {t.iaPanel.createAgent}
+                </Button>
+              </Box>
+            )}
+
+            {/* Contador de páginas a la derecha */}
+            {state.paginationData?.total_items !== undefined && (
+              <Box sx={{ textAlign: { xs: 'center', sm: 'right' } }}>
+                <Typography variant="body2" color="text.secondary">
+                  {`${(state.currentPage - 1) * parseInt(state.contentPerPage) + 1} - ${Math.min(
+                    state.currentPage * parseInt(state.contentPerPage),
+                    state.paginationData.total_items
+                  )} ${t.iaPanel.agentsCount.replace("{total}", state.paginationData.total_items.toString())}`}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+        </DashboardFooter>
+      )}
+
       {state.allowerState && (
         <ActionAllower
-          allowerStateCleaner={handleAllowerStateChange}
+          allowerStateCleaner={(value: boolean) => setState(prev => ({ ...prev, allowerState: value }))}
           actionToDo={handleDelete}
           actionParams={state.botToDelete}
         />
       )}
-    </Container>
+    </DashboardContainer>
   );
 };
 

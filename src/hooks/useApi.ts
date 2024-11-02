@@ -92,7 +92,7 @@ const useApi = (): UseApiHook => {
     const response = await fetch(`${apiBase}${path}`, {
       method: 'GET',
       headers,
-      credentials: 'include', // Importante para las cookies
+      credentials: 'include',
       ...config,
     });
     return handleResponse<T>(response);

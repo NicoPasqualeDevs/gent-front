@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const salutations = [
-    "Bonjour ! Comment allez-vous ?",
-    "Bienvenue ! Comment puis-je vous aider ?",
-    "Salutations ! Comment se passe votre journée ?",
-    "Ravi de vous voir ! Comment ça va ?"
-  ];
-  return salutations[Math.floor(Math.random() * salutations.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const fr = {
+const fr: TranslationType = {
   greeting: "Bonjour",
   farewell: "Au revoir",
   actionAllower: {
@@ -55,6 +47,9 @@ const fr = {
     perPage: "par page",
     manageTeam: "Gérer l'équipe",
     edit: "Modifier",
+    delete: "Supprimer",
+    confirmDelete: "Êtes-vous sûr de vouloir supprimer cette équipe ?",
+    deleteTeam: "Supprimer l'équipe",
     noTeamsFound: "Aucune Équipe IA trouvée avec ce nom",
     noTeamsToShow: "Aucune Équipe IA à afficher",
     teamsCount: "sur {total} Équipes IA",
@@ -82,14 +77,24 @@ const fr = {
     errorDeletingBot: "Erreur lors du chargement du botId pour la suppression",
     edit: "Modifier",
     created: "Créé le : {date}",
-    implementation: "Implémentation"
+    implementation: "Implémentation",
+    reloadData: "Recharger les données",
+    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer cet agent ?",
+    deletingAgent: "Suppression de l'agent...",
+    deleteButton: "Supprimer",
+    manageButton: "Gérer",
+    reloadButton: "Recharger",
+    configureButton: "Configurer",
+    copyWidget: "Copier le code du widget",
+    widgetCopied: "Code copié dans le presse-papiers",
+    modelAI: "Modèle d'IA : {model}"
   },
   chatView: {
     agentPanel: "Panneau de {agentName}",
     defaultAgentName: "Agent IA",
     history: "Historique",
     comingSoon: "(Bientôt disponible)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('fr'),
     inputPlaceholder: "Tapez votre message pour l'agent IA...",
     sendButton: "Envoyer",
     finishSession: "Terminer la session",
@@ -131,20 +136,6 @@ const fr = {
     fieldRequired: "Ce champ est obligatoire",
     connectionError: "Erreur : Impossible d'établir une connexion avec le serveur"
   },
-  tools: {
-    libraryTitle: "Bibliothèque d'Outils",
-    relatedTitle: "Outils Associés",
-    type: "Type",
-    relateButton: "Associer",
-    unrelateButton: "Dissocier",
-    successRelate: "Outil associé avec succès",
-    successUnrelate: "Outil dissocié avec succès",
-    errorRelate: "Erreur lors de l'association de l'outil",
-    errorUnrelate: "Erreur lors de la dissociation de l'outil",
-    errorToken: "Erreur d'authentification",
-    errorLoading: "Erreur lors du chargement des outils",
-    createToolButton: "Créer un Outil"
-  },
   toolsForm: {
     required: "Ce champ est obligatoire",
     onlyPyFiles: "Seuls les fichiers .py sont autorisés",
@@ -169,8 +160,24 @@ const fr = {
     successUpdate: "Outil mis à jour avec succès",
     successCreate: "Outil créé avec succès",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    editTitle: "Modifier l'outil {toolName}",
+    createTitle: "Créer un nouvel outil",
     selectUser: "Sélectionner un utilisateur",
     currentUser: "Utilisateur actuel"
+  },
+  tools: {
+    libraryTitle: "Bibliothèque d'Outils",
+    relatedTitle: "Outils Associés",
+    type: "Type",
+    relateButton: "Associer",
+    unrelateButton: "Dissocier",
+    successRelate: "Outil associé avec succès",
+    successUnrelate: "Outil dissocié avec succès",
+    errorRelate: "Erreur lors de l'association de l'outil",
+    errorUnrelate: "Erreur lors de la dissociation de l'outil",
+    errorToken: "Erreur d'authentification",
+    errorLoading: "Erreur lors du chargement des outils",
+    createToolButton: "Créer un Outil"
   },
   contextEntry: {
     title: "Créer un Agent",

@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const grüße = [
-    "Hallo! Wie geht es Ihnen?",
-    "Willkommen! Wie kann ich Ihnen helfen?",
-    "Grüß Gott! Wie läuft Ihr Tag?",
-    "Schön Sie zu sehen! Wie geht es Ihnen?"
-  ];
-  return grüße[Math.floor(Math.random() * grüße.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const de = {
+const de: TranslationType = {
   greeting: "Hallo",
   farewell: "Auf Wiedersehen",
   actionAllower: {
@@ -37,8 +29,8 @@ const de = {
     edit: "Bearbeiten",
     register: "Registrieren",
     fieldRequired: "Dieses Feld ist erforderlich",
-    successUpdate: "Kunde erfolgreich aktualisiert",
-    successCreate: "Kunde erfolgreich erstellt",
+    successUpdate: "Team erfolgreich aktualisiert",
+    successCreate: "Team erfolgreich erstellt",
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     selectUser: "Benutzer auswählen",
     noUsersAvailable: "Keine Benutzer verfügbar",
@@ -55,10 +47,13 @@ const de = {
     perPage: "pro Seite",
     manageTeam: "Team verwalten",
     edit: "Bearbeiten",
+    delete: "Löschen",
+    confirmDelete: "Sind Sie sicher, dass Sie dieses Team löschen möchten?",
+    deleteTeam: "Team löschen",
     noTeamsFound: "Keine KI-Teams mit diesem Namen gefunden",
     noTeamsToShow: "Keine KI-Teams zum Anzeigen",
     teamsCount: "von {total} KI-Teams",
-    successDelete: "Kunde erfolgreich gelöscht",
+    successDelete: "Team erfolgreich gelöscht",
     owner: "Eigentümer"
   },
   iaPanel: {
@@ -82,14 +77,24 @@ const de = {
     errorDeletingBot: "Fehler beim Laden der botId zum Löschen",
     edit: "Bearbeiten",
     created: "Erstellt am: {date}",
-    implementation: "Implementierung"
+    implementation: "Implementierung",
+    reloadData: "Daten neu laden",
+    deleteConfirmation: "Sind Sie sicher, dass Sie diesen Agenten löschen möchten?",
+    deletingAgent: "Agent wird gelöscht...",
+    deleteButton: "Löschen",
+    manageButton: "Verwalten",
+    reloadButton: "Neu laden",
+    configureButton: "Konfigurieren",
+    copyWidget: "Widget-Code kopieren",
+    widgetCopied: "Code in die Zwischenablage kopiert",
+    modelAI: "KI-Modell: {model}"
   },
   chatView: {
     agentPanel: "Panel von {agentName}",
     defaultAgentName: "KI-Agent",
     history: "Verlauf",
     comingSoon: "(Demnächst verfügbar)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('de'),
     inputPlaceholder: "Geben Sie Ihre Nachricht für den KI-Agenten ein...",
     sendButton: "Senden",
     finishSession: "Sitzung beenden",
@@ -160,11 +165,7 @@ const de = {
     selectUser: "Benutzer auswählen",
     currentUser: "Aktueller Benutzer"
   },
-
   tools: {
-    errorToken: "Authentifizierungsfehler",
-    errorLoading: "Fehler beim Laden der Werkzeuge",
-    tools: "Werkzeuge",
     libraryTitle: "Werkzeugbibliothek",
     relatedTitle: "Zugehörige Werkzeuge",
     type: "Typ",
@@ -174,14 +175,15 @@ const de = {
     successUnrelate: "Zuordnung des Werkzeugs erfolgreich aufgehoben",
     errorRelate: "Fehler beim Zuordnen des Werkzeugs",
     errorUnrelate: "Fehler beim Aufheben der Zuordnung des Werkzeugs",
+    errorToken: "Authentifizierungsfehler",
+    errorLoading: "Fehler beim Laden der Werkzeuge",
     createToolButton: "Werkzeug erstellen"
   },
-
   contextEntry: {
     title: "Agent erstellen",
     editTitle: "Agent bearbeiten",
     createTitle: "Agent erstellen",
-    name: "Agent Name",
+    name: "Agentname",
     description: "Beschreibung",
     modelAI: "KI-Modell",
     saving: "Speichern...",
@@ -193,7 +195,6 @@ const de = {
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     fieldRequired: "Dieses Feld ist erforderlich"
   },
-
   dataEntry: {
     title: "Agentendaten",
     editTitle: "Agentendaten bearbeiten",

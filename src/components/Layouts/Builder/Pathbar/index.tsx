@@ -4,15 +4,20 @@ import theme from "@/styles/theme";
 import { Box, Breadcrumbs, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { languages } from "@/utils/Traslations";
+import { useEffect, useState } from "react";
 
 const Pathbar: React.FC = () => {
   const navigate = useNavigate();
   const { appNavigation, language } = useAppContext();
-  const t = languages[language as keyof typeof languages];
+  const [translations, setTranslations] = useState(languages[language as keyof typeof languages]);
+
+  useEffect(() => {
+    setTranslations(languages[language as keyof typeof languages]);
+  }, [language]);
 
   const getTranslatedLabel = (item: any) => {
-    if (item.translationKey && t.leftMenu[item.translationKey as keyof typeof t.leftMenu]) {
-      return t.leftMenu[item.translationKey as keyof typeof t.leftMenu];
+    if (item.translationKey && translations.leftMenu[item.translationKey as keyof typeof translations.leftMenu]) {
+      return translations.leftMenu[item.translationKey as keyof typeof translations.leftMenu];
     }
     return item.label;
   };

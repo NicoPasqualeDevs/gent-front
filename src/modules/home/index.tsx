@@ -20,18 +20,9 @@ const HomeModule: React.FC<ModuleProps> = () => {
 
     const initializeModule = async () => {
       try {
-        if (!auth?.user?.uuid) {
+        if (!auth?.uuid) {
           throw new Error('User not authenticated');
         }
-
-        // Configurar navegación
-        replacePath([
-          {
-            label: t.leftMenu.workShop,
-            current_path: "/home",
-            preview_path: "",
-          },
-        ]);
 
         if (isSubscribed) {
           setState(prev => ({ ...prev, isLoading: false }));
@@ -50,7 +41,7 @@ const HomeModule: React.FC<ModuleProps> = () => {
     return () => {
       isSubscribed = false;
     };
-  }, [auth?.user?.uuid, navigate, replacePath, t]);
+  }, [auth?.uuid, navigate, replacePath, t]);
 
   if (state.isLoading) {
     return <PageCircularProgress />;

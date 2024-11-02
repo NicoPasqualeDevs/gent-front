@@ -1,7 +1,6 @@
 import React from 'react';
 import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import { useAppContext } from '@/context/app';
-import { useTranslation } from 'react-i18next';
 import ReactCountryFlag from 'react-country-flag';
 
 const countryCodeMap: { [key: string]: string } = {
@@ -14,7 +13,6 @@ const countryCodeMap: { [key: string]: string } = {
 
 const LanguageSelector: React.FC = () => {
   const { language, setLanguage } = useAppContext();
-  const { i18n } = useTranslation();
   const [open, setOpen] = React.useState(false);
 
 
@@ -31,7 +29,6 @@ const LanguageSelector: React.FC = () => {
     if (language !== newLang) {
       setLanguage(newLang);
       handleClose();
-      i18n.changeLanguage(newLang);
     };
   };
 

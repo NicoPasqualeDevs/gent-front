@@ -25,46 +25,23 @@ import {
   alpha,
   Card,
   CardContent,
-  Tooltip
+  Tooltip,
+  Skeleton
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AddIcon from "@mui/icons-material/Add";
 import PersonIcon from '@mui/icons-material/Person';
 import ActionAllower from "@/components/ActionAllower";
 import { SuccessToast } from "@/components/Toast";
-
-// Componentes de búsqueda estilizados
-const Search = styled('div')(({ theme }) => ({
-  position: 'relative',
-  borderRadius: theme.shape.borderRadius,
-  backgroundColor: alpha(theme.palette.common.white, 0.15),
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.common.white, 0.25),
-  },
-  marginLeft: 0,
-  width: '100%',
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0, 2),
-  height: '100%',
-  position: 'absolute',
-  pointerEvents: 'none',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-  color: 'inherit',
-  width: '100%',
-  '& .MuiInputBase-input': {
-    padding: theme.spacing(1, 1, 1, 0),
-    paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-    transition: theme.transitions.create('width'),
-    width: '100%',
-  },
-}));
+import { 
+  DashboardContainer, 
+  DashboardHeader, 
+  DashboardContent, 
+  DashboardFooter,
+  commonStyles,
+  SkeletonCard
+} from "@/utils/DashboardsUtils";
+import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 
 // Componente AiTeamCard
 const AiTeamCard = lazy(() => import("@/components/AiTeams/AiTeamCard"));
@@ -234,64 +211,27 @@ const AiTeamsList: React.FC<PageProps> = () => {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        {/* Header con búsqueda y botón de nuevo equipo */}
-        <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
-          }}>
-            {auth?.is_superuser && (
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={() => navigate('/builder/form')}
-                fullWidth
-                sx={{
-                  color: theme.palette.secondary.main,
-                  width: '100%',
-                  maxWidth: { xs: '100%', sm: '200px' }
-                }}
-              >
-                {t.aiTeamsList.newAiTeam}
-              </Button>
-            )}
-            <Box sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: { xs: 'center', sm: 'flex-end' }
-            }}>
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder={t.aiTeamsList.searchPlaceholder}
-                  value={state.searchQuery}
-                  onChange={handleSearch}
-                  fullWidth
-                />
-              </Search>
-            </Box>
-          </Box>
-        </Paper>
-
-        {/* Título y selector de items por página */}
-        <Paper elevation={3} sx={{ p: 2 }}>
+    <DashboardContainer>
+      <DashboardHeader
+        title={t.aiTeamsList.yourAiTeams}
+        actions={
           <Box sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
             alignItems: 'center',
-            justifyContent: 'space-between',
             gap: 2,
+            width: { xs: '100%', sm: 'auto' }
           }}>
-            <Typography variant="h5" sx={{ mr: 2 }}>
-              {t.aiTeamsList.yourAiTeams}
-            </Typography>
+            <Search sx={commonStyles.searchContainer}>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder={t.aiTeamsList.searchPlaceholder}
+                value={state.searchQuery}
+                onChange={handleSearch}
+              />
+            </Search>
             <Select
               value={state.contentPerPage}
               onChange={handleContentPerPageChange}
@@ -303,15 +243,24 @@ const AiTeamsList: React.FC<PageProps> = () => {
               <MenuItem value="20">20 {t.aiTeamsList.perPage}</MenuItem>
             </Select>
           </Box>
-        </Paper>
+        }
+      />
 
-        {/* Lista de equipos */}
+      <DashboardContent>
         {state.isLoading ? (
-          <PageCircularProgress />
+          <Paper elevation={3} sx={{ p: 2, flexGrow: 1}}>
+            <Grid container spacing={3}>
+              {[...Array(parseInt(state.contentPerPage))].map((_, index) => (
+                <Grid item xs={12} sm={6} md={4} key={`skeleton-${index}`}>
+                  <SkeletonCard />
+                </Grid>
+              ))}
+            </Grid>
+          </Paper>
         ) : (
           <>
             {state.pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{ p: 2, minHeight: '33vh' }}>
+              <Paper elevation={3} sx={{ p: 2, flexGrow: 1, overflow: 'auto' }}>
                 <Grid container spacing={3}>
                   {state.pageContent.map((aiTeam, index) => (
                     <Grid item xs={12} sm={6} md={4} key={`aiTeam-${index}`}>
@@ -366,17 +315,20 @@ const AiTeamsList: React.FC<PageProps> = () => {
             )}
           </>
         )}
+      </DashboardContent>
 
-        {/* Paginación */}
-        {state.pageContent.length > 0 && state.paginationData && (
-          <Paper elevation={3} sx={{ p: 2 }}>
-            <Box sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: 2,
-            }}>
+      {state.pageContent.length > 0 && state.paginationData && (
+        <DashboardFooter>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+            width: '100%'
+          }}>
+            {/* Paginación a la izquierda */}
+            <Box>
               <Pagination
                 count={state.paginationData.total_pages}
                 page={state.currentPage}
@@ -384,18 +336,22 @@ const AiTeamsList: React.FC<PageProps> = () => {
                 color="primary"
                 size="small"
               />
-              {state.paginationData?.total_items !== undefined && (
+            </Box>
+
+            {/* Contador de páginas a la derecha */}
+            {state.paginationData?.total_items !== undefined && (
+              <Box sx={{ textAlign: { xs: 'center', sm: 'right' } }}>
                 <Typography variant="body2" color="text.secondary">
                   {`${(state.currentPage - 1) * parseInt(state.contentPerPage) + 1} - ${Math.min(
                     state.currentPage * parseInt(state.contentPerPage),
                     state.paginationData.total_items
                   )} ${t.aiTeamsList.teamsCount.replace("{total}", state.paginationData.total_items.toString())}`}
                 </Typography>
-              )}
-            </Box>
-          </Paper>
-        )}
-      </Box>
+              </Box>
+            )}
+          </Box>
+        </DashboardFooter>
+      )}
 
       {state.allowerState && (
         <ActionAllower
@@ -404,7 +360,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
           actionParams={state.clientToDelete}
         />
       )}
-    </Container>
+    </DashboardContainer>
   );
 };
 

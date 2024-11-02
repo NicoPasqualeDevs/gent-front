@@ -12,6 +12,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import PersonIcon from '@mui/icons-material/Person';
 import { AiTeamsDetails } from '@/types/AiTeams';
+import { useAppContext } from "@/context/app";
+import { languages } from "@/utils/Traslations";
 
 interface AiTeamCardProps {
   aiTeam: AiTeamsDetails;
@@ -22,6 +24,8 @@ interface AiTeamCardProps {
 
 const AiTeamCard: React.FC<AiTeamCardProps> = ({ aiTeam, onDelete, onEdit, onManage }) => {
   const theme = useTheme();
+  const { language } = useAppContext();
+  const t = languages[language as keyof typeof languages];
 
   return (
     <Card sx={{
@@ -66,10 +70,10 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({ aiTeam, onDelete, onEdit, onMan
       <CardActions sx={{ p: 2, pt: 0, justifyContent: 'space-between' }}>
         <Box>
           <Button size="small" onClick={onEdit}>
-            Edit
+            {t.aiTeamsList.edit}
           </Button>
           <Button size="small" onClick={onManage}>
-            Manage
+            {t.aiTeamsList.manageTeam}
           </Button>
         </Box>
         <IconButton
