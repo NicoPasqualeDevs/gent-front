@@ -33,6 +33,7 @@ import {
   commonStyles,
   SkeletonCard
 } from "@/utils/DashboardsUtils";
+import { alpha } from '@mui/material/styles';
 
 const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
@@ -209,214 +210,275 @@ const IaPanel: React.FC<PageProps> = () => {
   }, [getBotsData]);
 
   const renderBotCard = (bot: AgentData) => (
-    <Card sx={{
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: theme.palette.background.paper,
-      border: `1px solid ${theme.palette.divider}`,
-      borderRadius: '12px',
-      overflow: 'hidden',
-      position: 'relative'
-    }}>
-      <Box sx={{ 
-        position: 'relative', 
-        zIndex: 2, 
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column' 
+    <Card sx={commonStyles.card}>
+      <CardContent sx={{
+        ...commonStyles.cardContent,
+        py: 1,
+        position: 'relative',
       }}>
-        <CardHeader
-          avatar={
-            <Avatar aria-label="bot">
+        <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          {/* Header con título y avatar */}
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center',
+            mb: 2
+          }}>
+            <Avatar sx={{ mr: 1 }}>
               {bot.name.charAt(0).toUpperCase()}
             </Avatar>
-          }
-          title={bot.name}
-          subheader={t.iaPanel.created.replace("{date}", "20/10/2024")}
-          sx={{
-            p: 1.5,
-            '& .MuiCardHeader-title': {
-              fontSize: '1.1rem',
-              fontWeight: 'bold',
-            },
-            '& .MuiCardHeader-subheader': {
-              fontSize: '0.9rem',
-            },
-            '& .MuiCardHeader-avatar': {
-              marginRight: 1,
-            },
-          }}
-          action={
-            <Tooltip title={t.iaPanel.edit} arrow placement="top">
-              <IconButton
-                onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}/${bot.id}`)}
-                size="small"
-                sx={{ 
-                  zIndex: 3,
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                  },
-                }}
-              >
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          }
-        />
-        
-        <CardContent sx={{ flexGrow: 1, p: 0 }}>
-          <Box sx={{ p: 2 }}>
-            <Typography variant="body2" sx={{
-              color: theme.palette.secondary.main,
-              backgroundColor: theme.palette.primary.main,
-              display: 'inline-block',
-              padding: '7px 14px',
-              borderRadius: '16px',
-              fontSize: '0.95rem',
-              fontWeight: 'medium',
-              mb: 1,
-              mt: 1,
-              minWidth: '200px',
-              textAlign: 'center',
-            }}>
-              {modelAIOptions.find(option => option.value === bot.model_ai)?.label || 'No especificado'}
-            </Typography>
+            <Box>
+              <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
+                {bot.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t.iaPanel.created.replace("{date}", "20/10/2024")}
+              </Typography>
+            </Box>
           </Box>
-          
-          <Divider />
-          
-          <Box sx={{ p: 2 }}>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
+
+          {/* Badge del modelo AI */}
+          <Typography variant="body2" sx={{
+            color: theme.palette.secondary.main,
+            backgroundColor: theme.palette.primary.main,
+            display: 'inline-block',
+            padding: '7px 14px',
+            borderRadius: '16px',
+            fontSize: '0.95rem',
+            fontWeight: 'medium',
+            mb: 2,
+            minWidth: '200px',
+            textAlign: 'center',
+          }}>
+            {modelAIOptions.find(option => option.value === bot.model_ai)?.label || 'No especificado'}
+          </Typography>
+
+          <Divider sx={{ 
+            mb: 2,
+            borderColor: theme.palette.divider
+          }} />
+
+          {/* Sección de implementación */}
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" gutterBottom sx={{ 
+              fontWeight: 'bold', 
+              fontSize: '1rem',
+              mb: 1.5
+            }}>
               {t.iaPanel.implementation}
             </Typography>
             <Box sx={{ 
               display: 'flex', 
-              flexDirection: { xs: 'column', md: 'row' },
-              justifyContent: 'space-between', 
-              alignItems: { xs: 'stretch', md: 'center' },
-              gap: 0.5,
-              mt: 2 
+              gap: 1,
+              flexWrap: 'wrap'
             }}>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => navigate(`/builder/agents/chat/${bot.id}`)}
-                startIcon={<PlayArrowIcon />}
-                fullWidth
-                sx={{ 
-                  flex: 1,
-                  padding: '4px 8px',
-                  '& .MuiButton-startIcon': {
-                    marginRight: 0.5,
-                  },
-                  '& .MuiButton-label': {
-                    marginTop: '2px',
-                    lineHeight: 1,
-                  }
-                }}
-              >
-                {t.iaPanel.testAgent}
-              </Button>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
-                startIcon={<ApiIcon />}
-                fullWidth
-                sx={{ 
-                  flex: 1,
-                  padding: '4px 8px',
-                  '& .MuiButton-startIcon': {
-                    marginRight: 0.5,
-                  },
-                  '& .MuiButton-label': {
-                    marginTop: '2px',
-                    lineHeight: 1,
-                  }
-                }}
-              >
-                {t.iaPanel.useAPI}
-              </Button>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => window.open(apiBase.slice(0, -1) + bot.widget_url, "_blank")}
-                startIcon={<WidgetsIcon />}
-                fullWidth
-                sx={{ 
-                  flex: 1,
-                  padding: '4px 8px',
-                  '& .MuiButton-startIcon': {
-                    marginRight: 0.5,
-                  },
-                  '& .MuiButton-label': {
-                    marginTop: '2px',
-                    lineHeight: 1,
-                  }
-                }}
-              >
-                {t.iaPanel.widget}
-              </Button>
+              <Tooltip title={t.iaPanel.testAgent}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => navigate(`/builder/agents/chat/${bot.id}`)}
+                  startIcon={<PlayArrowIcon />}
+                  sx={{ 
+                    flex: '1 1 auto', 
+                    minWidth: '40px',
+                    '& .MuiButton-startIcon': {
+                      margin: { xl: '0' }
+                    },
+                    '& .MuiButton-endIcon': {
+                      margin: { xl: '0' }
+                    },
+                    '& .MuiButton-startIcon>*:nth-of-type(1)': {
+                      fontSize: '20px'
+                    },
+                    px: { xl: 1 }
+                  }}
+                >
+                  <Box sx={{ display: { xs: 'block', xl: 'none' } }}>
+                    {t.iaPanel.testAgent}
+                  </Box>
+                </Button>
+              </Tooltip>
+              
+              <Tooltip title={t.iaPanel.useAPI}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
+                  startIcon={<ApiIcon />}
+                  sx={{ 
+                    flex: '1 1 auto', 
+                    minWidth: '40px',
+                    '& .MuiButton-startIcon': {
+                      margin: { xl: '0' }
+                    },
+                    '& .MuiButton-endIcon': {
+                      margin: { xl: '0' }
+                    },
+                    '& .MuiButton-startIcon>*:nth-of-type(1)': {
+                      fontSize: '20px'
+                    },
+                    px: { xl: 1 }
+                  }}
+                >
+                  <Box sx={{ display: { xs: 'block', xl: 'none' } }}>
+                    {t.iaPanel.useAPI}
+                  </Box>
+                </Button>
+              </Tooltip>
+
+              <Tooltip title={t.iaPanel.widget}>
+                <Button
+                  variant="outlined"
+                  size="small"
+                  onClick={() => window.open(apiBase.slice(0, -1) + bot.widget_url, "_blank")}
+                  startIcon={<WidgetsIcon />}
+                  sx={{ 
+                    flex: '1 1 auto', 
+                    minWidth: '40px',
+                    '& .MuiButton-startIcon': {
+                      margin: { xl: '0' }
+                    },
+                    '& .MuiButton-endIcon': {
+                      margin: { xl: '0' }
+                    },
+                    '& .MuiButton-startIcon>*:nth-of-type(1)': {
+                      fontSize: '20px'
+                    },
+                    px: { xl: 1 }
+                  }}
+                >
+                  <Box sx={{ display: { xs: 'block', xl: 'none' } }}>
+                    {t.iaPanel.widget}
+                  </Box>
+                </Button>
+              </Tooltip>
             </Box>
           </Box>
-          
-          <Divider />
-          
-          <Box sx={{ p: 2 }}>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
+
+          <Divider sx={{ 
+            mb: 2,
+            borderColor: theme.palette.divider
+          }} />
+
+          {/* Sección de configuración */}
+          <Box>
+            <Typography variant="subtitle2" gutterBottom sx={{ 
+              fontWeight: 'bold', 
+              fontSize: '1rem',
+              mb: 1.5
+            }}>
               {t.iaPanel.configuration}
             </Typography>
             <Box sx={{ 
               display: 'flex', 
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              gap: 1,
-              flexWrap: 'wrap',
-              ml: '-4px'
+              flexWrap: 'nowrap',
             }}>
-              {[t.iaPanel.data, t.iaPanel.customization, t.iaPanel.tools].map((action) => (
+              <Box sx={{ 
+                width: 140, // Ancho fijo para el primer botón
+                flexShrink: 0 // Evita que el botón se encoja
+              }}>
                 <Button
-                  key={action}
                   variant="text"
                   size="small"
-                  onClick={() => {
-                    const routes: { [key: string]: string } = {
-                      [t.iaPanel.data]: `/builder/agents/dataEntry/${bot.id}`,
-                      [t.iaPanel.customization]: `/builder/agents/widgetCustomizer/${bot.id}`,
-                      [t.iaPanel.tools]: `/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`,
-                    };
-                    navigate(routes[action]);
-                  }}
+                  onClick={() => navigate(`/builder/agents/widgetCustomizer/${bot.id}`)}
                   sx={{ 
-                    textTransform: 'none',
                     color: theme.palette.primary.main,
+                    textTransform: 'none',
                     fontSize: '0.9rem',
+                    p: 0,
+                    minWidth: 0,
+                    justifyContent: 'flex-start',
+                    width: '100%',
+                    '& span': {
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      display: 'block',
+                      textAlign: 'left'
+                    },
+                    '&:hover': {
+                      backgroundColor: 'transparent'
+                    }
                   }}
                 >
-                  {action}
+                  <span>{t.iaPanel.customization}</span>
                 </Button>
-              ))}
+              </Box>
+              <Box sx={{ width: 16, flexShrink: 0 }} /> {/* Espaciador fijo */}
+              <Box sx={{ 
+                width: 140, // Ancho fijo para el segundo botn
+                flexShrink: 0 // Evita que el botón se encoja
+              }}>
+                <Button
+                  variant="text"
+                  size="small"
+                  onClick={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
+                  sx={{ 
+                    color: theme.palette.primary.main,
+                    textTransform: 'none',
+                    fontSize: '0.9rem',
+                    p: 0,
+                    minWidth: 0,
+                    justifyContent: 'flex-start',
+                    width: '100%',
+                    '& span': {
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                      display: 'block',
+                      textAlign: 'left'
+                    },
+                    '&:hover': {
+                      backgroundColor: 'transparent'
+                    }
+                  }}
+                >
+                  <span>{t.iaPanel.tools}</span>
+                </Button>
+              </Box>
             </Box>
           </Box>
-        </CardContent>
-        
-        <CardActions sx={{ justifyContent: 'flex-end', p: 1 }}>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => {
-              setState(prev => ({
-                ...prev,
-                allowerState: true,
-                botToDelete: bot.id
-              }));
-            }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </CardActions>
-      </Box>
+
+          {/* Footer con acciones */}
+          <Box sx={{ 
+            display: 'flex', 
+            justifyContent: 'flex-end',
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            gap: 0.5,
+            zIndex: 1,
+            '& .MuiIconButton-root': {
+              padding: '4px',
+              backgroundColor: alpha(theme.palette.background.paper, 0.2),
+              '&:hover': {
+                backgroundColor: alpha(theme.palette.background.paper, 0.2)
+              }
+            }
+          }}>
+            <Tooltip title={t.iaPanel.edit} arrow placement="top">
+              <IconButton
+                size="small"
+                onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}/${bot.id}`)}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <IconButton
+              size="small"
+              color="error"
+              onClick={() => {
+                setState(prev => ({
+                  ...prev,
+                  allowerState: true,
+                  botToDelete: bot.id
+                }));
+              }}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        </Box>
+      </CardContent>
     </Card>
   );
 
@@ -469,8 +531,8 @@ const IaPanel: React.FC<PageProps> = () => {
           <Paper elevation={3} sx={{ p: 2, flexGrow: 1 }}>
             <Grid container spacing={3}>
               {[...Array(parseInt(state.contentPerPage))].map((_, index) => (
-                <Grid item xs={12} sm={6} key={`skeleton-${index}`}>
-                  <SkeletonCard />
+                <Grid item xs={12} md={6} xl={4} key={`skeleton-${index}`}>
+                  <SkeletonCard variant="agent" />
                 </Grid>
               ))}
             </Grid>
@@ -478,16 +540,10 @@ const IaPanel: React.FC<PageProps> = () => {
         ) : (
           <>
             {state.pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{ 
-                p: 2, 
-                flexGrow: 1, 
-                overflow: 'auto', 
-                scrollbarColor: "auto",
-                ...commonStyles.scrollableContent
-              }}>
+              <Paper elevation={3} sx={{ p: 2, flexGrow: 1, overflow: 'auto', ...commonStyles.scrollableContent }}>
                 <Grid container spacing={3}>
                   {state.pageContent.map((bot, index) => (
-                    <Grid item xs={12} sm={6} key={`bot-${bot.id || index}`}>
+                    <Grid item xs={12} md={6} xl={4} sx={{p: 0}} key={`bot-${bot.id || index}`}>
                       {renderBotCard(bot)}
                     </Grid>
                   ))}

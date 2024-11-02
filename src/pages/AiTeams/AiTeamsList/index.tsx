@@ -255,7 +255,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
             <Grid container spacing={3}>
               {[...Array(parseInt(state.contentPerPage))].map((_, index) => (
                 <Grid item xs={12} md={6} xl={4} key={`skeleton-${index}`}>
-                  <SkeletonCard />
+                  <SkeletonCard variant="aiTeam" />
                 </Grid>
               ))}
             </Grid>
