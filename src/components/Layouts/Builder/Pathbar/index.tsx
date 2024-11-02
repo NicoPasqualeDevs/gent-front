@@ -11,8 +11,8 @@ const Pathbar: React.FC = () => {
   const t = languages[language as keyof typeof languages];
 
   const getTranslatedLabel = (item: any) => {
-    if (item.translationKey) {
-      return t.leftMenu[item.translationKey as keyof typeof t.leftMenu] || item.label;
+    if (item.translationKey && t.leftMenu[item.translationKey as keyof typeof t.leftMenu]) {
+      return t.leftMenu[item.translationKey as keyof typeof t.leftMenu];
     }
     return item.label;
   };
@@ -52,6 +52,7 @@ const Pathbar: React.FC = () => {
                 sx={{color:"secondary.light", paddingLeft:"5px"}} 
                 variant="body2" 
                 key={index}
+                data-translation-key={item.translationKey}
               >
                 {translatedLabel}
               </Typography>
@@ -64,6 +65,7 @@ const Pathbar: React.FC = () => {
               onClick={() => {
                 navigate(item.current_path);
               }}
+              data-translation-key={item.translationKey}
             >
               {translatedLabel}
             </PathButton>

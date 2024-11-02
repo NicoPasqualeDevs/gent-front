@@ -15,42 +15,47 @@ const LeftMenu: React.FC = () => {
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const t = languages[language as keyof typeof languages];
 
-  const options = [
+  const menuOptions = [
     {
       navElevation: t.leftMenu.aiTeams,
       translationKey: "aiTeams",
       label: t.leftMenu.aiTeams,
       path: "/builder",
-    }
-  ];
-
-  // Opción de registro de equipo solo para superusuarios
-  const superUserOptions = [
-    {
-      navElevation: t.leftMenu.registerTeam,
-      translationKey: "registerTeam",
-      label: t.leftMenu.registerTeam,
-      path: "/builder/form",
-    },
-    {
-      navElevation: t.leftMenu.registerUser,
-      translationKey: "registerUser",
-      label: t.leftMenu.registerUser,
-      path: "/auth/register/new-user",
-    },
-    {
-      navElevation: t.leftMenu.tools,
-      translationKey: "tools",
-      label: t.leftMenu.tools,
-      path: "/builder/admin-tools-form",
+      requireSuperUser: false
     },
     {
       navElevation: t.leftMenu.workShop,
       translationKey: "workShop",
       label: t.leftMenu.workShop,
       path: "/home",
+      requireSuperUser: false
     },
+    {
+      navElevation: t.leftMenu.registerTeam,
+      translationKey: "registerTeam",
+      label: t.leftMenu.registerTeam,
+      path: "/builder/form",
+      requireSuperUser: true
+    },
+    {
+      navElevation: t.leftMenu.registerUser,
+      translationKey: "registerUser",
+      label: t.leftMenu.registerUser,
+      path: "/auth/register/new-user",
+      requireSuperUser: true
+    },
+    {
+      navElevation: t.leftMenu.tools,
+      translationKey: "tools",
+      label: t.leftMenu.tools,
+      path: "/builder/admin-tools-form",
+      requireSuperUser: true
+    }
   ];
+
+  const filteredOptions = menuOptions.filter(option => 
+    !option.requireSuperUser || auth?.is_superuser
+  );
 
   return (
     <>
@@ -104,26 +109,30 @@ const LeftMenu: React.FC = () => {
             height: "100%",
           }}
         >
-          {options.map((option, index) => {
-            return (
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: '12px'
+          }}>
+            {filteredOptions.map((option, index) => (
               <Typography
                 key={`menu-option-${index}`}
                 sx={{
                   cursor: "pointer",
-                  marginBottom: "10px",
                   opacity: `${menu ? "1" : "0"}`,
                   fontSize: `${menu ? "110%" : "0px"}`,
                   transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
                   color:
                     navElevation === option.navElevation
                       ? theme.palette.primary.main
-                      : theme.palette.text.primary, // Cambiado a color de texto primario
+                      : theme.palette.text.primary,
                   ":hover": {
                     color: theme.palette.primary.main,
                   },
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
+                  padding: "6px 0",
                 }}
                 onClick={() => {
                   setNavElevation(option.navElevation);
@@ -140,43 +149,9 @@ const LeftMenu: React.FC = () => {
               >
                 {option.label}
               </Typography>
-            );
-          })}
-          {auth?.user?.is_superuser && superUserOptions.map((option, index) => (
-            <Typography
-              key={`menu-option-super-${index}`}
-              sx={{
-                cursor: "pointer",
-                marginBottom: "10px",
-                opacity: `${menu ? "1" : "0"}`,
-                fontSize: `${menu ? "110%" : "0px"}`,
-                transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
-                color: navElevation === option.navElevation
-                  ? theme.palette.primary.main
-                  : theme.palette.text.primary,
-                ":hover": {
-                  color: theme.palette.primary.main,
-                },
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-              }}
-              onClick={() => {
-                setNavElevation(option.navElevation);
-                replacePath([
-                  {
-                    label: option.label,
-                    translationKey: option.translationKey,
-                    current_path: option.path,
-                    preview_path: "/",
-                  },
-                ]);
-                navigate(option.path);
-              }}
-            >
-              {option.label}
-            </Typography>
-          ))}
+            ))}
+          </Box>
+
           <Box
             sx={{
               height: "100%",
