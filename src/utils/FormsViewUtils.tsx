@@ -11,7 +11,8 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem
+    MenuItem,
+    Skeleton
 } from '@mui/material';
 import { motion } from "framer-motion";
 import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
@@ -140,7 +141,7 @@ export const formStyles: FormStylesType = {
     multilineInput: {
         ...inputBaseStyles,
         '& .MuiInputBase-root': {
-            ...inputBaseStyles['& .MuiInputBase-root'],
+            borderRadius: '4px',
             padding: '14px'
         }
     },
@@ -183,11 +184,51 @@ export const FormHeader: React.FC<HeaderBaseProps> = ({
     </Paper>
 );
 
+// Componente para el skeleton del formulario
+export const FormSkeleton: React.FC = () => (
+    <Box sx={formStyles.form}>
+        {[1, 2, 3].map((index) => (
+            <FormInputGroup key={index}>
+                <Skeleton 
+                    variant="rectangular" 
+                    height={56}  // Altura estándar de un TextField de MUI
+                    sx={{ 
+                        borderRadius: '4px',
+                        bgcolor: 'rgba(255, 255, 255, 0.1)'  // Color más suave para el skeleton
+                    }} 
+                />
+            </FormInputGroup>
+        ))}
+        <FormActions>
+            <Skeleton 
+                variant="rectangular" 
+                width={120}
+                height={48}
+                sx={{ 
+                    borderRadius: '8px',
+                    bgcolor: 'rgba(255, 255, 255, 0.1)'
+                }} 
+            />
+            <Skeleton 
+                variant="rectangular" 
+                width={120}
+                height={48}
+                sx={{ 
+                    borderRadius: '8px',
+                    bgcolor: 'rgba(255, 255, 255, 0.1)'
+                }} 
+            />
+        </FormActions>
+    </Box>
+);
+
+// Actualizar FormContent para incluir el skeleton
 export const FormContent: React.FC<{
     children: React.ReactNode;
     onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
     encType?: string;
-}> = ({ children, onSubmit, encType }) => (
+    isLoading?: boolean;  // Nueva prop
+}> = ({ children, onSubmit, encType, isLoading }) => (
     <Paper elevation={3} sx={formStyles.paper}>
         <Box
             component="form"
@@ -195,7 +236,7 @@ export const FormContent: React.FC<{
             sx={formStyles.form}
             encType={encType}
         >
-            {children}
+            {isLoading ? <FormSkeleton /> : children}
         </Box>
     </Paper>
 );
@@ -290,6 +331,7 @@ export const FormTextField: React.FC<{
     required?: boolean;
     multiline?: boolean;
     rows?: number;
+    type?: string;
 }> = ({ multiline, rows, ...props }) => (
     <TextField
         {...props}

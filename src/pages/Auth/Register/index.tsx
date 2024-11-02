@@ -14,10 +14,12 @@ import {
   FormCancelButton,
   FormTextField
 } from "@/utils/FormsViewUtils";
+import { useState } from "react";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const { registerUser } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const initialValues: AuthRegisterData = {
     email: "",
@@ -48,17 +50,21 @@ const Register: React.FC = () => {
       .required("Confirmar la contraseña es requerido"),
   });
 
-  const onSubmit = (values: AuthRegisterData) => {
-    registerUser(values)
-      .then((response) => {
-        SuccessToast(response.message);
-        navigate("/builder");
-      })
-      .catch((err) => {
-        if (err) {
-          ErrorToast(err.message || "Error en el registro");
-        }
-      })
+  const onSubmit = async (values: AuthRegisterData) => {
+    setIsLoading(true);
+    try {
+      const response = await registerUser(values);
+      SuccessToast(response.message);
+      navigate("/builder");
+    } catch (err) {
+      if (err instanceof Error) {
+        ErrorToast(err.message || "Error en el registro");
+      } else {
+        ErrorToast("Error en el registro");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formik = useFormik({
@@ -73,7 +79,10 @@ const Register: React.FC = () => {
     <FormLayout>
       <FormHeader title="Registro de Usuario" />
       
-      <FormContent onSubmit={handleSubmit}>
+      <FormContent 
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+      >
         <FormInputGroup>
           <FormTextField
             name="email"

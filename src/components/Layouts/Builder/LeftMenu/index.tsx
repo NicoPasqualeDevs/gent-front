@@ -21,35 +21,40 @@ const LeftMenu: React.FC = () => {
       translationKey: "aiTeams",
       label: t.leftMenu.aiTeams,
       path: "/builder",
-      requireSuperUser: false
-    },
-    {
-      navElevation: t.leftMenu.workShop,
-      translationKey: "workShop",
-      label: t.leftMenu.workShop,
-      path: "/home",
-      requireSuperUser: false
+      requireSuperUser: false,
+      disabled: false
     },
     {
       navElevation: t.leftMenu.registerTeam,
       translationKey: "registerTeam",
       label: t.leftMenu.registerTeam,
       path: "/builder/form",
-      requireSuperUser: true
+      requireSuperUser: true,
+      disabled: false
     },
     {
       navElevation: t.leftMenu.registerUser,
       translationKey: "registerUser",
       label: t.leftMenu.registerUser,
       path: "/auth/register/new-user",
-      requireSuperUser: true
+      requireSuperUser: true,
+      disabled: false
     },
     {
       navElevation: t.leftMenu.tools,
       translationKey: "tools",
       label: t.leftMenu.tools,
       path: "/builder/admin-tools-form",
-      requireSuperUser: true
+      requireSuperUser: true,
+      disabled: false
+    },
+    {
+      navElevation: t.leftMenu.workShop,
+      translationKey: "workShop",
+      label: t.leftMenu.workShop,
+      path: "/home",
+      requireSuperUser: false,
+      disabled: true
     }
   ];
 
@@ -118,8 +123,8 @@ const LeftMenu: React.FC = () => {
               <Typography
                 key={`menu-option-${index}`}
                 sx={{
-                  cursor: "pointer",
-                  opacity: `${menu ? "1" : "0"}`,
+                  cursor: option.disabled ? "not-allowed" : "pointer",
+                  opacity: `${menu ? (option.disabled ? "0.5" : "1") : "0"}`,
                   fontSize: `${menu ? "110%" : "0px"}`,
                   transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
                   color:
@@ -127,7 +132,7 @@ const LeftMenu: React.FC = () => {
                       ? theme.palette.primary.main
                       : theme.palette.text.primary,
                   ":hover": {
-                    color: theme.palette.primary.main,
+                    color: option.disabled ? "inherit" : theme.palette.primary.main,
                   },
                   display: 'flex',
                   alignItems: 'center',
@@ -135,16 +140,18 @@ const LeftMenu: React.FC = () => {
                   padding: "6px 0",
                 }}
                 onClick={() => {
-                  setNavElevation(option.navElevation);
-                  replacePath([
-                    {
-                      label: option.label,
-                      translationKey: option.translationKey,
-                      current_path: option.path,
-                      preview_path: "/",
-                    },
-                  ]);
-                  navigate(option.path);
+                  if (!option.disabled) {
+                    setNavElevation(option.navElevation);
+                    replacePath([
+                      {
+                        label: option.label,
+                        translationKey: option.translationKey,
+                        current_path: option.path,
+                        preview_path: "/",
+                      },
+                    ]);
+                    navigate(option.path);
+                  }
                 }}
               >
                 {option.label}

@@ -1,8 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '@/context/app';
-import { PageCircularProgress } from '@/components/CircularProgress';
-import { PageProps } from '@/types/Page';
 import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useAiTeamsApi from "@/hooks/useAiTeams";
@@ -141,10 +139,6 @@ const AiTeamsForm: React.FC<PageProps> = () => {
     }));
   };
 
-  if (state.isLoading) {
-    return <PageCircularProgress />;
-  }
-
   if (state.isError) {
     return null;
   }
@@ -155,56 +149,63 @@ const AiTeamsForm: React.FC<PageProps> = () => {
         title={state.isEditing ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle}
       />
       
-      <FormContent onSubmit={handleSubmit}>
-        <FormInputGroup>
-          <FormTextField
-            name="name"
-            label={t.aiTeamsForm.teamName}
-            value={state.formData.name}
-            onChange={handleInputChange}
-            required
-          />
-        </FormInputGroup>
+      <FormContent 
+        onSubmit={handleSubmit}
+        isLoading={state.isLoading}
+      >
+        {!state.isError && (
+          <>
+            <FormInputGroup>
+              <FormTextField
+                name="name"
+                label={t.aiTeamsForm.teamName}
+                value={state.formData.name}
+                onChange={handleInputChange}
+                required
+              />
+            </FormInputGroup>
 
-        <FormInputGroup>
-          <FormTextField
-            name="description"
-            label={t.aiTeamsForm.description}
-            value={state.formData.description}
-            onChange={handleInputChange}
-            multiline
-            rows={4}
-          />
-        </FormInputGroup>
+            <FormInputGroup>
+              <FormTextField
+                name="description"
+                label={t.aiTeamsForm.description}
+                value={state.formData.description}
+                onChange={handleInputChange}
+                multiline
+                rows={4}
+              />
+            </FormInputGroup>
 
-        <FormInputGroup>
-          <FormTextField
-            name="address"
-            label={t.aiTeamsForm.address}
-            value={state.formData.address}
-            onChange={handleInputChange}
-          />
-        </FormInputGroup>
+            <FormInputGroup>
+              <FormTextField
+                name="address"
+                label={t.aiTeamsForm.address}
+                value={state.formData.address}
+                onChange={handleInputChange}
+              />
+            </FormInputGroup>
 
-        <FormActions>
-          <FormCancelButton
-            onClick={() => navigate('/builder')}
-            disabled={state.isSubmitting}
-          >
-            {t.aiTeamsForm.cancel}
-          </FormCancelButton>
-          <FormButton
-            type="submit"
-            variant="contained"
-            disabled={state.isSubmitting}
-          >
-            {state.isSubmitting 
-              ? t.aiTeamsForm.saving 
-              : state.isEditing 
-                ? t.aiTeamsForm.update 
-                : t.aiTeamsForm.create}
-          </FormButton>
-        </FormActions>
+            <FormActions>
+              <FormCancelButton
+                onClick={() => navigate('/builder')}
+                disabled={state.isSubmitting}
+              >
+                {t.aiTeamsForm.cancel}
+              </FormCancelButton>
+              <FormButton
+                type="submit"
+                variant="contained"
+                disabled={state.isSubmitting}
+              >
+                {state.isSubmitting 
+                  ? t.aiTeamsForm.saving 
+                  : state.isEditing 
+                    ? t.aiTeamsForm.update 
+                    : t.aiTeamsForm.create}
+              </FormButton>
+            </FormActions>
+          </>
+        )}
       </FormContent>
     </FormLayout>
   );

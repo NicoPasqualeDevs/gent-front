@@ -239,82 +239,77 @@ const ToolsForm: React.FC = () => {
       <FormContent 
         onSubmit={formSubmit}
         encType="multipart/form-data"
+        isLoading={!loaded}
       >
-        {!loaded ? (
-          <PageCircularProgress />
-        ) : (
-          <>
-            <FormInputGroup>
-              <FormTextField
-                name="tool_name"
-                label={t.toolName}
-                value={values.tool_name}
-                onChange={handleChange}
-                error={Boolean(errors.tool_name)}
-                helperText={errors.tool_name}
-              />
-            </FormInputGroup>
+        <FormInputGroup>
+          <FormTextField
+            name="tool_name"
+            label={t.toolName}
+            value={values.tool_name}
+            onChange={handleChange}
+            error={Boolean(errors.tool_name)}
+            helperText={errors.tool_name}
+          />
+        </FormInputGroup>
 
-            <FormInputGroup>
-              <FormTextField
-                name="instruction"
-                label={t.instructions}
-                value={values.instruction}
-                onChange={handleChange}
-                multiline
-                rows={6}
-                error={Boolean(errors.instruction)}
-                helperText={errors.instruction}
-              />
-            </FormInputGroup>
+        <FormInputGroup>
+          <FormTextField
+            name="instruction"
+            label={t.instructions}
+            value={values.instruction ?? ''}
+            onChange={handleChange}
+            multiline
+            rows={6}
+            error={Boolean(errors.instruction)}
+            helperText={errors.instruction}
+          />
+        </FormInputGroup>
 
-            <FormInputGroup>
-              <FormFileInput
-                accept=".py,.js,.ts"
-                onChange={(file) => {
-                  console.log('Selected file:', file);
-                  setFieldValue("tool_code", file);
-                }}
-                error={errors.tool_code}
-              />
-            </FormInputGroup>
+        <FormInputGroup>
+          <FormFileInput
+            accept=".py,.js,.ts"
+            onChange={(file) => {
+              console.log('Selected file:', file);
+              setFieldValue("tool_code", file);
+            }}
+            error={errors.tool_code}
+          />
+        </FormInputGroup>
 
-            <FormInputGroup>
-              <FormSelect
-                labelId="user-select-label"
-                label={t.selectUser}
-                value={values.user_id || ''}
-                onChange={(e) => {
-                  setFieldValue('user_id', e.target.value);
-                }}
-                name="user_id"
-              >
-                {nonSuperUsers.map((user) => (
-                  <MenuItem key={user.id} value={user.id.toString()}>
-                    {user.username} - {user.email}
-                    {user.id === Number(auth?.uuid) && ` (${t.currentUser})`}
-                  </MenuItem>
-                ))}
-              </FormSelect>
-            </FormInputGroup>
+        <FormInputGroup>
+          <FormSelect
+            labelId="user-select-label"
+            label={t.selectUser}
+            value={values.user_id || ''}
+            onChange={(e) => {
+              setFieldValue('user_id', e.target.value);
+            }}
+            name="user_id"
+          >
+            {nonSuperUsers.map((user) => (
+              <MenuItem key={user.id} value={user.id.toString()}>
+                {user.username} - {user.email}
+                {user.id === Number(auth?.uuid) && ` (${t.currentUser})`}
+              </MenuItem>
+            ))}
+          </FormSelect>
+        </FormInputGroup>
 
-            <FormActions>
-              <FormCancelButton
-                onClick={() => navigate(-1)}
-                disabled={!isToolDataLoaded}
-              >
-                {t.cancel}
-              </FormCancelButton>
-              <FormButton
-                type="submit"
-                variant="contained"
-                disabled={!isToolDataLoaded}
-              >
-                {toolId ? t.edit : t.create}
-              </FormButton>
-            </FormActions>
-          </>
-        )}
+        <FormActions>
+          <FormCancelButton
+            onClick={() => navigate(-1)}
+            disabled={!isToolDataLoaded}
+          >
+            {t.cancel}
+          </FormCancelButton>
+          <FormButton
+            type="submit"
+            variant="contained"
+            disabled={!isToolDataLoaded}
+          >
+            {toolId ? t.edit : t.create}
+          </FormButton>
+        </FormActions>
       </FormContent>
     </FormLayout>
   );
