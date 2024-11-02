@@ -21,7 +21,7 @@ const es: TranslationType = {
     workShop: "Taller"  // Nueva traducción
   },
   aiTeamsForm: {
-    editTitle: "Editar equipo de Equipos IA",
+    editTitle: "Editar equipo {teamName}",
     createTitle: "Registrar nuevo equipo de Equipos IA",
     teamName: "Nombre del Equipo",
     address: "Dirección",

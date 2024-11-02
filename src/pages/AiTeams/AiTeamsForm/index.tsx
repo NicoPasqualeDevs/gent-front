@@ -16,6 +16,7 @@ import {
   FormCancelButton,
   FormTextField
 } from "@/utils/FormsViewUtils";
+import { PageProps } from '@/types/Page';
 
 const AiTeamsForm: React.FC<PageProps> = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const AiTeamsForm: React.FC<PageProps> = () => {
 
     replacePath([
       {
-        label: t.leftMenu.aiTeams,
+        label: state.isEditing ? state.formData.name || aiTeamName || '' : t.leftMenu.aiTeams,
         current_path: "/builder",
         preview_path: "/builder",
         translationKey: "aiTeams"
@@ -96,11 +97,25 @@ const AiTeamsForm: React.FC<PageProps> = () => {
       ErrorToast(t.actionAllower.fieldRequired);
       navigate('/builder');
     }
-  }, [auth?.uuid, aiTeamId, aiTeamName, getAiTeamDetails, navigate, replacePath, t.leftMenu.aiTeams, t.aiTeamsForm.editTitle, t.aiTeamsForm.createTitle]);
+  }, [auth?.uuid, aiTeamId, aiTeamName, getAiTeamDetails, navigate, replacePath, t.leftMenu.aiTeams, t.aiTeamsForm.editTitle, t.aiTeamsForm.createTitle, state.formData.name, state.isEditing]);
 
   useEffect(() => {
     if (state.isLoading) {
       initializeForm();
+    }
+  }, [aiTeamId]);
+
+  useEffect(() => {
+    if (!aiTeamId) {
+      setState(prev => ({
+        ...prev,
+        isEditing: false,
+        formData: {
+          name: '',
+          description: '',
+          address: '',
+        }
+      }));
     }
   }, [aiTeamId]);
 
@@ -146,7 +161,9 @@ const AiTeamsForm: React.FC<PageProps> = () => {
   return (
     <FormLayout>
       <FormHeader 
-        title={state.isEditing ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle}
+        title={state.isEditing 
+          ? t.aiTeamsForm.editTitle.replace('{teamName}', state.formData.name || aiTeamName || '')
+          : t.aiTeamsForm.createTitle}
       />
       
       <FormContent 
