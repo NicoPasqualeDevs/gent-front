@@ -3,6 +3,7 @@ export const spacing = {
     cardPadding: '24px',
     contentGap: 2,
     sectionMarginBottom: 2,
+    footerButtonsGap: 1,
 } as const;
 
 // Dimensiones
@@ -43,4 +44,32 @@ export const typography = {
 // Bordes y efectos
 export const borders = {
     badgeRadius: '14px',
+} as const;
+
+// Alineación
+export const alignment = {
+    text: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    ownerText: {
+        marginTop: 0,
+    },
+    addressText: {
+        marginTop: 0,
+    },
+    skeletonTransform: 'none',
+} as const;
+
+// Medidas comunes
+export const common = {
+    ownerNameWidth: 120,
+    titleSkeletonWidth: '60%',
+    addressSkeletonWidth: '40%',
+    badgeSkeletonWidth: 140,
+    descriptionSkeletonWidths: {
+        first: '100%',
+        second: '90%',
+        third: '60%'
+    }
 } as const;

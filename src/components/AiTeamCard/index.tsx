@@ -15,7 +15,14 @@ import PersonIcon from '@mui/icons-material/Person';
 import { AiTeamsDetails } from '@/types/AiTeams';
 import { useAppContext } from '@/context/app';
 import { languages } from '@/utils/Traslations';
-import { spacing, dimensions, typography, borders } from './SkeletonAiTeamCardsVars';
+import { 
+    spacing, 
+    dimensions, 
+    typography, 
+    borders,
+    alignment,
+    common 
+} from './SkeletonAiTeamCardsVars';
 
 interface AiTeamCardProps {
     aiTeam: AiTeamsDetails;
@@ -50,8 +57,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                 </Typography>
 
                 <Box sx={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
+                    ...alignment.text,
                     gap: spacing.contentGap, 
                     mb: spacing.sectionMarginBottom,
                     height: dimensions.card.addressHeight
@@ -60,7 +66,10 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         fontSize: dimensions.card.iconSize.location,
                         color: theme.palette.text.secondary 
                     }} />
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                    >
                         {aiTeam.address || t.aiTeamsList.noAddress}
                     </Typography>
                 </Box>
@@ -110,8 +119,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                 borderTop: `1px solid ${theme.palette.divider}`,
             }}>
                 <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
+                    ...alignment.text,
                     gap: spacing.contentGap,
                     minWidth: 0,
                 }}>
@@ -125,7 +133,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         sx={{
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap'
+                            whiteSpace: 'nowrap',
                         }}
                     >
                         {aiTeam.owner_data?.name || t.aiTeamsList.noOwner}
@@ -134,7 +142,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
 
                 <Box sx={{
                     display: 'flex',
-                    gap: spacing.contentGap,
+                    gap: spacing.footerButtonsGap,
                     alignItems: 'center',
                 }}>
                     {[

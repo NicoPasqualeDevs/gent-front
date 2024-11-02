@@ -13,6 +13,14 @@ import {
 } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
+import { 
+    spacing, 
+    dimensions, 
+    typography, 
+    borders, 
+    alignment,
+    common 
+} from '@/components/AiTeamCard/SkeletonAiTeamCardsVars';
 
 // Tipos comunes
 interface DashboardContainerProps {
@@ -135,7 +143,7 @@ export const DashboardFooter: React.FC<DashboardFooterProps> = ({
 export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, variant = 'team' }) => {
     const theme = useTheme();
 
-    if (variant === 'agent') {
+    if (variant === 'team') {
         return (
             <Card sx={{
                 height: '100%',
@@ -145,41 +153,107 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
                 border: `1px solid ${theme.palette.divider}`,
                 boxShadow: 'none',
             }}>
-                <CardContent sx={{ p: 2 }}>
-                    {/* Header con avatar y título */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <Skeleton variant="circular" width={40} height={40} sx={{ mr: 2 }} />
-                        <Box sx={{ flex: 1 }}>
-                            <Skeleton variant="text" width="60%" height={24} />
-                            <Skeleton variant="text" width="40%" height={20} />
+                <CardContent sx={{
+                    p: spacing.cardPadding,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                    '&:last-child': { pb: spacing.cardPadding },
+                }}>
+                    {/* Contenido principal */}
+                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mb: 2 }}>
+                        {/* Título */}
+                        <Skeleton 
+                            variant="text" 
+                            width={common.titleSkeletonWidth} 
+                            height={dimensions.card.titleHeight} 
+                            sx={{ mb: spacing.sectionMarginBottom }} 
+                        />
+
+                        {/* Dirección */}
+                        <Box sx={{ 
+                            ...alignment.text,
+                            gap: spacing.contentGap, 
+                            mb: spacing.sectionMarginBottom,
+                            height: dimensions.card.addressHeight 
+                        }}>
+                            <Skeleton 
+                                variant="circular" 
+                                width={dimensions.card.iconSize.location} 
+                                height={dimensions.card.iconSize.location} 
+                            />
+                            <Skeleton 
+                                variant="text" 
+                                width={common.addressSkeletonWidth} 
+                                height={dimensions.card.addressHeight}
+                                sx={{
+                                    transform: alignment.skeletonTransform,
+                                }}
+                            />
+                        </Box>
+
+                        {/* LLM Key Badge */}
+                        <Box sx={{ mb: 2 }}>
+                            <Skeleton
+                                variant="rectangular"
+                                width={common.badgeSkeletonWidth}
+                                height={dimensions.card.badgeHeight}
+                                sx={{ borderRadius: borders.badgeRadius }}
+                            />
+                        </Box>
+
+                        {/* Descripción */}
+                        <Box sx={{ mb: 'auto' }}>
+                            <Skeleton variant="text" width={common.descriptionSkeletonWidths.first} height={dimensions.lineHeight} />
+                            <Skeleton variant="text" width={common.descriptionSkeletonWidths.second} height={dimensions.lineHeight} />
+                            <Skeleton variant="text" width={common.descriptionSkeletonWidths.third} height={dimensions.lineHeight} />
                         </Box>
                     </Box>
 
-                    {/* Badge del modelo */}
-                    <Skeleton
-                        variant="rectangular"
-                        width={200}
-                        height={36}
-                        sx={{
-                            borderRadius: '16px',
-                            mb: 2
-                        }}
-                    />
+                    {/* Footer */}
+                    <Box sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        pt: spacing.contentGap,
+                        borderTop: `1px solid ${theme.palette.divider}`,
+                    }}>
+                        {/* Owner info */}
+                        <Box sx={{
+                            ...alignment.text,
+                            gap: spacing.contentGap,
+                            minWidth: 0,
+                        }}>
+                            <Skeleton 
+                                variant="circular" 
+                                width={dimensions.card.iconSize.person} 
+                                height={dimensions.card.iconSize.person} 
+                            />
+                            <Skeleton 
+                                variant="text" 
+                                width={common.ownerNameWidth} 
+                                sx={{
+                                    height: dimensions.card.addressHeight,
+                                    transform: alignment.skeletonTransform,
+                                }}
+                            />
+                        </Box>
 
-                    {/* Área de implementación */}
-                    <Skeleton variant="text" width="40%" height={24} sx={{ mb: 1 }} />
-                    <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                        <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: 1 }} />
-                        <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: 1 }} />
-                        <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: 1 }} />
-                    </Box>
-
-                    {/* Área de configuración */}
-                    <Skeleton variant="text" width="40%" height={24} sx={{ mb: 1 }} />
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                        <Skeleton variant="text" width={60} height={24} />
-                        <Skeleton variant="text" width={60} height={24} />
-                        <Skeleton variant="text" width={60} height={24} />
+                        {/* Action buttons */}
+                        <Box sx={{
+                            display: 'flex',
+                            gap: spacing.footerButtonsGap,
+                            alignItems: 'center',
+                        }}>
+                            {[...Array(3)].map((_, index) => (
+                                <Skeleton
+                                    key={index}
+                                    variant="circular"
+                                    width={dimensions.card.actionButtonSize}
+                                    height={dimensions.card.actionButtonSize}
+                                />
+                            ))}
+                        </Box>
                     </Box>
                 </CardContent>
             </Card>
@@ -196,75 +270,41 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
             border: `1px solid ${theme.palette.divider}`,
             boxShadow: 'none',
         }}>
-            <CardContent sx={{
-                p: '24px',
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-                '&:last-child': { pb: '24px' },
-            }}>
-                {/* Contenido principal */}
-                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mb: 2 }}>
-                    {/* Título */}
-                    <Skeleton variant="text" width="60%" height={28} sx={{ mb: 2 }} />
-
-                    {/* Dirección */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-                        <Skeleton variant="circular" width={16} height={16} />
+            <CardContent sx={{ p: 2 }}>
+                {/* Header con avatar y título */}
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                    <Skeleton variant="circular" width={40} height={40} sx={{ mr: 2 }} />
+                    <Box sx={{ flex: 1 }}>
+                        <Skeleton variant="text" width="60%" height={24} />
                         <Skeleton variant="text" width="40%" height={20} />
-                    </Box>
-
-                    {/* LLM Key Badge */}
-                    <Box sx={{ mb: 2 }}>
-                        <Skeleton
-                            variant="rectangular"
-                            width={140}
-                            height={28}
-                            sx={{ borderRadius: '14px' }}
-                        />
-                    </Box>
-
-                    {/* Descripción */}
-                    <Box sx={{ mb: 'auto' }}>
-                        <Skeleton variant="text" width="100%" height={20} />
-                        <Skeleton variant="text" width="90%" height={20} />
-                        <Skeleton variant="text" width="60%" height={20} />
                     </Box>
                 </Box>
 
-                {/* Footer */}
-                <Box sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    pt: 2,
-                    borderTop: `1px solid ${theme.palette.divider}`,
-                }}>
-                    {/* Owner info */}
-                    <Box sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 1,
-                    }}>
-                        <Skeleton variant="circular" width={24} height={24} />
-                        <Skeleton variant="text" width={120} height={20} />
-                    </Box>
+                {/* Badge del modelo */}
+                <Skeleton
+                    variant="rectangular"
+                    width={200}
+                    height={36}
+                    sx={{
+                        borderRadius: '16px',
+                        mb: 2
+                    }}
+                />
 
-                    {/* Action buttons */}
-                    <Box sx={{
-                        display: 'flex',
-                        gap: 1,
-                        alignItems: 'center',
-                    }}>
-                        {[...Array(3)].map((_, index) => (
-                            <Skeleton
-                                key={index}
-                                variant="circular"
-                                width={32}
-                                height={32}
-                            />
-                        ))}
-                    </Box>
+                {/* Área de implementación */}
+                <Skeleton variant="text" width="40%" height={24} sx={{ mb: 1 }} />
+                <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                    <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: 1 }} />
+                    <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: 1 }} />
+                    <Skeleton variant="rectangular" width={100} height={32} sx={{ borderRadius: 1 }} />
+                </Box>
+
+                {/* Área de configuración */}
+                <Skeleton variant="text" width="40%" height={24} sx={{ mb: 1 }} />
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Skeleton variant="text" width={60} height={24} />
+                    <Skeleton variant="text" width={60} height={24} />
+                    <Skeleton variant="text" width={60} height={24} />
                 </Box>
             </CardContent>
         </Card>
