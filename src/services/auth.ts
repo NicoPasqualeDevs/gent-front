@@ -2,7 +2,7 @@ import { AuthUser } from "@/types/Auth";
 
 const AUTH_KEY = 'gent_auth_user';
 
-export const useAuthStorage = () => {
+export const authStorage = () => {
   const saveAuth = (auth: AuthUser) => {
     localStorage.setItem(AUTH_KEY, JSON.stringify(auth));
   };

@@ -7,7 +7,7 @@ import UserLayout from "./components/Layouts/User/UserLayout";
 import { useAppContext } from '@/context/app';
 import { useLocation } from 'react-router-dom';
 import DelayedSuspense from '@/components/DelayedSuspense';
-import { useAuthStorage } from "@/hooks/useAuthStorage";
+import { authStorage } from "@/services/auth";
 
 // Interfaces
 interface ProtectedRouteProps {
@@ -31,7 +31,7 @@ const UserL = (
 // Protected Route Component
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = true }) => {
   const { auth, setAuth } = useAppContext();
-  const { getAuth } = useAuthStorage();
+  const { getAuth } = authStorage();
   const location = useLocation();
 
   React.useEffect(() => {

@@ -7,7 +7,7 @@ import theme from "@/styles/theme";
 import { AuthUser } from "@/types/Auth";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
-import { useAuthStorage } from "@/hooks/useAuthStorage";
+import { authStorage } from "@/services/auth";
 
 interface AppProviderProps {
   children: React.ReactNode | Array<React.ReactNode>;
@@ -18,7 +18,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     React.Reducer<AppContextState, AppContextActions>
   >(AppReducer, INITIAL_STATE);
 
-  const { getAuth } = useAuthStorage();
+  const { getAuth } = authStorage();
 
   const {
     menu,
@@ -48,6 +48,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
   }, [width, isMobile, isTablet]);
 
+
   React.useEffect(() => {
     const savedAuth = getAuth();
     if (savedAuth) {
@@ -56,7 +57,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   }, []);
 
   const setAuth = React.useCallback((value: AuthUser | null) => {
-    const { saveAuth, removeAuth } = useAuthStorage();
+    const { saveAuth, removeAuth } = authStorage();
     
     if (value) {
       saveAuth(value);
