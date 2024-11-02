@@ -4,12 +4,12 @@ import { Outlet, Routes, Route, Navigate } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines";
 import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
-import { PageCircularProgress } from "@/components/CircularProgress";
-import AuthChecker from "./components/AuthChecker";
 import { useAppContext } from '@/context/app';
 import { useLocation } from 'react-router-dom';
 import Login from '@/pages/Auth/Login';
 import Register from '@/pages/Auth/Register';
+import LoadingFallback from "@/components/LoadingFallback";
+import DelayedSuspense from '@/components/DelayedSuspense';
 
 // Interfaces
 interface ProtectedRouteProps {
@@ -19,17 +19,11 @@ interface ProtectedRouteProps {
 
 // Lazy loaded components
 const HomeModule = lazy(() => import("./modules/home"));
-const AuthModule = lazy(() => import("./modules/auth"));
 const BuilderModule = lazy(() => import("./modules/builder"));
 const NotFoundModule = lazy(() => import("./modules/notFound"));
+const AuthModule = lazy(() => import("./modules/auth"));
 
 // Layout components with Suspense
-const BuilderL = (
-  <BuilderLayout>
-    <Outlet />
-  </BuilderLayout>
-);
-
 const UserL = (
   <UserLayout>
     <Outlet />
@@ -70,29 +64,17 @@ const AppRoutes = () => {
           pointerEvents: 'none',
         }}
       />
-      <Suspense fallback={<PageCircularProgress />}>
+      <DelayedSuspense>
         <Routes>
           <Route path="/">
-            <Route path="auth">
-              <Route 
-                path="login" 
-                element={
-                  <ProtectedRoute requireAuth={false}>
-                    <Login />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="register/new-user" 
-                element={
-                  <ProtectedRoute>
-                    <BuilderLayout>
-                      <Register />
-                    </BuilderLayout>
-                  </ProtectedRoute>
-                } 
-              />
-            </Route>
+            <Route 
+              path="auth/*" 
+              element={
+                <ProtectedRoute requireAuth={false}>
+                  <AuthModule />
+                </ProtectedRoute>
+              } 
+            />
             <Route 
               path="builder/*" 
               element={
@@ -117,7 +99,7 @@ const AppRoutes = () => {
             <Route path="*" element={<NotFoundModule />} />
           </Route>
         </Routes>
-      </Suspense>
+      </DelayedSuspense>
     </>
   );
 }

@@ -1,10 +1,12 @@
-import { useEffect, useState, lazy } from "react";
+import { useEffect, lazy, Suspense } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppContext } from '@/context/app';
-import { PageCircularProgress } from '@/components/CircularProgress';
-import { ModuleProps, ModuleState } from '@/types/Module';
+import LoadingFallback from '@/components/LoadingFallback';
+import { ModuleProps } from '@/types/Module';
 import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
+import useLoadingState from '@/hooks/useLoadingState';
+import DelayedSuspense from '@/components/DelayedSuspense';
 
 // Lazy loaded components
 const AiTeamsList = lazy(() => import("@/pages/AiTeams/AiTeamsList"));
@@ -17,10 +19,7 @@ const ChatViewModule = lazy(() => import("@/pages/Builder/ChatView"));
 const BuilderModule: React.FC<ModuleProps> = () => {
   const navigate = useNavigate();
   const { auth, language, replacePath, setNavElevation } = useAppContext();
-  const [state, setState] = useState<ModuleState>({
-    isLoading: true,
-    isError: false
-  });
+  const { state, setError, resetState } = useLoadingState();
   const t = languages[language as keyof typeof languages];
 
   useEffect(() => {
@@ -31,7 +30,6 @@ const BuilderModule: React.FC<ModuleProps> = () => {
           return;
         }
 
-        // Configurar navegación y elevación
         setNavElevation('builder');
         replacePath([
           {
@@ -42,22 +40,18 @@ const BuilderModule: React.FC<ModuleProps> = () => {
           },
         ]);
 
-        setState({ isLoading: false, isError: false });
+        resetState();
       } catch (error) {
-        setState({ 
-          isLoading: false, 
-          isError: true, 
-          errorMessage: error instanceof Error ? error.message : 'Unknown error' 
-        });
+        setError(error instanceof Error ? error.message : 'Unknown error');
         ErrorToast(t.actionAllower.fieldRequired);
       }
     };
 
     initializeModule();
-  }, [auth?.uuid]); // Solo dependemos de auth.uuid
+  }, [auth?.uuid]);
 
   if (state.isLoading) {
-    return <PageCircularProgress />;
+    return <LoadingFallback />;
   }
 
   if (state.isError) {
@@ -71,6 +65,7 @@ const BuilderModule: React.FC<ModuleProps> = () => {
       <Route path="/profile/*" element={<ProfileModule />} />
       <Route path="/agents/*" element={<AgentsDetailsModule />} />
       <Route path="/admin-tools-form" element={<ToolsForm />} />
+      <Route path="/chat/:botId" element={<ChatViewModule />} />
     </Routes>
   );
 };

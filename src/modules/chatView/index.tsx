@@ -1,35 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '@/context/app';
-import { PageCircularProgress } from '@/components/CircularProgress';
-import { ModuleProps, ModuleState } from '@/types/Module';
+import LoadingFallback from '@/components/LoadingFallback';
+import { ModuleProps } from '@/types/Module';
 import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
 import { AgentData } from "@/types/Bots";
-import { ApiResponse } from "@/types/Api";
-
-interface ChatViewState extends ModuleState {
-  botData?: AgentData;
-}
+import useLoadingState from '@/hooks/useLoadingState';
 
 const ChatViewModule: React.FC<ModuleProps> = () => {
   const navigate = useNavigate();
   const { botId } = useParams();
   const { auth, language, replacePath } = useAppContext();
   const botsApi = useBotsApi();
-  const [state, setState] = useState<ChatViewState>({
-    isLoading: true,
-    isError: false
-  });
+  const { state, setError, setData } = useLoadingState<AgentData>();
   const t = languages[language as keyof typeof languages];
 
   useEffect(() => {
-    let isSubscribed = true;
-
     const initializeModule = async () => {
       try {
-        if (!auth?.user?.uuid) {
+        if (!auth?.uuid) {
           throw new Error('User not authenticated');
         }
 
@@ -37,66 +28,50 @@ const ChatViewModule: React.FC<ModuleProps> = () => {
           throw new Error('Bot ID is required');
         }
 
-        // Obtener detalles del bot
-        const botDetails: ApiResponse<AgentData> = await botsApi.getBotDetails(botId);
+        const botDetails = await botsApi.getBotDetails(botId);
         
-        if (!isSubscribed) return;
-
         if (!botDetails?.data) {
           throw new Error('Bot not found');
         }
 
-        // Configurar navegación
         replacePath([
           {
             label: t.leftMenu.aiTeams,
             current_path: "/builder",
             preview_path: "/builder",
+            translationKey: "leftMenu.aiTeams"
           },
           {
             label: botDetails.data.name,
             current_path: `/builder/agents/chat/${botId}`,
             preview_path: "",
+            translationKey: "agents.chat"
           },
         ]);
 
-        setState(prev => ({ 
-          ...prev, 
-          isLoading: false,
-          botData: botDetails.data
-        }));
+        setData(botDetails.data);
 
       } catch (error) {
-        if (!isSubscribed) return;
-        
-        setState({ 
-          isLoading: false, 
-          isError: true, 
-          errorMessage: error instanceof Error ? error.message : 'Unknown error' 
-        });
+        setError(error instanceof Error ? error.message : 'Unknown error');
         ErrorToast(t.actionAllower.fieldRequired);
         navigate('/builder');
       }
     };
 
     initializeModule();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [auth?.user?.uuid, botId, navigate, replacePath, botsApi, t]);
+  }, [auth?.uuid, botId, navigate, replacePath, setData, setError, botsApi, t]);
 
   if (state.isLoading) {
-    return <PageCircularProgress />;
+    return <LoadingFallback />;
   }
 
-  if (state.isError || !state.botData) {
+  if (state.isError || !state.data) {
     return null;
   }
 
   return (
     <div>
-      {/* Aquí va el componente de chat usando state.botData */}
+      {/* Componente de chat usando state.data */}
     </div>
   );
 };

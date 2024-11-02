@@ -6,13 +6,13 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-import ModuleFallBack from "@/components/ModuleFallBack";
+import LoadingFallback from "@/components/LoadingFallback";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <React.Suspense fallback={<ModuleFallBack />}>
+      <React.Suspense fallback={<LoadingFallback />}>
         <AppProvider>
           <AppRoutes />
           <ToastContainer theme={"colored"} />

@@ -1,50 +1,37 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/context/app';
-import { PageCircularProgress } from '@/components/CircularProgress';
-import { ModuleProps, ModuleState } from '@/types/Module';
+import LoadingFallback from '@/components/LoadingFallback';
+import { ModuleProps } from '@/types/Module';
 import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
+import useLoadingState from '@/hooks/useLoadingState';
 
 const HomeModule: React.FC<ModuleProps> = () => {
   const navigate = useNavigate();
-  const { auth, language, replacePath } = useAppContext();
-  const [state, setState] = useState<ModuleState>({
-    isLoading: true,
-    isError: false
-  });
+  const { auth, language } = useAppContext();
+  const { state, setError, resetState } = useLoadingState();
   const t = languages[language as keyof typeof languages];
 
   useEffect(() => {
-    let isSubscribed = true;
-
     const initializeModule = async () => {
       try {
         if (!auth?.uuid) {
           throw new Error('User not authenticated');
         }
-
-        if (isSubscribed) {
-          setState(prev => ({ ...prev, isLoading: false }));
-        }
+        resetState();
       } catch (error) {
-        if (isSubscribed) {
-          setState({ isLoading: false, isError: true, errorMessage: error instanceof Error ? error.message : 'Unknown error' });
-          ErrorToast(t.actionAllower.fieldRequired);
-          navigate('/auth/login');
-        }
+        setError(error instanceof Error ? error.message : 'Unknown error');
+        ErrorToast(t.actionAllower.fieldRequired);
+        navigate('/auth/login');
       }
     };
 
     initializeModule();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [auth?.uuid, navigate, replacePath, t]);
+  }, [auth?.uuid, navigate, t, resetState, setError]);
 
   if (state.isLoading) {
-    return <PageCircularProgress />;
+    return <LoadingFallback />;
   }
 
   if (state.isError) {
