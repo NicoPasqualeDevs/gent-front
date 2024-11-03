@@ -182,6 +182,20 @@ export type TranslationType = {
     errorToken: string;
     errorLoading: string;
     createToolButton: string;
+    title: string;
+    description: string;
+    searchPlaceholder: string;
+    noToolsFound: string;
+    noToolsToShow: string;
+    toolsCount: string;
+    perPage: string;
+    reloadData: string;
+    manage: string;
+    edit: string;
+    delete: string;
+    deleteConfirmation: string;
+    deleteSuccess: string;
+    deleteError: string;
   };
   contextEntry: {
     title: string;
@@ -218,6 +232,14 @@ export type TranslationType = {
     uploadProgress: string;
     removeFile: string;
     uploadSuccess: string;
+  };
+  auth: {
+    register: string;
+    login: string;
+    logout: string;
+    registerTitle: string;
+    registerSuccess: string;
+    registerError: string;
   };
 };
 
@@ -261,4 +283,24 @@ export const greetings: GreetingsType = {
 export const getRandomGreeting = (lang: string): string => {
   const langGreetings = greetings[lang] || greetings.en;
   return langGreetings[Math.floor(Math.random() * langGreetings.length)];
-}; 
+};
+
+export interface PathbarTranslations {
+  home: string;
+}
+
+export interface LeftMenuTranslations {
+  aiTeams: string;
+  registerTeam: string;
+  registerUser: string;
+  tools: string;
+  workShop: string;
+  logout: string;
+  logoutSuccess: string;
+}
+
+export interface Translations {
+  // ... otras interfaces existentes
+  leftMenu: LeftMenuTranslations;
+  pathbar: PathbarTranslations;
+} 

@@ -87,8 +87,12 @@ const IaPanel: React.FC<PageProps> = () => {
           label: aiTeamName,
           current_path: `/builder/agents/${aiTeamName}/${aiTeamId}`,
           preview_path: "",
-          translationKey: "aiTeamName"
-        },
+          translationKey: "aiTeamName",
+          extraData: {
+            aiTeamId,
+            aiTeamName
+          }
+        }
       ]);
     }
   }, [aiTeamId, aiTeamName, replacePath, t]);

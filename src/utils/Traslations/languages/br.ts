@@ -12,13 +12,13 @@ const br: TranslationType = {
     cancel: "Cancelar"
   },
   leftMenu: {
-    aiTeams: "Equipes de IA",
-    registerTeam: "Nova equipe",
-    logout: "Sair",
-    logoutSuccess: "Você saiu com sucesso",
-    registerUser: "Novo Usuário",
+    aiTeams: "Times IA",
+    registerTeam: "Registrar Time",
+    registerUser: "Registrar Usuário",
     tools: "Ferramentas",
-    workShop: "Oficina"
+    workShop: "Oficina",
+    logout: "Sair",
+    logoutSuccess: "Sessão encerrada com sucesso"
   },
   aiTeamsForm: {
     editTitle: "Editar equipe {teamName}",
@@ -185,7 +185,21 @@ const br: TranslationType = {
     errorUnrelate: "Erro ao desvincular ferramenta",
     errorToken: "Erro de autenticação",
     errorLoading: "Erro ao carregar ferramentas",
-    createToolButton: "Criar Ferramenta"
+    createToolButton: "Criar Ferramenta",
+    title: "Ferramentas",
+    description: "Gerencie suas ferramentas",
+    searchPlaceholder: "Buscar ferramenta...",
+    noToolsFound: "Nenhuma ferramenta encontrada com esse nome",
+    noToolsToShow: "Nenhuma ferramenta para mostrar",
+    toolsCount: "de {total} ferramentas",
+    perPage: "por página",
+    reloadData: "Recarregar dados",
+    manage: "Gerenciar",
+    edit: "Editar",
+    delete: "Excluir",
+    deleteConfirmation: "Tem certeza que deseja excluir esta ferramenta?",
+    deleteSuccess: "Ferramenta excluída com sucesso",
+    deleteError: "Erro ao excluir ferramenta"
   },
   contextEntry: {
     title: "Criar Agente",
@@ -225,6 +239,14 @@ const br: TranslationType = {
   },
   header: {
     profile: "Perfil"
+  },
+  auth: {
+    register: "Registrar",
+    login: "Entrar",
+    logout: "Sair",
+    registerTitle: "Registro de Usuário",
+    registerSuccess: "Usuário registrado com sucesso",
+    registerError: "Erro ao registrar usuário"
   }
 };
 

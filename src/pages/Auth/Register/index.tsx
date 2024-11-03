@@ -14,12 +14,16 @@ import {
   FormCancelButton,
   FormTextField
 } from "@/utils/FormsViewUtils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useAppContext } from "@/context/app";
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const { registerUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
+  const { replacePath } = useAppContext();
 
   const initialValues: AuthRegisterData = {
     email: "",
@@ -74,6 +78,17 @@ const Register: React.FC = () => {
   });
 
   const { handleSubmit, handleChange, values, touched, errors } = formik;
+
+  useEffect(() => {
+    replacePath([
+      {
+        label: t('login.registerLink'),
+        current_path: "/auth/register",
+        preview_path: "",
+        translationKey: "login.registerLink"
+      }
+    ]);
+  }, [replacePath, t]);
 
   return (
     <FormLayout>

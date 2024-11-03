@@ -13,12 +13,12 @@ const en: TranslationType = {
   },
   leftMenu: {
     aiTeams: "AI Teams",
-    registerTeam: "New team",
-    logout: "Logout",
-    logoutSuccess: "You have successfully logged out",
-    registerUser: "New User",
+    registerTeam: "Register Team",
+    registerUser: "Register User",
     tools: "Tools",
-    workShop: "Workshop"
+    workShop: "Workshop",
+    logout: "Logout",
+    logoutSuccess: "Session closed successfully"
   },
   aiTeamsForm: {
     editTitle: "Edit team {teamName}",
@@ -185,7 +185,21 @@ const en: TranslationType = {
     errorUnrelate: "Error unrelating tool",
     errorToken: "Authentication error",
     errorLoading: "Error loading tools",
-    createToolButton: "Create Tool"
+    createToolButton: "Create Tool",
+    title: "Tools",
+    description: "Manage your tools",
+    searchPlaceholder: "Search tool...",
+    noToolsFound: "No tools found with that name",
+    noToolsToShow: "No tools to show",
+    toolsCount: "of {total} tools",
+    perPage: "per page",
+    reloadData: "Reload data",
+    manage: "Manage",
+    edit: "Edit",
+    delete: "Delete",
+    deleteConfirmation: "Are you sure you want to delete this tool?",
+    deleteSuccess: "Tool deleted successfully",
+    deleteError: "Error deleting tool"
   },
   contextEntry: {
     title: "Create Agent",
@@ -225,6 +239,14 @@ const en: TranslationType = {
   },
   header: {
     profile: "Profile"
+  },
+  auth: {
+    register: "Register",
+    login: "Login",
+    logout: "Logout",
+    registerTitle: "User Registration",
+    registerSuccess: "User registered successfully",
+    registerError: "Error registering user"
   }
 };
 

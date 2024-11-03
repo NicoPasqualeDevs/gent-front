@@ -29,7 +29,7 @@ const UserL = (
 
 // Protected Route Component
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = true }) => {
-  const { auth } = useAppContext();
+  const { auth, replacePath } = useAppContext();
   const location = useLocation();
 
   // Si requireAuth es true y no hay auth, redirigir a login
@@ -37,8 +37,9 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth =
     return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
   }
 
-  // Si requireAuth es false y hay auth, redirigir a builder
+  // Si requireAuth es false y hay auth, redirigir a builder sin establecer navegación
   if (!requireAuth && auth?.token) {
+    replacePath([]); // Limpiamos la navegación
     return <Navigate to="/builder" replace />;
   }
 
@@ -46,6 +47,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth =
 };
 
 const AppRoutes = () => {
+  const { replacePath } = useAppContext();
+
+  // Aseguramos que la navegación esté limpia al montar las rutas
+  React.useEffect(() => {
+    replacePath([]);
+  }, []);
+
   return (
     <>
       <BackgroundLines />
@@ -91,7 +99,7 @@ const AppRoutes = () => {
           >
             <Route index element={<HomeModule />} />
           </Route>
-          <Route index element={<Navigate to="/home" replace />} />
+          <Route index element={<Navigate to="/builder" replace />} />
           <Route path="*" element={<NotFoundModule />} />
         </Route>
       </Routes>

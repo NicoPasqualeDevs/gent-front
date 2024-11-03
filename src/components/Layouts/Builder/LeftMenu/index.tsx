@@ -7,6 +7,7 @@ import { LogoutSharp } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 import { languages } from "@/utils/Traslations";
+import { useEffect } from "react";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -61,6 +62,11 @@ const LeftMenu: React.FC = () => {
   const filteredOptions = menuOptions.filter(option => 
     !option.requireSuperUser || auth?.is_superuser
   );
+
+  // Limpiar la navegación al montar el componente
+  useEffect(() => {
+    replacePath([]);
+  }, []);
 
   return (
     <>

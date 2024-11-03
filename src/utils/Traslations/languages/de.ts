@@ -13,12 +13,12 @@ const de: TranslationType = {
   },
   leftMenu: {
     aiTeams: "KI-Teams",
-    registerTeam: "Neues Team",
-    logout: "Abmelden",
-    logoutSuccess: "Sie haben sich erfolgreich abgemeldet",
-    registerUser: "Neuer Benutzer",
+    registerTeam: "Team Registrieren",
+    registerUser: "Benutzer Registrieren",
     tools: "Werkzeuge",
-    workShop: "Werkstatt"
+    workShop: "Werkstatt",
+    logout: "Abmelden",
+    logoutSuccess: "Sitzung erfolgreich beendet"
   },
   aiTeamsForm: {
     editTitle: "Team {teamName} bearbeiten",
@@ -185,7 +185,21 @@ const de: TranslationType = {
     errorUnrelate: "Fehler beim Aufheben der Zuordnung des Werkzeugs",
     errorToken: "Authentifizierungsfehler",
     errorLoading: "Fehler beim Laden der Werkzeuge",
-    createToolButton: "Werkzeug erstellen"
+    createToolButton: "Werkzeug erstellen",
+    title: "Werkzeuge",
+    description: "Verwalten Sie Ihre Werkzeuge",
+    searchPlaceholder: "Werkzeug suchen...",
+    noToolsFound: "Keine Werkzeuge mit diesem Namen gefunden",
+    noToolsToShow: "Keine Werkzeuge zum Anzeigen",
+    toolsCount: "von {total} Werkzeugen",
+    perPage: "pro Seite",
+    reloadData: "Daten neu laden",
+    manage: "Verwalten",
+    edit: "Bearbeiten",
+    delete: "Löschen",
+    deleteConfirmation: "Sind Sie sicher, dass Sie dieses Werkzeug löschen möchten?",
+    deleteSuccess: "Werkzeug erfolgreich gelöscht",
+    deleteError: "Fehler beim Löschen des Werkzeugs"
   },
   contextEntry: {
     title: "Agent erstellen",
@@ -225,6 +239,14 @@ const de: TranslationType = {
   },
   header: {
     profile: "Profil"
+  },
+  auth: {
+    register: "Registrieren",
+    login: "Anmelden",
+    logout: "Abmelden",
+    registerTitle: "Benutzerregistrierung",
+    registerSuccess: "Benutzer erfolgreich registriert",
+    registerError: "Fehler bei der Benutzerregistrierung"
   }
 };
 

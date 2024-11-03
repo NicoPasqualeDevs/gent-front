@@ -63,7 +63,7 @@ type NonSuperUser = {
 const ToolsForm: React.FC = () => {
   const navigate = useNavigate();
   const { toolId } = useParams();
-  const { language, auth } = useAppContext();
+  const { language, auth, replacePath } = useAppContext();
   const { postTool, patchTool, getTool } = useTools(); // Usar el nuevo hook
   const { listNonSuperUsers } = useAdmin(); // Utilizamos el nuevo hook
   const t = languages[language as keyof typeof languages].toolsForm;
@@ -154,11 +154,11 @@ const ToolsForm: React.FC = () => {
   const initializeUsers = useCallback(() => {
     if (!auth?.uuid) return;
     
-    const currentUser = {
+    const currentUser: NonSuperUser = {
       id: Number(auth.uuid),
-      username: auth.first_name,
+      username: auth.first_name || '',
       email: auth.email,
-      first_name: auth.first_name,
+      first_name: auth.first_name || '',
       last_name: auth.last_name || ''
     };
 
@@ -229,6 +229,28 @@ const ToolsForm: React.FC = () => {
             ErrorToast(error.message || t.errorConnection);
         });
   };
+
+  // Agregar useEffect para configurar el pathbar
+  useEffect(() => {
+    replacePath([
+      {
+        label: languages[language as keyof typeof languages].tools.libraryTitle,
+        current_path: "/builder/tools",
+        preview_path: "/builder/tools",
+        translationKey: "tools.libraryTitle"
+      },
+      {
+        label: toolId 
+          ? t.editTool.replace("{toolName}", values.tool_name) 
+          : t.createNewTool,
+        current_path: toolId 
+          ? `/builder/tools/form/${toolId}` 
+          : "/builder/tools/form",
+        preview_path: "",
+        translationKey: toolId ? "toolsForm.editTool" : "toolsForm.createNewTool"
+      }
+    ]);
+  }, [toolId, values.tool_name, replacePath, t, language]);
 
   return (
     <FormLayout>

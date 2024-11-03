@@ -13,12 +13,12 @@ const fr: TranslationType = {
   },
   leftMenu: {
     aiTeams: "Équipes IA",
-    registerTeam: "Nouvelle équipe",
-    logout: "Déconnexion",
-    logoutSuccess: "Vous vous êtes déconnecté avec succès",
-    registerUser: "Nouvel Utilisateur",
+    registerTeam: "Enregistrer Équipe",
+    registerUser: "Enregistrer Utilisateur",
     tools: "Outils",
-    workShop: "Atelier"
+    workShop: "Atelier",
+    logout: "Déconnexion",
+    logoutSuccess: "Session fermée avec succès"
   },
   aiTeamsForm: {
     editTitle: "Modifier l'équipe {teamName}",
@@ -185,7 +185,21 @@ const fr: TranslationType = {
     errorUnrelate: "Erreur lors de la dissociation de l'outil",
     errorToken: "Erreur d'authentification",
     errorLoading: "Erreur lors du chargement des outils",
-    createToolButton: "Créer un Outil"
+    createToolButton: "Créer un Outil",
+    title: "Outils",
+    description: "Gérez vos outils",
+    searchPlaceholder: "Rechercher un outil...",
+    noToolsFound: "Aucun outil trouvé avec ce nom",
+    noToolsToShow: "Aucun outil à afficher",
+    toolsCount: "sur {total} outils",
+    perPage: "par page",
+    reloadData: "Recharger les données",
+    manage: "Gérer",
+    edit: "Modifier",
+    delete: "Supprimer",
+    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer cet outil ?",
+    deleteSuccess: "Outil supprimé avec succès",
+    deleteError: "Erreur lors de la suppression de l'outil"
   },
   contextEntry: {
     title: "Créer un Agent",
@@ -225,6 +239,14 @@ const fr: TranslationType = {
   },
   header: {
     profile: "Profil"
+  },
+  auth: {
+    register: "S'inscrire",
+    login: "Se connecter",
+    logout: "Se déconnecter",
+    registerTitle: "Inscription Utilisateur",
+    registerSuccess: "Utilisateur enregistré avec succès",
+    registerError: "Erreur lors de l'enregistrement de l'utilisateur"
   }
 };
 

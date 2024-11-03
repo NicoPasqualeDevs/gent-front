@@ -119,6 +119,27 @@ const AiTeamsForm: React.FC<PageProps> = () => {
     }
   }, [aiTeamId]);
 
+  useEffect(() => {
+    const currentPath = state.isEditing 
+      ? `/builder/form/${aiTeamName}/${aiTeamId}`
+      : "/builder/form";
+
+    replacePath([
+      {
+        label: t.leftMenu.aiTeams,
+        current_path: "/builder",
+        preview_path: "/builder",
+        translationKey: "leftMenu.aiTeams"
+      },
+      {
+        label: state.isEditing ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
+        current_path: currentPath,
+        preview_path: "",
+        translationKey: state.isEditing ? "editTeam" : "createTeam"
+      }
+    ]);
+  }, [state.isEditing, aiTeamId, aiTeamName, replacePath, t]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
