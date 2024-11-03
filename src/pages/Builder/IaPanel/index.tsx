@@ -34,6 +34,7 @@ import {
   SkeletonCard
 } from "@/utils/DashboardsUtils";
 import { alpha } from '@mui/material/styles';
+import { PaginationFooter } from "@/utils/DashboardsUtils";
 
 const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
@@ -597,59 +598,24 @@ const IaPanel: React.FC<PageProps> = () => {
         )}
       </DashboardContent>
 
-      {state.pageContent.length > 0 && (
-        <DashboardFooter>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
-            width: '100%'
-          }}>
-            {/* Paginación a la izquierda */}
-            <Box>
-              <Pagination
-                count={state.paginationData?.total_pages || 1}
-                page={state.currentPage}
-                onChange={handlePagination}
-                color="primary"
-                size="small"
-              />
-            </Box>
-
-            {/* Botón de acción en el centro */}
-            {auth?.is_superuser && (
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <Button
-                  variant="contained"
-                  onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
-                  startIcon={<AddIcon />}
-                  sx={{
-                    color: 'white',
-                    '&:hover': {
-                      color: 'white',
-                    },
-                  }}
-                >
-                  {t.iaPanel.createAgent}
-                </Button>
-              </Box>
-            )}
-
-            {/* Contador de páginas a la derecha */}
-            {state.paginationData?.total_items !== undefined && (
-              <Box sx={{ textAlign: { xs: 'center', sm: 'right' } }}>
-                <Typography variant="body2" color="text.secondary">
-                  {`${(state.currentPage - 1) * parseInt(state.contentPerPage) + 1} - ${Math.min(
-                    state.currentPage * parseInt(state.contentPerPage),
-                    state.paginationData.total_items
-                  )} ${t.iaPanel.agentsCount.replace("{total}", state.paginationData.total_items.toString())}`}
-                </Typography>
-              </Box>
-            )}
-          </Box>
-        </DashboardFooter>
+      {state.pageContent.length > 0 && state.paginationData && (
+        <PaginationFooter
+          currentPage={state.currentPage}
+          totalPages={state.paginationData.total_pages}
+          totalItems={state.paginationData.total_items}
+          itemsPerPage={state.contentPerPage}
+          onPageChange={handlePagination}
+          onItemsPerPageChange={handleContentPerPageChange}
+          createButton={auth?.is_superuser ? {
+            onClick: () => navigate(`/builder/agents/contextEntry/${aiTeamId}`),
+            label: t.iaPanel.createAgent,
+            show: true
+          } : undefined}
+          translations={{
+            itemsCount: t.iaPanel.agentsCount,
+            perPage: t.iaPanel.perPage
+          }}
+        />
       )}
 
       {state.allowerState && (

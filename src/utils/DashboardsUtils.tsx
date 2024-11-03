@@ -9,19 +9,16 @@ import {
     Skeleton,
     Theme,
     useTheme,
-    alpha
+    alpha,
+    Pagination,
+    Button,
+    Select,
+    MenuItem
 } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
-import { 
-    spacing, 
-    dimensions, 
-    typography, 
-    borders, 
-    alignment,
-    common 
-} from '@/components/AiTeamCard/SkeletonAiTeamCardsVars';
-
+import AddIcon from '@mui/icons-material/Add';
+import { SelectChangeEvent } from '@mui/material/Select';
 // Tipos comunes
 interface DashboardContainerProps {
     children: React.ReactNode;
@@ -29,7 +26,7 @@ interface DashboardContainerProps {
     sx?: SxProps<Theme>;
 }
 
-interface DashboardHeaderProps extends HeaderBaseProps {}
+interface DashboardHeaderProps extends HeaderBaseProps { }
 
 interface DashboardContentProps {
     children: React.ReactNode;
@@ -44,6 +41,25 @@ interface DashboardFooterProps {
 interface SkeletonCardProps {
     height?: number | string;
     variant?: 'agent' | 'team' | 'aiTeam';
+}
+
+// Añadir nueva interfaz para el PaginationFooter
+interface PaginationFooterProps {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: string | number;
+    onPageChange: (event: React.ChangeEvent<unknown>, value: number) => void;
+    onItemsPerPageChange: (event: SelectChangeEvent) => void;
+    createButton?: {
+        onClick: () => void;
+        label: string;
+        show: boolean;
+    };
+    translations: {
+        itemsCount: string;
+        perPage: string;
+    };
 }
 
 // Componente contenedor principal del dashboard
@@ -153,7 +169,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
                 border: `1px solid ${theme.palette.divider}`,
                 boxShadow: 'none',
             }}>
-                <CardContent sx={{ 
+                <CardContent sx={{
                     py: 1,
                     position: 'relative',
                     height: '100%',
@@ -162,36 +178,36 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
                 }}>
                     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                         {/* Header con avatar y título */}
-                        <Box sx={{ 
-                            display: 'flex', 
+                        <Box sx={{
+                            display: 'flex',
                             alignItems: 'center',
                             mb: 2,
                             height: 46.58,
                         }}>
-                            <Skeleton 
-                                variant="circular" 
+                            <Skeleton
+                                variant="circular"
                                 width={40}
                                 height={40}
-                                sx={{ 
+                                sx={{
                                     mr: 1,
                                     alignSelf: 'center'
                                 }}
                             />
-                            <Box sx={{ 
+                            <Box sx={{
                                 flex: 1,
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'center',
                                 height: '100%'
                             }}>
-                                <Skeleton 
-                                    variant="text" 
+                                <Skeleton
+                                    variant="text"
                                     width={120}
                                     height={20}
                                     sx={{ mb: 0.25 }}
                                 />
-                                <Skeleton 
-                                    variant="text" 
+                                <Skeleton
+                                    variant="text"
                                     width={150}
                                     height={16}
                                 />
@@ -210,75 +226,75 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
                         />
 
                         {/* Divider */}
-                        <Skeleton 
-                            variant="rectangular" 
-                            width="100%" 
+                        <Skeleton
+                            variant="rectangular"
+                            width="100%"
                             height={1}
                             sx={{ mb: 2 }}
                         />
 
                         {/* Sección de implementación */}
                         <Box sx={{ mb: 2 }}>
-                            <Skeleton 
-                                variant="text" 
+                            <Skeleton
+                                variant="text"
                                 width={120}
                                 height={25.11}
-                                sx={{ 
+                                sx={{
                                     mb: 1.5,
                                     borderRadius: 2.5
                                 }}
                             />
                             <Box sx={{ display: 'flex', gap: 1 }}>
-                                <Skeleton 
-                                    variant="rectangular" 
-                                    width={100} 
-                                    height={22} 
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={100}
+                                    height={22}
                                     sx={{ borderRadius: 2.5 }}
                                 />
-                                <Skeleton 
-                                    variant="rectangular" 
-                                    width={100} 
-                                    height={22} 
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={100}
+                                    height={22}
                                     sx={{ borderRadius: 2.5 }}
                                 />
-                                <Skeleton 
-                                    variant="rectangular" 
-                                    width={100} 
-                                    height={22} 
+                                <Skeleton
+                                    variant="rectangular"
+                                    width={100}
+                                    height={22}
                                     sx={{ borderRadius: 2.5 }}
                                 />
                             </Box>
                         </Box>
 
                         {/* Divider */}
-                        <Skeleton 
-                            variant="rectangular" 
-                            width="100%" 
+                        <Skeleton
+                            variant="rectangular"
+                            width="100%"
                             height={1}
                             sx={{ mb: 2 }}
                         />
 
                         {/* Sección de configuración */}
                         <Box sx={{ mb: 0 }}>
-                            <Skeleton 
-                                variant="text" 
+                            <Skeleton
+                                variant="text"
                                 width={120}
                                 height={25.11}
-                                sx={{ 
+                                sx={{
                                     mb: 1.5,
                                     borderRadius: 2.5
                                 }}
                             />
                             <Box sx={{ display: 'flex', gap: 2 }}>
-                                <Skeleton 
-                                    variant="text" 
-                                    width={140} 
+                                <Skeleton
+                                    variant="text"
+                                    width={140}
                                     height={25.2}
                                     sx={{ borderRadius: 2.5 }}
                                 />
-                                <Skeleton 
-                                    variant="text" 
-                                    width={140} 
+                                <Skeleton
+                                    variant="text"
+                                    width={140}
                                     height={25.2}
                                     sx={{ borderRadius: 2.5 }}
                                 />
@@ -286,26 +302,26 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
                         </Box>
 
                         {/* Botones flotantes */}
-                        <Box sx={{ 
+                        <Box sx={{
                             position: 'absolute',
                             top: 8,
                             right: 8,
                             display: 'flex',
                             gap: 0.5
                         }}>
-                            <Skeleton 
-                                variant="circular" 
-                                width={28} 
-                                height={28} 
-                                sx={{ 
+                            <Skeleton
+                                variant="circular"
+                                width={28}
+                                height={28}
+                                sx={{
                                     backgroundColor: alpha(theme.palette.background.paper, 0.2)
                                 }}
                             />
-                            <Skeleton 
-                                variant="circular" 
-                                width={28} 
+                            <Skeleton
+                                variant="circular"
+                                width={28}
                                 height={28}
-                                sx={{ 
+                                sx={{
                                     backgroundColor: alpha(theme.palette.background.paper, 0.2)
                                 }}
                             />
@@ -337,29 +353,29 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
                 }}>
                     {/* Header - Title */}
                     <Box sx={{ mb: 1 }}>
-                        <Skeleton 
-                            variant="text" 
-                            width="70%" 
+                        <Skeleton
+                            variant="text"
+                            width="70%"
                             height={32}
                         />
                     </Box>
 
                     {/* Address */}
                     <Box sx={{ mb: 2 }}>
-                        <Skeleton 
-                            variant="text" 
-                            width="40%" 
+                        <Skeleton
+                            variant="text"
+                            width="40%"
                             height={20}
                         />
                     </Box>
 
                     {/* LLM Tag */}
                     <Box sx={{ mb: 2 }}>
-                        <Skeleton 
-                            variant="rectangular" 
-                            width={100} 
+                        <Skeleton
+                            variant="rectangular"
+                            width={100}
                             height={24}
-                            sx={{ 
+                            sx={{
                                 borderRadius: 1,
                                 backgroundColor: alpha(theme.palette.primary.main, 0.1)
                             }}
@@ -368,74 +384,74 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, varian
 
                     {/* Description */}
                     <Box sx={{ mb: 2 }}>
-                        <Skeleton 
-                            variant="text" 
-                            width="100%" 
+                        <Skeleton
+                            variant="text"
+                            width="100%"
                             height={20}
                             sx={{ mb: 0.5 }}
                         />
-                        <Skeleton 
-                            variant="text" 
-                            width="90%" 
+                        <Skeleton
+                            variant="text"
+                            width="90%"
                             height={20}
                             sx={{ mb: 0.5 }}
                         />
-                        <Skeleton 
-                            variant="text" 
-                            width="80%" 
+                        <Skeleton
+                            variant="text"
+                            width="80%"
                             height={20}
                         />
                     </Box>
 
                     {/* Divider */}
-                    <Skeleton 
-                        variant="rectangular" 
-                        width="100%" 
+                    <Skeleton
+                        variant="rectangular"
+                        width="100%"
                         height={1}
                         sx={{ mb: 2 }}
                     />
 
                     {/* Footer with owner and action buttons */}
-                    <Box sx={{ 
+                    <Box sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
                         mt: '-8px'
                     }}>
                         {/* Owner section */}
-                        <Box sx={{ 
+                        <Box sx={{
                             display: 'flex',
                             alignItems: 'center',
                             gap: 1,
                             mb: '-26px'
                         }}>
-                            <Skeleton 
-                                variant="circular" 
-                                width={24} 
+                            <Skeleton
+                                variant="circular"
+                                width={24}
                                 height={24}
                             />
-                            <Skeleton 
-                                variant="text" 
-                                width={80} 
+                            <Skeleton
+                                variant="text"
+                                width={80}
                                 height={20}
                             />
                         </Box>
 
                         {/* Action buttons */}
-                        <Box sx={{ 
+                        <Box sx={{
                             display: 'flex',
                             gap: 1,
                             mb: '-8px'
                         }}>
                             {[1, 2, 3].map((_, index) => (
-                                <Skeleton 
+                                <Skeleton
                                     key={index}
-                                    variant="circular" 
+                                    variant="circular"
                                     sx={{
                                         mt: '4px',
                                         mr: '6px'
                                     }}
-                                    width={24} 
+                                    width={24}
                                     height={24}
                                 />
                             ))}
@@ -537,4 +553,83 @@ export const commonStyles = {
             background: (theme: Theme) => theme.palette.action.hover,
         },
     },
+};
+
+// Nuevo componente PaginationFooter
+export const PaginationFooter: React.FC<PaginationFooterProps> = ({
+    currentPage,
+    totalPages,
+    totalItems,
+    itemsPerPage,
+    onPageChange,
+    onItemsPerPageChange,
+    createButton,
+    translations
+}) => {
+    const startItem = (currentPage - 1) * Number(itemsPerPage) + 1;
+    const endItem = Math.min(currentPage * Number(itemsPerPage), totalItems);
+
+    return (
+        <DashboardFooter>
+            <Box sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                gap: 2,
+                width: '100%'
+            }}>
+                {/* Paginación y selector de items por página */}
+                <Box sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
+                    flexDirection: { xs: 'column', sm: 'row' }
+                }}>
+                    <Pagination
+                        count={totalPages}
+                        page={currentPage}
+                        onChange={onPageChange}
+                        color="primary"
+                        size="small"
+                        sx={{
+                            lineHeight: "26px",
+                            '& .MuiPaginationItem-root': {
+                                paddingTop: '2px',
+                                color: 'white'
+                            }
+                        }}
+                    />
+                </Box>
+                {/* Botón de acción en el centro (opcional) */}
+                {createButton?.show && (
+                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                        <Button
+                            variant="contained"
+                            onClick={createButton.onClick}
+                            startIcon={<AddIcon />}
+                            sx={{
+                                color: 'white',
+                                '&:hover': {
+                                    color: 'white',
+                                },
+                            }}
+                        >
+                            {createButton.label}
+                        </Button>
+                    </Box>
+                )}
+                {/* Contador de páginas a la derecha */}
+                <Box sx={{ textAlign: { xs: 'center', sm: 'right' }, display: 'flex', flexDirection: 'row', gap: 1 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{mr: -0.5}}>
+                        {endItem.toString()}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                        {translations.itemsCount
+                            .replace("{total}", totalItems.toString())}
+                    </Typography>
+                </Box>
+            </Box>
+        </DashboardFooter>
+    );
 };

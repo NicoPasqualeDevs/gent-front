@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, lazy, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/app";
-import { PageCircularProgress } from "@/components/CircularProgress";
 import { PageProps, PaginatedPageState } from "@/types/Page";
 import { ErrorToast } from "@/components/Toast";
 import { languages } from "@/utils/Traslations";
@@ -9,27 +8,19 @@ import useAiTeamsApi from "@/hooks/useAiTeams";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata } from "@/types/Api";
 import { 
-  Container, 
   Box, 
   Paper, 
   Grid, 
   Typography, 
-  Button, 
   Select, 
   MenuItem, 
   Pagination,
   SelectChangeEvent,
   useTheme,
-  InputBase,
-  styled,
-  alpha,
   Card,
   CardContent,
-  Tooltip,
-  Skeleton
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import AddIcon from "@mui/icons-material/Add";
 
 import ActionAllower from "@/components/ActionAllower";
 import { SuccessToast } from "@/components/Toast";
@@ -42,6 +33,7 @@ import {
   SkeletonCard
 } from "@/utils/DashboardsUtils";
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
+import { PaginationFooter } from "@/utils/DashboardsUtils";
 
 // Componente AiTeamCard
 const AiTeamCard = lazy(() => import("@/components/AiTeamCard"));
@@ -69,13 +61,10 @@ const AiTeamsList: React.FC<PageProps> = () => {
     clientToDelete: ""
   });
   const t = languages[language as keyof typeof languages];
-  const theme = useTheme();
-  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const initializeAuth = () => {
       if (!auth) {
-        console.log('No auth found, redirecting to login');
         navigate('/auth/login');
         return;
       }
@@ -89,7 +78,6 @@ const AiTeamsList: React.FC<PageProps> = () => {
     
     const loadData = async () => {
       if (!auth?.uuid) {
-        console.log('No auth UUID found, skipping data load');
         return;
       }
 
@@ -98,7 +86,6 @@ const AiTeamsList: React.FC<PageProps> = () => {
         const filterParams = `?page_size=${state.contentPerPage}&page=${state.currentPage}`;
         await getAiTeamsData(filterParams);
       } catch (error) {
-        console.error('Error loading data:', error);
         setState(prev => ({ 
           ...prev,
           isLoading: false,
@@ -119,13 +106,8 @@ const AiTeamsList: React.FC<PageProps> = () => {
       console.log('No auth UUID in getAiTeamsData, aborting');
       return;
     }
-
-    console.log('Fetching AI teams with params:', filterParams);
-    console.log('Auth state:', auth);
-
     try {
       setState(prev => ({ ...prev, isLoading: true }));
-      
       let response;
       if (auth.is_superuser) {
         console.log('Fetching as superuser');
@@ -134,9 +116,6 @@ const AiTeamsList: React.FC<PageProps> = () => {
         console.log('Fetching as regular user');
         response = await getAiTeamsByOwner(auth.uuid, filterParams);
       }
-
-      console.log('API response:', response);
-
       if (response?.data) {
         setState(prev => ({
           ...prev,
@@ -149,7 +128,6 @@ const AiTeamsList: React.FC<PageProps> = () => {
         setClientPage(response.metadata?.current_page || 1);
       }
     } catch (error) {
-      console.error('Error fetching AI teams:', error);
       setState(prev => ({ 
         ...prev, 
         isLoading: false,
@@ -163,7 +141,6 @@ const AiTeamsList: React.FC<PageProps> = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setState(prev => ({ ...prev, searchQuery: e.target.value }));
-    
     if (e.target.value.trim() === "") {
       getAiTeamsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
     } else {
@@ -177,7 +154,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
     getAiTeamsData(`?page_size=${newValue}&page=1`);
   };
 
-  const handlePagination = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePagination = (_event: React.ChangeEvent<unknown>, value: number) => {
     setState(prev => ({ ...prev, currentPage: value }));
     getAiTeamsData(`?page_size=${state.contentPerPage}&page=${value}`);
   };
@@ -301,42 +278,18 @@ const AiTeamsList: React.FC<PageProps> = () => {
       </DashboardContent>
 
       {state.pageContent.length > 0 && state.paginationData && (
-        <DashboardFooter>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 2,
-            width: '100%'
-          }}>
-            {/* Paginación a la izquierda */}
-            <Box sx={{ width: { xs: '83.33%', sm: 'auto' } }}>
-              <Pagination
-                count={state.paginationData.total_pages}
-                page={state.currentPage}
-                onChange={handlePagination}
-                color="primary"
-                size="small"
-              />
-            </Box>
-
-            {/* Contador de páginas a la derecha */}
-            {state.paginationData?.total_items !== undefined && (
-              <Box sx={{ 
-                textAlign: { xs: 'center', sm: 'right' },
-                width: { xs: '83.33%', sm: 'auto' }
-              }}>
-                <Typography variant="body2" color="text.secondary">
-                  {`${(state.currentPage - 1) * parseInt(state.contentPerPage) + 1} - ${Math.min(
-                    state.currentPage * parseInt(state.contentPerPage),
-                    state.paginationData.total_items
-                  )} ${t.aiTeamsList.teamsCount.replace("{total}", state.paginationData.total_items.toString())}`}
-                </Typography>
-              </Box>
-            )}
-          </Box>
-        </DashboardFooter>
+        <PaginationFooter
+          currentPage={state.currentPage}
+          totalPages={state.paginationData.total_pages}
+          totalItems={state.paginationData.total_items}
+          itemsPerPage={state.contentPerPage}
+          onPageChange={handlePagination}
+          onItemsPerPageChange={handleContentPerPageChange}
+          translations={{
+            itemsCount: t.aiTeamsList.teamsCount,
+            perPage: t.aiTeamsList.perPage
+          }}
+        />
       )}
 
       {state.allowerState && (
