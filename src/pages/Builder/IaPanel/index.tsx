@@ -13,7 +13,7 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
 import theme from "@/styles/theme";
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
-import useApi from "@/hooks/useApi";
+import useApi from "@/hooks/api/useApi";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { modelAIOptions } from "@/utils/LargeModelsUtils";

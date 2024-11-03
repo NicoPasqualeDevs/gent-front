@@ -1,6 +1,6 @@
 import { ApiResponse } from "@/types/Api";
 import { AiTeamsDetails, AiTeamsFormData } from "@/types/AiTeams";
-import useApi from "./useApi";
+import useApi from "./api/useApi";
 
 interface UseAiTeamsApiHook {
   getMyAiTeams: (filterParams: string) => Promise<ApiResponse<AiTeamsDetails[]>>;

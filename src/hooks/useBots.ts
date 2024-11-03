@@ -1,6 +1,6 @@
 import { ApiResponse } from "@/types/Api";
 import { AgentData } from "@/types/Bots";
-import useApi from "./useApi";
+import useApi from "./api/useApi";
 
 interface BotFormData {
   name: string;

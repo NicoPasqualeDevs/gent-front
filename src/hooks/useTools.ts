@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { ToolData } from "@/types/Bots";
-import useApi from "./useApi";
+import useApi from "./api/useApi";
 import { ApiResponse } from "@/types/Api";
 
 const useTools = () => {

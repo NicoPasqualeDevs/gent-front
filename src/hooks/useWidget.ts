@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { WidgetData, CustomGreetingData } from "@/types/Widget";
 import { ApiResponse } from "@/types/Api";
-import useApi from "./useApi";
+import useApi from "./api/useApi";
 
 interface UseWidgetApi {
   getWidget: (botId: string) => Promise<ApiResponse<WidgetData>>;

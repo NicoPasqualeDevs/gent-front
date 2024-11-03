@@ -1,6 +1,6 @@
 import { AuthLoginData, AuthUser, AuthRegisterData, ValidationResult } from "@/types/Auth";
 import { ApiResponse } from "@/types/Api";
-import useApi from "./useApi";
+import useApi from "./api/useApi";
 
 interface ApiRequestConfig {
   headers?: { [key: string]: string };
