@@ -19,17 +19,10 @@ interface UseApiHook {
   apiGet: <T>(path: string, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiPost: <T>(path: string, data: any, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiPut: <T>(path: string, data: any, config?: ApiConfig) => Promise<ApiResponse<T>>;
+  apiPatch: <T>(path: string, data: any, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiDelete: <T>(path: string, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiBase: string;
   getCsrfToken: () => Promise<string>;
-}
-
-// Añadir la interfaz User con token
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  token: string;  // Añadido el campo token
 }
 
 const useApi = (): UseApiHook => {
@@ -122,6 +115,18 @@ const useApi = (): UseApiHook => {
     return handleResponse<T>(response);
   };
 
+  const apiPatch = async <T>(path: string, data: any, config?: ApiConfig): Promise<ApiResponse<T>> => {
+    const headers = await getHeaders(config);
+    const response = await fetch(`${apiBase}${path}`, {
+      method: 'PATCH',
+      headers,
+      credentials: 'include',
+      body: JSON.stringify(data),
+      ...config,
+    });
+    return handleResponse<T>(response);
+  };
+
   const apiDelete = async <T>(path: string, config?: ApiConfig): Promise<ApiResponse<T>> => {
     const headers = await getHeaders(config);
     const response = await fetch(`${apiBase}${path}`, {
@@ -137,6 +142,7 @@ const useApi = (): UseApiHook => {
     apiGet,
     apiPost,
     apiPut,
+    apiPatch,
     apiDelete,
     apiBase,
     getCsrfToken

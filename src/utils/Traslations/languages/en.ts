@@ -140,7 +140,8 @@ const en: TranslationType = {
     invalidEmail: "Invalid email",
     invalidCredentials: "Invalid credentials",
     fieldRequired: "This field is required",
-    connectionError: "Error: Could not establish connection with the server"
+    connectionError: "Error: Could not establish connection with the server",
+    invalidServerResponse: "Invalid server response"
   },
   toolsForm: {
     required: "This field is required",

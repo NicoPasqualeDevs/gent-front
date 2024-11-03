@@ -4,7 +4,7 @@ import useApi from "./useApi";
 import { ApiResponse } from "@/types/Api";
 
 const useTools = () => {
-  const { apiPost, apiPatch, apiGet } = useApi();
+  const { apiPost, apiGet, apiPatch } = useApi();
 
   const postTool = useCallback(async (formData: FormData): Promise<ApiResponse<ToolData>> => {
     try {
@@ -38,7 +38,48 @@ const useTools = () => {
     }
   }, []);
 
-  return { postTool, patchTool, getTool };
+  const getClientTools = useCallback(async (clientId: string): Promise<ApiResponse<ToolData[]>> => {
+    try {
+      return await apiGet(`api/tools/client/${clientId}`);
+    } catch (error: any) {
+      throw new Error(error?.message || "Error al obtener las herramientas del cliente");
+    }
+  }, [apiGet]);
+
+  const getBotTools = useCallback(async (botId: string): Promise<ToolData[]> => {
+    try {
+      const response = await apiGet(`api/tools/bot/${botId}`);
+      return response.data as ToolData[];
+    } catch (error: any) {
+      throw new Error(error?.message || "Error al obtener las herramientas del bot");
+    }
+  }, [apiGet]);
+
+  const addToolToBot = useCallback(async (botId: string, toolIds: number[]): Promise<void> => {
+    try {
+      await apiPost(`api/tools/bot/${botId}/relate`, { tool_ids: toolIds });
+    } catch (error: any) {
+      throw new Error(error?.message || "Error al relacionar las herramientas con el bot");
+    }
+  }, [apiPost]);
+
+  const removeToolFromBot = useCallback(async (botId: string, toolIds: number[]): Promise<void> => {
+    try {
+      await apiPost(`api/tools/bot/${botId}/unrelate`, { tool_ids: toolIds });
+    } catch (error: any) {
+      throw new Error(error?.message || "Error al desrelacionar las herramientas del bot");
+    }
+  }, [apiPost]);
+
+  return { 
+    postTool, 
+    patchTool, 
+    getTool, 
+    getClientTools, 
+    getBotTools,
+    addToolToBot,
+    removeToolFromBot
+  };
 };
 
 export default useTools; 

@@ -258,7 +258,7 @@ const Login: React.FC = () => {
                     label={t.emailLabel}
                     value={values.email}
                     helperText={inputError.email}
-                    error={inputError.email && inputError.email.trim() !== ""}
+                    error={Boolean(inputError.email && inputError.email.trim())}
                     onChange={handleChange}
                   />
                 </motion.div>
@@ -273,7 +273,7 @@ const Login: React.FC = () => {
                     label={t.passwordLabel}
                     value={values.password}
                     helperText={inputError.password}
-                    error={inputError.password && inputError.password.trim() !== ""}
+                    error={Boolean(inputError.password && inputError.password.trim())}
                     onChange={handleChange}
                   />
                 </motion.div>

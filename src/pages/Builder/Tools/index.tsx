@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button, Card, CardContent, Typography, Stack, CardActions, Container, Box, Paper } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import useBotsApi from "@/hooks/useBots";
+import useToolsApi from "@/hooks/useTools";
 import { ToolData } from "@/types/Bots";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
@@ -12,7 +12,7 @@ import AddIcon from "@mui/icons-material/Add";
 
 const Tools: React.FC = () => {
   const { aiTeamId, clientName, botName, botId } = useParams<{ aiTeamId: string; clientName: string; botName: string; botId: string }>();
-  const { getClientTools, addToolToBot, removeToolFromBot, getBotTools } = useBotsApi();
+  const { getClientTools, getBotTools, addToolToBot, removeToolFromBot } = useToolsApi();
   const [tools, setTools] = useState<ToolData[]>([]);
   const [agentTools, setAgentTools] = useState<ToolData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,7 +22,7 @@ const Tools: React.FC = () => {
   const navigate = useNavigate();
 
   const fetchTools = useCallback(async () => {
-    if (!auth.user?.token || !botId) {
+    if (!auth?.token || !botId) {
       ErrorToast(t.errorToken);
       setIsLoading(false);
       return;
@@ -30,14 +30,14 @@ const Tools: React.FC = () => {
 
     try {
       const [clientToolsResponse, botToolsResponse] = await Promise.all([
-        getClientTools(auth.user.uuid),
+        getClientTools(auth.uuid),
         getBotTools(botId)
       ]);
       
       const allClientTools = clientToolsResponse.data;
       const botTools = botToolsResponse;
 
-      setTools(allClientTools.filter(tool => !botTools.some(botTool => botTool.id === tool.id)));
+      setTools(allClientTools.filter((tool: ToolData) => !botTools.some((botTool: ToolData) => botTool.id === tool.id)));
       setAgentTools(botTools);
     } catch (error) {
       ErrorToast(t.errorLoading);
@@ -45,21 +45,20 @@ const Tools: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [auth.user?.token, botId, getClientTools, getBotTools, t.errorLoading, t.errorToken]);
+  }, [auth?.token, auth?.uuid, botId, getClientTools, getBotTools, t.errorLoading, t.errorToken]);
 
   useEffect(() => {
     const updatePathAndFetchTools = async () => {
       if (aiTeamId && clientName && botName) {
         replacePath([
           ...appNavigation.slice(0, 1),
-          { label: clientName, current_path: `/builder/agents/${clientName}/${aiTeamId}`, preview_path: "" },
-          { label: botName, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "" },
-          { label: t.type, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "" },
+          { label: clientName, current_path: `/builder/agents/${clientName}/${aiTeamId}`, preview_path: "", translationKey: "" },
+          { label: botName, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "", translationKey: "" },
+          { label: t.type, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "", translationKey: "" },
         ]);
       }
       await fetchTools();
     };
-
     updatePathAndFetchTools();
   }, [aiTeamId, clientName, botName, fetchTools, replacePath, appNavigation, t.type]);
 
@@ -92,7 +91,7 @@ const Tools: React.FC = () => {
 
   return (
     <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      {auth.user?.is_superuser && (
+      {auth?.is_superuser && (
         <Button
           variant="contained"
           startIcon={<AddIcon />}

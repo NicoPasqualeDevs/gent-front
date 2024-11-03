@@ -38,7 +38,7 @@ const DataEntry: React.FC<PageProps> = () => {
 
     const initializePage = async () => {
       try {
-        if (!auth?.user?.uuid) {
+        if (!auth?.uuid) {
           throw new Error('User not authenticated');
         }
 
@@ -61,11 +61,13 @@ const DataEntry: React.FC<PageProps> = () => {
             label: t.leftMenu.aiTeams,
             current_path: "/builder",
             preview_path: "/builder",
+            translationKey: 'aiTeams'
           },
           {
             label: botDetails.data.name,
             current_path: `/builder/agents/dataEntry/${botId}`,
             preview_path: "",
+            translationKey: 'botDetails'
           },
         ]);
 
@@ -100,7 +102,7 @@ const DataEntry: React.FC<PageProps> = () => {
     return () => {
       isSubscribed = false;
     };
-  }, [auth?.user?.uuid, botId, navigate, replacePath, getBotDetails, t]);
+  }, [auth?.uuid, botId, navigate, replacePath, getBotDetails, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

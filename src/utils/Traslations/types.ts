@@ -134,6 +134,7 @@ export type TranslationType = {
     invalidCredentials: string;
     fieldRequired: string;
     connectionError: string;
+    invalidServerResponse: string;
   };
   toolsForm: {
     required: string;

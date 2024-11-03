@@ -140,7 +140,8 @@ const de: TranslationType = {
     invalidEmail: "Ungültige E-Mail-Adresse",
     invalidCredentials: "Ungültige Anmeldedaten",
     fieldRequired: "Dieses Feld ist erforderlich",
-    connectionError: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
+    connectionError: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    invalidServerResponse: "Ungültige Serverantwort"
   },
   toolsForm: {
     required: "Dieses Feld ist erforderlich",

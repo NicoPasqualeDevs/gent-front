@@ -7,7 +7,7 @@ import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
 import { Container, Box, Paper, TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { ContextEntryState, ContextEntryFormData } from './types';
+import { ContextEntryState } from './types';
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -37,7 +37,7 @@ const ContextEntry: React.FC<PageProps> = () => {
 
     const initializePage = async () => {
       try {
-        if (!auth?.user?.uuid) {
+        if (!auth?.uuid) {
           throw new Error('User not authenticated');
         }
 
@@ -51,11 +51,13 @@ const ContextEntry: React.FC<PageProps> = () => {
             label: t.leftMenu.aiTeams,
             current_path: "/builder",
             preview_path: "/builder",
+            translationKey: 'aiTeams'
           },
           {
             label: state.isEditing ? t.contextEntry.editTitle : t.contextEntry.createTitle,
             current_path: `/builder/agents/contextEntry/${aiTeamId}`,
             preview_path: "",
+            translationKey: state.isEditing ? 'editTitle' : 'createTitle'
           },
         ]);
 
@@ -99,7 +101,7 @@ const ContextEntry: React.FC<PageProps> = () => {
     return () => {
       isSubscribed = false;
     };
-  }, [auth?.user?.uuid, aiTeamId, botId, state.isEditing, navigate, replacePath, getBotDetails, t]);
+  }, [auth?.uuid, aiTeamId, botId, state.isEditing, navigate, replacePath, getBotDetails, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -140,7 +140,8 @@ const fr: TranslationType = {
     invalidEmail: "Adresse e-mail invalide",
     invalidCredentials: "Identifiants incorrects",
     fieldRequired: "Ce champ est obligatoire",
-    connectionError: "Erreur : Impossible d'établir une connexion avec le serveur"
+    connectionError: "Erreur : Impossible d'établir une connexion avec le serveur",
+    invalidServerResponse: "Réponse du serveur invalide"
   },
   toolsForm: {
     required: "Ce champ est obligatoire",
