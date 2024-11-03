@@ -32,7 +32,7 @@ const useAuth = (): AuthHook => {
     try {
       const config: ApiRequestConfig = {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Token ${token}`
         }
       };
 

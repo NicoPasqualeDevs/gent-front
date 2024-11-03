@@ -1,10 +1,10 @@
 export interface AuthUser {
   email: string;
-  first_name: string;
-  last_name: string;
   token: string;
-  is_superuser: boolean;
   uuid: string;
+  first_name?: string;
+  last_name?: string;
+  is_superuser?: boolean;
 }
 
 export interface User {

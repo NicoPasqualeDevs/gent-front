@@ -76,7 +76,7 @@ const useApi = (): UseApiHook => {
 
     // Añadir token de autorización si existe
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers['Authorization'] = `Token ${token}`;
     }
 
     // Añadir headers adicionales del config

@@ -37,6 +37,16 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   React.useEffect(() => {
+    const loadAuthData = async () => {
+      const savedAuth = getAuth();
+      if (savedAuth?.token && !auth) {
+        setAuth(savedAuth);
+      }
+    };
+    loadAuthData();
+  }, []);
+
+  React.useEffect(() => {
     dispatch({ type: "setBreakPoint", payload: width });
 
     if (isMobile) {
@@ -47,14 +57,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       dispatch({ type: "setDevice", payload: "pc" });
     }
   }, [width, isMobile, isTablet]);
-
-
-  React.useEffect(() => {
-    const savedAuth = getAuth();
-    if (savedAuth) {
-      setAuth(savedAuth);
-    }
-  }, []);
 
   const setAuth = React.useCallback((value: AuthUser | null) => {
     const { saveAuth, removeAuth } = authStorage();

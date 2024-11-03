@@ -58,21 +58,18 @@ const Login: React.FC = () => {
       const response = await loginUser(values);
       const userData = response.data;
 
-      if (!userData.token || !userData.email) {
-        throw new Error('Respuesta de servidor inválida');
+      if (!userData.token || !userData.email || !userData.uuid) {
+        throw new Error(t.invalidServerResponse);
       }
 
       const authData: AuthUser = {
         email: userData.email,
-        first_name: userData.first_name ?? "Admin",
-        last_name: userData.last_name ?? "Admin",
         token: userData.token,
-        is_superuser: userData.is_superuser ?? false,
         uuid: userData.uuid,
+        first_name: userData.first_name || "",
+        last_name: userData.last_name || "",
+        is_superuser: userData.is_superuser || false,
       };
-
-      sessionStorage.setItem("user_email", userData.email);
-      sessionStorage.setItem("user_token", userData.token);
 
       await Promise.all([
         setAuth(authData),
@@ -81,14 +78,15 @@ const Login: React.FC = () => {
 
       navigate("/builder", { replace: true });
 
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof Error) {
         ErrorToast(t.connectionError);
-      } else {
-        ErrorToast(error.message);
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        const errorMessage = (error as { message: string }).message;
+        ErrorToast(errorMessage);
         setInputError({
-          email: error.message === t.invalidEmail ? t.invalidEmail : "",
-          password: error.message === t.invalidCredentials ? t.invalidCredentials : "",
+          email: errorMessage === t.invalidEmail ? t.invalidEmail : "",
+          password: errorMessage === t.invalidCredentials ? t.invalidCredentials : "",
         });
       }
     }
@@ -218,7 +216,7 @@ const Login: React.FC = () => {
                 top: '296px'
               }}
             >
-              <Box sx={{ mt: "-170px" }}>
+              <Box sx={{ mt: "-162px" }}>
                 <Typography
                   textAlign="center"
                   sx={{
