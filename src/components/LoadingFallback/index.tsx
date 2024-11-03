@@ -21,7 +21,7 @@ const LoadingFallback: React.FC = () => {
                         width: "70%",
                         margin: "0px auto",
                         mt: "-142px",
-                        mb: "134px",
+                        mb: "163px",
                         borderRadius: "8px",
                     }}
                     variant="indeterminate"

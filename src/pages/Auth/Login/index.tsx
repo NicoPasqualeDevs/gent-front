@@ -8,7 +8,7 @@ import { ErrorToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from '@mui/material/styles';
 import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -121,7 +121,6 @@ const Login: React.FC = () => {
       justifyContent: "center",
       alignItems: "center",
       position: 'relative',
-      overflow: 'hidden'
     }}>
       {/* Language Selector */}
       <Box sx={{
@@ -156,136 +155,241 @@ const Login: React.FC = () => {
       </Box>
 
       {/* Main Content */}
-      <Box sx={{
-        zIndex: 2,
-        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-        backdropFilter: 'blur(5px)',
-        borderRadius: '15px',
-        padding: '2rem',
-        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        maxHeight: '80vh',
-        overflowY: 'auto',
-        width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' }
-      }}>
-        <Box sx={{mb: "-152px"}}>
-          <GlowingText>Gents</GlowingText>
-        </Box>
+      <Box
+        component={motion.div}
+        layout
+        initial={false}
+        animate={{
+          height: showLoginForm ? "460px" : "320px",
+        }}
+        transition={{
+          height: {
+            duration: 0.5,
+            ease: "anticipate",
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+          }
+        }}
+        sx={{
+          zIndex: 2,
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(5px)',
+          borderRadius: '15px',
+          padding: '2.5rem',
+          pt: '0rem',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+          width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' },
+          overflow: 'hidden',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          position: 'relative'
+        }}
+      >
+        <motion.div
+          initial={{ scale: 1 }}
+          animate={{
+            y: showLoginForm ? -0 : 0
+          }}
+          transition={{ duration: 0.5 }}
+          style={{
+            width: '100%',
+            position: 'absolute',
+            top: '-12px'
+          }}
+        >
 
-        {showLoginForm ? (
-          <>
-            <Typography textAlign="center" sx={{ mt: 1 }}>
-              {t.subtitle}
-            </Typography>
-            <Typography fontSize="75%" textAlign="center" sx={{ mt: 0.5, mb: 4 }}>
-              {t.version}
-            </Typography>
-            {/* Login Form */}
-            <form onSubmit={formSubmit}>
-              <TextInput
-                name="email"
-                label={t.emailLabel}
-                value={values.email}
-                helperText={inputError.email}
-                error={
-                  inputError.email && inputError.email.trim() !== "" ? true : false
-                }
-                onChange={handleChange}
-              />
-              <PasswordInput
-                name="password"
-                label={t.passwordLabel}
-                value={values.password}
-                helperText={inputError.password}
-                error={
-                  inputError.password && inputError.password.trim() !== "" ? true : false
-                }
-                onChange={handleChange}
-              />
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  mt: 2,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  type="submit"
+          <GlowingText>Gents</GlowingText>
+
+        </motion.div>
+
+        <AnimatePresence mode="wait">
+          {showLoginForm ? (
+            <motion.div
+              key="loginForm"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.5 }}
+              style={{
+                width: '80%',
+                position: 'absolute',
+                top: '296px'
+              }}
+            >
+              <Box sx={{ mt: "-170px" }}>
+                <Typography
+                  textAlign="center"
                   sx={{
-                    paddingTop: "10px",
-                    paddingBottom: "10px",
-                    [theme.breakpoints.between("xs", "sm")]: {
-                      maxWidth: "100%",
-                    },
+                    fontSize: "12px",
+                    mt: 0.5,
+                    opacity: 0.9,
+                    transform: 'translateY(0)',
+                    transition: 'all 0.3s ease'
                   }}
                 >
-                  {t.loginButton}
-                </Button>
-              </Grid>
-            </form>
-          </>
-        ) : (
-          <>
+                  {t.subtitle}
+                </Typography>
+                <Typography
+                  fontSize="60%"
+                  textAlign="center"
+                  sx={{
+                    mt: 0.5,
+                    mb: 2,
+                    opacity: 0.7
+                  }}
+                >
+                  {t.version}
+                </Typography>
+              </Box>
+
+              <motion.form
+                onSubmit={formSubmit}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <motion.div
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <TextInput
+                    name="email"
+                    label={t.emailLabel}
+                    value={values.email}
+                    helperText={inputError.email}
+                    error={inputError.email && inputError.email.trim() !== ""}
+                    onChange={handleChange}
+                  />
+                </motion.div>
+
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <PasswordInput
+                    name="password"
+                    label={t.passwordLabel}
+                    value={values.password}
+                    helperText={inputError.password}
+                    error={inputError.password && inputError.password.trim() !== ""}
+                    onChange={handleChange}
+                  />
+                </motion.div>
+
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      mt: 2,
+                    }}
+                  >
+                    <Button
+                      variant="contained"
+                      type="submit"
+                      sx={{
+                        paddingTop: "10px",
+                        paddingBottom: "10px",
+                        transition: 'all 0.3s ease',
+                        '&:hover': {
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 6px 12px rgba(0,0,0,0.2)',
+                        },
+                        [theme.breakpoints.between("xs", "sm")]: {
+                          maxWidth: "100%",
+                        },
+                      }}
+                    >
+                      {t.loginButton}
+                    </Button>
+                  </Grid>
+                </motion.div>
+              </motion.form>
+            </motion.div>
+          ) : (
             <motion.div
-              key={rotatingText}
+              key="welcomeScreen"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
+              style={{
+                width: '100%',
+                position: 'absolute',
+                top: "296px"
+              }}
             >
-              <Typography
-                textAlign="center"
-                variant="h5"
-                sx={{
-                  mt: 1,
-                  mb: -2,
-                  fontWeight: 'normal',
-                  color: theme.palette.text.secondary,
-                  textShadow: '0 0 5px rgba(0,0,0,0.3)',
-                  minHeight: '3em',
-                  lineHeight: '3em',
-                  fontSize: '1.2rem',
-                }}
-              >
-                {t.rotatingTexts[rotatingText]}
-              </Typography>
-            </motion.div>
-            {/* Start Button */}
-            <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
               <motion.div
-                whileHover={{
-                  scale: 1.1,
-                  rotate: [0, -1, 1, -1, 0],
-                  transition: { duration: 0.3 }
-                }}
-                whileTap={{ scale: 0.95 }}
+                key={rotatingText}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
               >
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={() => setShowLoginForm(true)}
+                <Typography
+                  textAlign="center"
                   sx={{
-                    mb: 1,
-                    fontSize: '1.5rem',
-                    padding: '20px 40px',
-                    borderRadius: '50px',
-                    boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
-                    backgroundColor: theme.palette.secondary.main,
-                    color: theme.palette.secondary.contrastText,
-                    '&:hover': {
-                      color: "white",
-                      backgroundColor: theme.palette.secondary.dark,
-                    },
+                    mt: "-172px",
+                    fontWeight: 'normal',
+                    color: theme.palette.text.secondary,
+                    textShadow: '0 0 5px rgba(0,0,0,0.3)',
+                    lineHeight: '78px',
+                    fontSize: '24px',
                   }}
                 >
-                  {t.startButton}
-                </Button>
+                  {t.rotatingTexts[rotatingText]}
+                </Typography>
               </motion.div>
-            </Grid>
-          </>
-        )}
+
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                <motion.div
+                  whileHover={{
+                    scale: 1.05,
+                    rotate: [0, -1, 1, -1, 0],
+                    transition: { duration: 0.3 }
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={() => {
+                      setShowLoginForm(true);
+                    }}
+                    sx={{
+                      mb: 1,
+                      fontSize: '1.5rem',
+                      padding: '20px 40px',
+                      borderRadius: '50px',
+                      boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
+                      backgroundColor: theme.palette.secondary.main,
+                      color: theme.palette.secondary.contrastText,
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        color: "white",
+                        backgroundColor: theme.palette.secondary.dark,
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 15px 25px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+                      },
+                    }}
+                  >
+                    {t.startButton}
+                  </Button>
+                </motion.div>
+              </Grid>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Box>
     </Box>
   );
