@@ -21,7 +21,6 @@ import {
     typography, 
     borders,
     alignment,
-    common 
 } from './SkeletonAiTeamCardsVars';
 
 interface AiTeamCardProps {
@@ -69,6 +68,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                     <Typography 
                         variant="body2" 
                         color="text.secondary"
+                        sx={{pt:"2px"}}
                     >
                         {aiTeam.address || t.aiTeamsList.noAddress}
                     </Typography>
@@ -87,7 +87,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                             height: dimensions.card.badgeHeight
                         }}
                     >
-                        <Typography variant="body2">
+                        <Typography sx={{pt:"2px"}} variant="body2">
                             {t.aiTeamsList.llmKeyBadge}
                         </Typography>
                     </Box>

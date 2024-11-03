@@ -14,9 +14,7 @@ import {
   Typography, 
   Select, 
   MenuItem, 
-  Pagination,
   SelectChangeEvent,
-  useTheme,
   Card,
   CardContent,
 } from "@mui/material";
@@ -28,7 +26,6 @@ import {
   DashboardContainer, 
   DashboardHeader, 
   DashboardContent, 
-  DashboardFooter,
   commonStyles,
   SkeletonCard
 } from "@/utils/DashboardsUtils";
@@ -62,27 +59,12 @@ const AiTeamsList: React.FC<PageProps> = () => {
   });
   const t = languages[language as keyof typeof languages];
 
-  useEffect(() => {
-    const initializeAuth = () => {
-      if (!auth) {
-        navigate('/auth/login');
-        return;
-      }
-    };
-
-    initializeAuth();
-  }, []);
-
-  useEffect(() => {
-    console.log('Auth state changed:', auth);
-    
+  useEffect(() => {    
     const loadData = async () => {
       if (!auth?.uuid) {
         return;
       }
-
       try {
-        console.log('Loading AI teams data...');
         const filterParams = `?page_size=${state.contentPerPage}&page=${state.currentPage}`;
         await getAiTeamsData(filterParams);
       } catch (error) {
