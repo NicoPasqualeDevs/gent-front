@@ -1,4 +1,4 @@
-import { AuthLoginData, AuthUser, AuthRegisterData, ValidationResult, User, StoredAuth } from "@/types/Auth";
+import { AuthLoginData, AuthUser, AuthRegisterData, ValidationResult } from "@/types/Auth";
 import { ApiResponse } from "@/types/Api";
 import useApi from "./useApi";
 
@@ -27,7 +27,7 @@ const useAuth = (): AuthHook => {
       code: data.password,
     }, { skipCsrf: true });
 
-    const standardizedAuth: StoredAuth = {
+    const standardizedAuth: AuthUser = {
       token: response.data.token,
       uuid: response.data.uuid,
       email: response.data.email,
@@ -50,11 +50,11 @@ const useAuth = (): AuthHook => {
         }
       };
 
-      const response = await apiGet<User>("auth/validate/", config);
+      const response = await apiGet<AuthUser>("auth/validate/", config);
 
       return {
         isValid: true,
-        user: response.data as User
+        user: response.data as AuthUser
       };
     } catch (error) {
       return {

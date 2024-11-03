@@ -7,14 +7,6 @@ export interface AuthUser {
   is_superuser?: boolean;
 }
 
-export interface User {
-  uuid: string;
-  email: string;
-  name: string;
-  is_superuser?: boolean;
-  // ... otros campos del usuario
-}
-
 export interface AuthLoginData {
   email: string;
   password: string;
@@ -31,15 +23,6 @@ export interface AuthRegisterData {
 
 export interface ValidationResult {
   isValid: boolean;
-  user?: User;
+  user?: AuthUser;
 }
 
-// Añadimos una interfaz específica para el almacenamiento de auth
-export interface StoredAuth {
-  token: string;
-  uuid: string;
-  email: string;
-  first_name?: string;
-  last_name?: string;
-  is_superuser?: boolean;
-}

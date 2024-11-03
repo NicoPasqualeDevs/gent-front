@@ -4,12 +4,12 @@ import { AppReducer, AppContextActions } from "./AppReducer";
 import { useWidth } from "@/hooks/useWidth";
 import { useMediaQuery } from '@mui/material';
 import theme from "@/styles/theme";
-import { AuthUser } from "@/types/Auth";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
 import { authStorage } from "@/services/auth";
-import { StoredAuth } from "@/types/Auth";
+import { AuthUser } from "@/types/Auth";
 import { menuStorage } from "@/services/menu";
+import { languageStorage } from "@/services/language";
 
 interface AppProviderProps {
   children: React.ReactNode | Array<React.ReactNode>;
@@ -42,8 +42,14 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   React.useEffect(() => {
     const initializeAuth = async () => {
       const savedAuth = getAuth();
+      const { getLanguage } = languageStorage();
+      const savedLanguage = getLanguage();
+      
       if (savedAuth?.token) {
         dispatch({ type: "setAuth", payload: savedAuth });
+      }
+      if (savedLanguage) {
+        dispatch({ type: "setLanguage", payload: savedLanguage });
       }
       setIsInitialized(true);
     };
@@ -62,11 +68,11 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
   }, [width, isMobile, isTablet]);
 
-  const setAuth = React.useCallback((value: StoredAuth | null) => {
+  const setAuth = React.useCallback((value: AuthUser | null) => {
     const { saveAuth, removeAuth } = authStorage();
     
     if (value) {
-      const authToStore: StoredAuth = {
+      const authToStore: AuthUser = {
         token: value.token,
         uuid: value.uuid,
         email: value.email,
@@ -137,9 +143,14 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   }, [appNavigation]);
 
   const setLanguage: Dispatch<SetStateAction<string>> = React.useCallback((value) => {
+    const { saveLanguage } = languageStorage();
+    
     if (typeof value === 'function') {
-      dispatch({ type: "setLanguage", payload: value(language) });
+      const newValue = value(language);
+      saveLanguage(newValue);
+      dispatch({ type: "setLanguage", payload: newValue });
     } else {
+      saveLanguage(value);
       dispatch({ type: "setLanguage", payload: value });
     }
   }, [language]);

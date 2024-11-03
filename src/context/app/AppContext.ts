@@ -3,8 +3,8 @@ import { AuthUser } from "@/types/Auth";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
 import { Breakpoint } from "@mui/material";
-import { StoredAuth } from "@/types/Auth";
 import { menuStorage } from "@/services/menu";
+import { languageStorage } from "@/services/language";
 
 export interface AppContextState {
   menu: boolean;
@@ -14,7 +14,7 @@ export interface AppContextState {
   };
   loaded: boolean;
   aiTeams: AiTeamsDetails[];
-  auth: StoredAuth | null;
+  auth: AuthUser | null;
   navElevation: string;
   appNavigation: PathData[];
   language: string;
@@ -22,7 +22,7 @@ export interface AppContextState {
   setAiTeams: React.Dispatch<React.SetStateAction<AiTeamsDetails[]>>;
   setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   setMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  setAuth: (value: StoredAuth | null) => void;
+  setAuth: (value: AuthUser | null) => void;
   setNavElevation: React.Dispatch<React.SetStateAction<string>>;
   setAppNavigation: React.Dispatch<React.SetStateAction<PathData[]>>;
   replacePath: (value: PathData[]) => void;
@@ -42,7 +42,7 @@ export const INITIAL_STATE: AppContextState = {
   auth: null,
   navElevation: "0",
   appNavigation: [],
-  language: "es",
+  language: languageStorage().getLanguage(),
   clientPage: 1,
   setAiTeams: () => {},
   setLoaded: () => {},
