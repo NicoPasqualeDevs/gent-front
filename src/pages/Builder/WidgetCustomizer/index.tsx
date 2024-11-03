@@ -18,7 +18,7 @@ import { PageCircularProgress } from "@/components/CircularProgress";
 import { MultilineInput, TextInput, CheckboxInput } from "@/components/Inputs";
 import { ShortInput } from "@/components/Inputs/ShortInput";
 import { FormFileInput } from "@/utils/FormsViewUtils";
-import DataEntry from "@/pages/Builder/DataEntry";
+import DataEntry from "@/pages/Builder/WidgetCustomizer/components/DataEntry";
 
 // Utils & Types
 import {

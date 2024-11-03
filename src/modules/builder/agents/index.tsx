@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
-import DataEntryComponent from "@/pages/Builder/DataEntry";
 import IaPanel from "@/pages/Builder/IaPanel";
 import { WidgetCustomizer } from "@/pages/Builder/WidgetCustomizer";
 import ContextEntry from "@/pages/Builder/ContextEntry";
@@ -16,7 +15,6 @@ const AgentsDetailsModule: React.FC = () => {
         {/* Rutas principales */}
         <Route path=":clientName/:aiTeamId" element={<IaPanel />} />
         <Route path="contextEntry/:aiTeamId/:botId?" element={<ContextEntry />} />
-        <Route path="dataEntry/:aiTeamId/:botId" element={<DataEntryComponent />} />
         <Route path="widgetCustomizer/:botId" element={<WidgetCustomizer />} />
 
         {/* Rutas de herramientas */}
