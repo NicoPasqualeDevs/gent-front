@@ -194,12 +194,12 @@ const ToolsForm: React.FC = () => {
   const createNewTool = (formData: FormData) => {
     console.log('Sending form data to server...');
     postTool(formData)
-        .then((response: any) => {
+        .then((response: { data: ToolData }) => {
             console.log('Server response:', response);
             SuccessToast(t.successCreate);
             navigate(-1);
         })
-        .catch((error: any) => {
+        .catch((error: Error) => {
             console.error('Error creating tool:', error);
             ErrorToast(error.message || t.errorConnection);
         });

@@ -16,3 +16,9 @@ export interface PaginatedResponse<T> {
   data: T[];
   metadata: Metadata;
 }
+
+export interface ApiError {
+  status: string;
+  error: string;
+  data?: string;
+}

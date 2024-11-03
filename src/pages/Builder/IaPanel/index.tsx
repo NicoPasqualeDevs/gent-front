@@ -192,11 +192,13 @@ const IaPanel: React.FC<PageProps> = () => {
       SuccessToast(t.iaPanel.deleteSuccess);
 
       await getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
-    } catch (error: any) {
-      ErrorToast(error instanceof Error
-        ? t.iaPanel.errorConnection
-        : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
-      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        ErrorToast(t.iaPanel.errorConnection);
+      } else {
+        const apiError = error as { status: string; error: string; data?: string };
+        ErrorToast(`${apiError.status} - ${apiError.error}${apiError.data ? ": " + apiError.data : ""}`);
+      }
     } finally {
       setState(prev => ({ ...prev, isDeleting: false }));
     }

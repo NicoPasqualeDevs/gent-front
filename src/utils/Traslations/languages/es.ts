@@ -250,6 +250,105 @@ const es: TranslationType = {
     registerTitle: "Registro de Usuario",
     registerSuccess: "Usuario registrado exitosamente",
     registerError: "Error al registrar usuario"
+  },
+  widgetCustomizer: {
+    title: "Personalizador de Widget",
+    tabs: {
+      colors: "Colores",
+      typography: "Tipografía",
+      images: "Imágenes",
+      security: "Seguridad",
+      greetings: "Saludos",
+      data: "Datos"
+    },
+    colors: {
+      primaryColor: "Color Primario",
+      primaryTextContrast: "Contraste de Texto Primario",
+      secondaryColor: "Color Secundario",
+      secondaryTextContrast: "Contraste de Texto Secundario",
+      badgeColor: "Color de Insignia",
+      badgeContrast: "Color de Texto de Insignia"
+    },
+    typography: {
+      fontFamily: "Familia de Fuente",
+      fontFamilyPlaceholder: "Ingrese el valor de font-family deseado",
+      faqQuestions: "Preguntas Frecuentes",
+      faqQuestionsPlaceholder: "Ingrese las preguntas (separadas por |)",
+      bannedWords: "Palabras Prohibidas",
+      bannedWordsPlaceholder: "Ingrese las palabras (separadas por |)"
+    },
+    images: {
+      brandAlt: "Texto Alternativo del Logo",
+      brandAltPlaceholder: "Ingrese el texto alternativo",
+      brandLogo: "Logo del Cliente",
+      botIcon: "Ícono del Bot",
+      chatIcon: "Ícono del Chat",
+      hiddenIcon: "Ícono de Ocultar",
+      sendIcon: "Ícono de Enviar"
+    },
+    security: {
+      sqlInjection: "Comprobación de Inyección SQL",
+      phpInjection: "Comprobación de Inyección PHP",
+      strangeChars: "Comprobación de Caracteres Extraños"
+    },
+    greetings: {
+      newMessage: "Crear nuevo mensaje",
+      update: "Actualizar",
+      delete: "Eliminar",
+      create: "Crear"
+    },
+    actions: {
+      save: "Guardar",
+      saveColors: "Guardar Colores",
+      saveTypography: "Guardar Tipografía",
+      saveImages: "Guardar Imágenes",
+      saveSecurity: "Guardar Seguridad",
+      saveGreetings: "Guardar Saludos",
+      saveData: "Guardar Datos"
+    },
+    messages: {
+      updateSuccess: "Widget actualizado correctamente",
+      updateError: "Error al actualizar el widget",
+      colorsSaved: "Colores guardados correctamente",
+      typographySaved: "Tipografía guardada correctamente",
+      imagesSaved: "Imágenes guardadas correctamente",
+      securitySaved: "Configuración de seguridad guardada correctamente",
+      greetingsSaved: "Saludos guardados correctamente",
+      dataSaved: "Datos guardados correctamente"
+    },
+    inputs: {
+      fontFamily: {
+        label: "Tipo de Fuente",
+        placeholder: "Ingrese el valor de atributo font-family deseado",
+        helperText: "Ejemplo: Arial, Helvetica, sans-serif"
+      },
+      faqQuestions: {
+        label: "Preguntas Frecuentes",
+        placeholder: "Ingrese las preguntas (separadas por |)",
+        helperText: "Ejemplo: ¿Cómo funciona? | ¿Cuánto cuesta?"
+      },
+      bandList: {
+        label: "Palabras Baneadas",
+        placeholder: "Ingrese las palabras (separadas por |)",
+        helperText: "Ejemplo: spam | ofensivo | inapropiado"
+      },
+      brandAlt: {
+        label: "Texto alternativo de Logo",
+        placeholder: "Ingrese el texto alternativo",
+        helperText: "Texto que se mostrará si la imagen no carga"
+      }
+    },
+    validation: {
+      required: "Este campo es requerido",
+      invalidColor: "Color inválido",
+      invalidFile: "Archivo inválido",
+      maxFileSize: "El archivo excede el tamaño máximo permitido"
+    },
+    preview: {
+      title: "Vista previa del Widget",
+      loading: "Cargando vista previa...",
+      error: "Error al cargar la vista previa"
+    }
   }
 };
 

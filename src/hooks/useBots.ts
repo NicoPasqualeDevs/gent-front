@@ -6,11 +6,13 @@ interface BotFormData {
   name: string;
   description: string;
   model_ai: string;
+  [key: string]: string;
 }
 
 interface BotDataFormData {
   context: string;
   documents?: File[];
+  [key: string]: string | File[] | undefined;
 }
 
 interface ChatHistory {
@@ -39,7 +41,7 @@ interface ConversationData {
   }>;
 }
 
-interface ToolRelationshipData {
+interface ToolRelationshipData extends Record<string, unknown> {
   agent_tool_ids: number[];
 }
 
@@ -56,11 +58,11 @@ interface UseBotsApi {
   closeChat: (conversationId: string) => Promise<void>;
   getAgentData: (botId: string) => Promise<ApiResponse<AgentData>>;
   getClientBotConversations: (botId: string) => Promise<ConversationData[]>;
-  postTool: (data: FormData) => Promise<any>;
-  getAllTools: () => Promise<any>;
-  getBotTools: (botId: string) => Promise<any>;
-  setToolRelationship: (data: ToolRelationshipData) => Promise<any>;
-  removeToolRelationship: (data: ToolRelationshipData) => Promise<any>;
+  postTool: (data: FormData) => Promise<unknown>;
+  getAllTools: () => Promise<unknown>;
+  getBotTools: (botId: string) => Promise<unknown>;
+  setToolRelationship: (data: ToolRelationshipData) => Promise<unknown>;
+  removeToolRelationship: (data: ToolRelationshipData) => Promise<unknown>;
 }
 
 const useBotsApi = (): UseBotsApi => {
@@ -93,21 +95,11 @@ const useBotsApi = (): UseBotsApi => {
   const uploadDocument = async (
     file: File,
     botId: string,
-    onProgress?: (progress: number) => void
   ): Promise<ApiResponse<void>> => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const config = {
-      onUploadProgress: (progressEvent: any) => {
-        if (onProgress) {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-          onProgress(percentCompleted);
-        }
-      }
-    };
-
-    return apiPost(`api/bots/${botId}/upload/`, formData, config);
+    return apiPost<void>(`api/bots/${botId}/upload/`, formData);
   };
 
   const getChatHistory = (botId: string): Promise<ApiResponse<ChatHistory>> => {
@@ -132,24 +124,24 @@ const useBotsApi = (): UseBotsApi => {
     return response.data as ConversationData[];
   };
 
-  const postTool = (data: FormData): Promise<any> => {
+  const postTool = (data: FormData): Promise<unknown> => {
     return apiPost('api/tools/', data);
   };
 
-  const getAllTools = (): Promise<any> => {
+  const getAllTools = (): Promise<unknown> => {
     return apiGet('api/tools/');
   };
 
-  const getBotTools = (botId: string): Promise<any> => {
+  const getBotTools = (botId: string): Promise<unknown> => {
     return apiGet(`api/bots/${botId}/tools/`);
   };
 
-  const setToolRelationship = (data: ToolRelationshipData): Promise<any> => {
-    return apiPost('api/tools/relationship/', data);
+  const setToolRelationship = (data: ToolRelationshipData): Promise<unknown> => {
+    return apiPost('api/tools/relationship/', data as Record<string, unknown>);
   };
 
-  const removeToolRelationship = (data: ToolRelationshipData): Promise<any> => {
-    return apiDelete(`api/tools/relationship/`, data);
+  const removeToolRelationship = (data: ToolRelationshipData): Promise<unknown> => {
+    return apiDelete(`api/tools/relationship/`, { data });
   };
 
   return {

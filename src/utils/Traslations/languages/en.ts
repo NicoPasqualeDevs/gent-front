@@ -250,6 +250,105 @@ const en: TranslationType = {
     registerTitle: "User Registration",
     registerSuccess: "User registered successfully",
     registerError: "Error registering user"
+  },
+  widgetCustomizer: {
+    title: "Widget Customizer",
+    tabs: {
+      colors: "Colors",
+      typography: "Typography",
+      images: "Images",
+      security: "Security",
+      greetings: "Greetings",
+      data: "Data"
+    },
+    colors: {
+      primaryColor: "Primary Color",
+      primaryTextContrast: "Primary Text Contrast",
+      secondaryColor: "Secondary Color",
+      secondaryTextContrast: "Secondary Text Contrast",
+      badgeColor: "Badge Color",
+      badgeContrast: "Badge Text Color"
+    },
+    typography: {
+      fontFamily: "Font Family",
+      fontFamilyPlaceholder: "Enter desired font-family value",
+      faqQuestions: "FAQ Questions",
+      faqQuestionsPlaceholder: "Enter questions (separated by |)",
+      bannedWords: "Banned Words",
+      bannedWordsPlaceholder: "Enter words (separated by |)"
+    },
+    images: {
+      brandAlt: "Logo Alt Text",
+      brandAltPlaceholder: "Enter alternative text",
+      brandLogo: "Client Logo",
+      botIcon: "Bot Icon",
+      chatIcon: "Chat Icon",
+      hiddenIcon: "Hidden Icon",
+      sendIcon: "Send Icon"
+    },
+    security: {
+      sqlInjection: "SQL Injection Check",
+      phpInjection: "PHP Injection Check",
+      strangeChars: "Strange Characters Check"
+    },
+    greetings: {
+      newMessage: "Create new message",
+      update: "Update",
+      delete: "Delete",
+      create: "Create"
+    },
+    actions: {
+      save: "Save",
+      saveColors: "Save Colors",
+      saveTypography: "Save Typography",
+      saveImages: "Save Images",
+      saveSecurity: "Save Security",
+      saveGreetings: "Save Greetings",
+      saveData: "Save Data"
+    },
+    messages: {
+      updateSuccess: "Widget updated successfully",
+      updateError: "Error updating widget",
+      colorsSaved: "Colors saved successfully",
+      typographySaved: "Typography saved successfully",
+      imagesSaved: "Images saved successfully",
+      securitySaved: "Security settings saved successfully",
+      greetingsSaved: "Greetings saved successfully",
+      dataSaved: "Data saved successfully"
+    },
+    inputs: {
+      fontFamily: {
+        label: "Font Family",
+        placeholder: "Enter desired font-family attribute value",
+        helperText: "Example: Arial, Helvetica, sans-serif"
+      },
+      faqQuestions: {
+        label: "FAQ Questions",
+        placeholder: "Enter questions (separated by |)",
+        helperText: "Example: How does it work? | How much does it cost?"
+      },
+      bandList: {
+        label: "Banned Words",
+        placeholder: "Enter words (separated by |)",
+        helperText: "Example: spam | offensive | inappropriate"
+      },
+      brandAlt: {
+        label: "Logo Alternative Text",
+        placeholder: "Enter alternative text",
+        helperText: "Text to show if image fails to load"
+      }
+    },
+    validation: {
+      required: "This field is required",
+      invalidColor: "Invalid color",
+      invalidFile: "Invalid file",
+      maxFileSize: "File exceeds maximum allowed size"
+    },
+    preview: {
+      title: "Widget Preview",
+      loading: "Loading preview...",
+      error: "Error loading preview"
+    }
   }
 };
 

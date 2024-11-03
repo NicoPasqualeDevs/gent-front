@@ -8,16 +8,19 @@ declare global {
 import { useAppContext } from "@/context/app";
 import { ApiResponse } from "@/types/Api";
 
-interface ApiConfig extends Record<string, any> {
+// Primero definimos un tipo para los datos que se pueden enviar a la API
+type ApiData = Record<string, unknown> | FormData;
+
+interface ApiConfig extends Record<string, unknown> {
   headers?: Record<string, string>;
   skipCsrf?: boolean;
 }
 
 interface UseApiHook {
   apiGet: <T>(path: string, config?: ApiConfig) => Promise<ApiResponse<T>>;
-  apiPost: <T>(path: string, data: any, config?: ApiConfig) => Promise<ApiResponse<T>>;
-  apiPut: <T>(path: string, data: any, config?: ApiConfig) => Promise<ApiResponse<T>>;
-  apiPatch: <T>(path: string, data: any, config?: ApiConfig) => Promise<ApiResponse<T>>;
+  apiPost: <T>(path: string, data: ApiData, config?: ApiConfig) => Promise<ApiResponse<T>>;
+  apiPut: <T>(path: string, data: ApiData, config?: ApiConfig) => Promise<ApiResponse<T>>;
+  apiPatch: <T>(path: string, data: ApiData, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiDelete: <T>(path: string, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiBase: string;
   getCsrfToken: () => Promise<string>;
@@ -53,24 +56,24 @@ const useApi = (): UseApiHook => {
     return data.csrfToken;
   };
 
-  // Actualizar getHeaders para incluir el X-CSRFToken
-  const getHeaders = async (config?: ApiConfig) => {
-    let headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
+  // Modificamos getHeaders para manejar el Content-Type basado en el tipo de datos
+  const getHeaders = async (data?: ApiData, config?: ApiConfig): Promise<Record<string, string>> => {
+    let headers: Record<string, string> = {};
 
-    // Solo añadir CSRF si no está marcado para omitirlo
+    // Si hay datos y no es FormData, establecer Content-Type
+    if (data && !(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     if (!config?.skipCsrf) {
       const csrfToken = await getCsrfToken();
       headers['X-CSRFToken'] = csrfToken;
     }
 
-    // Añadir token de autorización si existe
     if (token) {
       headers['Authorization'] = `Token ${token}`;
     }
 
-    // Añadir headers adicionales del config
     if (config?.headers) {
       headers = { ...headers, ...config.headers };
     }
@@ -89,37 +92,43 @@ const useApi = (): UseApiHook => {
     return handleResponse<T>(response);
   };
 
-  const apiPost = async <T>(path: string, data: any, config?: ApiConfig): Promise<ApiResponse<T>> => {
+  const apiPost = async <T>(
+    url: string, 
+    data: ApiData, 
+    config?: ApiConfig
+  ): Promise<ApiResponse<T>> => {
     const headers = await getHeaders(config);
-    const response = await fetch(`${apiBase}${path}`, {
+    const response = await fetch(`${apiBase}${url}`, {
       method: 'POST',
       headers,
-      credentials: config?.skipCsrf ? 'omit' : 'include',  // No incluir cookies si skipCsrf es true
-      body: JSON.stringify(data),
+      credentials: config?.skipCsrf ? 'omit' : 'include',
+      body: data instanceof FormData ? data : JSON.stringify(data),
       ...config,
     });
     return handleResponse<T>(response);
   };
 
-  const apiPut = async <T>(path: string, data: any, config?: ApiConfig): Promise<ApiResponse<T>> => {
-    const headers = await getHeaders(config);
+  const apiPut = async <T>(path: string, data: ApiData, config?: ApiConfig): Promise<ApiResponse<T>> => {
+    const headers = await getHeaders(data, config);
     const response = await fetch(`${apiBase}${path}`, {
       method: 'PUT',
       headers,
       credentials: 'include',
-      body: JSON.stringify(data),
+      body: data instanceof FormData ? data : JSON.stringify(data),
       ...config,
     });
     return handleResponse<T>(response);
   };
 
-  const apiPatch = async <T>(path: string, data: any, config?: ApiConfig): Promise<ApiResponse<T>> => {
-    const headers = await getHeaders(config);
+  const apiPatch = async <T>(path: string, data: ApiData, config?: ApiConfig): Promise<ApiResponse<T>> => {
+    const headers = await getHeaders(data, config);
+    const body = data instanceof FormData ? data : JSON.stringify(data);
+    
     const response = await fetch(`${apiBase}${path}`, {
       method: 'PATCH',
       headers,
       credentials: 'include',
-      body: JSON.stringify(data),
+      body,
       ...config,
     });
     return handleResponse<T>(response);

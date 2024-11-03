@@ -10,7 +10,7 @@ export interface ExtendedLoadingState<T> extends LoadingState {
   data?: T;
 }
 
-const useLoadingState = <T = void>(initialState: boolean = true) => {
+const useLoadingState = <T = void>(initialState = true) => {
   const [state, setState] = useState<ExtendedLoadingState<T>>({
     isLoading: initialState,
     isError: false,

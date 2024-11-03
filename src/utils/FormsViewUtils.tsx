@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { motion } from "framer-motion";
 import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 // Definir el tipo para los estilos base
 type FormStylesType = {
@@ -346,16 +347,26 @@ export const FormTextField: React.FC<{
     />
 );
 
-export const FormSelect: React.FC<{
-    labelId: string;
-    label: string;
-    value: string;
-    onChange: (e: any) => void;
-    children: React.ReactNode;
-    name: string;
-}> = (props) => (
-    <FormControl sx={formStyles.select}>
-        <InputLabel id={props.labelId}>{props.label}</InputLabel>
-        <Select {...props} />
-    </FormControl>
+interface FormSelectProps {
+  labelId: string;
+  label: string;
+  value: string;
+  onChange: (event: SelectChangeEvent<string>) => void;
+  children: React.ReactNode;
+  name: string;
+}
+
+export const FormSelect: React.FC<FormSelectProps> = (props) => (
+  <FormControl sx={formStyles.select}>
+    <InputLabel id={props.labelId}>{props.label}</InputLabel>
+    <Select
+      labelId={props.labelId}
+      label={props.label}
+      value={props.value}
+      onChange={props.onChange}
+      name={props.name}
+    >
+      {props.children}
+    </Select>
+  </FormControl>
 );

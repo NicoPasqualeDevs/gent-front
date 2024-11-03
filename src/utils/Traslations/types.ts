@@ -244,6 +244,105 @@ export interface TranslationType {
     registerSuccess: string;
     registerError: string;
   };
+  widgetCustomizer: {
+    title: string;
+    tabs: {
+      colors: string;
+      typography: string;
+      images: string;
+      security: string;
+      greetings: string;
+      data: string;
+    };
+    colors: {
+      primaryColor: string;
+      primaryTextContrast: string;
+      secondaryColor: string;
+      secondaryTextContrast: string;
+      badgeColor: string;
+      badgeContrast: string;
+    };
+    typography: {
+      fontFamily: string;
+      fontFamilyPlaceholder: string;
+      faqQuestions: string;
+      faqQuestionsPlaceholder: string;
+      bannedWords: string;
+      bannedWordsPlaceholder: string;
+    };
+    images: {
+      brandAlt: string;
+      brandAltPlaceholder: string;
+      brandLogo: string;
+      botIcon: string;
+      chatIcon: string;
+      hiddenIcon: string;
+      sendIcon: string;
+    };
+    security: {
+      sqlInjection: string;
+      phpInjection: string;
+      strangeChars: string;
+    };
+    greetings: {
+      newMessage: string;
+      update: string;
+      delete: string;
+      create: string;
+    };
+    actions: {
+      save: string;
+      saveColors: string;
+      saveTypography: string;
+      saveImages: string;
+      saveSecurity: string;
+      saveGreetings: string;
+      saveData: string;
+    };
+    messages: {
+      updateSuccess: string;
+      updateError: string;
+      colorsSaved: string;
+      typographySaved: string;
+      imagesSaved: string;
+      securitySaved: string;
+      greetingsSaved: string;
+      dataSaved: string;
+    };
+    inputs: {
+      fontFamily: {
+        label: string;
+        placeholder: string;
+        helperText: string;
+      };
+      faqQuestions: {
+        label: string;
+        placeholder: string;
+        helperText: string;
+      };
+      bandList: {
+        label: string;
+        placeholder: string;
+        helperText: string;
+      };
+      brandAlt: {
+        label: string;
+        placeholder: string;
+        helperText: string;
+      };
+    };
+    validation: {
+      required: string;
+      invalidColor: string;
+      invalidFile: string;
+      maxFileSize: string;
+    };
+    preview: {
+      title: string;
+      loading: string;
+      error: string;
+    };
+  };
 }
 
 export interface GreetingsType {

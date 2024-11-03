@@ -2,8 +2,12 @@ import { AuthLoginData, AuthUser, AuthRegisterData, ValidationResult } from "@/t
 import { ApiResponse } from "@/types/Api";
 import useApi from "./useApi";
 
-interface ApiRequestConfig extends Record<string, any> {
-  headers?: Record<string, string>;
+interface ApiRequestConfig {
+  headers?: { [key: string]: string };
+  skipCsrf?: boolean;
+  params?: Record<string, string | number | boolean>;
+  timeout?: number;
+  [key: string]: undefined | string | number | boolean | Record<string, string> | Record<string, string | number | boolean>;
 }
 
 type AuthHook = {
@@ -17,7 +21,7 @@ const useAuth = (): AuthHook => {
 
   const registerUser = (data: AuthRegisterData): Promise<ApiResponse<AuthUser>> => {
     const path = "auth/register/";
-    return apiPost(path, data);
+    return apiPost(path, data as unknown as Record<string, string | number | boolean>);
   };
 
   const loginUser = async (data: AuthLoginData): Promise<ApiResponse<AuthUser>> => {

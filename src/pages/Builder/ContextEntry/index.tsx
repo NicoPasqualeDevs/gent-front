@@ -7,7 +7,7 @@ import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
 import { Container, Box, Paper, TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { ContextEntryState } from './types';
+import { ContextEntryState } from '@/types/ContextEntry';
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -45,7 +45,6 @@ const ContextEntry: React.FC<PageProps> = () => {
           throw new Error('AI Team ID is required');
         }
 
-        // Configurar navegación
         replacePath([
           {
             label: t.leftMenu.aiTeams,
@@ -61,15 +60,14 @@ const ContextEntry: React.FC<PageProps> = () => {
           },
         ]);
 
-        // Si estamos editando, cargar datos del bot
         if (state.isEditing && botId) {
           const botDetails = await getBotDetails(botId);
           
           if (!isSubscribed) return;
 
           if (botDetails?.data) {
-            setState(prev => ({
-              ...prev,
+            setState((prevState: ContextEntryState) => ({
+              ...prevState,
               formData: {
                 name: botDetails.data.name,
                 description: botDetails.data.description || '',
@@ -80,12 +78,15 @@ const ContextEntry: React.FC<PageProps> = () => {
         }
 
         if (isSubscribed) {
-          setState(prev => ({ ...prev, isLoading: false }));
+          setState((prevState: ContextEntryState) => ({ 
+            ...prevState, 
+            isLoading: false 
+          }));
         }
       } catch (error) {
         if (isSubscribed) {
-          setState(prev => ({ 
-            ...prev, 
+          setState((prevState: ContextEntryState) => ({ 
+            ...prevState, 
             isLoading: false, 
             isError: true,
             errorMessage: error instanceof Error ? error.message : 'Unknown error'
@@ -107,7 +108,10 @@ const ContextEntry: React.FC<PageProps> = () => {
     e.preventDefault();
     
     try {
-      setState(prev => ({ ...prev, isSubmitting: true }));
+      setState((prevState: ContextEntryState) => ({ 
+        ...prevState, 
+        isSubmitting: true 
+      }));
 
       if (state.isEditing && !botId) {
         throw new Error('Bot ID is required for editing');
@@ -124,7 +128,10 @@ const ContextEntry: React.FC<PageProps> = () => {
     } catch (error) {
       ErrorToast(t.contextEntry.errorConnection);
     } finally {
-      setState(prev => ({ ...prev, isSubmitting: false }));
+      setState((prevState: ContextEntryState) => ({ 
+        ...prevState, 
+        isSubmitting: false 
+      }));
     }
   };
 
@@ -132,9 +139,9 @@ const ContextEntry: React.FC<PageProps> = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
   ) => {
     const { name, value } = e.target;
-    setState(prev => ({
-      ...prev,
-      formData: { ...prev.formData, [name]: value }
+    setState((prevState: ContextEntryState) => ({
+      ...prevState,
+      formData: { ...prevState.formData, [name]: value }
     }));
   };
 

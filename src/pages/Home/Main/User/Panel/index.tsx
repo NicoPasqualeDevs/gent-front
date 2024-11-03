@@ -19,7 +19,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
 import { AiTeamsDetails } from "@/types/AiTeams";
-import { Metadata } from "@/types/Api";
+import { Metadata, ApiError } from "@/types/Api";
 import agent from '@/assets/agents/1.png';
 import agronomia from '@/assets/categories/agronomia.png';
 import musica from '@/assets/categories/musica.png';
@@ -120,6 +120,13 @@ const scrollbarStyles: CSSObject = {
   },
 };
 
+// Definir una interfaz para el error
+interface DeleteError {
+  status: string;
+  error: string;
+  data?: string;
+}
+
 const UserPanel: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -157,7 +164,7 @@ const UserPanel: React.FC = () => {
         setPaginationData(metadata);
         setLoaded(true);
       })
-      .catch((error: any) => {
+      .catch((error: ApiError) => {
         if (error instanceof Error) {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
@@ -192,12 +199,13 @@ const UserPanel: React.FC = () => {
       setAllowerState(false);
       setClientToDelete("");
       SuccessToast("Cliente eliminado satisfactoriamente");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as DeleteError;
       if (error instanceof Error) {
         ErrorToast("Error: no se pudo establecer conexión con el servidor");
       } else {
         ErrorToast(
-          `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
+          `${err.status} - ${err.error} ${err.data ? ": " + err.data : ""}`
         );
       }
     }

@@ -34,11 +34,11 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
   }, [apiDelete]);
 
   const createAiTeam = useCallback(async (data: AiTeamsFormData): Promise<ApiResponse<AiTeamsDetails>> => {
-    return apiPost('api/team_details/', data);
+    return apiPost('api/team_details/', data as unknown as Record<string, unknown>);
   }, [apiPost]);
 
   const updateAiTeam = useCallback(async (data: AiTeamsFormData, aiTeamId: string): Promise<ApiResponse<AiTeamsDetails>> => {
-    return apiPut(`api/team_details/${aiTeamId}/`, data);
+    return apiPut(`api/team_details/${aiTeamId}/`, data as unknown as Record<string, unknown>);
   }, [apiPut]);
 
   return {

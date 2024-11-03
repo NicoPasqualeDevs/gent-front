@@ -250,6 +250,105 @@ const fr: TranslationType = {
     registerTitle: "Inscription Utilisateur",
     registerSuccess: "Utilisateur enregistré avec succès",
     registerError: "Erreur lors de l'enregistrement de l'utilisateur"
+  },
+  widgetCustomizer: {
+    title: "Personnalisateur de Widget",
+    tabs: {
+      colors: "Couleurs",
+      typography: "Typographie",
+      images: "Images",
+      security: "Sécurité",
+      greetings: "Messages d'accueil",
+      data: "Données"
+    },
+    colors: {
+      primaryColor: "Couleur Primaire",
+      primaryTextContrast: "Contraste du Texte Primaire",
+      secondaryColor: "Couleur Secondaire",
+      secondaryTextContrast: "Contraste du Texte Secondaire",
+      badgeColor: "Couleur du Badge",
+      badgeContrast: "Couleur du Texte du Badge"
+    },
+    typography: {
+      fontFamily: "Famille de Police",
+      fontFamilyPlaceholder: "Entrez la valeur font-family souhaitée",
+      faqQuestions: "Questions Fréquentes",
+      faqQuestionsPlaceholder: "Entrez les questions (séparées par |)",
+      bannedWords: "Mots Interdits",
+      bannedWordsPlaceholder: "Entrez les mots (séparés par |)"
+    },
+    images: {
+      brandAlt: "Texte Alternatif du Logo",
+      brandAltPlaceholder: "Entrez le texte alternatif",
+      brandLogo: "Logo du Client",
+      botIcon: "Icône du Bot",
+      chatIcon: "Icône du Chat",
+      hiddenIcon: "Icône de Masquage",
+      sendIcon: "Icône d'Envoi"
+    },
+    security: {
+      sqlInjection: "Vérification d'Injection SQL",
+      phpInjection: "Vérification d'Injection PHP",
+      strangeChars: "Vérification des Caractères Étranges"
+    },
+    greetings: {
+      newMessage: "Créer un nouveau message",
+      update: "Mettre à jour",
+      delete: "Supprimer",
+      create: "Créer"
+    },
+    actions: {
+      save: "Enregistrer",
+      saveColors: "Enregistrer les Couleurs",
+      saveTypography: "Enregistrer la Typographie",
+      saveImages: "Enregistrer les Images",
+      saveSecurity: "Enregistrer la Sécurité",
+      saveGreetings: "Enregistrer les Messages",
+      saveData: "Enregistrer les Données"
+    },
+    messages: {
+      updateSuccess: "Widget mis à jour avec succès",
+      updateError: "Erreur lors de la mise à jour du widget",
+      colorsSaved: "Couleurs enregistrées avec succès",
+      typographySaved: "Typographie enregistrée avec succès",
+      imagesSaved: "Images enregistrées avec succès",
+      securitySaved: "Paramètres de sécurité enregistrés avec succès",
+      greetingsSaved: "Messages enregistrés avec succès",
+      dataSaved: "Données enregistrées avec succès"
+    },
+    inputs: {
+      fontFamily: {
+        label: "Famille de Police",
+        placeholder: "Entrez la valeur d'attribut font-family souhaitée",
+        helperText: "Exemple: Arial, Helvetica, sans-serif"
+      },
+      faqQuestions: {
+        label: "Questions Fréquentes",
+        placeholder: "Entrez les questions (séparées par |)",
+        helperText: "Exemple: Comment ça marche ? | Combien ça coûte ?"
+      },
+      bandList: {
+        label: "Mots Interdits",
+        placeholder: "Entrez les mots (séparés par |)",
+        helperText: "Exemple: spam | offensant | inapproprié"
+      },
+      brandAlt: {
+        label: "Texte Alternatif du Logo",
+        placeholder: "Entrez le texte alternatif",
+        helperText: "Texte à afficher si l'image ne se charge pas"
+      }
+    },
+    validation: {
+      required: "Ce champ est obligatoire",
+      invalidColor: "Couleur invalide",
+      invalidFile: "Fichier invalide",
+      maxFileSize: "Le fichier dépasse la taille maximale autorisée"
+    },
+    preview: {
+      title: "Aperçu du Widget",
+      loading: "Chargement de l'aperçu...",
+      error: "Erreur lors du chargement de l'aperçu"
+    }
   }
 };
 

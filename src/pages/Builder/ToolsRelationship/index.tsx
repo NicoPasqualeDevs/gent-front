@@ -26,6 +26,7 @@ interface Tool extends ToolData {
 
 interface ToolRelationshipData {
   agent_tool_ids: number[];
+  [key: string]: number[] | undefined;
 }
 
 const not = (a: Tool[], b: Tool[]): Tool[] => {
@@ -37,7 +38,7 @@ const intersection = (a: ToolData[], b: ToolData[]): Tool[] => {
 };
 
 const ToolsRelationship: React.FC = () => {
-  const { botName, botId } = useParams();
+  const { botName, botId, aiTeamId } = useParams();
 
   const {
     getAllTools,
@@ -91,15 +92,16 @@ const ToolsRelationship: React.FC = () => {
 
   const getToolsData = useCallback((botId: string) => {
     getAllTools()
-      .then((allTools: Tool[]) => {
+      .then((allTools: unknown) => {
         getBotTools(botId)
-          .then((response: Tool[]) => {
-            const temp = allTools.filter((item: Tool) => {
-              return !response.find((i: Tool) => i.id === item.id);
+          .then((response: unknown) => {
+            const botTools = response as Tool[];
+            const temp = (allTools as Tool[]).filter((item: Tool) => {
+              return !botTools.find((i: Tool) => i.id === item.id);
             });
             setNoRelatedTools(temp);
-            setRelatedTools(response);
-            setCurrentTools(response);
+            setRelatedTools(botTools);
+            setCurrentTools(botTools);
             setLoaded(true);
           })
           .catch((error) => {
@@ -224,7 +226,6 @@ const ToolsRelationship: React.FC = () => {
   useEffect(() => {
     setLoaded(false);
     if (botId) {
-      const { aiTeamId } = useParams(); // Obtener aiTeamId de los parámetros
       replacePath([
         ...appNavigation.slice(0, 3),
         {
@@ -238,7 +239,7 @@ const ToolsRelationship: React.FC = () => {
     } else {
       ErrorToast("Error al cargar botId en la vista");
     }
-  }, [botId, botName, replacePath, appNavigation, getToolsData]);
+  }, [botId, botName, aiTeamId, replacePath, appNavigation, getToolsData]);
 
   return (
     <>

@@ -29,7 +29,7 @@ const LanguageSelector: React.FC = () => {
     if (language !== newLang) {
       setLanguage(newLang);
       handleClose();
-    };
+    }
   };
 
 

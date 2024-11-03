@@ -250,6 +250,105 @@ const br: TranslationType = {
     registerTitle: "Registro de Usuário",
     registerSuccess: "Usuário registrado com sucesso",
     registerError: "Erro ao registrar usuário"
+  },
+  widgetCustomizer: {
+    title: "Personalizador de Widget",
+    tabs: {
+      colors: "Cores",
+      typography: "Tipografia",
+      images: "Imagens",
+      security: "Segurança",
+      greetings: "Saudações",
+      data: "Dados"
+    },
+    colors: {
+      primaryColor: "Cor Primária",
+      primaryTextContrast: "Contraste do Texto Primário",
+      secondaryColor: "Cor Secundria",
+      secondaryTextContrast: "Contraste do Texto Secundário",
+      badgeColor: "Cor do Badge",
+      badgeContrast: "Cor do Texto do Badge"
+    },
+    typography: {
+      fontFamily: "Família da Fonte",
+      fontFamilyPlaceholder: "Digite o valor desejado para font-family",
+      faqQuestions: "Perguntas Frequentes",
+      faqQuestionsPlaceholder: "Digite as perguntas (separadas por |)",
+      bannedWords: "Palavras Proibidas",
+      bannedWordsPlaceholder: "Digite as palavras (separadas por |)"
+    },
+    images: {
+      brandAlt: "Texto Alternativo do Logo",
+      brandAltPlaceholder: "Digite o texto alternativo",
+      brandLogo: "Logo do Cliente",
+      botIcon: "Ícone do Bot",
+      chatIcon: "Ícone do Chat",
+      hiddenIcon: "Ícone de Ocultar",
+      sendIcon: "Ícone de Enviar"
+    },
+    security: {
+      sqlInjection: "Verificação de Injeção SQL",
+      phpInjection: "Verificação de Injeção PHP",
+      strangeChars: "Verificação de Caracteres Estranhos"
+    },
+    greetings: {
+      newMessage: "Criar nova mensagem",
+      update: "Atualizar",
+      delete: "Excluir",
+      create: "Criar"
+    },
+    actions: {
+      save: "Salvar",
+      saveColors: "Salvar Cores",
+      saveTypography: "Salvar Tipografia",
+      saveImages: "Salvar Imagens",
+      saveSecurity: "Salvar Segurança",
+      saveGreetings: "Salvar Saudações",
+      saveData: "Salvar Dados"
+    },
+    messages: {
+      updateSuccess: "Widget atualizado com sucesso",
+      updateError: "Erro ao atualizar o widget",
+      colorsSaved: "Cores salvas com sucesso",
+      typographySaved: "Tipografia salva com sucesso",
+      imagesSaved: "Imagens salvas com sucesso",
+      securitySaved: "Configurações de segurança salvas com sucesso",
+      greetingsSaved: "Saudações salvas com sucesso",
+      dataSaved: "Dados salvos com sucesso"
+    },
+    inputs: {
+      fontFamily: {
+        label: "Família da Fonte",
+        placeholder: "Digite o valor do atributo font-family desejado",
+        helperText: "Exemplo: Arial, Helvetica, sans-serif"
+      },
+      faqQuestions: {
+        label: "Perguntas Frequentes",
+        placeholder: "Digite as perguntas (separadas por |)",
+        helperText: "Exemplo: Como funciona? | Quanto custa?"
+      },
+      bandList: {
+        label: "Palavras Banidas",
+        placeholder: "Digite as palavras (separadas por |)",
+        helperText: "Exemplo: spam | ofensivo | inapropriado"
+      },
+      brandAlt: {
+        label: "Texto Alternativo do Logo",
+        placeholder: "Digite o texto alternativo",
+        helperText: "Texto que será mostrado se a imagem não carregar"
+      }
+    },
+    validation: {
+      required: "Este campo é obrigatório",
+      invalidColor: "Cor inválida",
+      invalidFile: "Arquivo inválido",
+      maxFileSize: "O arquivo excede o tamanho máximo permitido"
+    },
+    preview: {
+      title: "Pré-visualização do Widget",
+      loading: "Carregando pré-visualização...",
+      error: "Erro ao carregar pré-visualização"
+    }
   }
 };
 

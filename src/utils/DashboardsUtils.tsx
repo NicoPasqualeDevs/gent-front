@@ -24,7 +24,7 @@ interface DashboardContainerProps {
     sx?: SxProps<Theme>;
 }
 
-interface DashboardHeaderProps extends HeaderBaseProps { }
+type DashboardHeaderProps = HeaderBaseProps;
 
 interface DashboardContentProps {
     children: React.ReactNode;
