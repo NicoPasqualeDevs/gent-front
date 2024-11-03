@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import Pathbar from "../Pathbar";
 import { useTheme } from "@mui/material/styles";
 import LanguageSelector from "@/components/LanguageSelector"; // Importamos el LanguageSelector
+import { languages } from "@/utils/Traslations";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -21,12 +22,14 @@ const Header: React.FC = () => {
     menu,
     replacePath,
     setMenu,
+    language
   } = useAppContext();
+  const t = languages[language as keyof typeof languages];
 
   const handleProfileClick = () => {
     replacePath([
       {
-        label: "Perfil",
+        label: t.header.profile,
         current_path: "/profile",
         preview_path: "/",
         translationKey: "profile"

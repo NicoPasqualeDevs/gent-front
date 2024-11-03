@@ -222,6 +222,9 @@ const de: TranslationType = {
     uploadProgress: "Upload-Fortschritt: {progress}%",
     removeFile: "Datei entfernen",
     uploadSuccess: "Datei erfolgreich hochgeladen"
+  },
+  header: {
+    profile: "Profil"
   }
 };
 

@@ -222,6 +222,9 @@ const en: TranslationType = {
     uploadProgress: "Upload progress: {progress}%",
     removeFile: "Remove file",
     uploadSuccess: "File uploaded successfully"
+  },
+  header: {
+    profile: "Profile"
   }
 };
 

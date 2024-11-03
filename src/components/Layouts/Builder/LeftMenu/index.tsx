@@ -10,7 +10,7 @@ import { languages } from "@/utils/Traslations";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, navElevation, setNavElevation, setAuth, setMenu, language, auth, replacePath } = useAppContext();
+  const { menu, navElevation, setNavElevation, setAuth, language, auth, replacePath } = useAppContext();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const t = languages[language as keyof typeof languages];

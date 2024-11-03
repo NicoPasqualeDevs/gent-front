@@ -1,6 +1,9 @@
 export type TranslationType = {
   greeting: string;
   farewell: string;
+  header: {
+    profile: string;
+  };
   actionAllower: {
     fieldRequired: string;
     confirmAction: string;
