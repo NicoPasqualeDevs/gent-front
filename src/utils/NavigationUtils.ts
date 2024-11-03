@@ -25,7 +25,7 @@ export const authNavigationUtils = {
     navigate('/auth/login'),
     
   toRegister: (navigate: NavigateFunction) => 
-    navigate('/auth/register/new-user')
+    navigate('/builder/register-user')
 };
 
 // Funciones del builder

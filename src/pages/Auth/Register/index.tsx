@@ -81,14 +81,18 @@ const Register: React.FC = () => {
   const { handleSubmit, handleChange, values, touched, errors } = formik;
 
   useEffect(() => {
-    replacePath([
-      {
-        label: t('login.registerLink'),
-        current_path: "/auth/register",
-        preview_path: "",
-        translationKey: "login.registerLink"
-      }
-    ]);
+    const timer = setTimeout(() => {
+      replacePath([
+        {
+          label: t('login.registerLink'),
+          current_path: "/auth/register",
+          preview_path: "",
+          translationKey: "login.registerLink"
+        }
+      ]);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [replacePath, t]);
 
   return (

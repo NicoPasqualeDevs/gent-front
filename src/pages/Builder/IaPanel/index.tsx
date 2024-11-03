@@ -25,10 +25,10 @@ import { languages } from "@/utils/Traslations";
 import { PageProps } from '@/types/Page';
 import { IaPanelState } from './types';
 import AddIcon from "@mui/icons-material/Add";
-import { 
-  DashboardContainer, 
-  DashboardHeader, 
-  DashboardContent, 
+import {
+  DashboardContainer,
+  DashboardHeader,
+  DashboardContent,
   DashboardFooter,
   commonStyles,
   SkeletonCard
@@ -44,7 +44,7 @@ const IaPanel: React.FC<PageProps> = () => {
   const { getBotsList, deleteBot } = useBotsApi();
   const { apiBase } = useApi();
   const t = languages[language as keyof typeof languages];
-  
+
   const [state, setState] = useState<IaPanelState>({
     isLoading: true,
     isError: false,
@@ -121,8 +121,8 @@ const IaPanel: React.FC<PageProps> = () => {
       }
     } catch (error) {
       console.error('Error fetching bots:', error);
-      setState(prev => ({ 
-        ...prev, 
+      setState(prev => ({
+        ...prev,
         isLoading: false,
         isError: true,
         errorMessage: error instanceof Error ? error.message : 'Unknown error',
@@ -145,7 +145,7 @@ const IaPanel: React.FC<PageProps> = () => {
         await getBotsData(filterParams);
       } catch (error) {
         console.error('Error loading data:', error);
-        setState(prev => ({ 
+        setState(prev => ({
           ...prev,
           isLoading: false,
           isError: true,
@@ -162,7 +162,7 @@ const IaPanel: React.FC<PageProps> = () => {
 
   const handleSearch = useCallback((value: string) => {
     setState(prev => ({ ...prev, searchQuery: value }));
-    
+
     if (value.trim() === "") {
       getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
     } else {
@@ -173,7 +173,7 @@ const IaPanel: React.FC<PageProps> = () => {
   const handlePagination = useCallback((event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
     if (state.isLoading) return;
-    
+
     setState(prev => ({ ...prev, currentPage: value }));
     getBotsData(`?page_size=${state.contentPerPage}&page=${value}`);
   }, [state.contentPerPage, state.isLoading, getBotsData]);
@@ -184,16 +184,16 @@ const IaPanel: React.FC<PageProps> = () => {
     try {
       setState(prev => ({ ...prev, isDeleting: true }));
       await deleteBot(botId);
-      
-      setState(prev => ({ 
-        ...prev, 
+
+      setState(prev => ({
+        ...prev,
         pageContent: prev.pageContent.filter(item => item.id !== botId),
         allowerState: false,
         botToDelete: "",
         isDeleting: false
       }));
       SuccessToast(t.iaPanel.deleteSuccess);
-      
+
       await getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
     } catch (error: any) {
       ErrorToast(error instanceof Error
@@ -224,14 +224,19 @@ const IaPanel: React.FC<PageProps> = () => {
       }}>
         <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
           {/* Header con título y avatar */}
-          <Box sx={{ 
-            display: 'flex', 
+          <Box sx={{
+            display: 'flex',
             alignItems: 'center',
             mb: 2
           }}>
-            <Avatar sx={{ mr: 1, backgroundColor: theme.palette.secondary.light }}>
+            {/*             <Avatar sx={{
+              pt: "2px",
+              mr: 1,
+              color: theme.palette.secondary.contrastText,
+              backgroundColor: theme.palette.secondary.light
+            }}>
               {bot.name.charAt(0).toUpperCase()}
-            </Avatar>
+            </Avatar> */}
             <Box>
               <Typography variant="h6" sx={{ fontSize: '1.1rem', fontWeight: 'bold' }}>
                 {bot.name}
@@ -244,36 +249,40 @@ const IaPanel: React.FC<PageProps> = () => {
 
           {/* Badge del modelo AI */}
           <Typography variant="body2" sx={{
-            color: theme.palette.secondary.main,
-            backgroundColor: theme.palette.secondary.dark,
+            color: theme.palette.secondary.contrastText,
+            backgroundColor: theme.palette.secondary.light,
             display: 'inline-block',
             padding: '7px 14px',
             borderRadius: '16px',
             fontSize: '0.95rem',
             fontWeight: 'medium',
             mb: 2,
+            pt: "9px",
+            lineHeight: '0.95rem',
             minWidth: '200px',
             textAlign: 'center',
           }}>
             {modelAIOptions.find(option => option.value === bot.model_ai)?.label || 'No especificado'}
           </Typography>
 
-          <Divider sx={{ 
+          <Divider sx={{
             mb: 2,
+            mt: 2,
+            width: "100%",
             borderColor: theme.palette.divider
           }} />
 
           {/* Sección de implementación */}
           <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" gutterBottom sx={{ 
-              fontWeight: 'bold', 
+            <Typography variant="subtitle2" gutterBottom sx={{
+              fontWeight: 'bold',
               fontSize: '1rem',
               mb: 1.5
             }}>
               {t.iaPanel.implementation}
             </Typography>
-            <Box sx={{ 
-              display: 'flex', 
+            <Box sx={{
+              display: 'flex',
               gap: 1,
               flexWrap: 'wrap'
             }}>
@@ -283,8 +292,8 @@ const IaPanel: React.FC<PageProps> = () => {
                   size="small"
                   onClick={() => navigate(`/builder/agents/chat/${bot.id}`)}
                   startIcon={<PlayArrowIcon />}
-                  sx={{ 
-                    flex: '1 1 auto', 
+                  sx={{
+                    flex: '1 1 auto',
                     minWidth: '40px',
                     '& .MuiButton-startIcon': {
                       margin: { xl: '0' }
@@ -303,15 +312,15 @@ const IaPanel: React.FC<PageProps> = () => {
                   </Box>
                 </Button>
               </Tooltip>
-              
+
               <Tooltip title={t.iaPanel.useAPI}>
                 <Button
                   variant="outlined"
                   size="small"
                   onClick={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
                   startIcon={<ApiIcon />}
-                  sx={{ 
-                    flex: '1 1 auto', 
+                  sx={{
+                    flex: '1 1 auto',
                     minWidth: '40px',
                     '& .MuiButton-startIcon': {
                       margin: { xl: '0' }
@@ -337,8 +346,8 @@ const IaPanel: React.FC<PageProps> = () => {
                   size="small"
                   onClick={() => window.open(apiBase.slice(0, -1) + bot.widget_url, "_blank")}
                   startIcon={<WidgetsIcon />}
-                  sx={{ 
-                    flex: '1 1 auto', 
+                  sx={{
+                    flex: '1 1 auto',
                     minWidth: '40px',
                     '& .MuiButton-startIcon': {
                       margin: { xl: '0' }
@@ -360,25 +369,27 @@ const IaPanel: React.FC<PageProps> = () => {
             </Box>
           </Box>
 
-          <Divider sx={{ 
+          <Divider sx={{
             mb: 2,
+            mt: 2,
+            width: "100%",
             borderColor: theme.palette.divider
           }} />
 
           {/* Sección de configuración */}
           <Box>
-            <Typography variant="subtitle2" gutterBottom sx={{ 
-              fontWeight: 'bold', 
+            <Typography variant="subtitle2" gutterBottom sx={{
+              fontWeight: 'bold',
               fontSize: '1rem',
               mb: 1.5
             }}>
               {t.iaPanel.configuration}
             </Typography>
-            <Box sx={{ 
-              display: 'flex', 
+            <Box sx={{
+              display: 'flex',
               flexWrap: 'nowrap',
             }}>
-              <Box sx={{ 
+              <Box sx={{
                 width: 140, // Ancho fijo para el primer botón
                 flexShrink: 0 // Evita que el botón se encoja
               }}>
@@ -386,7 +397,7 @@ const IaPanel: React.FC<PageProps> = () => {
                   variant="text"
                   size="small"
                   onClick={() => navigate(`/builder/agents/widgetCustomizer/${bot.id}`)}
-                  sx={{ 
+                  sx={{
                     color: theme.palette.primary.main,
                     textTransform: 'none',
                     fontSize: '0.9rem',
@@ -410,7 +421,7 @@ const IaPanel: React.FC<PageProps> = () => {
                 </Button>
               </Box>
               <Box sx={{ width: 16, flexShrink: 0 }} /> {/* Espaciador fijo */}
-              <Box sx={{ 
+              <Box sx={{
                 width: 140, // Ancho fijo para el segundo botn
                 flexShrink: 0 // Evita que el botón se encoja
               }}>
@@ -418,7 +429,7 @@ const IaPanel: React.FC<PageProps> = () => {
                   variant="text"
                   size="small"
                   onClick={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
-                  sx={{ 
+                  sx={{
                     color: theme.palette.primary.main,
                     textTransform: 'none',
                     fontSize: '0.9rem',
@@ -445,8 +456,8 @@ const IaPanel: React.FC<PageProps> = () => {
           </Box>
 
           {/* Footer con acciones */}
-          <Box sx={{ 
-            display: 'flex', 
+          <Box sx={{
+            display: 'flex',
             justifyContent: 'flex-end',
             position: 'absolute',
             top: 8,
@@ -489,10 +500,10 @@ const IaPanel: React.FC<PageProps> = () => {
   );
 
   const handleAllowerStateChange = (value: boolean) => {
-    setState(prev => ({ 
-      ...prev, 
+    setState(prev => ({
+      ...prev,
       allowerState: value,
-      botToDelete: value ? prev.botToDelete : "" 
+      botToDelete: value ? prev.botToDelete : ""
     }));
   };
 
@@ -501,7 +512,7 @@ const IaPanel: React.FC<PageProps> = () => {
       ErrorToast(t.iaPanel.errorMissingParams);
       return;
     }
-    
+
     builderNavigationUtils.toAgentContext(navigate, {
       aiTeamId,
       botId: bot.id
@@ -510,7 +521,7 @@ const IaPanel: React.FC<PageProps> = () => {
 
   return (
     <DashboardContainer>
-      <DashboardHeader 
+      <DashboardHeader
         title={t.iaPanel.agentsOf.replace("{clientName}", aiTeamName || "")}
         actions={
           <Box sx={{
@@ -558,16 +569,16 @@ const IaPanel: React.FC<PageProps> = () => {
         ) : (
           <>
             {state.pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{ 
-                p: 2, 
-                flexGrow: 1, 
+              <Paper elevation={3} sx={{
+                p: 2,
+                flexGrow: 1,
                 overflow: 'auto',
                 scrollbarColor: "auto",
                 ...commonStyles.scrollableContent
               }}>
                 <Grid container spacing={3}>
                   {state.pageContent.map((bot, index) => (
-                    <Grid item xs={12} md={6} xl={4} sx={{p: 0}} key={`bot-${bot.id || index}`}>
+                    <Grid item xs={12} md={6} xl={4} sx={{ p: 0 }} key={`bot-${bot.id || index}`}>
                       {renderBotCard(bot)}
                     </Grid>
                   ))}
@@ -597,8 +608,8 @@ const IaPanel: React.FC<PageProps> = () => {
                   </Button>
                 )}
                 {state.searchQuery && (
-                  <Button 
-                    variant="contained" 
+                  <Button
+                    variant="contained"
                     onClick={refreshData}
                     sx={{ mb: 2 }}
                   >

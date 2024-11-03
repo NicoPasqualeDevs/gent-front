@@ -607,6 +607,7 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
                             startIcon={<AddIcon />}
                             sx={{
                                 color: 'white',
+                                padding: '6px 32px',
                                 '&:hover': {
                                     color: 'white',
                                 },

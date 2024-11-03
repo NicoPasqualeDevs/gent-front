@@ -37,7 +37,7 @@ const LeftMenu: React.FC = () => {
       navElevation: t.leftMenu.registerUser,
       translationKey: "registerUser",
       label: t.leftMenu.registerUser,
-      path: "/auth/register/new-user",
+      path: "/builder/register-user",
       requireSuperUser: true,
       disabled: false
     },

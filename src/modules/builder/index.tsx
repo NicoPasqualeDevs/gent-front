@@ -5,6 +5,7 @@ import { ModuleProps } from '@/types/Module';
 import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useLoadingState from '@/hooks/useLoadingState';
+import Register from '@/pages/Auth/Register';
 
 // Lazy loaded components
 const AiTeamsList = lazy(() => import("@/pages/AiTeams/AiTeamsList"));
@@ -60,6 +61,7 @@ const BuilderModule: React.FC<ModuleProps> = () => {
       <Route path="/agents/*" element={<AgentsDetailsModule />} />
       <Route path="/admin-tools-form" element={<ToolsForm />} />
       <Route path="/chat/:botId" element={<ChatViewModule />} />
+      <Route path="register-user" element={<Register />} />
     </Routes>
   );
 };

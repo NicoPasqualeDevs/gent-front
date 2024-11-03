@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { WidgetData, CustomGreetingData } from "@/types/Bots";
 import { ApiResponse } from "@/types/Api";
 import useApi from "./useApi";
@@ -24,11 +24,11 @@ const useWidget = (): UseWidgetApi => {
     return apiGet(`api/widgets/${botId}/messages`);
   }, [apiGet]);
 
-  return {
+  return useMemo(() => ({
     getWidget,
     patchWidget,
     getCustomMessages
-  };
+  }), [getWidget, patchWidget, getCustomMessages]);
 };
 
 export default useWidget; 
