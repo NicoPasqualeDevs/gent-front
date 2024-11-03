@@ -29,23 +29,15 @@ const UserL = (
 
 // Protected Route Component
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = true }) => {
-  const { auth, setAuth } = useAppContext();
-  const { getAuth } = authStorage();
+  const { auth } = useAppContext();
   const location = useLocation();
 
-  React.useEffect(() => {
-    if (requireAuth && !auth?.token) {
-      const savedAuth = getAuth();
-      if (savedAuth?.token) {
-        setAuth(savedAuth);
-      }
-    }
-  }, [auth, requireAuth, setAuth]);
-
+  // Si requireAuth es true y no hay auth, redirigir a login
   if (requireAuth && !auth?.token) {
     return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
   }
 
+  // Si requireAuth es false y hay auth, redirigir a builder
   if (!requireAuth && auth?.token) {
     return <Navigate to="/builder" replace />;
   }

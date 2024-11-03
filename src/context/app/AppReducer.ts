@@ -3,9 +3,10 @@ import { Breakpoint } from "@mui/material";
 import { AuthUser } from "@/types/Auth";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
+import { StoredAuth } from "@/types/Auth";
 
 export type AppContextActions =
-  | { type: "setAuth"; payload: AuthUser | null }
+  | { type: "setAuth"; payload: StoredAuth | null }
   | { type: "setLoaded"; payload: boolean }
   | { type: "setAiTeams"; payload: AiTeamsDetails[] }
   | { type: "setMenu"; payload: boolean }

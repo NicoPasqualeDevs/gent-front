@@ -29,6 +29,7 @@ const Header: React.FC = () => {
         label: "Perfil",
         current_path: "/profile",
         preview_path: "/",
+        translationKey: "profile"
       },
     ]);
     navigate('/profile');
@@ -108,7 +109,7 @@ const Header: React.FC = () => {
         <Box sx={{ marginRight: 2 }}>
           <LanguageSelector />
         </Box>
-        {auth.user && isLargeScreen ? (
+        {auth && isLargeScreen ? (
           <UserBubble>
             <Typography
               variant="body1"
@@ -122,7 +123,7 @@ const Header: React.FC = () => {
                 cursor: 'pointer'
               }}
             >
-              {auth.user.email ? auth.user.email : ""}
+              {auth?.email ? auth.email : ""}
             </Typography>
           </UserBubble>
         ) : (
@@ -130,8 +131,8 @@ const Header: React.FC = () => {
             sx={{ cursor: "pointer" }}
             onClick={handleProfileClick}
           >
-            {auth.user && auth.user.email.trim() !== ""
-              ? auth.user.email[0].toUpperCase()
+            {auth && auth.email.trim() !== ""
+              ? auth.email[0].toUpperCase()
               : null}
           </Avatar>
         )}

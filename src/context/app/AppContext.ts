@@ -3,6 +3,8 @@ import { AuthUser } from "@/types/Auth";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
 import { Breakpoint } from "@mui/material";
+import { StoredAuth } from "@/types/Auth";
+import { menuStorage } from "@/services/menu";
 
 export interface AppContextState {
   menu: boolean;
@@ -12,7 +14,7 @@ export interface AppContextState {
   };
   loaded: boolean;
   aiTeams: AiTeamsDetails[];
-  auth: AuthUser | null;
+  auth: StoredAuth | null;
   navElevation: string;
   appNavigation: PathData[];
   language: string;
@@ -20,7 +22,7 @@ export interface AppContextState {
   setAiTeams: React.Dispatch<React.SetStateAction<AiTeamsDetails[]>>;
   setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   setMenu: React.Dispatch<React.SetStateAction<boolean>>;
-  setAuth: (value: AuthUser | null) => void;
+  setAuth: (value: StoredAuth | null) => void;
   setNavElevation: React.Dispatch<React.SetStateAction<string>>;
   setAppNavigation: React.Dispatch<React.SetStateAction<PathData[]>>;
   replacePath: (value: PathData[]) => void;
@@ -30,7 +32,7 @@ export interface AppContextState {
 }
 
 export const INITIAL_STATE: AppContextState = {
-  menu: false,
+  menu: menuStorage().getMenuState(),
   layout: {
     breakpoint: undefined,
     device: undefined

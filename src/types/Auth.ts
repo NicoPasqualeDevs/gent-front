@@ -33,3 +33,13 @@ export interface ValidationResult {
   isValid: boolean;
   user?: User;
 }
+
+// Añadimos una interfaz específica para el almacenamiento de auth
+export interface StoredAuth {
+  token: string;
+  uuid: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  is_superuser?: boolean;
+}

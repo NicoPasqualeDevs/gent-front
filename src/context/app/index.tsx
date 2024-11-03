@@ -8,6 +8,8 @@ import { AuthUser } from "@/types/Auth";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { PathData } from "@/types/Pathbar";
 import { authStorage } from "@/services/auth";
+import { StoredAuth } from "@/types/Auth";
+import { menuStorage } from "@/services/menu";
 
 interface AppProviderProps {
   children: React.ReactNode | Array<React.ReactNode>;
@@ -18,6 +20,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     React.Reducer<AppContextState, AppContextActions>
   >(AppReducer, INITIAL_STATE);
 
+  const [isInitialized, setIsInitialized] = React.useState(false);
   const { getAuth } = authStorage();
 
   const {
@@ -37,13 +40,14 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const isTablet = useMediaQuery(theme.breakpoints.down('md'));
 
   React.useEffect(() => {
-    const loadAuthData = async () => {
+    const initializeAuth = async () => {
       const savedAuth = getAuth();
-      if (savedAuth?.token && !auth) {
-        setAuth(savedAuth);
+      if (savedAuth?.token) {
+        dispatch({ type: "setAuth", payload: savedAuth });
       }
+      setIsInitialized(true);
     };
-    loadAuthData();
+    initializeAuth();
   }, []);
 
   React.useEffect(() => {
@@ -58,16 +62,25 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
   }, [width, isMobile, isTablet]);
 
-  const setAuth = React.useCallback((value: AuthUser | null) => {
+  const setAuth = React.useCallback((value: StoredAuth | null) => {
     const { saveAuth, removeAuth } = authStorage();
     
     if (value) {
-      saveAuth(value);
+      const authToStore: StoredAuth = {
+        token: value.token,
+        uuid: value.uuid,
+        email: value.email,
+        first_name: value.first_name,
+        last_name: value.last_name,
+        is_superuser: value.is_superuser
+      };
+      
+      saveAuth(authToStore);
+      dispatch({ type: "setAuth", payload: authToStore });
     } else {
       removeAuth();
+      dispatch({ type: "setAuth", payload: null });
     }
-    
-    dispatch({ type: "setAuth", payload: value });
   }, []);
 
   const setLoaded: Dispatch<SetStateAction<boolean>> = React.useCallback((value) => {
@@ -87,12 +100,25 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   }, [aiTeams]);
 
   const setMenu: Dispatch<SetStateAction<boolean>> = React.useCallback((value) => {
+    const { saveMenuState } = menuStorage();
+    
     if (typeof value === 'function') {
-      dispatch({ type: "setMenu", payload: value(menu) });
+      const newValue = value(menu);
+      saveMenuState(newValue);
+      dispatch({ type: "setMenu", payload: newValue });
     } else {
+      saveMenuState(value);
       dispatch({ type: "setMenu", payload: value });
     }
   }, [menu]);
+
+  React.useEffect(() => {
+    const { getMenuState } = menuStorage();
+    const savedMenuState = getMenuState();
+    if (savedMenuState !== menu) {
+      dispatch({ type: "setMenu", payload: savedMenuState });
+    }
+  }, []);
 
   const setNavElevation: Dispatch<SetStateAction<string>> = React.useCallback((value) => {
     if (typeof value === 'function') {
@@ -129,6 +155,10 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const cleanState = () => {
     dispatch({ type: "cleanState" });
   };
+
+  if (!isInitialized) {
+    return null;
+  }
 
   return (
     <AppContext.Provider
