@@ -1,4 +1,4 @@
-import { BoxProps, LinearProgress, styled } from "@mui/material";
+import { LinearProgress} from "@mui/material";
 import React from "react";
 import Box from "@mui/material/Box";
 import GlowingText from "../GlowingText";

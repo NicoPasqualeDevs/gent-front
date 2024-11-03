@@ -94,17 +94,6 @@ const Tools: React.FC = () => {
     });
   };
 
-  const handleRelationship = () => {
-    if (!aiTeamId || !botId) {
-      ErrorToast(t.iaPanel.errorMissingParams);
-      return;
-    }
-    
-    builderNavigationUtils.toToolsRelationship(navigate, {
-      aiTeamId,
-      botId
-    });
-  };
 
   if (isLoading) {
     return <PageCircularProgress />;

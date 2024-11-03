@@ -6,7 +6,6 @@ import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
 import { useAppContext } from '@/context/app';
 import { useLocation } from 'react-router-dom';
-import { authStorage } from "@/services/auth";
 
 // Interfaces
 interface ProtectedRouteProps {

@@ -157,6 +157,7 @@ const es: TranslationType = {
     toolType: "Tipo de herramienta",
     instructions: "Instrucciones",
     toolFile: "Archivo de la herramienta",
+    fileInput: "Archivo de la herramienta",
     update: "Actualizar",
     create: "Crear",
     edit: "Editar",

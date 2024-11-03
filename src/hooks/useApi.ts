@@ -5,8 +5,6 @@ declare global {
     };
   }
 }
-
-import React from "react";
 import { useAppContext } from "@/context/app";
 import { ApiResponse } from "@/types/Api";
 

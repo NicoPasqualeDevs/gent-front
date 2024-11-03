@@ -72,7 +72,7 @@ const ToolsForm: React.FC = () => {
       formData.append("tool_code", values.tool_code);
     }
     // Agregar user_token al formData
-    formData.append("user_token", auth.user?.token || "");
+    formData.append("user_token", auth?.token || "");
 
     createNewTool(formData);
   };

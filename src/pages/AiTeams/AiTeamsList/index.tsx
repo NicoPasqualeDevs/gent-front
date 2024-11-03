@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, lazy, useRef } from "react";
+import { useEffect, useState, useCallback, lazy } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppContext } from "@/context/app";
 import { PageProps, PaginatedPageState } from "@/types/Page";

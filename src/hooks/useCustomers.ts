@@ -8,10 +8,11 @@ interface UseAiTeamsApiHook {
   getAiTeamDetails: (aiTeamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
   createAiTeam: (data: AiTeamsFormData) => Promise<ApiResponse<AiTeamsDetails>>;
   updateAiTeam: (data: AiTeamsFormData, aiTeamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
+  deleteAiTeam: (aiTeamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
 }
 
 const useAiTeamsApi = (): UseAiTeamsApiHook => {
-  const { apiGet, apiPost, apiPut } = useApi();
+  const { apiGet, apiPost, apiPut, apiDelete } = useApi();
 
   const getMyAiTeams = (filterParams: string): Promise<ApiResponse<AiTeamsDetails[]>> => {
     return apiGet(`ai-teams/${filterParams}`);
@@ -33,12 +34,17 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
     return apiPut(`ai-teams/${aiTeamId}/`, data);
   };
 
+  const deleteAiTeam = (aiTeamId: string): Promise<ApiResponse<AiTeamsDetails>> => {
+    return apiDelete(`ai-teams/${aiTeamId}/`);
+  };
+
   return {
     getMyAiTeams,
     getAiTeamsByOwner,
     getAiTeamDetails,
     createAiTeam,
-    updateAiTeam
+    updateAiTeam,
+    deleteAiTeam
   };
 };
 

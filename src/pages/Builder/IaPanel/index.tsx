@@ -1,15 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams, Navigate } from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
 import {
-  Grid, Typography, Pagination, Card, CardActions, Button, Divider,
-  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent, IconButton, CardHeader, Avatar, Tooltip, Skeleton
+  Grid, Typography, Card, Button, Divider,
+  Select, MenuItem, Box, Paper, SelectChangeEvent, CardContent, IconButton, Tooltip
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import useBotsApi from "@/hooks/useBots";
-import { PageCircularProgress } from "@/components/CircularProgress";
 import { AgentData } from "@/types/Bots";
-import { Metadata } from "@/types/Api";
 import ActionAllower from "@/components/ActionAllower";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
@@ -29,7 +27,6 @@ import {
   DashboardContainer,
   DashboardHeader,
   DashboardContent,
-  DashboardFooter,
   commonStyles,
   SkeletonCard
 } from "@/utils/DashboardsUtils";
@@ -500,11 +497,13 @@ const IaPanel: React.FC<PageProps> = () => {
   );
 
   const handleAllowerStateChange = (value: boolean) => {
-    setState(prev => ({
-      ...prev,
-      allowerState: value,
-      botToDelete: value ? prev.botToDelete : ""
-    }));
+    if (!value) {
+      setState(prev => ({
+        ...prev,
+        allowerState: false,
+        botToDelete: ""
+      }));
+    }
   };
 
   const handleEditClick = (bot: AgentData) => {
@@ -644,7 +643,7 @@ const IaPanel: React.FC<PageProps> = () => {
 
       {state.allowerState && (
         <ActionAllower
-          allowerStateCleaner={(value: boolean) => setState(prev => ({ ...prev, allowerState: value }))}
+          allowerStateCleaner={handleAllowerStateChange}
           actionToDo={handleDelete}
           actionParams={state.botToDelete}
         />

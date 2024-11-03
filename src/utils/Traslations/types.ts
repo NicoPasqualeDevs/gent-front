@@ -1,9 +1,6 @@
-export type TranslationType = {
+export interface TranslationType {
   greeting: string;
   farewell: string;
-  header: {
-    profile: string;
-  };
   actionAllower: {
     fieldRequired: string;
     confirmAction: string;
@@ -15,11 +12,11 @@ export type TranslationType = {
   leftMenu: {
     aiTeams: string;
     registerTeam: string;
-    logout: string;
-    logoutSuccess: string;
     registerUser: string;
     tools: string;
     workShop: string;
+    logout: string;
+    logoutSuccess: string;
   };
   aiTeamsForm: {
     editTitle: string;
@@ -153,6 +150,7 @@ export type TranslationType = {
     toolType: string;
     instructions: string;
     toolFile: string;
+    fileInput: string;
     update: string;
     create: string;
     edit: string;
@@ -235,6 +233,9 @@ export type TranslationType = {
     removeFile: string;
     uploadSuccess: string;
   };
+  header: {
+    profile: string;
+  };
   auth: {
     register: string;
     login: string;
@@ -243,11 +244,11 @@ export type TranslationType = {
     registerSuccess: string;
     registerError: string;
   };
-};
+}
 
-export type GreetingsType = {
+export interface GreetingsType {
   [key: string]: string[];
-};
+}
 
 export const greetings: GreetingsType = {
   en: [
@@ -282,10 +283,10 @@ export const greetings: GreetingsType = {
   ]
 };
 
-export const getRandomGreeting = (lang: string): string => {
-  const langGreetings = greetings[lang] || greetings.en;
+export function getRandomGreeting(language: string): string {
+  const langGreetings = greetings[language] || greetings.en;
   return langGreetings[Math.floor(Math.random() * langGreetings.length)];
-};
+}
 
 export interface PathbarTranslations {
   home: string;

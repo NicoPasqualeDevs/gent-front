@@ -4,7 +4,6 @@ import { useAppContext } from '@/context/app';
 import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useAiTeamsApi from "@/hooks/useAiTeams";
-import { Container, Box, Paper, Button } from '@mui/material';
 import { AiTeamsFormState } from '@/types/AiTeams';
 import { 
   FormLayout, 

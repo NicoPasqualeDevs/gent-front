@@ -9,7 +9,6 @@ import { PageCircularProgress } from "@/components/CircularProgress";
 import {
   MultilineInput,
   TextInput,
-  ImageInput,
   CheckboxInput,
 } from "@/components/Inputs";
 import { ShortInput } from "@/components/Inputs/ShortInput";
@@ -119,7 +118,7 @@ type FormikHandleChange = {
 type ImageInputEvent = {
   target: {
     name: string;
-    value: string;
+    value: File | string;
   };
 };
 
@@ -193,14 +192,13 @@ const ImagesTab: React.FC<ImagesTabProps> = ({ values, handleChange, errors }) =
     </Grid>
     <Grid item xs={12}>
       <FormFileInput
-        name="brand_logo"
         label="Logo de Cliente"
         accept="image/*"
         onChange={(file) => {
           handleChange({
             target: {
               name: 'brand_logo',
-              value: file
+              value: URL.createObjectURL(file)
             }
           });
         }}
@@ -216,7 +214,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({ values, handleChange, errors }) =
           handleChange({
             target: {
               name: 'icon_bot',
-              value: file
+              value: URL.createObjectURL(file)
             }
           });
         }}
@@ -232,7 +230,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({ values, handleChange, errors }) =
           handleChange({
             target: {
               name: 'icon_chat',
-              value: file
+              value: URL.createObjectURL(file)
             }
           });
         }}
@@ -248,7 +246,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({ values, handleChange, errors }) =
           handleChange({
             target: {
               name: 'icon_hidden',
-              value: file
+              value: URL.createObjectURL(file)
             }
           });
         }}
@@ -264,7 +262,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({ values, handleChange, errors }) =
           handleChange({
             target: {
               name: 'icon_send',
-              value: file
+              value: URL.createObjectURL(file)
             }
           });
         }}
@@ -382,6 +380,11 @@ interface TabAction {
   show?: boolean;
 }
 
+// Agregar cerca de las otras definiciones de tipos
+type WidgetDataField = {
+  [K in keyof WidgetData]: string | boolean | File | undefined;
+};
+
 export const WidgetCustomizer: React.FC = () => {
   const theme = useTheme();
   const [tabValue, setTabValue] = useState(0);
@@ -428,11 +431,11 @@ export const WidgetCustomizer: React.FC = () => {
     badge_contrast: Yup.string(),
     font_family: Yup.string(),
     brand_alt: Yup.string(),
-    brand_logo: Yup.string(),
-    icon_bot: Yup.string(),
-    icon_chat: Yup.string(),
-    icon_hidden: Yup.string(),
-    icon_send: Yup.string(),
+    brand_logo: Yup.mixed(),
+    icon_bot: Yup.mixed(),
+    icon_chat: Yup.mixed(),
+    icon_hidden: Yup.mixed(),
+    icon_send: Yup.mixed(),
     sql_injection_tester: Yup.boolean(),
     php_injection_tester: Yup.boolean(),
     strange_chars_tester: Yup.boolean(),
@@ -493,11 +496,13 @@ export const WidgetCustomizer: React.FC = () => {
 
   const onSubmit = (values: WidgetData) => {
     let data: Partial<WidgetData> = {
-      id: widgetData.id,
+      id: widgetData.id
     };
+    
     Object.entries(widgetData).forEach(([key, value]) => {
-      if (value !== values[key as keyof WidgetData]) {
-        data[key as keyof WidgetData] = values[key as keyof WidgetData];
+      const typedKey = key as keyof WidgetData;
+      if (value !== values[typedKey]) {
+        (data as any)[typedKey] = values[typedKey];
       }
     });
     
@@ -565,11 +570,11 @@ export const WidgetCustomizer: React.FC = () => {
       });
   }, [getCustomMessages]);
 
-  const handleUpdate = (index: number) => {
+  const handleUpdate = () => {
     // ... (mantener la lógica existente de handleUpdate)
   };
 
-  const handleDelete = (index: number) => {
+  const handleDelete = () => {
     // ... (mantener la lógica existente de handleDelete)
   };
 
@@ -627,27 +632,58 @@ export const WidgetCustomizer: React.FC = () => {
     }, 125);
   };
 
-  // Función para asegurar que widgetData tenga todos los campos requeridos
-  const getWidgetDataForPreview = () => ({
-    primary_color: widgetData.primary_color || theme.palette.primary.main,
-    primary_textContrast: widgetData.primary_textContrast || theme.palette.primary.contrastText,
-    secondary_color: widgetData.secondary_color || theme.palette.secondary.main,
-    secondary_textContrast: widgetData.secondary_textContrast || theme.palette.secondary.contrastText,
-    badge_color: widgetData.badge_color || theme.palette.primary.light,
-    badge_contrast: widgetData.badge_contrast || theme.palette.primary.contrastText,
-    font_family: widgetData.font_family || '',
-    brand_alt: widgetData.brand_alt || '',
-    brand_logo: widgetData.brand_logo || '',
-    icon_bot: widgetData.icon_bot || '',
-    icon_chat: widgetData.icon_chat || '',
-    icon_hidden: widgetData.icon_hidden || '',
-    icon_send: widgetData.icon_send || '',
-    faq_questions: widgetData.faq_questions
-  });
+  interface WidgetPreviewData {
+    primary_color: string;
+    primary_textContrast: string;
+    secondary_color: string;
+    secondary_textContrast: string;
+    badge_color: string;
+    badge_contrast: string;
+    font_family: string;
+    brand_alt: string;
+    brand_logo: string;
+    icon_bot: string;
+    icon_chat: string;
+    icon_hidden: string;
+    icon_send: string;
+    faq_questions?: string;
+  }
+
+  const getWidgetDataForPreview = (): WidgetPreviewData => {
+    return {
+      primary_color: widgetData.primary_color || theme.palette.primary.main,
+      primary_textContrast: widgetData.primary_textContrast || theme.palette.primary.contrastText,
+      secondary_color: widgetData.secondary_color || theme.palette.secondary.main,
+      secondary_textContrast: widgetData.secondary_textContrast || theme.palette.secondary.contrastText,
+      badge_color: widgetData.badge_color || theme.palette.primary.light,
+      badge_contrast: widgetData.badge_contrast || theme.palette.primary.contrastText,
+      font_family: widgetData.font_family || '',
+      brand_alt: widgetData.brand_alt || '',
+      brand_logo: typeof widgetData.brand_logo === 'string' ? widgetData.brand_logo : '',
+      icon_bot: typeof widgetData.icon_bot === 'string' ? widgetData.icon_bot : '',
+      icon_chat: typeof widgetData.icon_chat === 'string' ? widgetData.icon_chat : '',
+      icon_hidden: typeof widgetData.icon_hidden === 'string' ? widgetData.icon_hidden : '',
+      icon_send: typeof widgetData.icon_send === 'string' ? widgetData.icon_send : '',
+      faq_questions: widgetData.faq_questions || undefined
+    };
+  };
 
   // Crear un manejador específico para ImageInput
   const handleImageChange = (event: ImageInputEvent) => {
-    handleChange(event);
+    const { name, value } = event.target;
+    
+    if (value instanceof File) {
+      // Si es un archivo, crear URL
+      handleChange({
+        target: {
+          name,
+          value: URL.createObjectURL(value)
+        }
+      });
+    } else {
+      // Si es una URL o string, pasar directamente
+      handleChange(event);
+    }
   };
 
   // Funciones específicas para cada tab
@@ -659,15 +695,16 @@ export const WidgetCustomizer: React.FC = () => {
       'secondary_textContrast',
       'badge_color',
       'badge_contrast'
-    ];
+    ] as const;
 
     let data: Partial<WidgetData> = {
-      id: widgetData.id,
+      id: widgetData.id
     };
 
     colorFields.forEach(field => {
-      if (widgetData[field as keyof WidgetData] !== values[field as keyof WidgetData]) {
-        data[field as keyof WidgetData] = values[field as keyof WidgetData];
+      const typedField = field as keyof WidgetData;
+      if (widgetData[typedField] !== values[typedField]) {
+        (data as any)[typedField] = values[typedField];
       }
     });
 
@@ -680,20 +717,27 @@ export const WidgetCustomizer: React.FC = () => {
     }
   };
 
+  // Crear un tipo auxiliar para los valores permitidos
+  type WidgetDataValue = string | boolean | File | undefined;
+
+  // Modificar las funciones que manejan la asignación
   const handleSaveTypography = () => {
     const typographyFields = [
       'font_family',
       'faq_questions',
       'band_list'
-    ];
+    ] as const;
 
     let data: Partial<WidgetData> = {
-      id: widgetData.id,
+      id: widgetData.id
     };
 
     typographyFields.forEach(field => {
-      if (widgetData[field as keyof WidgetData] !== values[field as keyof WidgetData]) {
-        data[field as keyof WidgetData] = values[field as keyof WidgetData];
+      const typedField = field as keyof WidgetData;
+      const newValue = values[typedField];
+      if (widgetData[typedField] !== newValue) {
+
+        (data as any)[typedField] = values[typedField];
       }
     });
 
@@ -714,15 +758,17 @@ export const WidgetCustomizer: React.FC = () => {
       'icon_chat',
       'icon_hidden',
       'icon_send'
-    ];
+    ] as const;
 
     let data: Partial<WidgetData> = {
-      id: widgetData.id,
+      id: widgetData.id
     };
 
     imageFields.forEach(field => {
-      if (widgetData[field as keyof WidgetData] !== values[field as keyof WidgetData]) {
-        data[field as keyof WidgetData] = values[field as keyof WidgetData];
+      const typedField = field as keyof WidgetData;
+      const newValue = values[typedField] as WidgetDataValue;
+      if (widgetData[typedField] !== newValue) {
+        (data as WidgetDataField)[typedField] = values[typedField];
       }
     });
 
@@ -748,7 +794,7 @@ export const WidgetCustomizer: React.FC = () => {
 
     securityFields.forEach(field => {
       if (widgetData[field as keyof WidgetData] !== values[field as keyof WidgetData]) {
-        data[field as keyof WidgetData] = values[field as keyof WidgetData];
+        (data as WidgetDataField)[field as keyof WidgetData] = values[field as keyof WidgetData];
       }
     });
 

@@ -18,12 +18,22 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-const not = (a: ToolData[], b: ToolData[]) => {
+// Añadir interfaces para los tipos
+interface Tool extends ToolData {
+  id: string;
+  tool_name: string;
+}
+
+interface ToolRelationshipData {
+  agent_tool_ids: number[];
+}
+
+const not = (a: Tool[], b: Tool[]): Tool[] => {
   return a.filter((value) => b.indexOf(value) === -1);
 };
 
-const intersection = (a: ToolData[], b: ToolData[]) => {
-  return a.filter((value) => b.indexOf(value) !== -1);
+const intersection = (a: ToolData[], b: ToolData[]): Tool[] => {
+  return a.filter((value) => b.indexOf(value) !== -1) as Tool[];
 };
 
 const ToolsRelationship: React.FC = () => {
@@ -37,15 +47,15 @@ const ToolsRelationship: React.FC = () => {
   } = useBotsApi();
   const { replacePath, appNavigation } = useAppContext();
   const [loaded, setLoaded] = useState<boolean>(false);
-  const [checked, setChecked] = useState<ToolData[]>([]);
-  const [noRelatedTools, setNoRelatedTools] = useState<ToolData[]>([]);
-  const [relatedTools, setRelatedTools] = useState<ToolData[]>([]);
-  const [currentTools, setCurrentTools] = useState<ToolData[]>([]);
+  const [checked, setChecked] = useState<Tool[]>([]);
+  const [noRelatedTools, setNoRelatedTools] = useState<Tool[]>([]);
+  const [relatedTools, setRelatedTools] = useState<Tool[]>([]);
+  const [currentTools, setCurrentTools] = useState<Tool[]>([]);
 
   const noRelatedChecked = intersection(checked, noRelatedTools);
   const relatedChecked = intersection(checked, relatedTools);
 
-  const handleToggle = (value: ToolData) => () => {
+  const handleToggle = (value: Tool) => () => {
     const currentIndex = checked.indexOf(value);
     const newChecked = [...checked];
 
@@ -81,11 +91,11 @@ const ToolsRelationship: React.FC = () => {
 
   const getToolsData = useCallback((botId: string) => {
     getAllTools()
-      .then((allTools) => {
+      .then((allTools: Tool[]) => {
         getBotTools(botId)
-          .then((response) => {
-            const temp = allTools.filter((item) => {
-              return !response.find((i) => i.id === item.id);
+          .then((response: Tool[]) => {
+            const temp = allTools.filter((item: Tool) => {
+              return !response.find((i: Tool) => i.id === item.id);
             });
             setNoRelatedTools(temp);
             setRelatedTools(response);
@@ -117,10 +127,10 @@ const ToolsRelationship: React.FC = () => {
           );
         }
       });
-  }, []);
+  }, [getAllTools, getBotTools]);
 
-  const setRelationship = async (botId: string) => {
-    const newCurrentTools: ToolData[] = [];
+  const setRelationship = async () => {
+    const newCurrentTools: Tool[] = [];
     const toolsToAdd: number[] = [];
     const toolsToRemove: number[] = [];
 
@@ -146,13 +156,14 @@ const ToolsRelationship: React.FC = () => {
     });
 
     try {
-      // Realizamos los llamados solo si es necesario.
       if (toolsToRemove.length > 0) {
-        await removeToolRelationship(botId, { agent_tool_ids: toolsToRemove });
+        const removeData: ToolRelationshipData = { agent_tool_ids: toolsToRemove };
+        await removeToolRelationship(removeData);
       }
 
       if (toolsToAdd.length > 0) {
-        await setToolRelationship(botId, { agent_tool_ids: toolsToAdd });
+        const addData: ToolRelationshipData = { agent_tool_ids: toolsToAdd };
+        await setToolRelationship(addData);
       }
 
       SuccessToast("Tools relacionadas satisfactoriamente");
@@ -167,7 +178,7 @@ const ToolsRelationship: React.FC = () => {
     }
   };
 
-  const customList = (items: ToolData[]) => (
+  const customList = (items: Tool[]) => (
     <Paper
       sx={{
         width: "100%",
@@ -177,7 +188,7 @@ const ToolsRelationship: React.FC = () => {
       }}
     >
       <List dense component="div" role="list">
-        {items.map((value: ToolData) => {
+        {items.map((value: Tool) => {
           const labelId = `transfer-list-item-${value}-label`;
 
           return (
@@ -213,19 +224,21 @@ const ToolsRelationship: React.FC = () => {
   useEffect(() => {
     setLoaded(false);
     if (botId) {
+      const { aiTeamId } = useParams(); // Obtener aiTeamId de los parámetros
       replacePath([
         ...appNavigation.slice(0, 3),
         {
           label: "Asignar Tools",
-          current_path: `bots/tools-relationship/${botName}/${botId}`,
+          current_path: `/builder/agents/tools/${aiTeamId}/${botName}/${botId}`,
           preview_path: "",
+          translationKey: "tools.assign"
         },
       ]);
       getToolsData(botId);
     } else {
       ErrorToast("Error al cargar botId en la vista");
     }
-  }, [botId]);
+  }, [botId, botName, replacePath, appNavigation, getToolsData]);
 
   return (
     <>
@@ -309,7 +322,7 @@ const ToolsRelationship: React.FC = () => {
             }}
             onClick={() => {
               if (botId) {
-                setRelationship(botId);
+                setRelationship();
               }
             }}
           >

@@ -12,8 +12,6 @@ import {
     alpha,
     Pagination,
     Button,
-    Select,
-    MenuItem
 } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
@@ -156,7 +154,7 @@ export const DashboardFooter: React.FC<DashboardFooterProps> = ({
 );
 
 // Componente de tarjeta con skeleton para estados de carga
-export const SkeletonCard: React.FC<SkeletonCardProps> = ({ height = 180, variant = 'team' }) => {
+export const SkeletonCard: React.FC<SkeletonCardProps> = ({ variant = 'team' }) => {
     const theme = useTheme();
 
     if (variant === 'agent') {

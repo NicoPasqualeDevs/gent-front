@@ -2,6 +2,10 @@ import { useEffect, useCallback, useState, useRef } from "react";
 import { useAppContext } from "@/context/app";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import { CSSObject } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
+import { alpha } from '@mui/material/styles';
 import {
   Typography,
   Box,
@@ -24,11 +28,8 @@ import salud from '@/assets/categories/salud.png';
 import costureria from '@/assets/categories/costureria.png';
 import filosofia from '@/assets/categories/filosofia.png';
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
-import { styled } from "@mui/material/styles";
-import { alpha } from '@mui/material/styles';
 import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
-import { CSSObject } from '@mui/material/styles';
-import { useTheme } from '@mui/material/styles';
+import { ApiResponse } from "@/types/Api";
 
 // Componente estilizado actualizado para las tarjetas
 const AiTeamCard = styled(Box)(({ theme }) => ({
@@ -120,14 +121,15 @@ const scrollbarStyles: CSSObject = {
 };
 
 const UserPanel: React.FC = () => {
-  const navigate = useNavigate(); const {
+  const navigate = useNavigate();
+  const {
     setNavElevation,
     replacePath,
     clientPage,
     setClientPage,
-    setAgentsPage,
+    
   } = useAppContext();
-  const { getAiTeamsList, deleteAiTeamDetails } = useAiTeamsApi();
+  const { getMyAiTeams, deleteAiTeam } = useAiTeamsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
@@ -141,22 +143,26 @@ const UserPanel: React.FC = () => {
 
   const getAiTeamsData = useCallback((filterParams: string) => {
     setIsLoading(true);
-    getAiTeamsList(filterParams)
-      .then((response) => {
+    getMyAiTeams(filterParams)
+      .then((response: ApiResponse<AiTeamsDetails[]>) => {
         const data: AiTeamsDetails[] = response.data;
-        const paginationData: Metadata = response.metadata;
-        setClientPage(paginationData.current_page || 1);
+        const metadata: Metadata = response.metadata || {
+          current_page: 1,
+          total_pages: 1,
+          page_size: 10,
+          total_items: 0
+        };
+        setClientPage(metadata.current_page);
         setPageContent(data);
-        setPaginationData(paginationData);
+        setPaginationData(metadata);
         setLoaded(true);
       })
-      .catch((error) => {
+      .catch((error: any) => {
         if (error instanceof Error) {
           ErrorToast("Error: no se pudo establecer conexión con el servidor");
         } else {
           ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-            }`
+            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
           );
         }
       })
@@ -167,7 +173,7 @@ const UserPanel: React.FC = () => {
           searchInputRef.current.focus();
         }
       });
-  }, [getAiTeamsList, setClientPage]);
+  }, [getMyAiTeams, setClientPage]);
 
   const handleSearch = useCallback((value: string) => {
     setSearchQuery(value);
@@ -179,27 +185,23 @@ const UserPanel: React.FC = () => {
     }
   }, [getAiTeamsData]);
 
-  const deleteAction = (aiTeamId: string) => {
-    deleteAiTeamDetails(aiTeamId)
-      .then(() => {
-        let temp = pageContent;
-        temp = temp.filter((item) => item.id !== aiTeamId);
-        setPageContent(temp);
-        setAllowerState(false);
-        setClientToDelete("");
-        SuccessToast("Cliente eliminado satisfactoriamente");
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-            }`
-          );
-        }
-      });
-  };
+  const deleteAction = useCallback(async (aiTeamId: string): Promise<void> => {
+    try {
+      await deleteAiTeam(aiTeamId);
+      setPageContent(prev => prev.filter(item => item.id !== aiTeamId));
+      setAllowerState(false);
+      setClientToDelete("");
+      SuccessToast("Cliente eliminado satisfactoriamente");
+    } catch (error: any) {
+      if (error instanceof Error) {
+        ErrorToast("Error: no se pudo establecer conexión con el servidor");
+      } else {
+        ErrorToast(
+          `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""}`
+        );
+      }
+    }
+  }, [deleteAiTeam]);
 
   const handlePrevPage = () => {
     if (clientPage > 1) {
@@ -223,9 +225,10 @@ const UserPanel: React.FC = () => {
         label: "Mis Equipos",
         current_path: "/builder",
         preview_path: "/builder",
+        translationKey: "my_teams"
       },
     ]);
-    setAgentsPage(1);
+    setPageContent([]);
     setNavElevation("builder");
     if (!loaded) {
       getAiTeamsData(`?page_size=5&page=${clientPage}`);

@@ -1,13 +1,12 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '@/context/app';
-import { PageCircularProgress } from '@/components/CircularProgress';
 import { PageProps } from '@/types/Page';
 import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
 import { Container, Box, Paper, TextField, Button, Typography, LinearProgress } from '@mui/material';
-import { DataEntryState, DataEntryFormData } from './types';
+import { DataEntryState } from './types';
 
 const MAX_FILE_SIZE = 10; // MB
 

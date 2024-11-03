@@ -1,13 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Box,
-  Button,
-  Typography,
-  Paper,
-  Container,
-  FormControl,
-  InputLabel,
-  Select,
   MenuItem,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,16 +7,13 @@ import {
   ErrorToast,
   SuccessToast,
 } from "@/components/Toast";
-import useBotsApi from "@/hooks/useBots";
-import useAdmin from "@/hooks/useAdmin"; // Importamos el nuevo hook
-import { PageCircularProgress } from "@/components/CircularProgress";
-import * as Yup from "yup";
+import useAdmin from "@/hooks/useAdmin";
+import * as Yup from "yup";  
 import { useFormik } from "formik";
-import { MultilineInput, TextInput } from "@/components/Inputs";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
 import { ToolData } from "@/types/Bots";
-import useTools from "@/hooks/useTools"; // Importar el nuevo hook
+import useTools from "@/hooks/useTools"; 
 import { 
   FormLayout, 
   FormHeader, 
@@ -38,20 +27,6 @@ import {
   FormSelect
 } from "@/utils/FormsViewUtils";
 
-// Definir interfaz para el usuario autenticado
-interface AuthUser {
-  uuid: string;
-  first_name: string;
-  email: string;
-  last_name?: string;
-  is_superuser: boolean;
-}
-
-interface AuthContextExtended {
-  user: AuthUser | null;
-}
-
-// Actualizar el tipo NonSuperUser
 type NonSuperUser = {
   id: number;
   username: string;
@@ -64,8 +39,8 @@ const ToolsForm: React.FC = () => {
   const navigate = useNavigate();
   const { toolId } = useParams();
   const { language, auth, replacePath } = useAppContext();
-  const { postTool, patchTool, getTool } = useTools(); // Usar el nuevo hook
-  const { listNonSuperUsers } = useAdmin(); // Utilizamos el nuevo hook
+  const { postTool, patchTool, getTool } = useTools(); 
+  const { listNonSuperUsers } = useAdmin();
   const t = languages[language as keyof typeof languages].toolsForm;
 
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -289,6 +264,7 @@ const ToolsForm: React.FC = () => {
 
         <FormInputGroup>
           <FormFileInput
+            label={t.fileInput}
             accept=".py,.js,.ts"
             onChange={(file) => {
               console.log('Selected file:', file);

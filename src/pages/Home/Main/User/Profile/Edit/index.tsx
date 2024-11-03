@@ -141,11 +141,13 @@ const ProfileEdit: React.FC = () => {
         label: "Perfil",
         current_path: "/profile",
         preview_path: "",
+        translationKey: "profile"
       },
       {
         label: "Editar",
         current_path: "/profile/edit",
         preview_path: "",
+        translationKey: "edit"
       },
     ]);
     setNavElevation("profile");

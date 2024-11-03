@@ -29,7 +29,7 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
     return apiGet(`api/team_details/${aiTeamId}/`);
   }, [apiGet]);
 
-  const deleteAiTeamDetails = useCallback(async (aiTeamId: string): Promise<ApiResponse<void>> => {
+  const deleteAiTeamDetails = useCallback((aiTeamId: string): Promise<ApiResponse<void>> => {
     return apiDelete(`api/team_details/${aiTeamId}/`);
   }, [apiDelete]);
 

@@ -157,6 +157,7 @@ const br: TranslationType = {
     toolType: "Tipo de ferramenta",
     instructions: "Instruções",
     toolFile: "Arquivo da ferramenta",
+    fileInput: "Arquivo da ferramenta",
     update: "Atualizar",
     create: "Criar",
     edit: "Editar",

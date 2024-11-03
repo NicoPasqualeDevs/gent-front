@@ -11,7 +11,6 @@ import {
     FormControl,
     InputLabel,
     Select,
-    MenuItem,
     Skeleton
 } from '@mui/material';
 import { motion } from "framer-motion";
@@ -287,11 +286,16 @@ export const FormButton: React.FC<{
     );
 };
 
-export const FormFileInput: React.FC<{
-    accept?: string;
-    onChange: (file: File) => void;
-    error?: string;
-}> = ({ accept, onChange, error }) => (
+// Actualizar la interfaz del FormFileInput
+interface FormFileInputProps {
+  name?: string;
+  label: string;
+  accept?: string;
+  onChange: (file: File) => void;
+  error?: string;
+}
+
+export const FormFileInput: React.FC<FormFileInputProps> = ({ accept, onChange, error }) => (
     <Box sx={formStyles.fileInput}>
         <input
             type="file"

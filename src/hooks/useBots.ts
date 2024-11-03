@@ -39,6 +39,10 @@ interface ConversationData {
   }>;
 }
 
+interface ToolRelationshipData {
+  agent_tool_ids: number[];
+}
+
 interface UseBotsApi {
   getBotDetails: (botId: string) => Promise<ApiResponse<AgentData>>;
   getBotsList: (aiTeamId: string, filterParams: string) => Promise<ApiResponse<AgentData[]>>;
@@ -52,6 +56,11 @@ interface UseBotsApi {
   closeChat: (conversationId: string) => Promise<void>;
   getAgentData: (botId: string) => Promise<ApiResponse<AgentData>>;
   getClientBotConversations: (botId: string) => Promise<ConversationData[]>;
+  postTool: (data: FormData) => Promise<any>;
+  getAllTools: () => Promise<any>;
+  getBotTools: (botId: string) => Promise<any>;
+  setToolRelationship: (data: ToolRelationshipData) => Promise<any>;
+  removeToolRelationship: (data: ToolRelationshipData) => Promise<any>;
 }
 
 const useBotsApi = (): UseBotsApi => {
@@ -82,7 +91,7 @@ const useBotsApi = (): UseBotsApi => {
   };
 
   const uploadDocument = async (
-    file: File, 
+    file: File,
     botId: string,
     onProgress?: (progress: number) => void
   ): Promise<ApiResponse<void>> => {
@@ -110,7 +119,7 @@ const useBotsApi = (): UseBotsApi => {
   };
 
   const closeChat = async (conversationId: string): Promise<void> => {
-    const response = await apiDelete(`api/bots/close-chat/${conversationId}/`);
+    await apiDelete(`api/bots/close-chat/${conversationId}/`);
     return;
   };
 
@@ -121,6 +130,26 @@ const useBotsApi = (): UseBotsApi => {
   const getClientBotConversations = async (botId: string): Promise<ConversationData[]> => {
     const response = await apiGet(`api/bots/${botId}/client-bot-conversations/`);
     return response.data as ConversationData[];
+  };
+
+  const postTool = (data: FormData): Promise<any> => {
+    return apiPost('api/tools/', data);
+  };
+
+  const getAllTools = (): Promise<any> => {
+    return apiGet('api/tools/');
+  };
+
+  const getBotTools = (botId: string): Promise<any> => {
+    return apiGet(`api/bots/${botId}/tools/`);
+  };
+
+  const setToolRelationship = (data: ToolRelationshipData): Promise<any> => {
+    return apiPost('api/tools/relationship/', data);
+  };
+
+  const removeToolRelationship = (data: ToolRelationshipData): Promise<any> => {
+    return apiDelete(`api/tools/relationship/`, data);
   };
 
   return {
@@ -135,7 +164,12 @@ const useBotsApi = (): UseBotsApi => {
     sendMessage,
     closeChat,
     getAgentData,
-    getClientBotConversations
+    getClientBotConversations,
+    postTool,
+    getAllTools,
+    getBotTools,
+    setToolRelationship,
+    removeToolRelationship
   };
 };
 
