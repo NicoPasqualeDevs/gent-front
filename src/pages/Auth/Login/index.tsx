@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Grid, Typography, Box } from "@mui/material";
+import { Button, Grid, Typography, Box, CircularProgress } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { AuthLoginData, AuthUser } from "@/types/Auth";
@@ -32,6 +32,7 @@ const Login: React.FC = () => {
   const theme = useTheme();
   const [rotatingText, setRotatingText] = useState(0);
   const t = languages[language as keyof typeof languages].login;
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,6 +55,7 @@ const Login: React.FC = () => {
   });
 
   const onSubmit = async (values: AuthLoginData) => {
+    setIsLoading(true);
     try {
       const response = await loginUser(values);
       const userData = response.data;
@@ -89,6 +91,8 @@ const Login: React.FC = () => {
           password: errorMessage === t.invalidCredentials ? t.invalidCredentials : "",
         });
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -292,24 +296,28 @@ const Login: React.FC = () => {
                       mt: 2,
                     }}
                   >
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      sx={{
-                        paddingTop: "10px",
-                        paddingBottom: "10px",
-                        color: "white",
-                        transition: 'all 0.3s ease',
-                        '&:hover': {
-                          color: theme.palette.secondary.contrastText,
-                        },
-                        [theme.breakpoints.between("xs", "sm")]: {
-                          maxWidth: "100%",
-                        },
-                      }}
-                    >
-                      {t.loginButton}
-                    </Button>
+                    {isLoading ? (
+                      <CircularProgress size={36} color="primary" />
+                    ) : (
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        sx={{
+                          paddingTop: "10px",
+                          paddingBottom: "10px",
+                          color: "white",
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            color: theme.palette.secondary.contrastText,
+                          },
+                          [theme.breakpoints.between("xs", "sm")]: {
+                            maxWidth: "100%",
+                          },
+                        }}
+                      >
+                        {t.loginButton}
+                      </Button>
+                    )}
                   </Grid>
                 </motion.div>
               </motion.form>
