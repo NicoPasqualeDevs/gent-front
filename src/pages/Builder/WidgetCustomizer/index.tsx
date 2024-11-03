@@ -1,7 +1,6 @@
-import { StyledPageTitle } from "@/components/styledComponents/Typography";
 import useWidget from "@/hooks/useWidget";
 import { WidgetData, CustomGreetingData, NewGreetingData } from "@/types/Bots";
-import { Grid, Box, Tabs, Tab, Paper, Button } from "@mui/material";
+import { Grid, Box, Tabs, Typography, Tab, Paper, Button } from "@mui/material";
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { StyledDefaultButton, StyledDangerButton } from "@/components/styledComponents/Buttons";
@@ -28,6 +27,8 @@ import {
   DashboardFooter,
   commonStyles
 } from "@/utils/DashboardsUtils";
+import { FormFileInput } from "@/utils/FormsViewUtils";
+import DataEntry from "@/pages/Builder/DataEntry";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -142,7 +143,7 @@ interface SecurityTabProps {
 
 // Actualizar los componentes con los nuevos tipos
 const TypographyTab: React.FC<TypographyTabProps> = ({ values, handleChange, inputError }) => (
-  <Grid container component={"form"} gap={2}>
+  <Grid container spacing={2}>
     <Grid item xs={12}>
       <TextInput
         name="font_family"
@@ -151,27 +152,25 @@ const TypographyTab: React.FC<TypographyTabProps> = ({ values, handleChange, inp
         helperText={inputError.font_family ?? " "}
         value={values.font_family ?? ""}
         onChange={handleChange}
+        
       />
     </Grid>
     <Grid item xs={12}>
       <MultilineInput
         name="faq_questions"
         label="Preguntas Frecuentes"
-        placeholder={`Ingrese las preguntas, en el siguiente formato:
-                pregunta #1 | pregunta #2 | etc... 
-                utilice el caracter "|" para separar las preguntas`}
+        placeholder="Ingrese las preguntas (separadas por |)"
         value={values.faq_questions ?? ""}
         helperText={inputError.faq_questions ?? " "}
         onChange={handleChange}
+        
       />
     </Grid>
     <Grid item xs={12}>
       <MultilineInput
         name="band_list"
         label="Palabras Baneadas"
-        placeholder={`Ingrese las palabras, en el siguiente formato:
-                palabra #1 | palabra #2 | etc... 
-                utilice el caracter "|" para separar las palabras`}
+        placeholder="Ingrese las palabras (separadas por |)"
         helperText={inputError.band_list ?? " "}
         value={values.band_list ?? ""}
         onChange={handleChange}
@@ -181,7 +180,7 @@ const TypographyTab: React.FC<TypographyTabProps> = ({ values, handleChange, inp
 );
 
 const ImagesTab: React.FC<ImagesTabProps> = ({ values, handleChange, errors }) => (
-  <Grid container component={"form"} gap={2}>
+  <Grid container spacing={2}>
     <Grid item xs={12}>
       <TextInput
         name="brand_alt"
@@ -192,57 +191,98 @@ const ImagesTab: React.FC<ImagesTabProps> = ({ values, handleChange, errors }) =
         onChange={handleChange}
       />
     </Grid>
-    <Grid item xs={6}>
-      <ImageInput
+    <Grid item xs={12}>
+      <FormFileInput
         name="brand_logo"
         label="Logo de Cliente"
-        onChange={handleChange}
-        value={values.brand_logo ? true : false}
+        accept="image/*"
+        onChange={(file) => {
+          handleChange({
+            target: {
+              name: 'brand_logo',
+              value: file
+            }
+          });
+        }}
+        error={errors.brand_logo}
       />
     </Grid>
-    <Grid item xs={6}>
-      <ImageInput
+    <Grid item xs={12}>
+      <FormFileInput
         name="icon_bot"
         label="Ícono de bot"
-        onChange={handleChange}
-        value={values.icon_bot ? true : false}
+        accept="image/*"
+        onChange={(file) => {
+          handleChange({
+            target: {
+              name: 'icon_bot',
+              value: file
+            }
+          });
+        }}
+        error={errors.icon_bot}
       />
     </Grid>
-    <Grid item xs={6}>
-      <ImageInput
+    <Grid item xs={12}>
+      <FormFileInput
         name="icon_chat"
         label="Ícono de chat"
-        onChange={handleChange}
-        value={values.icon_chat ? true : false}
+        accept="image/*"
+        onChange={(file) => {
+          handleChange({
+            target: {
+              name: 'icon_chat',
+              value: file
+            }
+          });
+        }}
+        error={errors.icon_chat}
       />
     </Grid>
-    <Grid item xs={6}>
-      <ImageInput
+    <Grid item xs={12}>
+      <FormFileInput
         name="icon_hidden"
         label="Ícono de ocultar"
-        onChange={handleChange}
-        value={values.icon_hidden ? true : false}
+        accept="image/*"
+        onChange={(file) => {
+          handleChange({
+            target: {
+              name: 'icon_hidden',
+              value: file
+            }
+          });
+        }}
+        error={errors.icon_hidden}
       />
     </Grid>
-    <Grid item xs={6}>
-      <ImageInput
+    <Grid item xs={12}>
+      <FormFileInput
         name="icon_send"
         label="Ícono de enviar"
-        onChange={handleChange}
-        value={values.icon_send ? true : false}
+        accept="image/*"
+        onChange={(file) => {
+          handleChange({
+            target: {
+              name: 'icon_send',
+              value: file
+            }
+          });
+        }}
+        error={errors.icon_send}
       />
     </Grid>
   </Grid>
 );
 
 const SecurityTab: React.FC<SecurityTabProps> = ({ values, handleChange }) => (
-  <Grid container component={"form"} gap={2}>
+  <Grid container spacing={2}>
     <Grid item xs={12}>
       <CheckboxInput
         name="sql_injection_tester"
         label="Comprobación de Inyección de SQL"
         onChange={handleChange}
         value={values.sql_injection_tester}
+        
       />
     </Grid>
     <Grid item xs={12}>
@@ -251,6 +291,7 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ values, handleChange }) => (
         label="Comprobación de Inyección de PHP"
         onChange={handleChange}
         value={values.php_injection_tester}
+        
       />
     </Grid>
     <Grid item xs={12}>
@@ -259,6 +300,7 @@ const SecurityTab: React.FC<SecurityTabProps> = ({ values, handleChange }) => (
         label="Comprobación de uso de caracteres extraños"
         onChange={handleChange}
         value={values.strange_chars_tester}
+        
       />
     </Grid>
   </Grid>
@@ -273,44 +315,64 @@ const GreetingsTab: React.FC<{
   handleDelete: (index: number) => void;
   handleNew: () => void;
 }> = ({ messages, emptyMessagesTemplate, newMessage, handleUpdate, handleDelete, handleNew }) => (
-  <Box>
-    <Box sx={{ mt: 2 }}>
+  <Grid container spacing={2}>
+    <Grid item xs={12}>
       {messages.map((item, index) => (
         <Box
-          display={"flex"}
-          gap={1}
-          marginTop={"10px"}
           key={`greeting-${index}`}
+          sx={{
+            display: 'flex',
+            gap: 2,
+            mb: 2,
+            alignItems: 'center'
+          }}
         >
           <ShortInput
             propKey="text"
             emptyData={emptyMessagesTemplate[index]}
             data={item}
+            
           />
-          <StyledDefaultButton onClick={() => handleUpdate(index)}>
+          <StyledDefaultButton 
+            onClick={() => handleUpdate(index)}
+            sx={{ minWidth: '120px' }}
+          >
             Actualizar
           </StyledDefaultButton>
-          <StyledDangerButton onClick={() => handleDelete(index)}>
+          <StyledDangerButton 
+            onClick={() => handleDelete(index)}
+            sx={{ minWidth: '120px' }}
+          >
             Borrar
           </StyledDangerButton>
         </Box>
       ))}
-    </Box>
+    </Grid>
 
-    <Box sx={{ mt: 4 }}>
-      <h3>Crear nuevo mensaje</h3>
-      <Box display={"flex"} gap={1} marginTop={"10px"}>
+    <Grid item xs={12}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
+        Crear nuevo mensaje
+      </Typography>
+      <Box sx={{
+        display: 'flex',
+        gap: 2,
+        alignItems: 'center'
+      }}>
         <ShortInput
           propKey="text"
           emptyData={newMessage}
           data={newMessage}
+          
         />
-{/*         <StyledDefaultButton onClick={handleNew}>
+        <StyledDefaultButton 
+          onClick={handleNew}
+          sx={{ minWidth: '120px' }}
+        >
           Crear
-        </StyledDefaultButton> */}
+        </StyledDefaultButton>
       </Box>
-    </Box>
-  </Box>
+    </Grid>
+  </Grid>
 );
 
 // Definir la interfaz para las acciones
@@ -548,23 +610,21 @@ export const WidgetCustomizer: React.FC = () => {
   const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     
-    // Limpiar cualquier timer pendiente
+
+    
+    // Limpiar el timeout anterior si existe
     if (colorUpdateTimeout.current) {
       clearTimeout(colorUpdateTimeout.current);
     }
     
-    // Actualizar el estado del formulik inmediatamente para la vista previa
-    handleChange(e);
-    
-    // Crear el nuevo timer y guardarlo como el último
+    // Crear nuevo timeout para actualizar widgetData
     colorUpdateTimeout.current = setTimeout(() => {
+    handleChange(e);
       setWidgetData(prevData => ({
         ...prevData,
         [name]: value
       }));
-      // Limpiar la referencia del timer después de ejecutarse
-      colorUpdateTimeout.current = undefined;
-    }, 1);
+    }, 125);
   };
 
   // Función para asegurar que widgetData tenga todos los campos requeridos
@@ -739,6 +799,14 @@ export const WidgetCustomizer: React.FC = () => {
     [{
       label: "Guardar Saludos",
       onClick: handleNew
+    }],
+    // Acciones para la tab de Datos
+    [{
+      label: "Guardar Datos",
+      onClick: () => {
+        setHelperText();
+        // Aquí puedes agregar la lógica específica para guardar datos si es necesario
+      }
     }]
   ];
 
@@ -764,6 +832,7 @@ export const WidgetCustomizer: React.FC = () => {
               <Tab label="Imágenes" />
               <Tab label="Seguridad" />
               <Tab label="Saludos" />
+              <Tab label="Datos" />
             </Tabs>
           </Box>
 
@@ -866,6 +935,10 @@ export const WidgetCustomizer: React.FC = () => {
                         handleDelete={handleDelete}
                         handleNew={handleNew}
                       />
+                    </TabPanel>
+
+                    <TabPanel value={tabValue} index={5}>
+                      <DataEntry />
                     </TabPanel>
                   </Box>
                 </Box>
