@@ -93,7 +93,8 @@ const fr: TranslationType = {
     configureButton: "Configurer",
     copyWidget: "Copier le code du widget",
     widgetCopied: "Code copié dans le presse-papiers",
-    modelAI: "Modèle d'IA : {model}"
+    modelAI: "Modèle d'IA : {model}",
+    errorMissingParams: "Paramètres requis manquants pour cette action"
   },
   chatView: {
     agentPanel: "Panneau de {agentName}",
@@ -199,7 +200,8 @@ const fr: TranslationType = {
     delete: "Supprimer",
     deleteConfirmation: "Êtes-vous sûr de vouloir supprimer cet outil ?",
     deleteSuccess: "Outil supprimé avec succès",
-    deleteError: "Erreur lors de la suppression de l'outil"
+    deleteError: "Erreur lors de la suppression de l'outil",
+    errorMissingParams: "Paramètres requis manquants pour cette action"
   },
   contextEntry: {
     title: "Créer un Agent",

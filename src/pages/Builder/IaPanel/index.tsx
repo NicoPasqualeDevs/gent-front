@@ -35,6 +35,7 @@ import {
 } from "@/utils/DashboardsUtils";
 import { alpha } from '@mui/material/styles';
 import { PaginationFooter } from "@/utils/DashboardsUtils";
+import { builderNavigationUtils } from '@/utils/NavigationUtils';
 
 const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
@@ -228,7 +229,7 @@ const IaPanel: React.FC<PageProps> = () => {
             alignItems: 'center',
             mb: 2
           }}>
-            <Avatar sx={{ mr: 1 }}>
+            <Avatar sx={{ mr: 1, backgroundColor: theme.palette.secondary.light }}>
               {bot.name.charAt(0).toUpperCase()}
             </Avatar>
             <Box>
@@ -244,7 +245,7 @@ const IaPanel: React.FC<PageProps> = () => {
           {/* Badge del modelo AI */}
           <Typography variant="body2" sx={{
             color: theme.palette.secondary.main,
-            backgroundColor: theme.palette.primary.main,
+            backgroundColor: theme.palette.secondary.dark,
             display: 'inline-block',
             padding: '7px 14px',
             borderRadius: '16px',
@@ -463,7 +464,7 @@ const IaPanel: React.FC<PageProps> = () => {
             <Tooltip title={t.iaPanel.edit} arrow placement="top">
               <IconButton
                 size="small"
-                onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}/${bot.id}`)}
+                onClick={() => handleEditClick(bot)}
               >
                 <EditIcon fontSize="small" />
               </IconButton>
@@ -493,6 +494,18 @@ const IaPanel: React.FC<PageProps> = () => {
       allowerState: value,
       botToDelete: value ? prev.botToDelete : "" 
     }));
+  };
+
+  const handleEditClick = (bot: AgentData) => {
+    if (!aiTeamId || !bot.id) {
+      ErrorToast(t.iaPanel.errorMissingParams);
+      return;
+    }
+    
+    builderNavigationUtils.toAgentContext(navigate, {
+      aiTeamId,
+      botId: bot.id
+    });
   };
 
   return (

@@ -93,7 +93,8 @@ const en: TranslationType = {
     configureButton: "Configure",
     copyWidget: "Copy widget code",
     widgetCopied: "Code copied to clipboard",
-    modelAI: "AI Model: {model}"
+    modelAI: "AI Model: {model}",
+    errorMissingParams: "Missing required parameters for this action"
   },
   chatView: {
     agentPanel: "Panel of {agentName}",
@@ -199,7 +200,8 @@ const en: TranslationType = {
     delete: "Delete",
     deleteConfirmation: "Are you sure you want to delete this tool?",
     deleteSuccess: "Tool deleted successfully",
-    deleteError: "Error deleting tool"
+    deleteError: "Error deleting tool",
+    errorMissingParams: "Missing required parameters for this action"
   },
   contextEntry: {
     title: "Create Agent",

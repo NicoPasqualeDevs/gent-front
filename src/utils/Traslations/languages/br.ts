@@ -93,7 +93,8 @@ const br: TranslationType = {
     configureButton: "Configurar",
     copyWidget: "Copiar código do widget",
     widgetCopied: "Código copiado para a área de transferência",
-    modelAI: "Modelo de IA: {model}"
+    modelAI: "Modelo de IA: {model}",
+    errorMissingParams: "Parâmetros necessários ausentes para esta ação"
   },
   chatView: {
     agentPanel: "Painel de {agentName}",
@@ -199,7 +200,8 @@ const br: TranslationType = {
     delete: "Excluir",
     deleteConfirmation: "Tem certeza que deseja excluir esta ferramenta?",
     deleteSuccess: "Ferramenta excluída com sucesso",
-    deleteError: "Erro ao excluir ferramenta"
+    deleteError: "Erro ao excluir ferramenta",
+    errorMissingParams: "Parâmetros necessários ausentes para esta ação"
   },
   contextEntry: {
     title: "Criar Agente",

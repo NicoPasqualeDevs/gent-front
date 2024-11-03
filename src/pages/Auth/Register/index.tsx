@@ -17,6 +17,7 @@ import {
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppContext } from "@/context/app";
+import { authNavigationUtils } from '@/utils/NavigationUtils';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ const Register: React.FC = () => {
     try {
       const response = await registerUser(values);
       SuccessToast(response.message);
-      navigate("/builder");
+      authNavigationUtils.postRegisterRedirect(navigate);
     } catch (err) {
       if (err instanceof Error) {
         ErrorToast(err.message || "Error en el registro");

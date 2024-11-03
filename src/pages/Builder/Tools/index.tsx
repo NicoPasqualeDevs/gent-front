@@ -9,6 +9,7 @@ import { ToolData } from "@/types/Bots";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
 import AddIcon from "@mui/icons-material/Add";
+import { builderNavigationUtils } from '@/utils/NavigationUtils';
 
 const Tools: React.FC = () => {
   const { aiTeamId, clientName, botName, botId } = useParams<{ aiTeamId: string; clientName: string; botName: string; botId: string }>();
@@ -17,13 +18,13 @@ const Tools: React.FC = () => {
   const [agentTools, setAgentTools] = useState<ToolData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { auth, language, replacePath, appNavigation } = useAppContext();
-  const t = languages[language as keyof typeof languages].tools;
+  const t = languages[language as keyof typeof languages];
   const theme = useTheme();
   const navigate = useNavigate();
 
   const fetchTools = useCallback(async () => {
     if (!auth?.token || !botId) {
-      ErrorToast(t.errorToken);
+      ErrorToast(t.tools.errorToken);
       setIsLoading(false);
       return;
     }
@@ -40,12 +41,12 @@ const Tools: React.FC = () => {
       setTools(allClientTools.filter((tool: ToolData) => !botTools.some((botTool: ToolData) => botTool.id === tool.id)));
       setAgentTools(botTools);
     } catch (error) {
-      ErrorToast(t.errorLoading);
+      ErrorToast(t.tools.errorLoading);
       console.error("Error fetching tools:", error);
     } finally {
       setIsLoading(false);
     }
-  }, [auth?.token, auth?.uuid, botId, getClientTools, getBotTools, t.errorLoading, t.errorToken]);
+  }, [auth?.token, auth?.uuid, botId, getClientTools, getBotTools]);
 
   useEffect(() => {
     const updatePathAndFetchTools = async () => {
@@ -54,13 +55,13 @@ const Tools: React.FC = () => {
           ...appNavigation.slice(0, 1),
           { label: clientName, current_path: `/builder/agents/${clientName}/${aiTeamId}`, preview_path: "", translationKey: "" },
           { label: botName, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "", translationKey: "" },
-          { label: t.type, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "", translationKey: "" },
+          { label: t.tools.type, current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, preview_path: "", translationKey: "" },
         ]);
       }
       await fetchTools();
     };
     updatePathAndFetchTools();
-  }, [aiTeamId, clientName, botName, fetchTools, replacePath, appNavigation, t.type]);
+  }, [aiTeamId, clientName, botName, fetchTools, replacePath, appNavigation, t.tools.type]);
 
   const handleToolAction = async (toolId: number, action: 'relate' | 'unrelate') => {
     if (!botId) return;
@@ -68,21 +69,41 @@ const Tools: React.FC = () => {
     try {
       if (action === 'relate') {
         await addToolToBot(botId, [toolId]);
-        SuccessToast(t.successRelate);
+        SuccessToast(t.tools.successRelate);
       } else {
         await removeToolFromBot(botId, [toolId]);
-        SuccessToast(t.successUnrelate);
+        SuccessToast(t.tools.successUnrelate);
       }
 
-      await fetchTools(); // Refetch tools after action
+      await fetchTools();
     } catch (error) {
-      ErrorToast(action === 'relate' ? t.errorRelate : t.errorUnrelate);
+      ErrorToast(action === 'relate' ? t.tools.errorRelate : t.tools.errorUnrelate);
       console.error(`Error during tool ${action}:`, error);
     }
   };
 
   const handleAddTool = () => {
-    navigate(`/builder/agents/tools-form/${aiTeamId}/${botName}`);
+    if (!aiTeamId || !botId) {
+      ErrorToast(t.iaPanel.errorMissingParams);
+      return;
+    }
+    
+    builderNavigationUtils.toToolsForm(navigate, {
+      aiTeamId,
+      botId
+    });
+  };
+
+  const handleRelationship = () => {
+    if (!aiTeamId || !botId) {
+      ErrorToast(t.iaPanel.errorMissingParams);
+      return;
+    }
+    
+    builderNavigationUtils.toToolsRelationship(navigate, {
+      aiTeamId,
+      botId
+    });
   };
 
   if (isLoading) {
@@ -98,13 +119,13 @@ const Tools: React.FC = () => {
           onClick={handleAddTool}
           sx={{ mb: 2, color: theme.palette.secondary.main }}
         >
-          {t.createToolButton}
+          {t.tools.createToolButton}
         </Button>
       )}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         <Paper elevation={3} sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-            <Typography variant="h4">{t.libraryTitle}</Typography>
+            <Typography variant="h4">{t.tools.libraryTitle}</Typography>
           </Box>
           {tools.map((tool) => (
             <Card key={tool.id} sx={{ marginBottom: 2 }}>
@@ -112,7 +133,7 @@ const Tools: React.FC = () => {
                 <Typography variant="h6">{tool.tool_name}</Typography>
                 <Stack direction="row" spacing={2}>
                   <Typography>ID: {tool.id}</Typography>
-                  <Typography>{t.type}: {tool.type}</Typography>
+                  <Typography>{t.tools.type}: {tool.type}</Typography>
                 </Stack>
               </CardContent>
               <CardActions>
@@ -121,21 +142,21 @@ const Tools: React.FC = () => {
                   variant="contained"
                   onClick={() => handleToolAction(Number(tool.id), 'relate')}
                 >
-                  {t.relateButton}
+                  {t.tools.relateButton}
                 </Button>
               </CardActions>
             </Card>
           ))}
         </Paper>
         <Paper elevation={3} sx={{ p: 2 }}>
-          <Typography variant="h4" gutterBottom>{t.relatedTitle}</Typography>
+          <Typography variant="h4" gutterBottom>{t.tools.relatedTitle}</Typography>
           {agentTools.map((tool) => (
             <Card key={tool.id} sx={{ marginBottom: 2 }}>
               <CardContent>
                 <Typography variant="h6">{tool.tool_name}</Typography>
                 <Stack direction="row" spacing={2}>
                   <Typography>ID: {tool.id}</Typography>
-                  <Typography>{t.type}: {tool.type}</Typography>
+                  <Typography>{t.tools.type}: {tool.type}</Typography>
                 </Stack>
               </CardContent>
               <CardActions>
@@ -145,7 +166,7 @@ const Tools: React.FC = () => {
                   color="secondary"
                   onClick={() => handleToolAction(Number(tool.id), 'unrelate')}
                 >
-                  {t.unrelateButton}
+                  {t.tools.unrelateButton}
                 </Button>
               </CardActions>
             </Card>

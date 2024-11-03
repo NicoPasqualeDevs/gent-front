@@ -13,13 +13,18 @@ const AgentsDetailsModule: React.FC = () => {
   return (
     <AuthChecker>
       <Routes>
-        <Route path="contextEntry/:aiTeamId?/:botId?" element={<ContextEntry />} />
-        <Route path="dataEntry/:botId?" element={<DataEntryComponent />} />
-        <Route path="widgetCustomizer/:botId?" element={<WidgetCustomizer />} />
-        <Route path="tools/:aiTeamId?/:botName?/:botId?/:toolName?/:toolId?" element={<Tools />} />
-        <Route path="tools-form/:aiTeamId?/:botName?/:botId?/:toolName?/:toolId?" element={<ToolsForm />} />
-        <Route path="tools-relationship/:botName?/:botId?" element={<ToolsRelationship />} />
+        {/* Rutas principales */}
         <Route path=":clientName/:aiTeamId" element={<IaPanel />} />
+        <Route path="contextEntry/:aiTeamId/:botId?" element={<ContextEntry />} />
+        <Route path="dataEntry/:aiTeamId/:botId" element={<DataEntryComponent />} />
+        <Route path="widgetCustomizer/:botId" element={<WidgetCustomizer />} />
+
+        {/* Rutas de herramientas */}
+        <Route path="tools">
+          <Route path=":aiTeamId/:botId/:toolId?" element={<Tools />} />
+          <Route path="form/:aiTeamId/:botId/:toolId?" element={<ToolsForm />} />
+          <Route path="relationship/:aiTeamId/:botId" element={<ToolsRelationship />} />
+        </Route>
       </Routes>
     </AuthChecker>
   );

@@ -13,6 +13,10 @@ const Pathbar: React.FC = () => {
     return t.leftMenu[key] || path.label;
   };
 
+  if (!appNavigation.length) {
+    return null;
+  }
+
   return (
     <Box
       sx={{
@@ -34,7 +38,8 @@ const Pathbar: React.FC = () => {
             color="text.primary"
             sx={{
               cursor: "default",
-              fontSize: "0.9rem"
+              fontSize: "0.9rem",
+              pt: "2px"
             }}
           >
             {getTranslation(path)}

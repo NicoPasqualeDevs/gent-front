@@ -93,7 +93,8 @@ const de: TranslationType = {
     configureButton: "Konfigurieren",
     copyWidget: "Widget-Code kopieren",
     widgetCopied: "Code in die Zwischenablage kopiert",
-    modelAI: "KI-Modell: {model}"
+    modelAI: "KI-Modell: {model}",
+    errorMissingParams: "Erforderliche Parameter für diese Aktion fehlen"
   },
   chatView: {
     agentPanel: "Panel von {agentName}",
@@ -199,7 +200,8 @@ const de: TranslationType = {
     delete: "Löschen",
     deleteConfirmation: "Sind Sie sicher, dass Sie dieses Werkzeug löschen möchten?",
     deleteSuccess: "Werkzeug erfolgreich gelöscht",
-    deleteError: "Fehler beim Löschen des Werkzeugs"
+    deleteError: "Fehler beim Löschen des Werkzeugs",
+    errorMissingParams: "Erforderliche Parameter für diese Aktion fehlen"
   },
   contextEntry: {
     title: "Agent erstellen",

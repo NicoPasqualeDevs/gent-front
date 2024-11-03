@@ -562,11 +562,9 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
     totalItems,
     itemsPerPage,
     onPageChange,
-    onItemsPerPageChange,
     createButton,
     translations
 }) => {
-    const startItem = (currentPage - 1) * Number(itemsPerPage) + 1;
     const endItem = Math.min(currentPage * Number(itemsPerPage), totalItems);
 
     return (
@@ -593,10 +591,9 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
                         color="primary"
                         size="small"
                         sx={{
-                            lineHeight: "26px",
                             '& .MuiPaginationItem-root': {
                                 paddingTop: '2px',
-                                color: 'white'
+                                color: 'white !important'
                             }
                         }}
                     />

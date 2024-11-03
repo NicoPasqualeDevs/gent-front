@@ -7,9 +7,7 @@ const AuthModule: React.FC = () => {
     return (
         <Routes>
             <Route path="login" element={<Login />} />
-            <Route path="register">
-                <Route path="new-user" element={<Register />} />
-            </Route>
+            <Route path="register/new-user" element={<Register />} />
         </Routes>
     )
 }

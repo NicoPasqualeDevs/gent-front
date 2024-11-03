@@ -95,6 +95,7 @@ export type TranslationType = {
     copyWidget: string;
     widgetCopied: string;
     modelAI: string;
+    errorMissingParams: string;
   };
   chatView: {
     agentPanel: string;
@@ -196,6 +197,7 @@ export type TranslationType = {
     deleteConfirmation: string;
     deleteSuccess: string;
     deleteError: string;
+    errorMissingParams: string;
   };
   contextEntry: {
     title: string;
@@ -303,4 +305,34 @@ export interface Translations {
   // ... otras interfaces existentes
   leftMenu: LeftMenuTranslations;
   pathbar: PathbarTranslations;
+}
+
+export interface ToolsTranslations {
+  libraryTitle: string;
+  relatedTitle: string;
+  type: string;
+  relateButton: string;
+  unrelateButton: string;
+  successRelate: string;
+  successUnrelate: string;
+  errorRelate: string;
+  errorUnrelate: string;
+  errorToken: string;
+  errorLoading: string;
+  createToolButton: string;
+  title: string;
+  description: string;
+  searchPlaceholder: string;
+  noToolsFound: string;
+  noToolsToShow: string;
+  toolsCount: string;
+  perPage: string;
+  reloadData: string;
+  manage: string;
+  edit: string;
+  delete: string;
+  deleteConfirmation: string;
+  deleteSuccess: string;
+  deleteError: string;
+  errorMissingParams: string;
 } 

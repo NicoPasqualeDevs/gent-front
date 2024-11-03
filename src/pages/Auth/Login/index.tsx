@@ -298,10 +298,10 @@ const Login: React.FC = () => {
                       sx={{
                         paddingTop: "10px",
                         paddingBottom: "10px",
+                        color: "white",
                         transition: 'all 0.3s ease',
                         '&:hover': {
-                          transform: 'translateY(-2px)',
-                          boxShadow: '0 6px 12px rgba(0,0,0,0.2)',
+                          color: theme.palette.secondary.contrastText,
                         },
                         [theme.breakpoints.between("xs", "sm")]: {
                           maxWidth: "100%",

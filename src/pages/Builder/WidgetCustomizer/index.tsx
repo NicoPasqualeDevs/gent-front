@@ -1,5 +1,5 @@
 import { StyledPageTitle } from "@/components/styledComponents/Typography";
-import useBotsApi from "@/hooks/useBots";
+import useWidget from "@/hooks/useWidget";
 import { WidgetData, CustomGreetingData, NewGreetingData } from "@/types/Bots";
 import { Grid, Box, Tabs, Tab } from "@mui/material";
 import React, { useCallback, useEffect, useState, useRef } from "react";
@@ -20,6 +20,7 @@ import { useAppContext } from "@/context/app";
 import { ReactWidget } from './components/ReactWidget';
 import { useTheme } from '@mui/material/styles';
 import { ColorInput } from "@/components/Inputs/ColorInput";
+import { ApiResponse } from "@/types/Api";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -48,8 +49,8 @@ export const WidgetCustomizer: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const { replacePath, appNavigation } = useAppContext();
   const [widgetData, setWidgetData] = useState<WidgetData>({ id: "" });
-  const { getWidget, patchWidget, getCustomMessages } = useBotsApi();
-  const { botId } = useParams();  // Estados para mensajes personalizados
+  const { getWidget, patchWidget, getCustomMessages } = useWidget();
+  const { botId } = useParams();
   const [messages, setMessages] = useState<CustomGreetingData[]>([]);
   const [newMessage, setNewMessage] = useState<NewGreetingData>({
     bot: "",
@@ -152,17 +153,20 @@ export const WidgetCustomizer: React.FC = () => {
   };
 
   const onSubmit = (values: WidgetData) => {
-    let data: WidgetData = {
+    let data: Partial<WidgetData> = {
       id: widgetData.id,
     };
-    Object.entries(widgetData).map(([key, value]) => {
-      if (value !== values[key]) {
-        data = { ...data, [key]: values[key] };
+    Object.entries(widgetData).forEach(([key, value]) => {
+      if (value !== values[key as keyof WidgetData]) {
+        data[key as keyof WidgetData] = values[key as keyof WidgetData];
       }
     });
+    
     patchWidget(widgetData.id, data)
       .then(() => SuccessToast("Widget actualizado correctamente"))
-      .catch((error) => ErrorToast(`Error: ${error.status} - ${error.error}`));
+      .catch((error: { status: string; error: string }) => 
+        ErrorToast(`Error: ${error.status} - ${error.error}`)
+      );
   };
 
   const { handleSubmit, handleChange, errors, values, setValues } = useFormik({
@@ -173,15 +177,15 @@ export const WidgetCustomizer: React.FC = () => {
 
   const getWidgetData = useCallback((botId: string): void => {
     getWidget(botId)
-      .then((response) => {
+      .then((response: ApiResponse<WidgetData>) => {
         const defaultedResponse = {
-          ...response,
-          primary_color: response.primary_color || theme.palette.primary.main,
-          primary_textContrast: response.primary_textContrast || theme.palette.primary.contrastText,
-          secondary_color: response.secondary_color || theme.palette.secondary.main,
-          secondary_textContrast: response.secondary_textContrast || theme.palette.secondary.contrastText,
-          badge_color: response.badge_color || theme.palette.primary.light,
-          badge_contrast: response.badge_contrast || theme.palette.primary.contrastText,
+          ...response.data,
+          primary_color: response.data.primary_color || theme.palette.primary.main,
+          primary_textContrast: response.data.primary_textContrast || theme.palette.primary.contrastText,
+          secondary_color: response.data.secondary_color || theme.palette.secondary.main,
+          secondary_textContrast: response.data.secondary_textContrast || theme.palette.secondary.contrastText,
+          badge_color: response.data.badge_color || theme.palette.primary.light,
+          badge_contrast: response.data.badge_contrast || theme.palette.primary.contrastText,
         };
         
         setWidgetData(defaultedResponse);
@@ -191,7 +195,7 @@ export const WidgetCustomizer: React.FC = () => {
         });
         setIsLoaded(true);
       })
-      .catch((error) => {
+      .catch((error: { status: string; error: string }) => {
         const fallbackData = {
           id: "",
           primary_color: theme.palette.primary.main,
@@ -209,19 +213,18 @@ export const WidgetCustomizer: React.FC = () => {
         });
         setIsLoaded(true);
       });
-  }, [theme.palette, setValues, values]);
+  }, [theme.palette, setValues, values, getWidget]);
 
-  // Funciones para mensajes personalizados
   const getCustomMessagesData = useCallback((botId: string): Promise<void> => {
     return getCustomMessages(botId)
-      .then((response) => {
-        emptyMessagesTemplate = [...response.data];
-        setMessages([...response.data]);
+      .then((response: ApiResponse<{ data: CustomGreetingData[] }>) => {
+        emptyMessagesTemplate = [...response.data.data];
+        setMessages([...response.data.data]);
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         console.log(error);
       });
-  }, []);
+  }, [getCustomMessages]);
 
   const handleUpdate = (index: number) => {
     // ... (mantener la lógica existente de handleUpdate)
@@ -242,23 +245,24 @@ export const WidgetCustomizer: React.FC = () => {
   // Efectos y carga inicial
   useEffect(() => {
     if (botId) {
+      const newPath = {
+        label: "Widget",
+        current_path: `bots/widgetCustomizer/${botId}`,
+        preview_path: "",
+        translationKey: "widget" // Añadir la clave de traducción requerida
+      };
+
       replacePath([
         ...appNavigation.slice(0, 2),
-        {
-          label: "Widget",
-          current_path: `bots/widgetCustomizer/${botId}`,
-          preview_path: "",
-        },
+        newPath,
       ]);
       
-      // Primero cargar los datos del widget
       getWidgetData(botId);
-      // Luego cargar los mensajes personalizados
       getCustomMessagesData(botId).then(() => {
         setNewMessage({ ...newMessage, bot: botId });
       });
     }
-  }, [botId]);
+  }, [botId, getWidgetData, getCustomMessagesData]);
 
   // Agregar esta referencia al inicio del componente, junto con los otros estados
   const colorUpdateTimeout = useRef<ReturnType<typeof setTimeout>>();

@@ -47,7 +47,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       
       if (savedAuth?.token) {
         dispatch({ type: "setAuth", payload: savedAuth });
-        dispatch({ type: "setAppNavigation", payload: [] });
       }
       if (savedLanguage) {
         dispatch({ type: "setLanguage", payload: savedLanguage });
@@ -84,7 +83,6 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       
       saveAuth(authToStore);
       dispatch({ type: "setAuth", payload: authToStore });
-      dispatch({ type: "setAppNavigation", payload: [] });
     } else {
       removeAuth();
       dispatch({ type: "setAuth", payload: null });
