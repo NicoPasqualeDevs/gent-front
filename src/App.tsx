@@ -1,23 +1,22 @@
 import theme from "@/styles/theme";
-import React from "react";
 import AppRoutes from "./AppRoutes.tsx";
 import { AppProvider } from "@/context/app";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-import LoadingFallback from "@/components/LoadingFallback";
+import DelayedSuspense from "@/components/DelayedSuspense";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <React.Suspense fallback={<LoadingFallback />}>
+      <DelayedSuspense>
         <AppProvider>
           <AppRoutes />
           <ToastContainer theme={"colored"} />
         </AppProvider>
-      </React.Suspense>
+      </DelayedSuspense>
     </ThemeProvider>
   );
 }

@@ -6,7 +6,6 @@ import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
 import { useAppContext } from '@/context/app';
 import { useLocation } from 'react-router-dom';
-import DelayedSuspense from '@/components/DelayedSuspense';
 import { authStorage } from "@/services/auth";
 
 // Interfaces
@@ -15,13 +14,13 @@ interface ProtectedRouteProps {
   requireAuth?: boolean;
 }
 
-// Lazy loaded components
+// Lazy loaded components sin Suspense individual
 const HomeModule = lazy(() => import("./modules/home"));
 const BuilderModule = lazy(() => import("./modules/builder"));
 const NotFoundModule = lazy(() => import("./modules/notFound"));
 const AuthModule = lazy(() => import("./modules/auth"));
 
-// Layout components with Suspense
+// Layout components
 const UserL = (
   <UserLayout>
     <Outlet />
@@ -70,42 +69,40 @@ const AppRoutes = () => {
           pointerEvents: 'none',
         }}
       />
-      <DelayedSuspense>
-        <Routes>
-          <Route path="/">
-            <Route 
-              path="auth/*" 
-              element={
-                <ProtectedRoute requireAuth={false}>
-                  <AuthModule />
-                </ProtectedRoute>
-              } 
-            />
-            <Route 
-              path="builder/*" 
-              element={
-                <ProtectedRoute>
-                  <BuilderLayout>
-                    <BuilderModule />
-                  </BuilderLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route 
-              path="home" 
-              element={
-                <ProtectedRoute>
-                  {UserL}
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<HomeModule />} />
-            </Route>
-            <Route index element={<Navigate to="/home" replace />} />
-            <Route path="*" element={<NotFoundModule />} />
+      <Routes>
+        <Route path="/">
+          <Route 
+            path="auth/*" 
+            element={
+              <ProtectedRoute requireAuth={false}>
+                <AuthModule />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="builder/*" 
+            element={
+              <ProtectedRoute>
+                <BuilderLayout>
+                  <BuilderModule />
+                </BuilderLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route 
+            path="home" 
+            element={
+              <ProtectedRoute>
+                {UserL}
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<HomeModule />} />
           </Route>
-        </Routes>
-      </DelayedSuspense>
+          <Route index element={<Navigate to="/home" replace />} />
+          <Route path="*" element={<NotFoundModule />} />
+        </Route>
+      </Routes>
     </>
   );
 }

@@ -1,12 +1,10 @@
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, lazy } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useAppContext } from '@/context/app';
-import LoadingFallback from '@/components/LoadingFallback';
 import { ModuleProps } from '@/types/Module';
 import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useLoadingState from '@/hooks/useLoadingState';
-import DelayedSuspense from '@/components/DelayedSuspense';
 
 // Lazy loaded components
 const AiTeamsList = lazy(() => import("@/pages/AiTeams/AiTeamsList"));
@@ -49,10 +47,6 @@ const BuilderModule: React.FC<ModuleProps> = () => {
 
     initializeModule();
   }, [auth?.uuid]);
-
-  if (state.isLoading) {
-    return <LoadingFallback />;
-  }
 
   if (state.isError) {
     return null;

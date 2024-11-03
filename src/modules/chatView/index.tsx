@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '@/context/app';
-import LoadingFallback from '@/components/LoadingFallback';
 import { ModuleProps } from '@/types/Module';
 import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
@@ -60,10 +59,6 @@ const ChatViewModule: React.FC<ModuleProps> = () => {
 
     initializeModule();
   }, [auth?.uuid, botId, navigate, replacePath, setData, setError, botsApi, t]);
-
-  if (state.isLoading) {
-    return <LoadingFallback />;
-  }
 
   if (state.isError || !state.data) {
     return null;

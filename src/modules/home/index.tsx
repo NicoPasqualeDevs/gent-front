@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '@/context/app';
-import LoadingFallback from '@/components/LoadingFallback';
 import { ModuleProps } from '@/types/Module';
 import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
@@ -29,10 +28,6 @@ const HomeModule: React.FC<ModuleProps> = () => {
 
     initializeModule();
   }, [auth?.uuid, navigate, t, resetState, setError]);
-
-  if (state.isLoading) {
-    return <LoadingFallback />;
-  }
 
   if (state.isError) {
     return null;
