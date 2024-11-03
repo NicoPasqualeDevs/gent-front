@@ -21,7 +21,7 @@ import ApiIcon from '@mui/icons-material/Api'; // Añade esta importación
 import EditIcon from '@mui/icons-material/Edit';
 import { languages } from "@/utils/Traslations";
 import { PageProps } from '@/types/Page';
-import { IaPanelState } from './types';
+import { IaPanelState } from '../../../types/IaPanel';
 import AddIcon from "@mui/icons-material/Add";
 import {
   DashboardContainer,

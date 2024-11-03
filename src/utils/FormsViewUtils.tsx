@@ -335,6 +335,7 @@ export const FormTextField: React.FC<{
     helperText?: string;
     required?: boolean;
     multiline?: boolean;
+    disabled?: boolean;
     rows?: number;
     type?: string;
 }> = ({ multiline, rows, ...props }) => (

@@ -12,12 +12,13 @@ export interface AiTeamsDetails {
   };
 }
 
-export interface AiTeamsFormData {
-  name: string;
-  description: string;
-  owner?: string;
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
 }
-
 
 export interface AiTeamsFormData {
   name: string;
@@ -30,4 +31,9 @@ export interface AiTeamsFormState extends PageState {
   formData: AiTeamsFormData;
   isSubmitting: boolean;
   isEditing: boolean;
+  searchQuery: string;
+  contentPerPage: string;
+  isSearching: boolean;
+  users: User[];
+  errorMessage?: string;
 } 
