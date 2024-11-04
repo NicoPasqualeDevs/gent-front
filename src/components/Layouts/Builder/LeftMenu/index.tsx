@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { alpha, Box, Stack, Typography } from "@mui/material";
 import { useAppContext } from "@/context/app";
 import { useNavigate } from "react-router-dom";
 import { LeftMenuContainer } from "@/components/styledComponents/Layout";
@@ -8,10 +8,12 @@ import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 import { languages } from "@/utils/Traslations";
 import { useEffect } from "react";
+import { KeyboardArrowUp } from "@mui/icons-material";
+import { Fab } from "@mui/material";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
-  const { menu, navElevation, setNavElevation, setAuth, language, auth, replacePath } = useAppContext();
+  const { menu, navElevation, setMenu, setNavElevation, setAuth, language, auth, replacePath } = useAppContext();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const t = languages[language as keyof typeof languages];
@@ -169,7 +171,10 @@ const LeftMenu: React.FC = () => {
             sx={{
               height: "100%",
               display: "flex",
-              alignItems: "flex-end",
+              flexDirection: "column",
+              justifyContent: "flex-end",
+              gap: 2,
+              paddingBottom: "20px"
             }}
           >
             <Typography
@@ -194,15 +199,30 @@ const LeftMenu: React.FC = () => {
                 SuccessToast(t.leftMenu.logoutSuccess);
               }}
             >
-              <LogoutSharp
-                sx={{
-                  opacity: `${menu ? "1" : "0"}`,
-                  marginRight: "5px",
-                  transform: "scaleX(-1)",
-                }}
-              />
+              <LogoutSharp />
               {t.leftMenu.logout}
             </Typography>
+
+            <Box sx={{ 
+              display: { xs: menu ? 'flex' : 'none', lg: 'none' }, 
+              justifyContent: 'center',
+              position: 'absolute',
+              bottom: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)'
+            }}>
+              <Fab 
+                color="primary"
+                onClick={() => setMenu(!menu)}
+                size="medium"
+                sx={{
+                  backgroundColor: alpha(theme.palette.primary.main, 0.85),
+                  color: theme.palette.secondary.main,
+                }}
+              >
+                <KeyboardArrowUp />
+              </Fab>
+            </Box>
           </Box>
         </Stack>
       </LeftMenuContainer>

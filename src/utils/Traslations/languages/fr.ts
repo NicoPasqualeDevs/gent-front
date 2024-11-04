@@ -38,7 +38,8 @@ const fr: TranslationType = {
     saving: "Enregistrement...",
     update: "Mettre à jour",
     create: "Créer",
-    cancel: "Annuler"
+    cancel: "Annuler",
+    owner: "Propriétaire"
   },
   aiTeamsList: {
     newAiTeam: "Nouvelle Équipe IA",

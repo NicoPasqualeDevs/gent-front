@@ -1,15 +1,17 @@
 import { PageState } from '@/types/Page';
 
+export interface OwnerData {
+  name: string;
+  email: string;
+  id: string;
+}
+
 export interface AiTeamsDetails {
   id: string;
   name: string;
   description?: string;
-  owner?: string;
   address?: string;
-  owner_data?: {
-    name: string;
-    email: string;
-  };
+  owner_data?: OwnerData;
 }
 
 export interface User {
@@ -20,15 +22,8 @@ export interface User {
   last_name: string;
 }
 
-export interface AiTeamsFormData {
-  name: string;
-  description: string;
-  address: string;
-  owner?: string;
-}
-
 export interface AiTeamsFormState extends PageState {
-  formData: AiTeamsFormData;
+  formData: AiTeamsDetails;
   isSubmitting: boolean;
   isEditing: boolean;
   searchQuery: string;

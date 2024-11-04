@@ -38,7 +38,8 @@ const de: TranslationType = {
     saving: "Speichern...",
     update: "Aktualisieren",
     create: "Erstellen",
-    cancel: "Abbrechen"
+    cancel: "Abbrechen",
+    owner: "Eigentümer"
   },
   aiTeamsList: {
     newAiTeam: "Neues KI-Team",

@@ -1,202 +1,167 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '@/context/app';
 import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useAiTeamsApi from "@/hooks/useAiTeams";
-import { AiTeamsFormState } from '@/types/AiTeams';
-import { 
-  FormLayout, 
-  FormHeader, 
-  FormContent, 
+import useUsers from "@/hooks/useUsers";
+import {
+  FormLayout,
+  FormHeader,
+  FormContent,
   FormInputGroup,
-  FormButton,
-  FormActions,
-  FormCancelButton,
-  FormTextField
+  FormTextField,
 } from "@/utils/FormsViewUtils";
 import { PageProps } from '@/types/Page';
+import { SelectChangeEvent } from '@mui/material';
+import { AiTeamsFormState } from '@/types/AiTeams';
+import { Select, MenuItem } from '@mui/material';
 
 const AiTeamsForm: React.FC<PageProps> = () => {
   const navigate = useNavigate();
   const { aiTeamId, aiTeamName } = useParams();
   const { auth, language, replacePath } = useAppContext();
   const { getAiTeamDetails, createAiTeam, updateAiTeam } = useAiTeamsApi();
-  const [state, setState] = useState<AiTeamsFormState>({
+  const { getNoSuperAdminUsers } = useUsers();
+  const t = languages[language];
+
+  const [formState, setFormState] = useState<AiTeamsFormState>({
     isLoading: true,
     isError: false,
     isSubmitting: false,
-    isEditing: Boolean(aiTeamId),
+    isEditing: false,
     searchQuery: '',
-    contentPerPage: '5',
+    contentPerPage: '10',
     isSearching: false,
+    users: [],
     formData: {
-      name: '',
+      id: '',
+      name: aiTeamName || '',
       description: '',
       address: '',
+      owner_data: {
+        name: `${auth?.first_name || ''} ${auth?.last_name || ''}`.trim(),
+        email: auth?.email || '',
+        id: auth?.uuid || ''
+      }
     }
   });
-  const t = languages[language as keyof typeof languages];
 
-  const initializeForm = useCallback(async () => {
-    if (!auth?.uuid) {
-      console.log('No auth found, redirecting to login');
-      navigate('/auth/login');
-      return;
-    }
-
-    const currentPath = state.isEditing 
+  useEffect(() => {
+    const currentPath = aiTeamId
       ? `/builder/form/${aiTeamName}/${aiTeamId}`
       : "/builder/form";
 
     replacePath([
       {
-        label: state.isEditing ? state.formData.name || aiTeamName || '' : t.leftMenu.aiTeams,
+        label: aiTeamId ? formState.formData.name || aiTeamName || '' : t.leftMenu.aiTeams,
         current_path: "/builder",
         preview_path: "/builder",
         translationKey: "aiTeams"
       },
       {
-        label: state.isEditing ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
+        label: aiTeamId ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
         current_path: currentPath,
         preview_path: "",
-        translationKey: state.isEditing ? "editTeam" : "createTeam"
-      },
+        translationKey: aiTeamId ? "editTeam" : "createTeam"
+      }
     ]);
+  }, [aiTeamId, aiTeamName, formState.formData.name, t]);
 
-    if (!state.isEditing || !aiTeamId) {
-      setState(prev => ({ ...prev, isLoading: false }));
-      return;
-    }
+  useEffect(() => {
+    const loadInitialData = async () => {
+      if (!auth?.uuid) {
+        navigate('/auth/login');
+        return;
+      }
 
-    try {
-      console.log('Fetching team details for:', aiTeamId);
-      const teamDetails = await getAiTeamDetails(aiTeamId);
-      
-      if (teamDetails?.data) {
-        setState(prev => ({
+      try {
+        const nonSuperUsers = await getNoSuperAdminUsers();
+        if (aiTeamId) {
+          const teamDetails = await getAiTeamDetails(aiTeamId);
+          if (teamDetails.data) {
+            setFormState(prev => ({
+              ...prev,
+              formData: teamDetails.data
+            }));
+          }
+        }
+        if (nonSuperUsers.data) {
+          setFormState(prev => ({
+            ...prev,
+            users: nonSuperUsers.data
+          }));
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setFormState(prev => ({
           ...prev,
-          formData: {
-            name: teamDetails.data.name,
-            description: teamDetails.data.description || '',
-            address: teamDetails.data.address || '',
-            owner: teamDetails.data.owner
-          },
           isLoading: false
         }));
       }
-    } catch (error) {
-      console.error('Error initializing form:', error);
-      setState(prev => ({ 
-        ...prev, 
-        isLoading: false, 
-        isError: true,
-        errorMessage: error instanceof Error ? error.message : 'Unknown error'
-      }));
-      ErrorToast(t.actionAllower.fieldRequired);
-      navigate('/builder');
-    }
-  }, [auth?.uuid, aiTeamId, aiTeamName, getAiTeamDetails, navigate, replacePath, t.leftMenu.aiTeams, t.aiTeamsForm.editTitle, t.aiTeamsForm.createTitle, state.formData.name, state.isEditing]);
+    };
 
-  useEffect(() => {
-    if (state.isLoading) {
-      initializeForm();
-    }
-  }, [aiTeamId]);
+    loadInitialData();
 
-  useEffect(() => {
-    if (!aiTeamId) {
-      setState(prev => ({
-        ...prev,
-        isEditing: false,
-        formData: {
-          name: '',
-          description: '',
-          address: '',
-        }
-      }));
-    }
-  }, [aiTeamId]);
+  }, [aiTeamId, auth?.uuid]);
 
-  useEffect(() => {
-    const currentPath = state.isEditing 
-      ? `/builder/form/${aiTeamName}/${aiTeamId}`
-      : "/builder/form";
-
-    replacePath([
-      {
-        label: t.leftMenu.aiTeams,
-        current_path: "/builder",
-        preview_path: "/builder",
-        translationKey: "leftMenu.aiTeams"
-      },
-      {
-        label: state.isEditing ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
-        current_path: currentPath,
-        preview_path: "",
-        translationKey: state.isEditing ? "editTeam" : "createTeam"
-      }
-    ]);
-  }, [state.isEditing, aiTeamId, aiTeamName, replacePath, t]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    if (!state.formData.name.trim()) {
+
+    if (!formState.formData.name.trim()) {
       ErrorToast(t.actionAllower.fieldRequired);
       return;
     }
 
     try {
-      setState(prev => ({ ...prev, isSubmitting: true }));
+      setFormState(prev => ({ ...prev, isSubmitting: true }));
 
-      const response = state.isEditing && aiTeamId
-        ? await updateAiTeam(state.formData, aiTeamId)
-        : await createAiTeam(state.formData);
+      const response = aiTeamId
+        ? await updateAiTeam(formState.formData, aiTeamId)
+        : await createAiTeam(formState.formData);
 
       if (response?.data) {
-        SuccessToast(state.isEditing ? t.aiTeamsForm.successUpdate : t.aiTeamsForm.successCreate);
+        SuccessToast(aiTeamId ? t.aiTeamsForm.successUpdate : t.aiTeamsForm.successCreate);
         navigate('/builder');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       ErrorToast(t.actionAllower.fieldRequired);
     } finally {
-      setState(prev => ({ ...prev, isSubmitting: false }));
+      setFormState(prev => ({ ...prev, isSubmitting: false }));
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent) => {
     const { name, value } = e.target;
-    setState(prev => ({
+    setFormState(prev => ({
       ...prev,
       formData: { ...prev.formData, [name]: value }
     }));
   };
 
-  if (state.isError) {
-    return null;
-  }
+  if (formState.isError) return null;
 
   return (
     <FormLayout>
-      <FormHeader 
-        title={state.isEditing 
-          ? t.aiTeamsForm.editTitle.replace('{teamName}', state.formData.name || aiTeamName || '')
+      <FormHeader
+        title={aiTeamId
+          ? t.aiTeamsForm.editTitle.replace('{teamName}', formState.formData.name || aiTeamName || '')
           : t.aiTeamsForm.createTitle}
       />
-      
-      <FormContent 
+
+      <FormContent
         onSubmit={handleSubmit}
-        isLoading={state.isLoading}
+        isLoading={formState.isLoading}
       >
-        {!state.isError && (
+        {!formState.isLoading && !formState.isError && (
           <>
             <FormInputGroup>
               <FormTextField
                 name="name"
                 label={t.aiTeamsForm.teamName}
-                value={state.formData.name}
+                value={formState.formData.name}
                 onChange={handleInputChange}
                 required
               />
@@ -206,7 +171,7 @@ const AiTeamsForm: React.FC<PageProps> = () => {
               <FormTextField
                 name="description"
                 label={t.aiTeamsForm.description}
-                value={state.formData.description}
+                value={formState.formData.description || ""}
                 onChange={handleInputChange}
                 multiline
                 rows={4}
@@ -217,30 +182,27 @@ const AiTeamsForm: React.FC<PageProps> = () => {
               <FormTextField
                 name="address"
                 label={t.aiTeamsForm.address}
-                value={state.formData.address}
+                value={formState.formData?.address || ''}
                 onChange={handleInputChange}
               />
             </FormInputGroup>
 
-            <FormActions>
-              <FormCancelButton
-                onClick={() => navigate('/builder')}
-                disabled={state.isSubmitting}
+            <FormInputGroup>
+              <Select
+                name="selectedUser"
+                label={t.aiTeamsForm.selectUser}
+                value={formState.formData.owner_data?.email || ''}
+                onChange={handleInputChange}
+                fullWidth
+                labelId="user-select-label"
               >
-                {t.aiTeamsForm.cancel}
-              </FormCancelButton>
-              <FormButton
-                type="submit"
-                variant="contained"
-                disabled={state.isSubmitting}
-              >
-                {state.isSubmitting 
-                  ? t.aiTeamsForm.saving 
-                  : state.isEditing 
-                    ? t.aiTeamsForm.update 
-                    : t.aiTeamsForm.create}
-              </FormButton>
-            </FormActions>
+                {formState.users.map(user => (
+                  <MenuItem key={user.id} value={user.email}>
+                    {auth?.email}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormInputGroup>
           </>
         )}
       </FormContent>

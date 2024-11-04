@@ -349,12 +349,13 @@ export const FormTextField: React.FC<{
 );
 
 interface FormSelectProps {
-  labelId: string;
+  name: string;
   label: string;
   value: string;
-  onChange: (event: SelectChangeEvent<string>) => void;
+  onChange: (e: any) => void;
+  options: { value: any; label: string; }[];
+  labelId: string;
   children: React.ReactNode;
-  name: string;
 }
 
 export const FormSelect: React.FC<FormSelectProps> = (props) => (

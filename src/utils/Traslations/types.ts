@@ -37,6 +37,7 @@ export interface TranslationType {
     update: string;
     create: string;
     cancel: string;
+    owner: string;
   };
   aiTeamsList: {
     newAiTeam: string;

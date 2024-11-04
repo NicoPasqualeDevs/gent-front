@@ -21,7 +21,11 @@ const useAuth = (): AuthHook => {
 
   const registerUser = (data: AuthRegisterData): Promise<ApiResponse<AuthUser>> => {
     const path = "auth/register/";
-    return apiPost(path, data as unknown as Record<string, string | number | boolean>);
+    return apiPost(path, { ...data }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   };
 
   const loginUser = async (data: AuthLoginData): Promise<ApiResponse<AuthUser>> => {

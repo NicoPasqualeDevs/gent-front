@@ -38,7 +38,8 @@ const en: TranslationType = {
     saving: "Saving...",
     update: "Update",
     create: "Create",
-    cancel: "Cancel"
+    cancel: "Cancel",
+    owner: "Owner"
   },
   aiTeamsList: {
     newAiTeam: "New AI Team",
