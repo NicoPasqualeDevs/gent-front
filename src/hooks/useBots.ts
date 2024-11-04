@@ -48,7 +48,7 @@ interface ToolRelationshipData extends Record<string, unknown> {
 interface UseBotsApi {
   getBotDetails: (botId: string) => Promise<ApiResponse<AgentData>>;
   getBotsList: (aiTeamId: string, filterParams: string) => Promise<ApiResponse<AgentData[]>>;
-  createBot: (data: BotFormData) => Promise<ApiResponse<AgentData>>;
+  createBot: (data: BotFormData, teamId: string) => Promise<ApiResponse<AgentData>>;
   updateBot: (data: BotFormData, botId: string) => Promise<ApiResponse<AgentData>>;
   updateBotData: (data: BotDataFormData, botId: string) => Promise<ApiResponse<AgentData>>;
   deleteBot: (botId: string) => Promise<ApiResponse<void>>;
@@ -73,11 +73,29 @@ const useBotsApi = (): UseBotsApi => {
   };
 
   const getBotsList = (aiTeamId: string, filterParams: string): Promise<ApiResponse<AgentData[]>> => {
-    return apiGet(`api/team_details/bot/${aiTeamId}${filterParams}`);
+    return apiGet(`api/bot/${aiTeamId}/${filterParams}`);
   };
 
-  const createBot = (data: BotFormData): Promise<ApiResponse<AgentData>> => {
-    return apiPost('api/bot/', data);
+  const createBot = (data: BotFormData, teamId: string): Promise<ApiResponse<AgentData>> => {
+    if (!teamId) {
+      throw new Error('Team ID is required');
+    }
+    
+    const requiredFields = ['name', 'description', 'model_ai'];
+    for (const field of requiredFields) {
+      if (!data[field]) {
+        throw new Error(`${field} is required`);
+      }
+    }
+
+    const payload = {
+      name: data.name,
+      description: data.description,
+      model_ai: data.model_ai,
+      owner: teamId
+    };
+
+    return apiPost(`api/bot/${teamId}/`, payload);
   };
 
   const updateBot = (data: BotFormData, botId: string): Promise<ApiResponse<AgentData>> => {

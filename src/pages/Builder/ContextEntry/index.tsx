@@ -113,20 +113,36 @@ const ContextEntry: React.FC<PageProps> = () => {
         isSubmitting: true 
       }));
 
-      if (state.isEditing && !botId) {
-        throw new Error('Bot ID is required for editing');
+      if (!aiTeamId) {
+        throw new Error(t.contextEntry.errorMissingTeamId);
       }
 
+      if (state.isEditing && !botId) {
+        throw new Error(t.contextEntry.errorMissingBotId);
+      }
+
+      if (!state.formData.name || !state.formData.model_ai) {
+        throw new Error(t.contextEntry.fieldRequired);
+      }
+
+      const formData = {
+        ...state.formData,
+        description: state.formData.description || ''
+      };
+
+      console.log('Sending data:', formData);
+
       const response = state.isEditing && botId
-        ? await updateBot(state.formData, botId)
-        : await createBot(state.formData);
+        ? await updateBot(formData, botId)
+        : await createBot(formData, aiTeamId);
 
       if (response?.data) {
         SuccessToast(state.isEditing ? t.contextEntry.successUpdate : t.contextEntry.successCreate);
         navigate(`/builder/agents/${response.data.name}/${response.data.id}`);
       }
     } catch (error) {
-      ErrorToast(t.contextEntry.errorConnection);
+      console.error('Error submitting form:', error);
+      ErrorToast(error instanceof Error ? error.message : t.contextEntry.errorConnection);
     } finally {
       setState((prevState: ContextEntryState) => ({ 
         ...prevState, 

@@ -57,11 +57,13 @@ const useApi = (): UseApiHook => {
 
   // Modificamos getHeaders para manejar el Content-Type basado en el tipo de datos
   const getHeaders = async (data?: ApiData, config?: ApiConfig): Promise<Record<string, string>> => {
-    let headers: Record<string, string> = {};
+    let headers: Record<string, string> = {
+      'Content-Type': 'application/json'  // Establecer Content-Type por defecto
+    };
 
-    // Si hay datos y no es FormData, establecer Content-Type
-    if (data && !(data instanceof FormData)) {
-      headers['Content-Type'] = 'application/json';
+    // Si hay datos y es FormData, eliminar Content-Type para que el navegador lo establezca
+    if (data instanceof FormData) {
+      delete headers['Content-Type'];
     }
 
     if (!config?.skipCsrf) {
@@ -96,13 +98,12 @@ const useApi = (): UseApiHook => {
     data: ApiData, 
     config?: ApiConfig
   ): Promise<ApiResponse<T>> => {
-    const headers = await getHeaders(config);
+    const headers = await getHeaders(data, config);
     const response = await fetch(`${apiBase}${url}`, {
       method: 'POST',
       headers,
       credentials: config?.skipCsrf ? 'omit' : 'include',
       body: data instanceof FormData ? data : JSON.stringify(data),
-      ...config,
     });
     return handleResponse<T>(response);
   };

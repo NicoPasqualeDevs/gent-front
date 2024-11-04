@@ -140,3 +140,10 @@ export interface AiTeam {
   user_email: string;
   // Añade cualquier otro campo que pueda tener un cliente
 }
+
+interface BotFormData {
+  name: string;
+  description: string;
+  model_ai: string;
+  [key: string]: string;
+}

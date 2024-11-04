@@ -219,7 +219,9 @@ const en: TranslationType = {
     successUpdate: "Agent updated successfully",
     successCreate: "Agent created successfully",
     errorConnection: "Error: Could not establish connection with server",
-    fieldRequired: "This field is required"
+    fieldRequired: "This field is required",
+    errorMissingTeamId: "Team ID not found",
+    errorMissingBotId: "Bot ID not found"
   },
   dataEntry: {
     title: "Agent Data",

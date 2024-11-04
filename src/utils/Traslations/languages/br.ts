@@ -219,7 +219,9 @@ const br: TranslationType = {
     successUpdate: "Agente atualizado com sucesso",
     successCreate: "Agente criado com sucesso",
     errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
-    fieldRequired: "Este campo é obrigatório"
+    fieldRequired: "Este campo é obrigatório",
+    errorMissingTeamId: "ID da equipe não encontrado",
+    errorMissingBotId: "ID do bot não encontrado"
   },
   dataEntry: {
     title: "Dados do Agente",
@@ -346,7 +348,7 @@ const br: TranslationType = {
       maxFileSize: "O arquivo excede o tamanho máximo permitido"
     },
     preview: {
-      title: "Pré-visualizaç��o do Widget",
+      title: "Pré-visualizaço do Widget",
       loading: "Carregando pré-visualização...",
       error: "Erro ao carregar pré-visualização"
     }

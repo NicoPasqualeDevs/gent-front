@@ -219,7 +219,9 @@ const fr: TranslationType = {
     successUpdate: "Agent mis à jour avec succès",
     successCreate: "Agent créé avec succès",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
-    fieldRequired: "Ce champ est obligatoire"
+    fieldRequired: "Ce champ est obligatoire",
+    errorMissingTeamId: "ID d'équipe non trouvé",
+    errorMissingBotId: "ID de bot non trouvé"
   },
   dataEntry: {
     title: "Données de l'Agent",
@@ -289,7 +291,7 @@ const fr: TranslationType = {
     },
     security: {
       sqlInjection: "Vérification d'Injection SQL",
-      phpInjection: "Vérification d'Injection PHP",
+      phpInjection: "V��rification d'Injection PHP",
       strangeChars: "Vérification des Caractères Étranges"
     },
     greetings: {

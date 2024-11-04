@@ -104,7 +104,8 @@ const IaPanel: React.FC<PageProps> = () => {
 
     try {
       setState(prev => ({ ...prev, isLoading: true }));
-      const response = await getBotsList(aiTeamId, filterParams);
+      const params = filterParams.startsWith('?') ? filterParams : `?${filterParams}`;
+      const response = await getBotsList(aiTeamId, params);
 
       if (response?.data) {
         setState(prev => ({
@@ -520,6 +521,15 @@ const IaPanel: React.FC<PageProps> = () => {
     });
   };
 
+  const handleCreateBot = () => {
+    if (!aiTeamId) {
+      ErrorToast(t.iaPanel.errorMissingParams);
+      return;
+    }
+    
+    navigate(`/builder/agents/contextEntry/${aiTeamId}`);
+  };
+
   return (
     <DashboardContainer>
       <DashboardHeader
@@ -595,7 +605,7 @@ const IaPanel: React.FC<PageProps> = () => {
                 {auth?.is_superuser && !state.searchQuery && (
                   <Button
                     variant="contained"
-                    onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
+                    onClick={handleCreateBot}
                     startIcon={<AddIcon />}
                     sx={{
                       color: 'white',

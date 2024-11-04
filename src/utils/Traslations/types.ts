@@ -222,6 +222,8 @@ export interface TranslationType {
     successCreate: string;
     errorConnection: string;
     fieldRequired: string;
+    errorMissingTeamId: string;
+    errorMissingBotId: string;
   };
   dataEntry: {
     title: string;
