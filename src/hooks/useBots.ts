@@ -69,19 +69,19 @@ const useBotsApi = (): UseBotsApi => {
   const { apiGet, apiPost, apiPut, apiDelete } = useApi();
 
   const getBotDetails = (botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiGet(`api/bots/${botId}/`);
+    return apiGet(`api/bot/${botId}/`);
   };
 
   const getBotsList = (aiTeamId: string, filterParams: string): Promise<ApiResponse<AgentData[]>> => {
-    return apiGet(`api/team_details/bots/${aiTeamId}${filterParams}`);
+    return apiGet(`api/team_details/bot/${aiTeamId}${filterParams}`);
   };
 
   const createBot = (data: BotFormData): Promise<ApiResponse<AgentData>> => {
-    return apiPost('api/bots/', data);
+    return apiPost('api/bot/', data);
   };
 
   const updateBot = (data: BotFormData, botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiPut(`api/bots/${botId}/`, data);
+    return apiPut(`api/bot/${botId}/`, data);
   };
 
   const updateBotData = (data: BotDataFormData, botId: string): Promise<ApiResponse<AgentData>> => {
@@ -89,7 +89,7 @@ const useBotsApi = (): UseBotsApi => {
   };
 
   const deleteBot = (botId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`api/bots/${botId}/`);
+    return apiDelete(`api/bot/${botId}/`);
   };
 
   const uploadDocument = async (
@@ -99,28 +99,28 @@ const useBotsApi = (): UseBotsApi => {
     const formData = new FormData();
     formData.append('file', file);
 
-    return apiPost<void>(`api/bots/${botId}/upload/`, formData);
+    return apiPost<void>(`api/bot/${botId}/upload/`, formData);
   };
 
   const getChatHistory = (botId: string): Promise<ApiResponse<ChatHistory>> => {
-    return apiGet(`api/bots/${botId}/chat-history/`);
+    return apiGet(`api/bot/${botId}/chat-history/`);
   };
 
   const sendMessage = async (botId: string, data: { message: string }): Promise<ApiResponse<UpdatedChatHistoryType>> => {
-    return apiPost(`api/bots/${botId}/send-message/`, data);
+    return apiPost(`api/bot/${botId}/send-message/`, data);
   };
 
   const closeChat = async (conversationId: string): Promise<void> => {
-    await apiDelete(`api/bots/close-chat/${conversationId}/`);
+    await apiDelete(`api/bot/close-chat/${conversationId}/`);
     return;
   };
 
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiGet(`api/bots/${botId}/agent-data/`);
+    return apiGet(`api/bot/${botId}/agent-data/`);
   };
 
   const getClientBotConversations = async (botId: string): Promise<ConversationData[]> => {
-    const response = await apiGet(`api/bots/${botId}/client-bot-conversations/`);
+    const response = await apiGet(`api/bot/${botId}/client-bot-conversations/`);
     return response.data as ConversationData[];
   };
 
@@ -133,7 +133,7 @@ const useBotsApi = (): UseBotsApi => {
   };
 
   const getBotTools = (botId: string): Promise<unknown> => {
-    return apiGet(`api/bots/${botId}/tools/`);
+    return apiGet(`api/bot/${botId}/tools/`);
   };
 
   const setToolRelationship = (data: ToolRelationshipData): Promise<unknown> => {

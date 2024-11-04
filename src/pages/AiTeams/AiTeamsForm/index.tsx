@@ -20,7 +20,6 @@ import {
   FormCancelButton,
   FormButton,
 } from "@/utils/FormsViewUtils";
-import { PageProps } from '@/types/Page';
 import { User } from "@/types/AiTeams";
 
 // Definimos la interfaz para los valores del formulario
