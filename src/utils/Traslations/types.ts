@@ -9,6 +9,7 @@ export interface TranslationType {
     success: string;
     error: string;
     sessionExpired: string;
+    errorConnection: string;
   };
   actionAllower: {
     fieldRequired: string;

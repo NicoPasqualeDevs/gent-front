@@ -21,11 +21,11 @@ interface ToolsState {
 
 const Tools: React.FC = () => {
   const navigate = useNavigate();
-  const { aiTeamId, clientName, botName, botId } = useParams<{ 
-    aiTeamId: string; 
-    clientName: string; 
-    botName: string; 
-    botId: string; 
+  const { aiTeamId, clientName, botName, botId } = useParams<{
+    aiTeamId: string;
+    clientName: string;
+    botName: string;
+    botId: string;
   }>();
   const { getClientTools, getBotTools, addToolToBot, removeToolFromBot } = useToolsApi();
   const { auth, language, replacePath, appNavigation } = useAppContext();
@@ -74,7 +74,7 @@ const Tools: React.FC = () => {
   // Efecto para cargar datos iniciales
   useEffect(() => {
     setState(prev => ({ ...prev, isLoading: true }));
-    
+
     if (!auth?.token || !auth?.uuid || !botId) {
       setState(prev => ({ ...prev, isLoading: false }));
       ErrorToast(t.tools.errorToken);
@@ -90,23 +90,23 @@ const Tools: React.FC = () => {
 
     replacePath([
       ...appNavigation.slice(0, 1),
-      { 
-        label: clientName, 
-        current_path: `/builder/agents/${clientName}/${aiTeamId}`, 
-        preview_path: "", 
-        translationKey: "" 
+      {
+        label: clientName,
+        current_path: `/builder/agents/${clientName}/${aiTeamId}`,
+        preview_path: "",
+        translationKey: ""
       },
-      { 
-        label: botName, 
-        current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, 
-        preview_path: "", 
-        translationKey: "" 
+      {
+        label: botName,
+        current_path: `/builder/agents/tools/${aiTeamId}/${botName}`,
+        preview_path: "",
+        translationKey: ""
       },
-      { 
-        label: t.tools.type, 
-        current_path: `/builder/agents/tools/${aiTeamId}/${botName}`, 
-        preview_path: "", 
-        translationKey: "" 
+      {
+        label: t.tools.type,
+        current_path: `/builder/agents/tools/${aiTeamId}/${botName}`,
+        preview_path: "",
+        translationKey: ""
       },
     ]);
   }, [aiTeamId, clientName, botName]); // Removidas dependencias innecesarias
@@ -119,7 +119,7 @@ const Tools: React.FC = () => {
 
     try {
       setState(prev => ({ ...prev, isLoading: true }));
-      
+
       if (action === 'relate') {
         await addToolToBot(botId, [toolId]);
         SuccessToast(t.tools.successRelate);
@@ -136,12 +136,12 @@ const Tools: React.FC = () => {
     }
   }, [botId, addToolToBot, removeToolFromBot, loadToolsData, t.tools]);
 
-  const handleAddTool = useCallback(() => {
+  useCallback(() => {
     if (!aiTeamId || !botId) {
       ErrorToast(t.iaPanel.errorMissingParams);
       return;
     }
-    
+
     builderNavigationUtils.toToolsForm(navigate, {
       aiTeamId,
       botId
@@ -166,16 +166,16 @@ const Tools: React.FC = () => {
             </Typography>
           ) : (
             state.tools.map((tool) => (
-              <ToolCard 
+              <ToolCard
                 key={tool.id}
-                tool={tool} 
-                onAction={handleToolAction} 
+                tool={tool}
+                onAction={handleToolAction}
                 actionType='relate'
               />
             ))
           )}
         </Paper>
-        
+
         <Paper elevation={3} sx={{ p: 2 }}>
           <Typography variant="h4" gutterBottom>{t.tools.relatedTitle}</Typography>
           {state.agentTools.length === 0 ? (
@@ -184,10 +184,10 @@ const Tools: React.FC = () => {
             </Typography>
           ) : (
             state.agentTools.map((tool) => (
-              <ToolCard 
+              <ToolCard
                 key={tool.id}
-                tool={tool} 
-                onAction={handleToolAction} 
+                tool={tool}
+                onAction={handleToolAction}
                 actionType='unrelate'
               />
             ))

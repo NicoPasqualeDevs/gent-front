@@ -3,7 +3,7 @@ import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
 import useBotsApi from "@/hooks/useBots";
 import theme from "@/styles/theme";
-import { ToolData } from "@/types/Bots";
+import { ToolData } from "@/types/Tools";
 import {
   Button,
   Checkbox,
@@ -17,6 +17,8 @@ import {
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import languages from "@/utils/Traslations";
+import { LanguageKey } from "@/utils/Traslations";
 
 // Añadir interfaces para los tipos
 interface Tool extends ToolData {
@@ -46,7 +48,8 @@ const ToolsRelationship: React.FC = () => {
     setToolRelationship,
     removeToolRelationship,
   } = useBotsApi();
-  const { replacePath, appNavigation } = useAppContext();
+  const { replacePath, appNavigation, language } = useAppContext();
+  const t = languages[language as LanguageKey];
   const [loaded, setLoaded] = useState<boolean>(false);
   const [checked, setChecked] = useState<Tool[]>([]);
   const [noRelatedTools, setNoRelatedTools] = useState<Tool[]>([]);
@@ -106,9 +109,7 @@ const ToolsRelationship: React.FC = () => {
           })
           .catch((error) => {
             if (error instanceof Error) {
-              ErrorToast(
-                t.common.errorConnection
-              );
+              ErrorToast(t.common.errorConnection);
             } else {
               ErrorToast(
                 `${error.status} - ${error.error} ${
@@ -120,7 +121,7 @@ const ToolsRelationship: React.FC = () => {
       })
       .catch((error) => {
         if (error instanceof Error) {
-          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+          ErrorToast(t.common.errorConnection);
         } else {
           ErrorToast(
             `${error.status} - ${error.error} ${
@@ -129,7 +130,7 @@ const ToolsRelationship: React.FC = () => {
           );
         }
       });
-  }, [getAllTools, getBotTools]);
+  }, [getAllTools, getBotTools, t]);
 
   const setRelationship = async () => {
     const newCurrentTools: Tool[] = [];

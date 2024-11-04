@@ -239,7 +239,7 @@ const hi: TranslationType = {
     successUpdate: "डेटा सफलतापूर्वक अपडेट किया गया",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
     fieldRequired: "यह फ़ील्ड आवश्यक है",
-    dragAndDrop: "फ़ाइलें यहां खींचें और छोड़ें या चयन करने के लिए ���्लिक करें",
+    dragAndDrop: "फ़ाइलें यहां खींचें और छोड़ें या चयन करने के लिए ्लिक करें",
     maxSize: "प्रति फ़ाइल अधिकतम आकार: {size}MB",
     invalidType: "अमान्य फ़ाइल प्रकार",
     uploadError: "फ़ाइल अपलोड करने में त्रुटि",
@@ -248,7 +248,7 @@ const hi: TranslationType = {
     uploadSuccess: "फ़ाइल सफलतापूर्वक अपलोड की गई",
     knowledgeKey: "ज्ञान कुंजी",
     knowledgeKeyHelper: "इस ज्ञान की पहचान के लिए एक कुंजी दर्ज करें",
-    knowledgeSet: "ज���ञान समूह",
+    knowledgeSet: "जञान समूह",
     addKnowledgeSet: "नया समूह जोड़ें",
     searchKnowledge: "ज्ञान खोजें",
     noKnowledgeFound: "कोई ज्ञान नहीं मिला",
@@ -371,7 +371,8 @@ const hi: TranslationType = {
     saving: "सहेजा जा रहा है...",
     success: "कार्य सफल रहा",
     error: "एक त्रुटि हुई है",
-    sessionExpired: "सत्र समाप्त हो गया है, कृपया फिर से लॉग इन करें"
+    sessionExpired: "सत्र समाप्त हो गया है, कृपया फिर से लॉग इन करें",
+    errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका"
   }
 };
 

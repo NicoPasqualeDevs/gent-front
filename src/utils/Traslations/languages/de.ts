@@ -371,7 +371,8 @@ const de: TranslationType = {
     saving: "Wird gespeichert...",
     success: "Operation erfolgreich",
     error: "Ein Fehler ist aufgetreten",
-    sessionExpired: "Sitzung abgelaufen, bitte melden Sie sich erneut an"
+    sessionExpired: "Sitzung abgelaufen, bitte melden Sie sich erneut an",
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
   }
 };
 

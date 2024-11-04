@@ -371,7 +371,8 @@ const en: TranslationType = {
     saving: "Saving...",
     success: "Operation successful",
     error: "An error has occurred",
-    sessionExpired: "Session expired, please login again"
+    sessionExpired: "Session expired, please login again",
+    errorConnection: "Error: Could not establish connection with server"
   }
 };
 

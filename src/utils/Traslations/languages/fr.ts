@@ -371,7 +371,8 @@ const fr: TranslationType = {
     saving: "Enregistrement...",
     success: "Opération réussie",
     error: "Une erreur s'est produite",
-    sessionExpired: "La session a expiré, veuillez vous reconnecter"
+    sessionExpired: "La session a expiré, veuillez vous reconnecter",
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur"
   }
 };
 

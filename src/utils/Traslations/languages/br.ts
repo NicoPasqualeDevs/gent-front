@@ -371,7 +371,8 @@ const br: TranslationType = {
     saving: "Salvando...",
     success: "Operação bem-sucedida",
     error: "Ocorreu um erro",
-    sessionExpired: "Sessão expirada, por favor faça login novamente"
+    sessionExpired: "Sessão expirada, por favor faça login novamente",
+    errorConnection: "Erro: não foi possível estabelecer conexão com o servidor"
   }
 };
 
