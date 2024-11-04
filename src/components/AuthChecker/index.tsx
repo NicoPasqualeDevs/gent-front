@@ -1,22 +1,28 @@
-import React from "react";
-import { useEffect } from "react"
-import { useAppContext } from "@/context/app";
-import { useNavigate, } from "react-router-dom";
+import { ReactNode, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAppContext } from '@/context/app';
 
-type Props = {
-  children: React.ReactNode | React.ReactNode[];
-};
-const AuthChecker: React.FC<Props> = ({ children }) => {
-  const navigate = useNavigate();
+interface AuthCheckerProps {
+  children: ReactNode;
+}
+
+const AuthChecker: React.FC<AuthCheckerProps> = ({ children }) => {
   const { auth } = useAppContext();
-  useEffect(() => {
-    if (!auth.user) {
-      navigate("/auth/login");
-    }
-  }, [auth]);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  if (!auth) return null;
-  return <React.Fragment>{children}</React.Fragment>;
+  useEffect(() => {
+    if (!auth?.token) {
+      // Si no hay token, redirigir a login
+      navigate('/auth/login', { 
+        replace: true,
+        state: { from: location.pathname }
+      });
+    }
+  }, [auth, navigate, location]);
+
+  // Si hay token, mostrar el contenido protegido
+  return auth?.token ? <>{children}</> : null;
 };
 
 export default AuthChecker;

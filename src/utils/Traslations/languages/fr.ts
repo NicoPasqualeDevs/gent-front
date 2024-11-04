@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const salutations = [
-    "Bonjour ! Comment allez-vous ?",
-    "Bienvenue ! Comment puis-je vous aider ?",
-    "Salutations ! Comment se passe votre journée ?",
-    "Ravi de vous voir ! Comment ça va ?"
-  ];
-  return salutations[Math.floor(Math.random() * salutations.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const fr = {
+const fr: TranslationType = {
   greeting: "Bonjour",
   farewell: "Au revoir",
   actionAllower: {
@@ -21,15 +13,15 @@ const fr = {
   },
   leftMenu: {
     aiTeams: "Équipes IA",
-    registerTeam: "Nouvelle équipe",
-    logout: "Déconnexion",
-    logoutSuccess: "Vous vous êtes déconnecté avec succès",
-    registerUser: "Nouvel Utilisateur",
+    registerTeam: "Enregistrer Équipe",
+    registerUser: "Enregistrer Utilisateur",
     tools: "Outils",
-    workShop: "Atelier"
+    workShop: "Atelier",
+    logout: "Déconnexion",
+    logoutSuccess: "Session fermée avec succès"
   },
   aiTeamsForm: {
-    editTitle: "Modifier l'équipe d'Équipes IA",
+    editTitle: "Modifier l'équipe {teamName}",
     createTitle: "Enregistrer une nouvelle équipe d'Équipes IA",
     teamName: "Nom de l'équipe",
     address: "Adresse",
@@ -42,7 +34,12 @@ const fr = {
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     selectUser: "Sélectionner un utilisateur",
     noUsersAvailable: "Aucun utilisateur disponible",
-    currentUser: "Utilisateur actuel"
+    currentUser: "Utilisateur actuel",
+    saving: "Enregistrement...",
+    update: "Mettre à jour",
+    create: "Créer",
+    cancel: "Annuler",
+    owner: "Propriétaire"
   },
   aiTeamsList: {
     newAiTeam: "Nouvelle Équipe IA",
@@ -51,11 +48,20 @@ const fr = {
     perPage: "par page",
     manageTeam: "Gérer l'équipe",
     edit: "Modifier",
+    delete: "Supprimer",
+    confirmDelete: "Êtes-vous sûr de vouloir supprimer cette équipe ?",
+    deleteTeam: "Supprimer l'équipe",
     noTeamsFound: "Aucune Équipe IA trouvée avec ce nom",
     noTeamsToShow: "Aucune Équipe IA à afficher",
     teamsCount: "sur {total} Équipes IA",
     successDelete: "AiTeam supprimé avec succès",
-    owner: "Propriétaire"
+    owner: "Propriétaire",
+    noDescription: "Pas de description",
+    manage: "Gérer",
+    comingSoon: "Bientôt disponible",
+    noAddress: "Sans adresse",
+    llmKeyBadge: "Équipe avec LLM Key",
+    noOwner: "Sans propriétaire"
   },
   iaPanel: {
     createAgent: "Créer un Agent",
@@ -78,14 +84,25 @@ const fr = {
     errorDeletingBot: "Erreur lors du chargement du botId pour la suppression",
     edit: "Modifier",
     created: "Créé le : {date}",
-    implementation: "Implémentation"
+    implementation: "Implémentation",
+    reloadData: "Recharger les données",
+    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer cet agent ?",
+    deletingAgent: "Suppression de l'agent...",
+    deleteButton: "Supprimer",
+    manageButton: "Gérer",
+    reloadButton: "Recharger",
+    configureButton: "Configurer",
+    copyWidget: "Copier le code du widget",
+    widgetCopied: "Code copié dans le presse-papiers",
+    modelAI: "Modèle d'IA : {model}",
+    errorMissingParams: "Paramètres requis manquants pour cette action"
   },
   chatView: {
     agentPanel: "Panneau de {agentName}",
     defaultAgentName: "Agent IA",
     history: "Historique",
     comingSoon: "(Bientôt disponible)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('fr'),
     inputPlaceholder: "Tapez votre message pour l'agent IA...",
     sendButton: "Envoyer",
     finishSession: "Terminer la session",
@@ -125,21 +142,8 @@ const fr = {
     invalidEmail: "Adresse e-mail invalide",
     invalidCredentials: "Identifiants incorrects",
     fieldRequired: "Ce champ est obligatoire",
-    connectionError: "Erreur : Impossible d'établir une connexion avec le serveur"
-  },
-  tools: {
-    libraryTitle: "Bibliothèque d'Outils",
-    relatedTitle: "Outils Associés",
-    type: "Type",
-    relateButton: "Associer",
-    unrelateButton: "Dissocier",
-    successRelate: "Outil associé avec succès",
-    successUnrelate: "Outil dissocié avec succès",
-    errorRelate: "Erreur lors de l'association de l'outil",
-    errorUnrelate: "Erreur lors de la dissociation de l'outil",
-    errorToken: "Erreur d'authentification",
-    errorLoading: "Erreur lors du chargement des outils",
-    createToolButton: "Créer un Outil"
+    connectionError: "Erreur : Impossible d'établir une connexion avec le serveur",
+    invalidServerResponse: "Réponse du serveur invalide"
   },
   toolsForm: {
     required: "Ce champ est obligatoire",
@@ -154,6 +158,7 @@ const fr = {
     toolType: "Type d'outil",
     instructions: "Instructions",
     toolFile: "Fichier de l'outil",
+    fileInput: "Fichier de l'outil",
     update: "Mettre à jour",
     create: "Créer",
     edit: "Modifier",
@@ -165,8 +170,209 @@ const fr = {
     successUpdate: "Outil mis à jour avec succès",
     successCreate: "Outil créé avec succès",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    editTitle: "Modifier l'outil {toolName}",
+    createTitle: "Créer un nouvel outil",
     selectUser: "Sélectionner un utilisateur",
-    currentUser: "Utilisateur actuel"
+    currentUser: "Utilisateur actuel",
+    cancel: "Annuler"
+  },
+  tools: {
+    type: "Outils",
+    libraryTitle: "Bibliothèque d'outils",
+    relatedTitle: "Outils associés",
+    relateButton: "Associer",
+    unrelateButton: "Dissocier",
+    successRelate: "Outil associé avec succès",
+    successUnrelate: "Outil dissocié avec succès",
+    errorRelate: "Erreur lors de l'association de l'outil",
+    errorUnrelate: "Erreur lors de la dissociation de l'outil",
+    errorToken: "Erreur d'authentification",
+    errorLoading: "Erreur lors du chargement des outils",
+    createToolButton: "Créer un Outil",
+    title: "Outils",
+    description: "Gérez vos outils",
+    searchPlaceholder: "Rechercher un outil...",
+    noToolsFound: "Aucun outil trouvé avec ce nom",
+    noToolsToShow: "Aucun outil à afficher",
+    toolsCount: "sur {total} outils",
+    perPage: "par page",
+    reloadData: "Recharger les données",
+    manage: "Gérer",
+    edit: "Modifier",
+    delete: "Supprimer",
+    deleteConfirmation: "Êtes-vous sûr de vouloir supprimer cet outil ?",
+    deleteSuccess: "Outil supprimé avec succès",
+    deleteError: "Erreur lors de la suppression de l'outil",
+    errorMissingParams: "Paramètres requis manquants pour cette action",
+    noToolsAvailable: "Aucun outil disponible",
+    noType: "Pas de type",
+    noRelatedTools: "Aucun outil associé",
+    errorMissingBot: "Erreur : ID du bot non trouvé"
+  },
+  contextEntry: {
+    title: "Créer un Agent",
+    editTitle: "Modifier l'Agent",
+    createTitle: "Créer un Agent",
+    name: "Nom de l'Agent",
+    description: "Description",
+    modelAI: "Modèle d'IA",
+    saving: "Enregistrement...",
+    update: "Mettre à jour",
+    create: "Créer",
+    cancel: "Annuler",
+    successUpdate: "Agent mis à jour avec succès",
+    successCreate: "Agent créé avec succès",
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    fieldRequired: "Ce champ est obligatoire",
+    errorMissingTeamId: "ID d'équipe non trouvé",
+    errorMissingBotId: "ID de bot non trouvé"
+  },
+  dataEntry: {
+    title: "Données de l'Agent",
+    editTitle: "Modifier les Données de l'Agent",
+    context: "Contexte",
+    documents: "Documents",
+    upload: "Télécharger",
+    saving: "Enregistrement...",
+    update: "Mettre à jour",
+    cancel: "Annuler",
+    successUpdate: "Données mises à jour avec succès",
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    fieldRequired: "Ce champ est obligatoire",
+    dragAndDrop: "Glissez et déposez des fichiers ici ou cliquez pour sélectionner",
+    maxSize: "Taille maximale par fichier : {size}MB",
+    invalidType: "Type de fichier invalide",
+    uploadError: "Erreur lors du téléchargement du fichier",
+    uploadProgress: "Progression du téléchargement : {progress}%",
+    removeFile: "Supprimer le fichier",
+    uploadSuccess: "Fichier téléchargé avec succès",
+    knowledgeKey: "Clé de connaissance",
+    knowledgeKeyHelper: "Entrez une clé pour identifier cette connaissance",
+    knowledgeSet: "Ensemble de connaissances",
+    addKnowledgeSet: "Ajouter un nouvel ensemble",
+    searchKnowledge: "Rechercher des connaissances",
+    noKnowledgeFound: "Aucune connaissance trouvée",
+    noKnowledgeSets: "Aucun ensemble de connaissances"
+  },
+  header: {
+    profile: "Profil"
+  },
+  auth: {
+    register: "S'inscrire",
+    login: "Se connecter",
+    logout: "Se déconnecter",
+    registerTitle: "Inscription Utilisateur",
+    registerSuccess: "Utilisateur enregistré avec succès",
+    registerError: "Erreur lors de l'enregistrement de l'utilisateur"
+  },
+  widgetCustomizer: {
+    title: "Personnalisateur de Widget",
+    tabs: {
+      colors: "Couleurs",
+      typography: "Typographie",
+      images: "Images",
+      security: "Sécurité",
+      greetings: "Messages d'accueil",
+      data: "Données"
+    },
+    colors: {
+      primaryColor: "Couleur Primaire",
+      primaryTextContrast: "Contraste du Texte Primaire",
+      secondaryColor: "Couleur Secondaire",
+      secondaryTextContrast: "Contraste du Texte Secondaire",
+      badgeColor: "Couleur du Badge",
+      badgeContrast: "Couleur du Texte du Badge"
+    },
+    typography: {
+      fontFamily: "Famille de Police",
+      fontFamilyPlaceholder: "Entrez la valeur font-family souhaitée",
+      faqQuestions: "Questions Fréquentes",
+      faqQuestionsPlaceholder: "Entrez les questions (séparées par |)",
+      bannedWords: "Mots Interdits",
+      bannedWordsPlaceholder: "Entrez les mots (séparés par |)"
+    },
+    images: {
+      brandAlt: "Texte Alternatif du Logo",
+      brandAltPlaceholder: "Entrez le texte alternatif",
+      brandLogo: "Logo du Client",
+      botIcon: "Icône du Bot",
+      chatIcon: "Icône du Chat",
+      hiddenIcon: "Icône de Masquage",
+      sendIcon: "Icône d'Envoi"
+    },
+    security: {
+      sqlInjection: "Vérification d'Injection SQL",
+      phpInjection: "Vrification d'Injection PHP",
+      strangeChars: "Vérification des Caractères Étranges"
+    },
+    greetings: {
+      newMessage: "Créer un nouveau message",
+      update: "Mettre à jour",
+      delete: "Supprimer",
+      create: "Créer"
+    },
+    actions: {
+      save: "Enregistrer",
+      saveColors: "Enregistrer les Couleurs",
+      saveTypography: "Enregistrer la Typographie",
+      saveImages: "Enregistrer les Images",
+      saveSecurity: "Enregistrer la Sécurité",
+      saveGreetings: "Enregistrer les Messages",
+      saveData: "Enregistrer les Données"
+    },
+    messages: {
+      updateSuccess: "Widget mis à jour avec succès",
+      updateError: "Erreur lors de la mise à jour du widget",
+      colorsSaved: "Couleurs enregistrées avec succès",
+      typographySaved: "Typographie enregistrée avec succès",
+      imagesSaved: "Images enregistrées avec succès",
+      securitySaved: "Paramètres de sécurité enregistrés avec succès",
+      greetingsSaved: "Messages enregistrés avec succès",
+      dataSaved: "Données enregistrées avec succès"
+    },
+    inputs: {
+      fontFamily: {
+        label: "Famille de Police",
+        placeholder: "Entrez la valeur d'attribut font-family souhaitée",
+        helperText: "Exemple: Arial, Helvetica, sans-serif"
+      },
+      faqQuestions: {
+        label: "Questions Fréquentes",
+        placeholder: "Entrez les questions (séparées par |)",
+        helperText: "Exemple: Comment ça marche ? | Combien ça coûte ?"
+      },
+      bandList: {
+        label: "Mots Interdits",
+        placeholder: "Entrez les mots (séparés par |)",
+        helperText: "Exemple: spam | offensant | inapproprié"
+      },
+      brandAlt: {
+        label: "Texte Alternatif du Logo",
+        placeholder: "Entrez le texte alternatif",
+        helperText: "Texte à afficher si l'image ne se charge pas"
+      }
+    },
+    validation: {
+      required: "Ce champ est obligatoire",
+      invalidColor: "Couleur invalide",
+      invalidFile: "Fichier invalide",
+      maxFileSize: "Le fichier dépasse la taille maximale autorisée"
+    },
+    preview: {
+      title: "Aperçu du Widget",
+      loading: "Chargement de l'aperçu...",
+      error: "Erreur lors du chargement de l'aperçu"
+    }
+  },
+  common: {
+    errorLoadingData: "Erreur lors du chargement des données",
+    errorSavingData: "Erreur lors de l'enregistrement des données",
+    loading: "Chargement...",
+    saving: "Enregistrement...",
+    success: "Opération réussie",
+    error: "Une erreur s'est produite",
+    sessionExpired: "La session a expiré, veuillez vous reconnecter",
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur"
   }
 };
 

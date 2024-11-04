@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const greetings = [
-    "Hello! How are you?",
-    "Welcome! How can I help you?",
-    "Greetings! How's your day going?",
-    "Nice to see you! How are you doing?"
-  ];
-  return greetings[Math.floor(Math.random() * greetings.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const en = {
+const en: TranslationType = {
   greeting: "Hello",
   farewell: "Goodbye",
   actionAllower: {
@@ -21,15 +13,15 @@ const en = {
   },
   leftMenu: {
     aiTeams: "AI Teams",
-    registerTeam: "New team",
-    logout: "Logout",
-    logoutSuccess: "You have successfully logged out",
-    registerUser: "New User",
+    registerTeam: "Register Team",
+    registerUser: "Register User",
     tools: "Tools",
-    workShop: "Workshop"
+    workShop: "Workshop",
+    logout: "Logout",
+    logoutSuccess: "Session closed successfully"
   },
   aiTeamsForm: {
-    editTitle: "Edit AI Teams team",
+    editTitle: "Edit team {teamName}",
     createTitle: "Register new AI Teams team",
     teamName: "Team Name",
     address: "Address",
@@ -42,7 +34,12 @@ const en = {
     errorConnection: "Error: Could not establish connection with the server",
     selectUser: "Select user",
     noUsersAvailable: "No users available",
-    currentUser: "Current user"
+    currentUser: "Current user",
+    saving: "Saving...",
+    update: "Update",
+    create: "Create",
+    cancel: "Cancel",
+    owner: "Owner"
   },
   aiTeamsList: {
     newAiTeam: "New AI Team",
@@ -51,11 +48,20 @@ const en = {
     perPage: "per page",
     manageTeam: "Manage Team",
     edit: "Edit",
+    delete: "Delete",
+    confirmDelete: "Are you sure you want to delete this team?",
+    deleteTeam: "Delete Team",
     noTeamsFound: "No AI Teams found with that name",
     noTeamsToShow: "No AI Teams to show",
     teamsCount: "of {total} AI Teams",
     successDelete: "AiTeam deleted successfully",
-    owner: "Owner"
+    owner: "Owner",
+    noDescription: "No description",
+    manage: "Manage",
+    comingSoon: "Coming Soon",
+    noAddress: "No address",
+    llmKeyBadge: "Team with LLM Key",
+    noOwner: "No owner"
   },
   iaPanel: {
     createAgent: "Create Agent",
@@ -78,14 +84,25 @@ const en = {
     errorDeletingBot: "Error loading botId for deletion",
     edit: "Edit",
     created: "Created: {date}",
-    implementation: "Implementation"
+    implementation: "Implementation",
+    reloadData: "Reload data",
+    deleteConfirmation: "Are you sure you want to delete this agent?",
+    deletingAgent: "Deleting agent...",
+    deleteButton: "Delete",
+    manageButton: "Manage",
+    reloadButton: "Reload",
+    configureButton: "Configure",
+    copyWidget: "Copy widget code",
+    widgetCopied: "Code copied to clipboard",
+    modelAI: "AI Model: {model}",
+    errorMissingParams: "Missing required parameters for this action"
   },
   chatView: {
     agentPanel: "Panel of {agentName}",
     defaultAgentName: "AI Agent",
     history: "History",
     comingSoon: "(Coming Soon)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('en'),
     inputPlaceholder: "Type your message for the AI agent...",
     sendButton: "Send",
     finishSession: "Finish Session",
@@ -125,7 +142,8 @@ const en = {
     invalidEmail: "Invalid email",
     invalidCredentials: "Invalid credentials",
     fieldRequired: "This field is required",
-    connectionError: "Error: Could not establish connection with the server"
+    connectionError: "Error: Could not establish connection with the server",
+    invalidServerResponse: "Invalid server response"
   },
   toolsForm: {
     required: "This field is required",
@@ -140,13 +158,14 @@ const en = {
     toolType: "Tool type",
     instructions: "Instructions",
     toolFile: "Tool file",
+    fileInput: "Tool file",
     update: "Update",
     create: "Create",
     edit: "Edit",
     toolNotFound: "Tool not found",
     toolNotFoundMessage: "Sorry, the tool you are looking for does not exist or has been removed.",
     backToTools: "Back to Tools",
-    aiTeam: "AiTeam",
+    aiTeam: "Client",
     fieldRequired: "This field is required",
     successUpdate: "Tool updated successfully",
     successCreate: "Tool created successfully",
@@ -154,12 +173,13 @@ const en = {
     editTitle: "Edit tool {toolName}",
     createTitle: "Create new tool",
     selectUser: "Select user",
-    currentUser: "Current user"
+    currentUser: "Current user",
+    cancel: "Cancel"
   },
   tools: {
+    type: "Tools",
     libraryTitle: "Tools Library",
     relatedTitle: "Related Tools",
-    type: "Type",
     relateButton: "Relate",
     unrelateButton: "Unrelate",
     successRelate: "Tool related successfully",
@@ -168,7 +188,191 @@ const en = {
     errorUnrelate: "Error unrelating tool",
     errorToken: "Authentication error",
     errorLoading: "Error loading tools",
-    createToolButton: "Create Tool"
+    createToolButton: "Create Tool",
+    title: "Tools",
+    description: "Manage your tools",
+    searchPlaceholder: "Search tool...",
+    noToolsFound: "No tools found with that name",
+    noToolsToShow: "No tools to show",
+    toolsCount: "of {total} tools",
+    perPage: "per page",
+    reloadData: "Reload data",
+    manage: "Manage",
+    edit: "Edit",
+    delete: "Delete",
+    deleteConfirmation: "Are you sure you want to delete this tool?",
+    deleteSuccess: "Tool deleted successfully",
+    deleteError: "Error deleting tool",
+    errorMissingParams: "Missing required parameters for this action",
+    noToolsAvailable: "No tools available",
+    noType: "No type",
+    noRelatedTools: "No related tools",
+    errorMissingBot: "Error: Bot ID not found"
+  },
+  contextEntry: {
+    title: "Create Agent",
+    editTitle: "Edit Agent",
+    createTitle: "Create Agent",
+    name: "Agent Name",
+    description: "Description",
+    modelAI: "AI Model",
+    saving: "Saving...",
+    update: "Update",
+    create: "Create",
+    cancel: "Cancel",
+    successUpdate: "Agent updated successfully",
+    successCreate: "Agent created successfully",
+    errorConnection: "Error: Could not establish connection with server",
+    fieldRequired: "This field is required",
+    errorMissingTeamId: "Team ID not found",
+    errorMissingBotId: "Bot ID not found"
+  },
+  dataEntry: {
+    title: "Agent Data",
+    editTitle: "Edit Agent Data",
+    context: "Context",
+    documents: "Documents",
+    upload: "Upload",
+    saving: "Saving...",
+    update: "Update",
+    cancel: "Cancel",
+    successUpdate: "Data updated successfully",
+    errorConnection: "Error: Could not establish connection with server",
+    fieldRequired: "This field is required",
+    dragAndDrop: "Drag and drop files here or click to select",
+    maxSize: "Maximum file size: {size}MB",
+    invalidType: "Invalid file type",
+    uploadError: "Error uploading file",
+    uploadProgress: "Upload progress: {progress}%",
+    removeFile: "Remove file",
+    uploadSuccess: "File uploaded successfully",
+    knowledgeKey: "Knowledge key",
+    knowledgeKeyHelper: "Enter a key to identify this knowledge",
+    knowledgeSet: "Knowledge Set",
+    addKnowledgeSet: "Add new set",
+    searchKnowledge: "Search knowledge",
+    noKnowledgeFound: "No knowledge found",
+    noKnowledgeSets: "No knowledge sets"
+  },
+  header: {
+    profile: "Profile"
+  },
+  auth: {
+    register: "Register",
+    login: "Login",
+    logout: "Logout",
+    registerTitle: "User Registration",
+    registerSuccess: "User registered successfully",
+    registerError: "Error registering user"
+  },
+  widgetCustomizer: {
+    title: "Widget Customizer",
+    tabs: {
+      colors: "Colors",
+      typography: "Typography",
+      images: "Images",
+      security: "Security",
+      greetings: "Greetings",
+      data: "Data"
+    },
+    colors: {
+      primaryColor: "Primary Color",
+      primaryTextContrast: "Primary Text Contrast",
+      secondaryColor: "Secondary Color",
+      secondaryTextContrast: "Secondary Text Contrast",
+      badgeColor: "Badge Color",
+      badgeContrast: "Badge Text Color"
+    },
+    typography: {
+      fontFamily: "Font Family",
+      fontFamilyPlaceholder: "Enter desired font-family value",
+      faqQuestions: "FAQ Questions",
+      faqQuestionsPlaceholder: "Enter questions (separated by |)",
+      bannedWords: "Banned Words",
+      bannedWordsPlaceholder: "Enter words (separated by |)"
+    },
+    images: {
+      brandAlt: "Logo Alt Text",
+      brandAltPlaceholder: "Enter alternative text",
+      brandLogo: "Client Logo",
+      botIcon: "Bot Icon",
+      chatIcon: "Chat Icon",
+      hiddenIcon: "Hidden Icon",
+      sendIcon: "Send Icon"
+    },
+    security: {
+      sqlInjection: "SQL Injection Check",
+      phpInjection: "PHP Injection Check",
+      strangeChars: "Strange Characters Check"
+    },
+    greetings: {
+      newMessage: "Create new message",
+      update: "Update",
+      delete: "Delete",
+      create: "Create"
+    },
+    actions: {
+      save: "Save",
+      saveColors: "Save Colors",
+      saveTypography: "Save Typography",
+      saveImages: "Save Images",
+      saveSecurity: "Save Security",
+      saveGreetings: "Save Greetings",
+      saveData: "Save Data"
+    },
+    messages: {
+      updateSuccess: "Widget updated successfully",
+      updateError: "Error updating widget",
+      colorsSaved: "Colors saved successfully",
+      typographySaved: "Typography saved successfully",
+      imagesSaved: "Images saved successfully",
+      securitySaved: "Security settings saved successfully",
+      greetingsSaved: "Greetings saved successfully",
+      dataSaved: "Data saved successfully"
+    },
+    inputs: {
+      fontFamily: {
+        label: "Font Family",
+        placeholder: "Enter desired font-family attribute value",
+        helperText: "Example: Arial, Helvetica, sans-serif"
+      },
+      faqQuestions: {
+        label: "FAQ Questions",
+        placeholder: "Enter questions (separated by |)",
+        helperText: "Example: How does it work? | How much does it cost?"
+      },
+      bandList: {
+        label: "Banned Words",
+        placeholder: "Enter words (separated by |)",
+        helperText: "Example: spam | offensive | inappropriate"
+      },
+      brandAlt: {
+        label: "Logo Alternative Text",
+        placeholder: "Enter alternative text",
+        helperText: "Text to show if image fails to load"
+      }
+    },
+    validation: {
+      required: "This field is required",
+      invalidColor: "Invalid color",
+      invalidFile: "Invalid file",
+      maxFileSize: "File exceeds maximum allowed size"
+    },
+    preview: {
+      title: "Widget Preview",
+      loading: "Loading preview...",
+      error: "Error loading preview"
+    }
+  },
+  common: {
+    errorLoadingData: "Error loading data",
+    errorSavingData: "Error saving data",
+    loading: "Loading...",
+    saving: "Saving...",
+    success: "Operation successful",
+    error: "An error has occurred",
+    sessionExpired: "Session expired, please login again",
+    errorConnection: "Error: Could not establish connection with server"
   }
 };
 

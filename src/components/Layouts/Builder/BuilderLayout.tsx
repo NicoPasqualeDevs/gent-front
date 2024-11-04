@@ -10,25 +10,33 @@ interface ComponentProps {
 
 const BuilderLayout: React.FC<ComponentProps> = ({ children }) => {
   return (
-    <>
+    <Stack sx={{ height: '100vh', overflow: 'hidden' }}>
       <Header />
-      <Stack direction={"row"} position={"relative"}>
+      <Stack 
+        direction="row" 
+        sx={{ 
+          position: 'relative',
+          height: 'calc(100vh - 64px)', // Restamos el alto del header
+          overflow: 'hidden'
+        }}
+      >
         <LeftMenu />
-        <MainContent container>
+        <MainContent container sx={{ overflow: 'hidden' }}>
           <Grid
             item
             xs={11}
             md={9}
             lg={7}
             sx={{
-              paddingBottom: "20px",
+              height: '100%',
+              overflow: 'hidden'
             }}
           >
             {children}
           </Grid>
         </MainContent>
       </Stack>
-    </>
+    </Stack>
   );
 };
 

@@ -1,352 +1,185 @@
-import {
-  NewGreetingData,
-  PromptTemplateData,
-  PromptTemplatePost,
-  ToolData,
-  ToolRelationshipData,
-} from "./../types/Bots";
-import useApi from "@/hooks/useApi.ts";
-import {
-  ChatHistory,
-  UpdatedChatHistory,
-  Ktag,
-  AgentData,
-  AgentMetaData,
-  WidgetData,
-  GetCustomGreetingData,
-  CustomGreetingData,
-  AiTeam,
-  ConversationData,
-} from "@/types/Bots";
-import { ApiResponseList, ApiResponse } from "@/types/Api";
+import { ApiResponse } from "@/types/Api";
+import { AgentData } from "@/types/Bots";
+import useApi from "./api/useApi";
 
-type MessageUp = {
-  message: string;
-};
+interface BotFormData {
+  name: string;
+  description: string;
+  model_ai: string;
+  [key: string]: string;
+}
 
-type UseBotsApiHook = {
-  // Gets
-  getKnowledgeTags: (aiTeamId: string) => Promise<Ktag[]>;
-  getChatHistory: (botId: string) => Promise<ChatHistory>;
+interface BotDataFormData {
+  context: string;
+  documents?: File[];
+  [key: string]: string | File[] | undefined;
+}
+
+interface ChatHistory {
+  messages: Array<{
+    role: string;
+    content: string;
+    timestamp: string;
+  }>;
+}
+
+interface UpdatedChatHistoryType {
+  messages: Array<{
+    role: string;
+    content: string;
+    timestamp: string;
+  }>;
+}
+
+interface ConversationData {
+  id: string;
+  created_at: string;
+  messages: Array<{
+    role: string;
+    content: string;
+    timestamp: string;
+  }>;
+}
+
+interface ToolRelationshipData extends Record<string, unknown> {
+  agent_tool_ids: number[];
+}
+
+interface UseBotsApi {
+  getBotDetails: (botId: string) => Promise<ApiResponse<AgentData>>;
+  getBotsList: (aiTeamId: string, filterParams: string) => Promise<ApiResponse<AgentData[]>>;
+  createBot: (data: BotFormData, teamId: string) => Promise<ApiResponse<AgentData>>;
+  updateBot: (data: BotFormData, botId: string) => Promise<ApiResponse<AgentData>>;
+  updateBotData: (data: BotDataFormData, botId: string) => Promise<ApiResponse<AgentData>>;
+  deleteBot: (botId: string) => Promise<ApiResponse<void>>;
+  uploadDocument: (file: File, botId: string, onProgress?: (progress: number) => void) => Promise<ApiResponse<void>>;
+  getChatHistory: (botId: string) => Promise<ApiResponse<ChatHistory>>;
+  sendMessage: (botId: string, data: { message: string }) => Promise<ApiResponse<UpdatedChatHistoryType>>;
+  closeChat: (conversationId: string) => Promise<void>;
   getAgentData: (botId: string) => Promise<ApiResponse<AgentData>>;
-  getNoAuthAgentData: (botId: string) => Promise<AgentData>;
-  getBotsList: (
-    aiTeamId: string,
-    filterParams: string
-  ) => Promise<ApiResponseList<AgentData>>;
-  getKtags: (botId: string) => Promise<Ktag[]>;
-  getWidget: (botId: string) => Promise<WidgetData>;
-  getCustomMessages: (botId: string) => Promise<GetCustomGreetingData>;
-  getPromptTemplate: (botId: string) => Promise<PromptTemplateData>;
-  getAllTools: () => Promise<ToolData[]>;
-  getBotTools: (botId: string) => Promise<ToolData[]>;
-  getTool: (toolId: string) => Promise<ToolData>;
-  getClientTools: (user_id: string) => Promise<ApiResponse<ToolData[]>>;
-  getMyClients: () => Promise<ApiResponseList<AiTeam>>;
-  getBotConversations: (botId: string) => Promise<ApiResponseList<ConversationData>>;
-  getClientConversations: () => Promise<ApiResponseList<ConversationData>>;
   getClientBotConversations: (botId: string) => Promise<ConversationData[]>;
+  postTool: (data: FormData) => Promise<unknown>;
+  getAllTools: () => Promise<unknown>;
+  getBotTools: (botId: string) => Promise<unknown>;
+  setToolRelationship: (data: ToolRelationshipData) => Promise<unknown>;
+  removeToolRelationship: (data: ToolRelationshipData) => Promise<unknown>;
+}
 
-  //Post
-  createBot: (aiTeamId: string, data: AgentMetaData) => Promise<AgentData>;
-  sendMessage: (botId: string, data: MessageUp) => Promise<UpdatedChatHistory>;
-  saveKtag: (botId: string, data: Ktag) => Promise<Ktag>;
-  postWidget: (botId: string, data: WidgetData) => Promise<WidgetData>;
-  postCustomMessages: (data: NewGreetingData) => Promise<CustomGreetingData>;
-  postPromptTemplate: (
-    botId: string,
-    data: PromptTemplatePost
-  ) => Promise<PromptTemplateData>;
-  postTool: (data: FormData) => Promise<ToolData>;
-  setToolRelationship: (
-    botId: string,
-    data: ToolRelationshipData
-  ) => Promise<unknown>;
-  removeToolRelationship: (
-    botId: string,
-    data: ToolRelationshipData
-  ) => Promise<unknown>;
-  closeChat: (conversation_id: string) => Promise<void>;
+const useBotsApi = (): UseBotsApi => {
+  const { apiGet, apiPost, apiPut, apiDelete } = useApi();
 
-  //Puts
-  updateBot: (botId: string, data: AgentMetaData) => Promise<AgentData>;
-  editKtag: (tagId: string, data: Ktag) => Promise<void>;
-  putWidget: (botId: string, data: WidgetData) => Promise<WidgetData>;
-  putCustomMessage: (
-    messageId: string,
-    data: CustomGreetingData
-  ) => Promise<CustomGreetingData>;
-
-  //patchs
-  patchWidget: (widgetId: string, data: WidgetData) => Promise<WidgetData>;
-  patchTool: (toolId: string, data: FormData) => Promise<ToolData>;
-
-  //Deletes
-  deleteBot: (botId: string) => Promise<Response>;
-  deleteKtag: (KtagId: string) => Promise<Response>;
-  deleteCustomMessage: (messageId: string) => Promise<Response>;
-  deleteTool: (toolId: string) => Promise<Response>;
-
-  // Nuevos métodos para herramientas
-  addToolToBot: (botId: string, toolIds: number[]) => Promise<ApiResponse<unknown>>;
-  removeToolFromBot: (botId: string, toolIds: number[]) => Promise<ApiResponse<unknown>>;
-};
-
-const useBotsApi = (): UseBotsApiHook => {
-  const { apiPut, apiPost, apiGet, noAuthGet, apiDelete, apiPatch } = useApi();
-
-  // GETS
-  const getBotsList = (
-    aiTeamId: string,
-    filterParams: string
-  ): Promise<ApiResponseList<AgentData>> => {
-    const path = `api/team_details/bots/${aiTeamId}${filterParams}/`;
-    return apiGet<ApiResponseList<AgentData>>(path);
+  const getBotDetails = (botId: string): Promise<ApiResponse<AgentData>> => {
+    return apiGet(`api/bot/${botId}/`);
   };
+
+  const getBotsList = (aiTeamId: string, filterParams: string): Promise<ApiResponse<AgentData[]>> => {
+    return apiGet(`api/bot/${aiTeamId}/${filterParams}`);
+  };
+
+  const createBot = (data: BotFormData, teamId: string): Promise<ApiResponse<AgentData>> => {
+    if (!teamId) {
+      throw new Error('Team ID is required');
+    }
+    
+    const requiredFields = ['name', 'description', 'model_ai'];
+    for (const field of requiredFields) {
+      if (!data[field]) {
+        throw new Error(`${field} is required`);
+      }
+    }
+
+    const payload = {
+      name: data.name,
+      description: data.description,
+      model_ai: data.model_ai,
+      owner: teamId
+    };
+
+    return apiPost(`api/bot/${teamId}/`, payload);
+  };
+
+  const updateBot = (data: BotFormData, botId: string): Promise<ApiResponse<AgentData>> => {
+    return apiPut(`api/bot/${botId}/`, data);
+  };
+
+  const updateBotData = (data: BotDataFormData, botId: string): Promise<ApiResponse<AgentData>> => {
+    return apiPut(`api/bots/${botId}/data/`, data);
+  };
+
+  const deleteBot = (botId: string): Promise<ApiResponse<void>> => {
+    return apiDelete(`api/bot/${botId}/`);
+  };
+
+  const uploadDocument = async (
+    file: File,
+    botId: string,
+  ): Promise<ApiResponse<void>> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return apiPost<void>(`api/bot/${botId}/upload/`, formData);
+  };
+
+  const getChatHistory = (botId: string): Promise<ApiResponse<ChatHistory>> => {
+    return apiGet(`api/bot/${botId}/chat-history/`);
+  };
+
+  const sendMessage = async (botId: string, data: { message: string }): Promise<ApiResponse<UpdatedChatHistoryType>> => {
+    return apiPost(`api/bot/${botId}/send-message/`, data);
+  };
+
+  const closeChat = async (conversationId: string): Promise<void> => {
+    await apiDelete(`api/bot/close-chat/${conversationId}/`);
+    return;
+  };
+
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
-    const path = `api/bot/modify/${botId}/`;
-    return apiGet<ApiResponse<AgentData>>(path);
-  };
-  const getNoAuthAgentData = (botId: string): Promise<AgentData> => {
-    const path = `api/bot/modify/${botId}/`;
-    return noAuthGet<AgentData>(path);
-  };
-  const getChatHistory = (botId: string): Promise<ChatHistory> => {
-    const path = `api/chat/${botId}/`;
-    return apiGet<ChatHistory>(path);
-  };
-  const getKnowledgeTags = (aiTeamId: string): Promise<Ktag[]> => {
-    const path = `api/ktag/${aiTeamId}/`;
-    return apiGet<Ktag[]>(path);
-  };
-  const getKtags = (botId: string): Promise<Ktag[]> => {
-    const path = `api/ktag/${botId}/`;
-    return apiGet<Ktag[]>(path);
-  };
-  const getWidget = (botId: string): Promise<WidgetData> => {
-    const path = `api/widget/${botId}/`;
-    return apiGet<WidgetData>(path);
-  };
-  const getCustomMessages = (botId: string): Promise<GetCustomGreetingData> => {
-    const path = `api/greetings/list-bot/${botId}/`;
-    return apiGet<GetCustomGreetingData>(path);
-  };
-  const getPromptTemplate = (botId: string): Promise<PromptTemplateData> => {
-    const path = `api/bot/prompt/${botId}/`;
-    return apiGet<PromptTemplateData>(path);
-  };
-  const getAllTools = (): Promise<ToolData[]> => {
-    const path = `api/tool/all/`;
-    return apiGet<ToolData[]>(path);
-  };
-  const getBotTools = (botId: string): Promise<ToolData[]> => {
-    const path = `api/tool/list/${botId}/`;
-    return apiGet<ApiResponse<ToolData[]>>(path).then(response => response.data);
-  };
-  const getTool = (toolId: string): Promise<ToolData> => {
-    const path = `api/tool/modify/${toolId}/`;
-    return apiGet<ToolData>(path);
-  };
-  const getClientTools = (user_id: string): Promise<ApiResponse<ToolData[]>> => {
-    const path = `api/tool/user/${user_id}/`;
-    return apiGet<ApiResponse<ToolData[]>>(path);
-  };
-  const getMyClients = (): Promise<ApiResponseList<AiTeam>> => {
-    const path = `api/team_details/my_clients/`;  // Actualizado el endpoint
-    return apiGet<ApiResponseList<AiTeam>>(path);
+    return apiGet(`api/bot/${botId}/agent-data/`);
   };
 
-  // POST
-  const createBot = (aiTeamId: string, data: AgentMetaData): Promise<AgentData> => {
-    const path = `api/team_details/bots/${aiTeamId}/`;
-    return apiPost(path, data);
-  };
-  const sendMessage = (
-    botId: string,
-    data: MessageUp
-  ): Promise<UpdatedChatHistory> => {
-    const path = `/api/chat/${botId}/`;
-    return apiPost(path, data);
-  };
-  const saveKtag = (botId: string, data: Ktag): Promise<Ktag> => {
-    const path = `api/ktag/${botId}/`;
-    return apiPost(path, data);
-  };
-  const postWidget = (botId: string, data: WidgetData): Promise<WidgetData> => {
-    const path = `api/widget/${botId}/`;
-    return apiPost(path, data);
-  };
-  const postCustomMessages = (
-    data: NewGreetingData
-  ): Promise<CustomGreetingData> => {
-    const path = `api/greetings/create/`;
-    return apiPost(path, data);
-  };
-  const postPromptTemplate = (
-    botId: string,
-    data: PromptTemplatePost
-  ): Promise<PromptTemplateData> => {
-    const path = `api/bot/prompt/${botId}/`;
-    return apiPost(path, data);
-  };
-  const postTool = (data: FormData): Promise<ToolData> => {
-    const path = `api/tool/create/`;
-    console.log('Posting tool to:', path);
-    return apiPost(path, data, {
-        // No establecer Content-Type, dejar que el navegador lo maneje
-    });
-  };
-  const setToolRelationship = (
-    botId: string,
-    data: ToolRelationshipData
-  ): Promise<unknown> => {
-    const path = `api/tool/relate/${botId}/`;
-    return apiPost(path, data);
-  };
-  const removeToolRelationship = (
-    botId: string,
-    data: ToolRelationshipData
-  ): Promise<unknown> => {
-    const path = `api/tool/remove/${botId}/`;
-    return apiPost(path, data);
-  };
-  const closeChat = (conversation_id: string): Promise<void> => {
-    const path = `api/clean-chat/`;
-    return apiPost(path, { conversation_id });
+  const getClientBotConversations = async (botId: string): Promise<ConversationData[]> => {
+    const response = await apiGet(`api/bot/${botId}/client-bot-conversations/`);
+    return response.data as ConversationData[];
   };
 
-  // PUT
-  const updateBot = (botId: string, data: AgentMetaData): Promise<AgentData> => {
-    const path = `api/bot/modify/${botId}/`;
-    return apiPut(path, data);
-  };
-  const editKtag = (tagId: string, data: Ktag): Promise<void> => {
-    const path = `api/ktag/modify/${tagId}/`;
-    return apiPut(path, data);
-  };
-  const putWidget = (botId: string, data: WidgetData): Promise<WidgetData> => {
-    const path = `api/widget/modify/${botId}/`;
-    return apiPut(path, data);
-  };
-  const putCustomMessage = (
-    messageId: string,
-    data: CustomGreetingData
-  ): Promise<CustomGreetingData> => {
-    const path = `api/greetings/${messageId}/`;
-    return apiPut(path, data);
+  const postTool = (data: FormData): Promise<unknown> => {
+    return apiPost('api/tools/', data);
   };
 
-  //Patch
-  const patchWidget = (
-    widgetId: string,
-    data: WidgetData
-  ): Promise<WidgetData> => {
-    const path = `api/widget/modify/${widgetId}/`;
-    return apiPatch(path, data);
-  };
-  const patchTool = (toolId: string, data: FormData): Promise<ToolData> => {
-    const path = `api/tool/modify/${toolId}/`;
-    return apiPatch(path, data);
+  const getAllTools = (): Promise<unknown> => {
+    return apiGet('api/tools/');
   };
 
-  // DELETE
-  const deleteBot = (botId: string): Promise<Response> => {
-    const path = `api/bot/modify/${botId}/`;
-    return apiDelete(path);
-  };
-  const deleteKtag = (KtagId: string): Promise<Response> => {
-    const path = `api/ktag/modify/${KtagId}/`;
-    return apiDelete(path);
-  };
-  const deleteCustomMessage = (messageId: string): Promise<Response> => {
-    const path = `api/greetings/${messageId}/`;
-    return apiDelete(path);
-  };
-  const deleteTool = (toolId: string): Promise<Response> => {
-    const path = `api/tool/modify/${toolId}/`;
-    return apiDelete(path);
+  const getBotTools = (botId: string): Promise<unknown> => {
+    return apiGet(`api/bot/${botId}/tools/`);
   };
 
-  // Nuevos métodos para herramientas
-  const addToolToBot = (botId: string, toolIds: number[]): Promise<ApiResponse<unknown>> => {
-    const path = `api/tool/relate/${botId}/`;
-    return apiPost(path, { agent_tool_ids: toolIds });
+  const setToolRelationship = (data: ToolRelationshipData): Promise<unknown> => {
+    return apiPost('api/tools/relationship/', data as Record<string, unknown>);
   };
 
-  const removeToolFromBot = (botId: string, toolIds: number[]): Promise<ApiResponse<unknown>> => {
-    const path = `api/tool/remove/${botId}/`;
-    return apiPost(path, { agent_tool_ids: toolIds });
-  };
-
-  // Nuevo método para obtener el historial de conversaciones
-  const getBotConversations = (botId: string): Promise<ApiResponseList<ConversationData>> => {
-    const path = `api/chat/conversations/${botId}/`;
-    return apiGet<ApiResponseList<ConversationData>>(path);
-  };
-
-  // Nuevo método para obtener todas las conversaciones del cliente
-  const getClientConversations = (): Promise<ApiResponseList<ConversationData>> => {
-    const path = `api/chat/conversations/`;
-    return apiGet<ApiResponseList<ConversationData>>(path);
-  };
-
-  // Nuevo método para obtener las conversaciones de un bot específico
-  const getClientBotConversations = (botId: string): Promise<ConversationData[]> => {
-    const path = `api/chat/conversations/${botId}/`;
-    return apiGet<ConversationData[]>(path);
+  const removeToolRelationship = (data: ToolRelationshipData): Promise<unknown> => {
+    return apiDelete(`api/tools/relationship/`, { data });
   };
 
   return {
-    // Gets
-    getKnowledgeTags,
-    getChatHistory,
-    getNoAuthAgentData,
-    getAgentData,
+    getBotDetails,
     getBotsList,
-    getKtags,
-    getWidget,
-    getCustomMessages,
-    getPromptTemplate,
+    createBot,
+    updateBot,
+    updateBotData,
+    deleteBot,
+    uploadDocument,
+    getChatHistory,
+    sendMessage,
+    closeChat,
+    getAgentData,
+    getClientBotConversations,
+    postTool,
     getAllTools,
     getBotTools,
-    getTool,
-    getClientTools,
-    getMyClients,
-    getBotConversations,
-    getClientConversations,
-    getClientBotConversations,
-
-    //Post
-    createBot,
-    sendMessage,
-    saveKtag,
-    postWidget,
-    postCustomMessages,
-    postPromptTemplate,
-    postTool,
     setToolRelationship,
-    removeToolRelationship,
-    closeChat,
-
-    //Put
-    updateBot,
-    editKtag,
-    putWidget,
-    putCustomMessage,
-
-    //patch
-    patchWidget,
-    patchTool,
-
-    //Delete
-    deleteBot,
-    deleteKtag,
-    deleteCustomMessage,
-    deleteTool,
-
-    // Nuevos métodos para herramientas
-    addToolToBot,
-    removeToolFromBot,
+    removeToolRelationship
   };
 };
 

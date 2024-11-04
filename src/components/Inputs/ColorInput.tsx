@@ -25,11 +25,18 @@ const ColorPicker = styled('input')({
   }
 });
 
+interface ColorInputEvent {
+  target: {
+    name: string;
+    value: string;
+  }
+}
+
 interface ColorInputProps {
   name: string;
   label: string;
   value: string;
-  onChange: (e: any) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement> | ColorInputEvent) => void;
   onChangeComplete?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 

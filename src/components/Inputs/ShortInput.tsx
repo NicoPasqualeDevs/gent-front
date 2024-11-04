@@ -1,75 +1,58 @@
 import theme from "@/styles/theme";
-import { CustomGreetingData, NewGreetingData } from "@/types/Bots";
+import { CustomGreetingData, NewGreetingData } from "@/types/WidgetProps";
 import { StyledTextField } from "@/utils/StyledInputUtils";
-import { BaseSyntheticEvent, useState } from "react";
-import { Ktag } from "@/types/Bots";
-const getInputNameUtil = (propKey: string) => {
-    switch (propKey) {
-      case "text":
-        return "Custom Greeting";
-      default:
-        return propKey;
+import { useState } from "react";
+
+// Definir un tipo unión para los datos aceptados
+type InputData = CustomGreetingData | NewGreetingData;
+
+// Actualizar la interfaz de props
+interface ShortInputProps {
+  propKey: keyof InputData;
+  emptyData: InputData;
+  data: InputData;
+}
+
+// Definir un tipo específico para el evento de cambio
+type ShortInputChangeEvent = React.ChangeEvent<HTMLInputElement>;
+
+export const ShortInput: React.FC<ShortInputProps> = ({
+  propKey,
+  emptyData,
+  data,
+}) => {
+  const [value, setValue] = useState<string>((data[propKey] as string) || '');
+
+  const handleChange = (event: ShortInputChangeEvent) => {
+    const newValue = event.target.value;
+    setValue(newValue);
+    if (typeof emptyData[propKey] === 'string') {
+      (emptyData[propKey] as string) = newValue;
     }
   };
-  
-// SHORT INPUT
-interface ShortInputFieldProps {
-    value: string | undefined;
-    propKey: string;
-    onChange: (event: BaseSyntheticEvent) => void;
-}
-  
-const ShortInputField: React.FC<ShortInputFieldProps> = ({
-    value,
-    propKey,
-    onChange,
-}) => (
+
+  return (
     <StyledTextField
-        sx={{
-            width: "100%",
-            backgroundColor: "white",
-        }}
-        id={`${propKey}-clientForm-Short`}
-        variant="outlined"
-        label={`${getInputNameUtil(propKey)
-        .charAt(0)
-        .toUpperCase()}${getInputNameUtil(propKey).slice(1)}`}
-        InputProps={{
-            style: { color: theme.palette.secondary.dark, fontSize: "16px" },
-        }}
-        InputLabelProps={{
-            style: {
-                color: theme.palette.primary.main,
-                fontSize: "16px",
-            },
-        }}
-        name={propKey}
-        placeholder={`Ingrese ${getInputNameUtil(propKey)}...`}
-        onChange={onChange}
-        value={value || ""}
+      sx={{
+        width: "100%",
+        backgroundColor: "white",
+      }}
+      id={`${propKey}-clientForm-Short`}
+      variant="outlined"
+      label={`${propKey.charAt(0).toUpperCase()}${propKey.slice(1)}`}
+      InputProps={{
+        style: { color: theme.palette.secondary.dark, fontSize: "16px" },
+      }}
+      InputLabelProps={{
+        style: {
+          color: theme.palette.primary.main,
+          fontSize: "16px",
+        },
+      }}
+      name={propKey}
+      placeholder={`Ingrese ${propKey}...`}
+      onChange={handleChange}
+      value={value}
     />
-);
-  
-type ShortInputProp = {
-    propKey: string;
-    emptyData: CustomGreetingData | NewGreetingData | Ktag;
-    data: CustomGreetingData | NewGreetingData | Ktag;
-};
-  
-export const ShortInput: React.FC<ShortInputProp> = ({
-    propKey,
-    emptyData,
-    data,
-}) => {
-    const [value, setValue] = useState(data[propKey]);
-    return (
-      <ShortInputField
-        value={value}
-        propKey={propKey}
-        onChange={(event: BaseSyntheticEvent) => {
-          setValue(event.target.value);
-          emptyData[propKey] = event.target.value;
-        }}
-      />
-    );
+  );
 };
