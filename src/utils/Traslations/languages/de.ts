@@ -241,7 +241,11 @@ const de: TranslationType = {
     uploadError: "Fehler beim Hochladen der Datei",
     uploadProgress: "Upload-Fortschritt: {progress}%",
     removeFile: "Datei entfernen",
-    uploadSuccess: "Datei erfolgreich hochgeladen"
+    uploadSuccess: "Datei erfolgreich hochgeladen",
+    knowledgeKey: "Wissenssschlüssel",
+    knowledgeKeyHelper: "Geben Sie einen Schlüssel zur Identifizierung dieses Wissens ein",
+    knowledgeSet: "Wissenssatz",
+    addKnowledgeSet: "Neuen Satz hinzufügen"
   },
   header: {
     profile: "Profil"

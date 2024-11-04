@@ -241,7 +241,11 @@ const fr: TranslationType = {
     uploadError: "Erreur lors du téléchargement du fichier",
     uploadProgress: "Progression du téléchargement : {progress}%",
     removeFile: "Supprimer le fichier",
-    uploadSuccess: "Fichier téléchargé avec succès"
+    uploadSuccess: "Fichier téléchargé avec succès",
+    knowledgeKey: "Clé de connaissance",
+    knowledgeKeyHelper: "Entrez une clé pour identifier cette connaissance",
+    knowledgeSet: "Ensemble de connaissances",
+    addKnowledgeSet: "Ajouter un nouvel ensemble"
   },
   header: {
     profile: "Profil"
@@ -291,7 +295,7 @@ const fr: TranslationType = {
     },
     security: {
       sqlInjection: "Vérification d'Injection SQL",
-      phpInjection: "V��rification d'Injection PHP",
+      phpInjection: "Vrification d'Injection PHP",
       strangeChars: "Vérification des Caractères Étranges"
     },
     greetings: {

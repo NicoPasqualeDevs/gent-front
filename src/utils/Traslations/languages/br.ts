@@ -241,7 +241,11 @@ const br: TranslationType = {
     uploadError: "Erro ao enviar o arquivo",
     uploadProgress: "Progresso do upload: {progress}%",
     removeFile: "Remover arquivo",
-    uploadSuccess: "Arquivo enviado com sucesso"
+    uploadSuccess: "Arquivo enviado com sucesso",
+    knowledgeKey: "Chave de conhecimento",
+    knowledgeKeyHelper: "Digite uma chave para identificar este conhecimento",
+    knowledgeSet: "Conjunto de conhecimento",
+    addKnowledgeSet: "Adicionar novo conjunto"
   },
   header: {
     profile: "Perfil"

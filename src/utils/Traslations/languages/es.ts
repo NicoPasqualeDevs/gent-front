@@ -241,7 +241,11 @@ const es: TranslationType = {
     uploadError: "Error al subir el archivo",
     uploadProgress: "Progreso de carga: {progress}%",
     removeFile: "Eliminar archivo",
-    uploadSuccess: "Archivo subido correctamente"
+    uploadSuccess: "Archivo subido correctamente",
+    knowledgeKey: "Clave de conocimiento",
+    knowledgeKeyHelper: "Ingrese una clave para identificar este conocimiento",
+    knowledgeSet: "Conjunto de conocimiento",
+    addKnowledgeSet: "Agregar nuevo conjunto"
   },
   header: {
     profile: "Perfil"

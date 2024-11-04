@@ -244,6 +244,13 @@ export interface TranslationType {
     uploadProgress: string;
     removeFile: string;
     uploadSuccess: string;
+    knowledgeKey: string;
+    knowledgeKeyHelper: string;
+    knowledgeSet: string;
+    addKnowledgeSet: string;
+    searchKnowledge: string;
+    noKnowledgeFound: string;
+    noKnowledgeSets: string;
   };
   header: {
     profile: string;

@@ -147,3 +147,10 @@ export interface BotFormData {
   model_ai: string;
   [key: string]: string;
 }
+
+export interface BotDataFormData {
+  context: string;
+  knowledge_key?: string;
+  documents?: File[];
+  [key: string]: string | File[] | undefined;
+}

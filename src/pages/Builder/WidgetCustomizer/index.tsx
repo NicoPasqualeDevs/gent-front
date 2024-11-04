@@ -906,7 +906,6 @@ export const WidgetCustomizer: React.FC = () => {
                 >
                   <Box sx={{
                     flex: 1,
-                    overflow: 'auto',
                     ...commonStyles.scrollableContent,
                     pr: 2
                   }}>
