@@ -31,7 +31,7 @@ const es: TranslationType = {
     fieldRequired: "Este campo es requerido",
     successUpdate: "Cliente actualizado satisfactoriamente",
     successCreate: "Cliente creado satisfactoriamente",
-    errorConnection: "Error: no se pudo establecer conexi��n con el servidor",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor",
     selectUser: "Seleccionar usuario",
     noUsersAvailable: "No hay usuarios disponibles",
     currentUser: "Usuario actual",
@@ -203,7 +203,11 @@ const es: TranslationType = {
     deleteConfirmation: "¿Estás seguro de que deseas eliminar esta herramienta?",
     deleteSuccess: "Herramienta eliminada con éxito",
     deleteError: "Error al eliminar la herramienta",
-    errorMissingParams: "Faltan parámetros requeridos para esta acción"
+    errorMissingParams: "Faltan parámetros requeridos para esta acción",
+    noToolsAvailable: "No hay herramientas disponibles",
+    noType: "Sin tipo",
+    noRelatedTools: "No hay herramientas relacionadas",
+    errorMissingBot: "Error: ID del bot no encontrado"
   },
   contextEntry: {
     title: "Crear Agente",
@@ -291,7 +295,7 @@ const es: TranslationType = {
       brandAlt: "Texto Alternativo del Logo",
       brandAltPlaceholder: "Ingrese el texto alternativo",
       brandLogo: "Logo del Cliente",
-      botIcon: "��cono del Bot",
+      botIcon: "cono del Bot",
       chatIcon: "Ícono del Chat",
       hiddenIcon: "Ícono de Ocultar",
       sendIcon: "Ícono de Enviar"

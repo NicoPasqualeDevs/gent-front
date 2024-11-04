@@ -64,35 +64,56 @@ const ToolsForm: React.FC = () => {
   const onSubmit = (values: ToolData) => {
     const formData = new FormData();
     
-    // Agregar cada campo al FormData y hacer console.log para debug
     if (values.tool_name) {
-        formData.append('tool_name', values.tool_name);
-        console.log('Appending tool_name:', values.tool_name);
+      formData.append('tool_name', values.tool_name);
+      console.log('Appending tool_name:', values.tool_name);
     }
+    
     if (values.instruction) {
-        formData.append('instruction', values.instruction);
-        console.log('Appending instruction:', values.instruction);
+      formData.append('instruction', values.instruction);
+      console.log('Appending instruction:', values.instruction);
     }
-    if (values.tool_code) {
-        formData.append('tool_code', values.tool_code);
-        console.log('Appending tool_code:', values.tool_code);
+    
+    if (values.tool_code instanceof File) {
+      formData.append('tool_code', values.tool_code);
+      console.log('Appending tool_code:', values.tool_code.name);
     }
+    
     if (values.user_id) {
-        // Asegurarnos de que estamos enviando el ID numérico
-        const numericId = Number(values.user_id);
+      const numericId = Number(values.user_id);
+      if (!isNaN(numericId)) {
         formData.append('user_id', numericId.toString());
         console.log('Appending user_id:', numericId);
+      }
     }
 
-    // Agregar console.log para ver el FormData completo
+    console.log('FormData entries:');
     for (const pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
+      console.log(pair[0], pair[1]);
     }
 
     if (toolId) {
-        updateTool(formData, toolId);
+      patchTool(toolId, formData)
+        .then((response) => {
+          console.log('Update response:', response);
+          SuccessToast(t.successUpdate);
+          navigate(-1);
+        })
+        .catch((error) => {
+          console.error('Error updating tool:', error);
+          ErrorToast(error.message || t.errorConnection);
+        });
     } else {
-        createNewTool(formData);
+      postTool(formData)
+        .then((response) => {
+          console.log('Create response:', response);
+          SuccessToast(t.successCreate);
+          navigate(-1);
+        })
+        .catch((error) => {
+          console.error('Error creating tool:', error);
+          ErrorToast(error.message || t.errorConnection);
+        });
     }
   };
 
@@ -182,28 +203,6 @@ const ToolsForm: React.FC = () => {
       setFieldValue('user_id', auth.uuid);
     }
   }, [auth?.uuid]);
-
-  const updateTool = (formData: FormData, toolId: string) => {
-    patchTool(toolId, formData)
-      .then(() => SuccessToast(t.successUpdate))
-      .catch(() => {
-        ErrorToast(t.errorConnection);
-      })
-  };
-
-  const createNewTool = (formData: FormData) => {
-    console.log('Sending form data to server...');
-    postTool(formData)
-        .then((response: { data: ToolData }) => {
-            console.log('Server response:', response);
-            SuccessToast(t.successCreate);
-            navigate(-1);
-        })
-        .catch((error: Error) => {
-            console.error('Error creating tool:', error);
-            ErrorToast(error.message || t.errorConnection);
-        });
-  };
 
   // Agregar useEffect para configurar el pathbar
   useEffect(() => {

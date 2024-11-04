@@ -8,48 +8,43 @@ const useTools = () => {
 
   const postTool = useCallback(async (formData: FormData): Promise<ApiResponse<ToolData>> => {
     try {
-      return await apiPost("api/tools", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      return await apiPost("api/tool/create/", formData, {
+        skipCsrf: true
       });
     } catch (error: unknown) {
+      console.error('Error creating tool:', error);
       throw new Error(error instanceof Error ? error.message : "Error al crear la herramienta");
     }
-  }, []);
+  }, [apiPost]);
 
   const patchTool = useCallback(async (toolId: string, formData: FormData): Promise<ApiResponse<ToolData>> => {
     try {
-      return await apiPatch<ToolData>(`api/tools/${toolId}`, formData as unknown as Record<string, unknown>, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+      return await apiPatch(`api/tool/modify/${toolId}/`, formData, {
       });
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al actualizar la herramienta");
     }
-  }, []);
+  }, [apiPatch]);
 
   const getTool = useCallback(async (toolId: string): Promise<ApiResponse<ToolData>> => {
     try {
-      return await apiGet(`api/tools/${toolId}`);
+      return await apiGet(`api/tool/modify/${toolId}/`);
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al obtener la herramienta");
     }
-  }, []);
+  }, [apiGet]);
 
-  const getClientTools = useCallback(async (clientId: string): Promise<ApiResponse<ToolData[]>> => {
+  const getClientTools = useCallback(async (userId: string): Promise<ApiResponse<ToolData[]>> => {
     try {
-      return await apiGet(`api/tools/client/${clientId}`);
+      return await apiGet(`api/tool/user/${userId}/`);
     } catch (error: unknown) {
-      throw new Error(error instanceof Error ? error.message : "Error al obtener las herramientas del cliente");
+      throw new Error(error instanceof Error ? error.message : "Error al obtener las herramientas del usuario");
     }
   }, [apiGet]);
 
-  const getBotTools = useCallback(async (botId: string): Promise<ToolData[]> => {
+  const getBotTools = useCallback(async (botId: string): Promise<ApiResponse<ToolData[]>> => {
     try {
-      const response = await apiGet(`api/tools/bot/${botId}`);
-      return response.data as ToolData[];
+      return await apiGet(`api/tool/list/${botId}/`);
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al obtener las herramientas del bot");
     }

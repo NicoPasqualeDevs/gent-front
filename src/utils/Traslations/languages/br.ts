@@ -203,7 +203,11 @@ const br: TranslationType = {
     deleteConfirmation: "Tem certeza que deseja excluir esta ferramenta?",
     deleteSuccess: "Ferramenta excluída com sucesso",
     deleteError: "Erro ao excluir ferramenta",
-    errorMissingParams: "Parâmetros necessários ausentes para esta ação"
+    errorMissingParams: "Parâmetros necessários ausentes para esta ação",
+    noToolsAvailable: "Nenhuma ferramenta disponível",
+    noType: "Sem tipo",
+    noRelatedTools: "Nenhuma ferramenta relacionada",
+    errorMissingBot: "Erro: ID do bot não encontrado"
   },
   contextEntry: {
     title: "Criar Agente",

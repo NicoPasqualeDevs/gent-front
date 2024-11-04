@@ -203,7 +203,11 @@ const en: TranslationType = {
     deleteConfirmation: "Are you sure you want to delete this tool?",
     deleteSuccess: "Tool deleted successfully",
     deleteError: "Error deleting tool",
-    errorMissingParams: "Missing required parameters for this action"
+    errorMissingParams: "Missing required parameters for this action",
+    noToolsAvailable: "No tools available",
+    noType: "No type",
+    noRelatedTools: "No related tools",
+    errorMissingBot: "Error: Bot ID not found"
   },
   contextEntry: {
     title: "Create Agent",

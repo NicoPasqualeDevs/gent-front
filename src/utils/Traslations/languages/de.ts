@@ -203,7 +203,11 @@ const de: TranslationType = {
     deleteConfirmation: "Sind Sie sicher, dass Sie dieses Werkzeug löschen möchten?",
     deleteSuccess: "Werkzeug erfolgreich gelöscht",
     deleteError: "Fehler beim Löschen des Werkzeugs",
-    errorMissingParams: "Erforderliche Parameter für diese Aktion fehlen"
+    errorMissingParams: "Erforderliche Parameter für diese Aktion fehlen",
+    noToolsAvailable: "Keine Werkzeuge verfügbar",
+    noType: "Kein Typ",
+    noRelatedTools: "Keine zugeordneten Werkzeuge",
+    errorMissingBot: "Fehler: Bot-ID nicht gefunden"
   },
   contextEntry: {
     title: "Agent erstellen",

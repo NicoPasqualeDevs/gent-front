@@ -206,6 +206,10 @@ export interface TranslationType {
     deleteSuccess: string;
     deleteError: string;
     errorMissingParams: string;
+    noToolsAvailable: string;
+    noType: string;
+    noRelatedTools: string;
+    errorMissingBot: string;
   };
   contextEntry: {
     title: string;

@@ -203,7 +203,11 @@ const hi: TranslationType = {
     deleteConfirmation: "क्या आप वाकई इस उपकरण को हटाना चाहते हैं?",
     deleteSuccess: "उपकरण सफलतापूर्वक हटाया गया",
     deleteError: "उपकरण हटाने में त्रुटि",
-    errorMissingParams: "इस कार्य के लिए आवश्यक पैरामीटर गायब हैं"
+    errorMissingParams: "इस कार्य के लिए आवश्यक पैरामीटर गायब हैं",
+    noToolsAvailable: "कोई उपकरण उपलब्ध नहीं है",
+    noType: "कोई प्रकार नहीं",
+    noRelatedTools: "कोई संबंधित उपकरण नहीं",
+    errorMissingBot: "त्रुटि: बॉट आईडी नहीं मिली"
   },
   contextEntry: {
     title: "एजेंट बनाएं",
@@ -235,7 +239,7 @@ const hi: TranslationType = {
     successUpdate: "डेटा सफलतापूर्वक अपडेट किया गया",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
     fieldRequired: "यह फ़ील्ड आवश्यक है",
-    dragAndDrop: "फ़ाइलें यहां खींचें और छोड़ें या चयन करने के लिए क्लिक करें",
+    dragAndDrop: "फ़ाइलें यहां खींचें और छोड़ें या चयन करने के लिए ���्लिक करें",
     maxSize: "प्रति फ़ाइल अधिकतम आकार: {size}MB",
     invalidType: "अमान्य फ़ाइल प्रकार",
     uploadError: "फ़ाइल अपलोड करने में त्रुटि",
@@ -244,7 +248,7 @@ const hi: TranslationType = {
     uploadSuccess: "फ़ाइल सफलतापूर्वक अपलोड की गई",
     knowledgeKey: "ज्ञान कुंजी",
     knowledgeKeyHelper: "इस ज्ञान की पहचान के लिए एक कुंजी दर्ज करें",
-    knowledgeSet: "ज्ञान समूह",
+    knowledgeSet: "ज���ञान समूह",
     addKnowledgeSet: "नया समूह जोड़ें",
     searchKnowledge: "ज्ञान खोजें",
     noKnowledgeFound: "कोई ज्ञान नहीं मिला",
@@ -340,7 +344,7 @@ const hi: TranslationType = {
       bandList: {
         label: "प्रतिबंधित शब्द",
         placeholder: "शब्द दर्ज करें (| से अलग करें)",
-        helperText: "उदाहरण: स्पैम | आपत्तिजनक | अनुचित"
+        helperText: "उदाहरण: स्पैम | आपतिजनक | अनुचित"
       },
       brandAlt: {
         label: "लोगो वैकल्पिक टेक्स्ट",

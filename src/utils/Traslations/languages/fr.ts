@@ -203,7 +203,11 @@ const fr: TranslationType = {
     deleteConfirmation: "Êtes-vous sûr de vouloir supprimer cet outil ?",
     deleteSuccess: "Outil supprimé avec succès",
     deleteError: "Erreur lors de la suppression de l'outil",
-    errorMissingParams: "Paramètres requis manquants pour cette action"
+    errorMissingParams: "Paramètres requis manquants pour cette action",
+    noToolsAvailable: "Aucun outil disponible",
+    noType: "Pas de type",
+    noRelatedTools: "Aucun outil associé",
+    errorMissingBot: "Erreur : ID du bot non trouvé"
   },
   contextEntry: {
     title: "Créer un Agent",
