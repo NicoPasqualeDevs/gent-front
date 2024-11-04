@@ -350,6 +350,14 @@ const de: TranslationType = {
       loading: "Vorschau wird geladen...",
       error: "Fehler beim Laden der Vorschau"
     }
+  },
+  common: {
+    errorLoadingData: "Fehler beim Laden der Daten",
+    errorSavingData: "Fehler beim Speichern der Daten",
+    loading: "Wird geladen...",
+    saving: "Wird gespeichert...",
+    success: "Operation erfolgreich",
+    error: "Ein Fehler ist aufgetreten"
   }
 };
 

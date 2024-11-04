@@ -31,7 +31,7 @@ const es: TranslationType = {
     fieldRequired: "Este campo es requerido",
     successUpdate: "Cliente actualizado satisfactoriamente",
     successCreate: "Cliente creado satisfactoriamente",
-    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    errorConnection: "Error: no se pudo establecer conexi��n con el servidor",
     selectUser: "Seleccionar usuario",
     noUsersAvailable: "No hay usuarios disponibles",
     currentUser: "Usuario actual",
@@ -350,6 +350,14 @@ const es: TranslationType = {
       loading: "Cargando vista previa...",
       error: "Error al cargar la vista previa"
     }
+  },
+  common: {
+    errorLoadingData: "Error al cargar los datos",
+    errorSavingData: "Error al guardar los datos",
+    loading: "Cargando...",
+    saving: "Guardando...",
+    success: "Operación exitosa",
+    error: "Ha ocurrido un error"
   }
 };
 

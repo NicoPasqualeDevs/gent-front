@@ -350,6 +350,14 @@ const en: TranslationType = {
       loading: "Loading preview...",
       error: "Error loading preview"
     }
+  },
+  common: {
+    errorLoadingData: "Error loading data",
+    errorSavingData: "Error saving data",
+    loading: "Loading...",
+    saving: "Saving...",
+    success: "Operation successful",
+    error: "An error has occurred"
   }
 };
 

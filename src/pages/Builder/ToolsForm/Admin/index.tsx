@@ -276,13 +276,14 @@ const ToolsForm: React.FC = () => {
 
         <FormInputGroup>
           <FormSelect
-            labelId="user-select-label"
+            name="user_id"
             label={t.selectUser}
             value={values.user_id || ''}
             onChange={(e) => {
               setFieldValue('user_id', e.target.value);
             }}
-            name="user_id"
+            error={Boolean(errors.user_id)}
+            helperText={errors.user_id}
           >
             {nonSuperUsers.map((user) => (
               <MenuItem key={user.id} value={user.id.toString()}>

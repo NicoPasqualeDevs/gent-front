@@ -12,6 +12,7 @@ export interface AiTeamsDetails {
   description?: string;
   address?: string;
   owner_data?: OwnerData;
+  email?: string;
 }
 
 export interface User {

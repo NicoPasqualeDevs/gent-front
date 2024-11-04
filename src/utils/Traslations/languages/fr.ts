@@ -350,6 +350,14 @@ const fr: TranslationType = {
       loading: "Chargement de l'aperçu...",
       error: "Erreur lors du chargement de l'aperçu"
     }
+  },
+  common: {
+    errorLoadingData: "Erreur lors du chargement des données",
+    errorSavingData: "Erreur lors de l'enregistrement des données",
+    loading: "Chargement...",
+    saving: "Enregistrement...",
+    success: "Opération réussie",
+    error: "Une erreur s'est produite"
   }
 };
 

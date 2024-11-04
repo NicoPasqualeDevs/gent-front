@@ -11,7 +11,8 @@ import {
     FormControl,
     InputLabel,
     Select,
-    Skeleton
+    Skeleton,
+    FormHelperText
 } from '@mui/material';
 import { motion } from "framer-motion";
 import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
@@ -227,8 +228,9 @@ export const FormContent: React.FC<{
     children: React.ReactNode;
     onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
     encType?: string;
-    isLoading?: boolean;  // Nueva prop
-}> = ({ children, onSubmit, encType, isLoading }) => (
+    isLoading?: boolean;
+    isSubmitting?: boolean;
+}> = ({ children, onSubmit, encType, isLoading, isSubmitting }) => (
     <Paper elevation={3} sx={formStyles.paper}>
         <Box
             component="form"
@@ -236,7 +238,7 @@ export const FormContent: React.FC<{
             sx={formStyles.form}
             encType={encType}
         >
-            {isLoading ? <FormSkeleton /> : children}
+            {isLoading || isSubmitting ? <FormSkeleton /> : children}
         </Box>
     </Paper>
 );
@@ -352,23 +354,46 @@ interface FormSelectProps {
   name: string;
   label: string;
   value: string;
-  onChange: (e: any) => void;
-  options: { value: any; label: string; }[];
-  labelId: string;
+  onChange: (e: SelectChangeEvent<string>) => void;
   children: React.ReactNode;
+  labelId?: string;
+  error?: boolean;
+  helperText?: string;
+  disabled?: boolean;
+  fullWidth?: boolean;
 }
 
-export const FormSelect: React.FC<FormSelectProps> = (props) => (
-  <FormControl sx={formStyles.select}>
-    <InputLabel id={props.labelId}>{props.label}</InputLabel>
+export const FormSelect: React.FC<FormSelectProps> = ({
+  name,
+  label,
+  value,
+  onChange,
+  children,
+  labelId,
+  error,
+  helperText,
+  disabled,
+  fullWidth = true
+}) => (
+  <FormControl 
+    sx={formStyles.select} 
+    error={error}
+    fullWidth={fullWidth}
+    disabled={disabled}
+  >
+    <InputLabel id={labelId || `${name}-label`}>{label}</InputLabel>
     <Select
-      labelId={props.labelId}
-      label={props.label}
-      value={props.value}
-      onChange={props.onChange}
-      name={props.name}
+      labelId={labelId || `${name}-label`}
+      id={name}
+      name={name}
+      value={value}
+      label={label}
+      onChange={onChange}
     >
-      {props.children}
+      {children}
     </Select>
+    {helperText && (
+      <FormHelperText>{helperText}</FormHelperText>
+    )}
   </FormControl>
 );

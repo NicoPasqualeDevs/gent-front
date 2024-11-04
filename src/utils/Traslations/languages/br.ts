@@ -350,6 +350,14 @@ const br: TranslationType = {
       loading: "Carregando pré-visualização...",
       error: "Erro ao carregar pré-visualização"
     }
+  },
+  common: {
+    errorLoadingData: "Erro ao carregar dados",
+    errorSavingData: "Erro ao salvar dados",
+    loading: "Carregando...",
+    saving: "Salvando...",
+    success: "Operação bem-sucedida",
+    error: "Ocorreu um erro"
   }
 };
 

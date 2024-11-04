@@ -1,6 +1,14 @@
 export interface TranslationType {
   greeting: string;
   farewell: string;
+  common: {
+    errorLoadingData: string;
+    errorSavingData: string;
+    loading: string;
+    saving: string;
+    success: string;
+    error: string;
+  };
   actionAllower: {
     fieldRequired: string;
     confirmAction: string;
