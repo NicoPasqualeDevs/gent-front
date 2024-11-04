@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
   Grid, Typography, Card, Button, Divider,
   Select, MenuItem, Box, Paper, SelectChangeEvent, CardContent, IconButton, Tooltip
@@ -41,6 +41,7 @@ const IaPanel: React.FC<PageProps> = () => {
   const { getBotsList, deleteBot } = useBotsApi();
   const { apiBase } = useApi();
   const t = languages[language as keyof typeof languages];
+  const location = useLocation();
 
   const [state, setState] = useState<IaPanelState>({
     isLoading: true,
@@ -153,10 +154,13 @@ const IaPanel: React.FC<PageProps> = () => {
       }
     };
 
-    if (auth?.uuid && aiTeamId) {
+    if (location.state?.refreshData) {
+      loadData();
+      navigate(location.pathname, { replace: true, state: {} });
+    } else if (auth?.uuid && aiTeamId) {
       loadData();
     }
-  }, [auth?.uuid, aiTeamId, state.contentPerPage, state.currentPage]);
+  }, [auth?.uuid, aiTeamId, state.contentPerPage, state.currentPage, location.state?.refreshData]);
 
   const handleSearch = useCallback((value: string) => {
     setState(prev => ({ ...prev, searchQuery: value }));

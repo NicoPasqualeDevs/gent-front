@@ -87,7 +87,9 @@ const ContextEntry: React.FC = () => {
 
         if (response?.data) {
           SuccessToast(botId ? t.contextEntry.successUpdate : t.contextEntry.successCreate);
-          navigate(`/builder/agents/${response.data.name}/${response.data.id}`);
+          navigate(`/builder/agents/${response.data.name}/${aiTeamId}`, {
+            state: { refreshData: true }
+          });
         }
       } catch (error) {
         console.error('Error submitting form:', error);
