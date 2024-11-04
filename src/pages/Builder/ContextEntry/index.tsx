@@ -1,237 +1,244 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useAppContext } from '@/context/app';
-import { PageCircularProgress } from '@/components/CircularProgress';
-import { PageProps } from '@/types/Page';
-import { ErrorToast, SuccessToast } from '@/components/Toast';
+import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAppContext } from "@/context/app";
+import { BotFormData } from "@/types/Bots";
+import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
-import { Container, Box, Paper, TextField, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { ContextEntryState } from '@/types/ContextEntry';
+import { MenuItem } from "@mui/material";
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
-import { SelectChangeEvent } from '@mui/material/Select';
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import {
+  FormLayout,
+  FormHeader,
+  FormContent,
+  FormInputGroup,
+  FormTextField,
+  FormSelect,
+  FormActions,
+  FormCancelButton,
+  FormButton,
+} from "@/utils/FormsViewUtils";
 
-const ContextEntry: React.FC<PageProps> = () => {
+interface FormValues extends Record<string, string> {
+  name: string;
+  description: string;
+  model_ai: string;
+}
+
+interface FormState {
+  loaded: boolean;
+  isSubmitting: boolean;
+  error: string | null;
+}
+
+const ContextEntry: React.FC = () => {
   const navigate = useNavigate();
   const { aiTeamId, botId } = useParams();
   const { auth, language, replacePath } = useAppContext();
   const { getBotDetails, createBot, updateBot } = useBotsApi();
-  const [state, setState] = useState<ContextEntryState>({
-    isLoading: true,
-    isError: false,
+  const t = languages[language as keyof typeof languages];
+
+  const [formState, setFormState] = useState<FormState>({
+    loaded: false,
     isSubmitting: false,
-    isEditing: Boolean(botId),
-    searchQuery: '',
-    contentPerPage: '5',
-    isSearching: false,
-    formData: {
+    error: null
+  });
+
+  const validationSchema = useMemo(() => 
+    Yup.object({
+      name: Yup.string().required(t.contextEntry.fieldRequired),
+      description: Yup.string(),
+      model_ai: Yup.string().required(t.contextEntry.fieldRequired)
+    }), [t]);
+
+  const formik = useFormik<FormValues>({
+    initialValues: {
       name: '',
       description: '',
       model_ai: modelAIOptions[0].value
-    }
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      if (!auth?.token) {
+        ErrorToast(t.common.sessionExpired);
+        navigate('/auth/login');
+        return;
+      }
+
+      if (!aiTeamId) {
+        ErrorToast(t.contextEntry.errorMissingTeamId);
+        return;
+      }
+
+      setFormState(prev => ({ ...prev, isSubmitting: true }));
+
+      try {
+        const formData: BotFormData = {
+          name: values.name,
+          description: values.description,
+          model_ai: values.model_ai
+        };
+
+        const response = botId
+          ? await updateBot(formData, botId)
+          : await createBot(formData, aiTeamId);
+
+        if (response?.data) {
+          SuccessToast(botId ? t.contextEntry.successUpdate : t.contextEntry.successCreate);
+          navigate(`/builder/agents/${response.data.name}/${response.data.id}`);
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        ErrorToast(error instanceof Error ? error.message : t.contextEntry.errorConnection);
+      } finally {
+        setFormState(prev => ({ ...prev, isSubmitting: false }));
+      }
+    },
+    enableReinitialize: true
   });
-  const t = languages[language as keyof typeof languages];
 
   useEffect(() => {
-    let isSubscribed = true;
+    let mounted = true;
 
-    const initializePage = async () => {
+    const loadData = async () => {
+      if (!auth?.uuid) {
+        navigate('/auth/login');
+        return;
+      }
+
       try {
-        if (!auth?.uuid) {
-          throw new Error('User not authenticated');
-        }
+        setFormState(prev => ({ ...prev, loaded: false }));
 
-        if (!aiTeamId) {
-          throw new Error('AI Team ID is required');
-        }
-
-        replacePath([
-          {
-            label: t.leftMenu.aiTeams,
-            current_path: "/builder",
-            preview_path: "/builder",
-            translationKey: 'aiTeams'
-          },
-          {
-            label: state.isEditing ? t.contextEntry.editTitle : t.contextEntry.createTitle,
-            current_path: `/builder/agents/contextEntry/${aiTeamId}`,
-            preview_path: "",
-            translationKey: state.isEditing ? 'editTitle' : 'createTitle'
-          },
-        ]);
-
-        if (state.isEditing && botId) {
-          const botDetails = await getBotDetails(botId);
+        if (botId) {
+          const response = await getBotDetails(botId);
           
-          if (!isSubscribed) return;
+          if (!mounted) return;
 
-          if (botDetails?.data) {
-            setState((prevState: ContextEntryState) => ({
-              ...prevState,
-              formData: {
-                name: botDetails.data.name,
-                description: botDetails.data.description || '',
-                model_ai: botDetails.data.model_ai
-              }
-            }));
+          if (response?.data) {
+            formik.setValues({
+              name: response.data.name,
+              description: response.data.description || '',
+              model_ai: response.data.model_ai
+            });
           }
         }
 
-        if (isSubscribed) {
-          setState((prevState: ContextEntryState) => ({ 
-            ...prevState, 
-            isLoading: false 
-          }));
-        }
+        setFormState(prev => ({ ...prev, loaded: true }));
       } catch (error) {
-        if (isSubscribed) {
-          setState((prevState: ContextEntryState) => ({ 
-            ...prevState, 
-            isLoading: false, 
-            isError: true,
-            errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        if (mounted) {
+          console.error('Error loading data:', error);
+          setFormState(prev => ({
+            ...prev,
+            loaded: true,
+            error: t.common.errorLoadingData
           }));
-          ErrorToast(t.actionAllower.fieldRequired);
-          navigate('/builder');
+          ErrorToast(t.contextEntry.errorConnection);
         }
       }
     };
 
-    initializePage();
+    loadData();
 
     return () => {
-      isSubscribed = false;
+      mounted = false;
     };
-  }, [auth?.uuid, aiTeamId, botId, state.isEditing, navigate, replacePath, getBotDetails, t]);
+  }, [auth?.uuid, botId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    try {
-      setState((prevState: ContextEntryState) => ({ 
-        ...prevState, 
-        isSubmitting: true 
-      }));
-
-      if (!aiTeamId) {
-        throw new Error(t.contextEntry.errorMissingTeamId);
-      }
-
-      if (state.isEditing && !botId) {
-        throw new Error(t.contextEntry.errorMissingBotId);
-      }
-
-      if (!state.formData.name || !state.formData.model_ai) {
-        throw new Error(t.contextEntry.fieldRequired);
-      }
-
-      const formData = {
-        ...state.formData,
-        description: state.formData.description || ''
-      };
-
-      console.log('Sending data:', formData);
-
-      const response = state.isEditing && botId
-        ? await updateBot(formData, botId)
-        : await createBot(formData, aiTeamId);
-
-      if (response?.data) {
-        SuccessToast(state.isEditing ? t.contextEntry.successUpdate : t.contextEntry.successCreate);
-        navigate(`/builder/agents/${response.data.name}/${response.data.id}`);
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      ErrorToast(error instanceof Error ? error.message : t.contextEntry.errorConnection);
-    } finally {
-      setState((prevState: ContextEntryState) => ({ 
-        ...prevState, 
-        isSubmitting: false 
-      }));
-    }
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent<string>
-  ) => {
-    const { name, value } = e.target;
-    setState((prevState: ContextEntryState) => ({
-      ...prevState,
-      formData: { ...prevState.formData, [name]: value }
-    }));
-  };
-
-  if (state.isLoading) {
-    return <PageCircularProgress />;
-  }
-
-  if (state.isError) {
-    return null;
-  }
+  useEffect(() => {
+    replacePath([
+      {
+        label: t.leftMenu.aiTeams,
+        current_path: "/builder",
+        preview_path: "/builder",
+        translationKey: 'aiTeams'
+      },
+      {
+        label: botId ? t.contextEntry.editTitle : t.contextEntry.createTitle,
+        current_path: `/builder/agents/contextEntry/${aiTeamId}`,
+        preview_path: "",
+        translationKey: botId ? 'editTitle' : 'createTitle'
+      },
+    ]);
+  }, [botId, aiTeamId, replacePath, t]);
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <form onSubmit={handleSubmit}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <TextField
-              name="name"
-              label={t.contextEntry.name}
-              value={state.formData.name}
-              onChange={handleInputChange}
-              required
-              fullWidth
-            />
-            <TextField
-              name="description"
-              label={t.contextEntry.description}
-              value={state.formData.description}
-              onChange={handleInputChange}
-              multiline
-              rows={4}
-              fullWidth
-            />
-            <FormControl fullWidth required>
-              <InputLabel id="model-ai-label">{t.contextEntry.modelAI}</InputLabel>
-              <Select
-                labelId="model-ai-label"
-                name="model_ai"
-                value={state.formData.model_ai}
-                onChange={handleInputChange}
-                label={t.contextEntry.modelAI}
-              >
-                {modelAIOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-              <Button
-                variant="outlined"
-                onClick={() => navigate('/builder')}
-                disabled={state.isSubmitting}
-              >
-                {t.contextEntry.cancel}
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                disabled={state.isSubmitting}
-              >
-                {state.isSubmitting 
-                  ? t.contextEntry.saving 
-                  : state.isEditing 
-                    ? t.contextEntry.update 
-                    : t.contextEntry.create}
-              </Button>
-            </Box>
-          </Box>
-        </form>
-      </Paper>
-    </Container>
+    <FormLayout>
+      <FormHeader 
+        title={botId ? t.contextEntry.editTitle : t.contextEntry.createTitle} 
+      />
+
+      <FormContent
+        onSubmit={formik.handleSubmit}
+        isLoading={!formState.loaded}
+        isSubmitting={formState.isSubmitting}
+      >
+        <FormInputGroup>
+          <FormTextField
+            name="name"
+            label={t.contextEntry.name}
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name ? formik.errors.name : undefined}
+            required
+            disabled={formState.isSubmitting}
+          />
+        </FormInputGroup>
+
+        <FormInputGroup>
+          <FormTextField
+            name="description"
+            label={t.contextEntry.description}
+            value={formik.values.description}
+            onChange={formik.handleChange}
+            error={formik.touched.description && Boolean(formik.errors.description)}
+            helperText={formik.touched.description ? formik.errors.description : undefined}
+            multiline
+            rows={4}
+            disabled={formState.isSubmitting}
+          />
+        </FormInputGroup>
+
+        <FormInputGroup>
+          <FormSelect
+            name="model_ai"
+            label={t.contextEntry.modelAI}
+            value={formik.values.model_ai}
+            onChange={formik.handleChange}
+            error={formik.touched.model_ai && Boolean(formik.errors.model_ai)}
+            helperText={formik.touched.model_ai ? formik.errors.model_ai : undefined}
+            disabled={formState.isSubmitting}
+          >
+            {modelAIOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </FormSelect>
+        </FormInputGroup>
+
+        <FormActions>
+          <FormCancelButton
+            onClick={() => navigate(-1)}
+            disabled={formState.isSubmitting}
+          >
+            {t.contextEntry.cancel}
+          </FormCancelButton>
+          
+          <FormButton
+            type="submit"
+            variant="contained"
+            disabled={formState.isSubmitting}
+            loading={formState.isSubmitting}
+          >
+            {botId ? t.contextEntry.update : t.contextEntry.create}
+          </FormButton>
+        </FormActions>
+      </FormContent>
+    </FormLayout>
   );
 };
 
-export default ContextEntry;
+export default React.memo(ContextEntry);
