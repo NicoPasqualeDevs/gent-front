@@ -245,7 +245,10 @@ const br: TranslationType = {
     knowledgeKey: "Chave de conhecimento",
     knowledgeKeyHelper: "Digite uma chave para identificar este conhecimento",
     knowledgeSet: "Conjunto de conhecimento",
-    addKnowledgeSet: "Adicionar novo conjunto"
+    addKnowledgeSet: "Adicionar novo conjunto",
+    searchKnowledge: "Buscar conhecimento",
+    noKnowledgeFound: "Nenhum conhecimento encontrado",
+    noKnowledgeSets: "Nenhum conjunto de conhecimento"
   },
   header: {
     profile: "Perfil"

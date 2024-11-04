@@ -31,7 +31,7 @@ const es: TranslationType = {
     fieldRequired: "Este campo es requerido",
     successUpdate: "Cliente actualizado satisfactoriamente",
     successCreate: "Cliente creado satisfactoriamente",
-    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    errorConnection: "Error: no se pudo establecer conexi��n con el servidor",
     selectUser: "Seleccionar usuario",
     noUsersAvailable: "No hay usuarios disponibles",
     currentUser: "Usuario actual",
@@ -245,7 +245,10 @@ const es: TranslationType = {
     knowledgeKey: "Clave de conocimiento",
     knowledgeKeyHelper: "Ingrese una clave para identificar este conocimiento",
     knowledgeSet: "Conjunto de conocimiento",
-    addKnowledgeSet: "Agregar nuevo conjunto"
+    addKnowledgeSet: "Agregar nuevo conjunto",
+    searchKnowledge: "Buscar conocimiento",
+    noKnowledgeFound: "No se encontró ningún conocimiento",
+    noKnowledgeSets: "No hay conjuntos de conocimiento"
   },
   header: {
     profile: "Perfil"
@@ -288,7 +291,7 @@ const es: TranslationType = {
       brandAlt: "Texto Alternativo del Logo",
       brandAltPlaceholder: "Ingrese el texto alternativo",
       brandLogo: "Logo del Cliente",
-      botIcon: "Ícono del Bot",
+      botIcon: "��cono del Bot",
       chatIcon: "Ícono del Chat",
       hiddenIcon: "Ícono de Ocultar",
       sendIcon: "Ícono de Enviar"

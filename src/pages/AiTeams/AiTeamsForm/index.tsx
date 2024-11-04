@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { MenuItem, SelectChangeEvent } from "@mui/material";
+import React, { useState, useEffect, useMemo } from "react";
+import { MenuItem } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import useAdmin from "@/hooks/useAdmin";
@@ -139,13 +139,13 @@ const AiTeamsForm: React.FC = () => {
           SuccessToast(aiTeamId ? t.aiTeamsForm.successUpdate : t.aiTeamsForm.successCreate);
           navigate('/builder');
         }
-      } catch (error: any) {
-        if (error.status === 401) {
+      } catch (error: unknown) {
+        if (error instanceof Error && error.message === t.common.sessionExpired) {
           ErrorToast(t.common.sessionExpired);
           navigate('/auth/login');
         } else {
           console.error('Error submitting form:', error);
-          ErrorToast(error?.message || t.common.errorSavingData);
+          ErrorToast(t.common.errorSavingData);
         }
       } finally {
         setFormState(prev => ({ ...prev, isSubmitting: false }));

@@ -13,11 +13,11 @@ import {
   Container,
 } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
-import useAiTeamsApi from "@/hooks/useCustomers";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import { ErrorToast, SuccessToast } from "@/components/Toast";
+import { ErrorToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
+import useAiTeamsApi from "@/hooks/useAiTeams";
 import { AiTeamsDetails } from "@/types/AiTeams";
 import { Metadata, ApiError } from "@/types/Api";
 import agent from '@/assets/agents/1.png';
@@ -121,11 +121,11 @@ const scrollbarStyles: CSSObject = {
 };
 
 // Definir una interfaz para el error
-interface DeleteError {
+/* interface DeleteError {
   status: string;
   error: string;
   data?: string;
-}
+} */
 
 const UserPanel: React.FC = () => {
   const navigate = useNavigate();
@@ -136,7 +136,7 @@ const UserPanel: React.FC = () => {
     setClientPage,
     
   } = useAppContext();
-  const { getMyAiTeams, deleteAiTeam } = useAiTeamsApi();
+  const { getMyAiTeams } = useAiTeamsApi();
   const [loaded, setLoaded] = useState<boolean>(false);
   const [allowerState, setAllowerState] = useState<boolean>(false);
   const [clientToDelete, setClientToDelete] = useState<string>("");
@@ -193,7 +193,9 @@ const UserPanel: React.FC = () => {
   }, [getAiTeamsData]);
 
   const deleteAction = useCallback(async (aiTeamId: string): Promise<void> => {
-    try {
+    console.log('aiTeamId', aiTeamId);
+    setClientToDelete(aiTeamId);
+/*     try {
       await deleteAiTeam(aiTeamId);
       setPageContent(prev => prev.filter(item => item.id !== aiTeamId));
       setAllowerState(false);
@@ -208,8 +210,8 @@ const UserPanel: React.FC = () => {
           `${err.status} - ${err.error} ${err.data ? ": " + err.data : ""}`
         );
       }
-    }
-  }, [deleteAiTeam]);
+    } */
+  }, []);
 
   const handlePrevPage = () => {
     if (clientPage > 1) {

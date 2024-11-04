@@ -5,7 +5,6 @@ import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
 import { Box, TextField, Button, Typography, LinearProgress } from '@mui/material';
-import { BotDataFormData } from '@/types/Bots';
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import SearchIcon from "@mui/icons-material/Search";
 
@@ -22,7 +21,8 @@ interface KnowledgeSet {
 interface FormValues {
   knowledgeSets: KnowledgeSet[];
   documents: File[];
-  [key: string]: KnowledgeSet[] | File[];
+  context: string;
+  [key: string]: KnowledgeSet[] | File[] | string;
 }
 
 interface FormState {
@@ -55,7 +55,8 @@ export const DataEntry: React.FC = () => {
       knowledge_key: '',
       context: ''
     }],
-    documents: []
+    documents: [],
+    context: ''
   });
 
   // Memoizamos la configuración inicial
@@ -103,7 +104,9 @@ export const DataEntry: React.FC = () => {
           console.log('Bot details loaded:', response.data);
           setFormValues(prev => ({
             ...prev,
-            context: response.data.context || ''
+            context: response.data.context || '',
+            knowledgeSets: prev.knowledgeSets,
+            documents: prev.documents
           }));
 
           replacePath([
@@ -194,7 +197,7 @@ export const DataEntry: React.FC = () => {
   }, [t.dataEntry]);
 
   // Manejador de envío del formulario
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
+   useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!config.botId || formState.isSubmitting) {
       console.log('Submit cancelled:', { botId: config.botId, isSubmitting: formState.isSubmitting });
@@ -205,7 +208,10 @@ export const DataEntry: React.FC = () => {
       console.log('Submitting form data:', formValues);
       setFormState(prev => ({ ...prev, isSubmitting: true }));
 
-        const response = await apiMethods.updateBotData(formValues as BotDataFormData, config.botId);
+        const response = await apiMethods.updateBotData({
+          context: formValues.context,
+          documents: formValues.documents
+        }, config.botId);
 
       if (response?.data) {
         console.log('Submit successful:', response.data);
