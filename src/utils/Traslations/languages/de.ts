@@ -177,9 +177,9 @@ const de: TranslationType = {
     cancel: "Abbrechen"
   },
   tools: {
+    type: "Werkzeuge",
     libraryTitle: "Werkzeugbibliothek",
-    relatedTitle: "Zugehörige Werkzeuge",
-    type: "Typ",
+    relatedTitle: "Verknüpfte Werkzeuge",
     relateButton: "Zuordnen",
     unrelateButton: "Zuordnung aufheben",
     successRelate: "Werkzeug erfolgreich zugeordnet",

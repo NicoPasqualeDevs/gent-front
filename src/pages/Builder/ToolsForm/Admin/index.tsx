@@ -12,7 +12,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
-import { ToolData } from "@/types/Bots";
+import { ToolData } from "@/types/Tools";
 import useTools from "@/hooks/useTools"; 
 import { 
   FormLayout, 

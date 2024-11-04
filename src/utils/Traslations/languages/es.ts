@@ -31,7 +31,7 @@ const es: TranslationType = {
     fieldRequired: "Este campo es requerido",
     successUpdate: "Cliente actualizado satisfactoriamente",
     successCreate: "Cliente creado satisfactoriamente",
-    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    errorConnection: "Error: no se pudo establecer conexi��n con el servidor",
     selectUser: "Seleccionar usuario",
     noUsersAvailable: "No hay usuarios disponibles",
     currentUser: "Usuario actual",
@@ -177,9 +177,9 @@ const es: TranslationType = {
     cancel: "Cancelar"
   },
   tools: {
+    type: "Herramientas",
     libraryTitle: "Biblioteca de Herramientas",
     relatedTitle: "Herramientas Relacionadas",
-    type: "Tipo",
     relateButton: "Relacionar",
     unrelateButton: "Desvincular",
     successRelate: "Herramienta relacionada con éxito",

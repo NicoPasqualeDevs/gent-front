@@ -177,9 +177,9 @@ const fr: TranslationType = {
     cancel: "Annuler"
   },
   tools: {
-    libraryTitle: "Bibliothèque d'Outils",
-    relatedTitle: "Outils Associés",
-    type: "Type",
+    type: "Outils",
+    libraryTitle: "Bibliothèque d'outils",
+    relatedTitle: "Outils associés",
     relateButton: "Associer",
     unrelateButton: "Dissocier",
     successRelate: "Outil associé avec succès",

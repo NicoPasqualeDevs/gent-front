@@ -17,9 +17,9 @@ const AgentsDetailsModule: React.FC = () => {
         <Route path="contextEntry/:aiTeamId/:botId?" element={<ContextEntry />} />
         <Route path="widgetCustomizer/:botId" element={<WidgetCustomizer />} />
 
-        {/* Rutas de herramientas */}
+        {/* Rutas de herramientas - Asegurar que se use botId */}
         <Route path="tools">
-          <Route path=":aiTeamId/:botId/:toolId?" element={<Tools />} />
+          <Route path=":aiTeamId/:clientName/:botId" element={<Tools />} />
           <Route path="form/:aiTeamId/:botId/:toolId?" element={<ToolsForm />} />
           <Route path="relationship/:aiTeamId/:botId" element={<ToolsRelationship />} />
         </Route>

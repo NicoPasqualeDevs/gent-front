@@ -1,5 +1,5 @@
 import theme from "@/styles/theme";
-import { CustomGreetingData, NewGreetingData } from "@/types/Widget";
+import { CustomGreetingData, NewGreetingData } from "@/types/WidgetProps";
 import { StyledTextField } from "@/utils/StyledInputUtils";
 import { useState } from "react";
 

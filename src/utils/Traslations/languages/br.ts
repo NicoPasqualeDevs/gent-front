@@ -177,9 +177,9 @@ const br: TranslationType = {
     cancel: "Cancelar"
   },
   tools: {
+    type: "Ferramentas",
     libraryTitle: "Biblioteca de Ferramentas",
     relatedTitle: "Ferramentas Relacionadas",
-    type: "Tipo",
     relateButton: "Relacionar",
     unrelateButton: "Desvincular",
     successRelate: "Ferramenta relacionada com sucesso",

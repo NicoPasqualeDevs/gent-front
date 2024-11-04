@@ -177,9 +177,9 @@ const en: TranslationType = {
     cancel: "Cancel"
   },
   tools: {
+    type: "Tools",
     libraryTitle: "Tools Library",
     relatedTitle: "Related Tools",
-    type: "Type",
     relateButton: "Relate",
     unrelateButton: "Unrelate",
     successRelate: "Tool related successfully",

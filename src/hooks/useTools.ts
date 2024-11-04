@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { ToolData } from "@/types/Bots";
+import { ToolData } from "@/types/Tools";
 import useApi from "./api/useApi";
 import { ApiResponse } from "@/types/Api";
 
@@ -52,7 +52,7 @@ const useTools = () => {
 
   const addToolToBot = useCallback(async (botId: string, toolIds: number[]): Promise<void> => {
     try {
-      await apiPost(`api/tools/bot/${botId}/relate`, { tool_ids: toolIds });
+      await apiPost(`api/tool/relate/${botId}/`, { agent_tool_ids: toolIds });
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al relacionar las herramientas con el bot");
     }
@@ -60,7 +60,7 @@ const useTools = () => {
 
   const removeToolFromBot = useCallback(async (botId: string, toolIds: number[]): Promise<void> => {
     try {
-      await apiPost(`api/tools/bot/${botId}/unrelate`, { tool_ids: toolIds });
+      await apiPost(`api/tool/remove/${botId}/`, { agent_tool_ids: toolIds });
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al desrelacionar las herramientas del bot");
     }

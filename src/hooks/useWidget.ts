@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { WidgetData, CustomGreetingData } from "@/types/Widget";
+import { WidgetData, CustomGreetingData } from "@/types/WidgetProps";
 import { ApiResponse } from "@/types/Api";
 import useApi from "./api/useApi";
 

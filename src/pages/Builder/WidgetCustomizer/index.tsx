@@ -37,7 +37,7 @@ import {
   ColorInputEvent,
   ImageInputEvent,
   GreetingsTabProps
-} from '@/types/Widget';
+} from '@/types/WidgetProps';
 
 // Tipos locales
 type FormChangeEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
