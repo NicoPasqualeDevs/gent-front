@@ -398,6 +398,12 @@ export const greetings: GreetingsType = {
     "Bem-vindo! Em que posso ajudar?",
     "Saudações! Como está seu dia?",
     "Que bom ver você! Como vai?"
+  ],
+  hi: [
+    "नमस्ते! आप कैसे हैं?",
+    "स्वागत है! मैं आपकी कैसे मदद कर सकता हूं?",
+    "अभिवादन! आपका दिन कैसा जा रहा है?",
+    "आपको देखकर अच्छा लगा! आप कैसे हैं?"
   ]
 };
 

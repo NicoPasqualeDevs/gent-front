@@ -325,7 +325,6 @@ const AiTeamsForm: React.FC = () => {
                 disabled={formState.isSubmitting}
               />
             </FormInputGroup>
-
             <FormInputGroup>
               <FormTextField
                 name="description"

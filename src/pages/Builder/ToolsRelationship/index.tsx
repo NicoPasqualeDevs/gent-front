@@ -107,7 +107,7 @@ const ToolsRelationship: React.FC = () => {
           .catch((error) => {
             if (error instanceof Error) {
               ErrorToast(
-                "Error: no se pudo establecer conexión con el servidor"
+                t.common.errorConnection
               );
             } else {
               ErrorToast(

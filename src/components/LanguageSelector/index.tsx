@@ -9,6 +9,7 @@ const countryCodeMap: { [key: string]: string } = {
   fr: 'FR',
   de: 'DE',
   br: 'BR',
+  hi: 'IN',
 };
 
 const LanguageSelector: React.FC = () => {
