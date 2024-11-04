@@ -357,7 +357,8 @@ const fr: TranslationType = {
     loading: "Chargement...",
     saving: "Enregistrement...",
     success: "Opération réussie",
-    error: "Une erreur s'est produite"
+    error: "Une erreur s'est produite",
+    sessionExpired: "La session a expiré, veuillez vous reconnecter"
   }
 };
 

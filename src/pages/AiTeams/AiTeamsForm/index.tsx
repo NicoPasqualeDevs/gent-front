@@ -50,6 +50,14 @@ const AiTeamsForm: React.FC = () => {
   const { listNonSuperUsers } = useAdmin();
   const t = languages[language];
 
+  // Verificar autenticación al inicio
+  useEffect(() => {
+    if (!auth?.token) {
+      navigate('/auth/login');
+      return;
+    }
+  }, [auth?.token, navigate]);
+
   // Definimos el schema de validación
   const validationSchema = useMemo(() => 
     Yup.object({
@@ -103,24 +111,48 @@ const AiTeamsForm: React.FC = () => {
     },
     validationSchema,
     onSubmit: async (values) => {
+      if (!auth?.token) {
+        ErrorToast(t.common.sessionExpired);
+        navigate('/auth/login');
+        return;
+      }
+
       setFormState(prev => ({ ...prev, isSubmitting: true }));
       try {
+        // Formateamos los datos antes de enviar
+        const formattedData: AiTeamsDetails = {
+          id: values.id,
+          name: values.name,
+          description: values.description,
+          address: values.address,
+          owner_data: {
+            id: values.owner_data.id,
+            email: values.owner_data.email,
+            name: values.owner_data.name
+          }
+        };
+
         const response = aiTeamId
-          ? await apiMethods.updateAiTeam(values, aiTeamId)
-          : await apiMethods.createAiTeam(values);
+          ? await apiMethods.updateAiTeam(formattedData, aiTeamId)
+          : await apiMethods.createAiTeam(formattedData);
 
         if (response?.data) {
           SuccessToast(aiTeamId ? t.aiTeamsForm.successUpdate : t.aiTeamsForm.successCreate);
           navigate('/builder');
         }
       } catch (error: any) {
-        console.error('Error submitting form:', error);
-        ErrorToast(error?.message || t.common.errorSavingData);
+        if (error.status === 401) {
+          ErrorToast(t.common.sessionExpired);
+          navigate('/auth/login');
+        } else {
+          console.error('Error submitting form:', error);
+          ErrorToast(error?.message || t.common.errorSavingData);
+        }
       } finally {
         setFormState(prev => ({ ...prev, isSubmitting: false }));
       }
     },
-    enableReinitialize: false // Importante: evitamos reinicializaciones innecesarias
+    enableReinitialize: false
   });
 
   // 5. Un solo efecto para la carga inicial de datos

@@ -357,7 +357,8 @@ const en: TranslationType = {
     loading: "Loading...",
     saving: "Saving...",
     success: "Operation successful",
-    error: "An error has occurred"
+    error: "An error has occurred",
+    sessionExpired: "Session expired, please login again"
   }
 };
 

@@ -346,7 +346,7 @@ const br: TranslationType = {
       maxFileSize: "O arquivo excede o tamanho máximo permitido"
     },
     preview: {
-      title: "Pré-visualização do Widget",
+      title: "Pré-visualizaç��o do Widget",
       loading: "Carregando pré-visualização...",
       error: "Erro ao carregar pré-visualização"
     }
@@ -357,7 +357,8 @@ const br: TranslationType = {
     loading: "Carregando...",
     saving: "Salvando...",
     success: "Operação bem-sucedida",
-    error: "Ocorreu um erro"
+    error: "Ocorreu um erro",
+    sessionExpired: "Sessão expirada, por favor faça login novamente"
   }
 };
 

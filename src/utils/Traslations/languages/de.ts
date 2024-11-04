@@ -357,7 +357,8 @@ const de: TranslationType = {
     loading: "Wird geladen...",
     saving: "Wird gespeichert...",
     success: "Operation erfolgreich",
-    error: "Ein Fehler ist aufgetreten"
+    error: "Ein Fehler ist aufgetreten",
+    sessionExpired: "Sitzung abgelaufen, bitte melden Sie sich erneut an"
   }
 };
 

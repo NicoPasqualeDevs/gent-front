@@ -8,6 +8,7 @@ export interface TranslationType {
     saving: string;
     success: string;
     error: string;
+    sessionExpired: string;
   };
   actionAllower: {
     fieldRequired: string;

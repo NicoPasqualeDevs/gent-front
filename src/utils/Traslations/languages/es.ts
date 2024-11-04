@@ -31,7 +31,7 @@ const es: TranslationType = {
     fieldRequired: "Este campo es requerido",
     successUpdate: "Cliente actualizado satisfactoriamente",
     successCreate: "Cliente creado satisfactoriamente",
-    errorConnection: "Error: no se pudo establecer conexi��n con el servidor",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor",
     selectUser: "Seleccionar usuario",
     noUsersAvailable: "No hay usuarios disponibles",
     currentUser: "Usuario actual",
@@ -357,7 +357,8 @@ const es: TranslationType = {
     loading: "Cargando...",
     saving: "Guardando...",
     success: "Operación exitosa",
-    error: "Ha ocurrido un error"
+    error: "Ha ocurrido un error",
+    sessionExpired: "La sesión ha expirado, por favor inicie sesión nuevamente"
   }
 };
 
