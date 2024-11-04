@@ -141,7 +141,7 @@ export interface AiTeam {
   // Añade cualquier otro campo que pueda tener un cliente
 }
 
-interface BotFormData {
+export interface BotFormData {
   name: string;
   description: string;
   model_ai: string;
