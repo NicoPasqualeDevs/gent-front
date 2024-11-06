@@ -95,7 +95,8 @@ const de: TranslationType = {
     copyWidget: "Widget-Code kopieren",
     widgetCopied: "Code in die Zwischenablage kopiert",
     modelAI: "KI-Modell: {model}",
-    errorMissingParams: "Erforderliche Parameter für diese Aktion fehlen"
+    errorMissingParams: "Erforderliche Parameter für diese Aktion fehlen",
+    noModelSpecified: "Modell nicht angegeben"
   },
   chatView: {
     agentPanel: "Panel von {agentName}",
@@ -373,6 +374,28 @@ const de: TranslationType = {
     error: "Ein Fehler ist aufgetreten",
     sessionExpired: "Sitzung abgelaufen, bitte melden Sie sich erneut an",
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
+  },
+  robotCard: {
+    agentStatus: "Agentenstatus",
+    widget: "Widget",
+    customization: "Anpassung",
+    useAPI: "API verwenden",
+    tools: "Werkzeuge",
+    edit: "Bearbeiten",
+    testAgent: "Agent testen",
+    delete: "Löschen",
+    defaultStatus: "Agent funktioniert normal",
+    statusOnline: "Agent online",
+    statusOffline: "Agent offline",
+    statusBusy: "Agent beschäftigt",
+    statusError: "Agentenfehler",
+    statusUpdating: "Agent wird aktualisiert",
+    greetings: [
+      "Hallo! Wie geht es Ihnen?",
+      "Willkommen! Wie kann ich Ihnen helfen?",
+      "Grüß Gott! Wie läuft Ihr Tag?",
+      "Schön Sie zu sehen! Wie geht es Ihnen?"
+    ]
   }
 };
 

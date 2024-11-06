@@ -131,6 +131,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         variant="body2" 
                         color="text.secondary"
                         sx={{
+                            pt:"2px",
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
                             whiteSpace: 'nowrap',

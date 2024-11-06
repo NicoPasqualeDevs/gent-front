@@ -95,7 +95,8 @@ const en: TranslationType = {
     copyWidget: "Copy widget code",
     widgetCopied: "Code copied to clipboard",
     modelAI: "AI Model: {model}",
-    errorMissingParams: "Missing required parameters for this action"
+    errorMissingParams: "Missing required parameters for this action",
+    noModelSpecified: "Model not specified"
   },
   chatView: {
     agentPanel: "Panel of {agentName}",
@@ -373,6 +374,28 @@ const en: TranslationType = {
     error: "An error has occurred",
     sessionExpired: "Session expired, please login again",
     errorConnection: "Error: Could not establish connection with server"
+  },
+  robotCard: {
+    agentStatus: "Agent status",
+    widget: "Widget",
+    customization: "Customization",
+    useAPI: "Use API",
+    tools: "Tools",
+    edit: "Edit",
+    testAgent: "Test Agent",
+    delete: "Delete",
+    defaultStatus: "Agent working normally",
+    statusOnline: "Agent online",
+    statusOffline: "Agent offline",
+    statusBusy: "Agent busy",
+    statusError: "Agent error",
+    statusUpdating: "Updating agent",
+    greetings: [
+      "Hello! How are you?",
+      "Welcome! How can I help you?",
+      "Greetings! How's your day going?",
+      "Nice to see you! How are you doing?"
+    ]
   }
 };
 

@@ -95,7 +95,8 @@ const hi: TranslationType = {
     copyWidget: "विजेट कोड कॉपी करें",
     widgetCopied: "कोड क्लिपबोर्ड पर कॉपी किया गया",
     modelAI: "एआई मॉडल: {model}",
-    errorMissingParams: "इस कार्य के लिए आवश्यक पैरामीटर गायब हैं"
+    errorMissingParams: "इस कार्य के लिए आवश्यक पैरामीटर गायब हैं",
+    noModelSpecified: "मॉडल निर्दिष्ट नहीं"
   },
   chatView: {
     agentPanel: "{agentName} का पैनल",
@@ -125,7 +126,7 @@ const hi: TranslationType = {
   },
   login: {
     title: "जेंट्स",
-    subtitle: "निकोलस पास्क्वेल द्वारा एआई-आधारित परियोजना",
+    subtitle: "निकोलस पाक्वेल द्वारा एआई-आधारित परियोजना",
     version: "v 0.1",
     rotatingTexts: [
       "एआई एजेंट बनाएं और साझा करें",
@@ -163,7 +164,7 @@ const hi: TranslationType = {
     create: "बनाएं",
     edit: "संपादित करें",
     toolNotFound: "उपकरण नहीं मिला",
-    toolNotFoundMessage: "क्षमा करें, आप जिस उपकरण की तलाश कर रहे हैं वह मौजूद नहीं है या हटा दिया गया है।",
+    toolNotFoundMessage: "क्षमा करें, आप जिस उपकरण की तलाश कर रहे हैं वह मौजूद हीं है या हटा दिया गया है।",
     backToTools: "उपकरणों पर वापस जाएं",
     aiTeam: "ग्राहक",
     fieldRequired: "यह फ़ील्ड आवश्यक है",
@@ -183,7 +184,7 @@ const hi: TranslationType = {
     relateButton: "संबंधित करें",
     unrelateButton: "असंबंधित करें",
     successRelate: "उपकरण सफलतापूर्वक संबंधित किया गया",
-    successUnrelate: "उपकरण सफलतापूर्वक असंबंधित किया गया",
+    successUnrelate: "उपकरण सफलतापूर्वक असंबंधि किया गया",
     errorRelate: "उपकरण को संबंधित करने में त्रुटि",
     errorUnrelate: "उपकरण को असंबंधित करने में त्रुटि",
     errorToken: "प्रमाणीकरण त्रुटि",
@@ -241,9 +242,9 @@ const hi: TranslationType = {
     fieldRequired: "यह फ़ील्ड आवश्यक है",
     dragAndDrop: "फ़ाइलें यहां खींचें और छोड़ें या चयन करने के लिए ्लिक करें",
     maxSize: "प्रति फ़ाइल अधिकतम आकार: {size}MB",
-    invalidType: "अमान्य फ़ाइल प्रकार",
+    invalidType: "अमान्य फ़ाइल प्रकर",
     uploadError: "फ़ाइल अपलोड करने में त्रुटि",
-    uploadProgress: "अपलोड प्रगति: {progress}%",
+    uploadProgress: "अपलोड प्रग: {progress}%",
     removeFile: "फ़ाइल हटाएं",
     uploadSuccess: "फ़ाइल सफलतापूर्वक अपलोड की गई",
     knowledgeKey: "ज्ञान कुंजी",
@@ -355,12 +356,12 @@ const hi: TranslationType = {
     validation: {
       required: "यह फ़ील्ड आवश्यक है",
       invalidColor: "अमान्य रंग",
-      invalidFile: "अमान्य फ़ाइल",
+      invalidFile: "अमान्य फाइल",
       maxFileSize: "फ़ाइल अधिकतम अनुमत आकार से बड़ी है"
     },
     preview: {
       title: "विजेट पूर्वावलोकन",
-      loading: "पूर्वावलोकन लोड हो रहा है...",
+      loading: "पूर्वावलोकन ोड हो रहा है...",
       error: "पूर्वावलोकन लोड करने में त्रुटि"
     }
   },
@@ -373,6 +374,28 @@ const hi: TranslationType = {
     error: "एक त्रुटि हुई है",
     sessionExpired: "सत्र समाप्त हो गया है, कृपया फिर से लॉग इन करें",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका"
+  },
+  robotCard: {
+    agentStatus: "एजेंट की स्थिति",
+    widget: "विजेट",
+    customization: "अनुकूलन",
+    useAPI: "एपीआई का उपयोग करें",
+    tools: "उपकरण",
+    edit: "संपादित करें",
+    testAgent: "एजेंट का परीक्षण करें",
+    delete: "हटाएं",
+    defaultStatus: "एजेंट सामान्य रूप से कार्य कर रहा है",
+    statusOnline: "एजेंट ऑनलाइन है",
+    statusOffline: "एजेंट ऑफ़लाइन है",
+    statusBusy: "एजेंट व्य��्त है",
+    statusError: "एजेंट में त्रुटि",
+    statusUpdating: "एजेंट अपडेट हो रहा है",
+    greetings: [
+      "नमस्ते! आप कैसे हैं?",
+      "स्वागत है! मैं आपकी कैसे मदद कर सकता हूं?",
+      "अभिवादन! आपका दिन कैसा जा रहा है?",
+      "आपको देखकर अच्छा लगा! आप कैसे हैं?"
+    ]
   }
 };
 

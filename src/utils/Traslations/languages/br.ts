@@ -95,7 +95,8 @@ const br: TranslationType = {
     copyWidget: "Copiar código do widget",
     widgetCopied: "Código copiado para a área de transferência",
     modelAI: "Modelo de IA: {model}",
-    errorMissingParams: "Parâmetros necessários ausentes para esta ação"
+    errorMissingParams: "Parâmetros necessários ausentes para esta ação",
+    noModelSpecified: "Modelo não especificado"
   },
   chatView: {
     agentPanel: "Painel de {agentName}",
@@ -129,7 +130,7 @@ const br: TranslationType = {
     version: "v 0.1",
     rotatingTexts: [
       "Crie e compartilhe agentes de IA",
-      "Implemente rápido e fácil",
+      "Implemente rpido e fácil",
       "Comercialize soluções de IA",
       "Importe e publique sua solução",
     ],
@@ -373,6 +374,28 @@ const br: TranslationType = {
     error: "Ocorreu um erro",
     sessionExpired: "Sessão expirada, por favor faça login novamente",
     errorConnection: "Erro: não foi possível estabelecer conexão com o servidor"
+  },
+  robotCard: {
+    agentStatus: "Status do agente",
+    widget: "Widget",
+    customization: "Personalização",
+    useAPI: "Usar API",
+    tools: "Ferramentas",
+    edit: "Editar",
+    testAgent: "Testar Agente",
+    delete: "Excluir",
+    defaultStatus: "Agente funcionando normalmente",
+    statusOnline: "Agente online",
+    statusOffline: "Agente offline",
+    statusBusy: "Agente ocupado",
+    statusError: "Erro no agente",
+    statusUpdating: "Atualizando agente",
+    greetings: [
+      "Olá! Como você está?",
+      "Bem-vindo! Em que posso ajudar?",
+      "Saudações! Como está seu dia?",
+      "Que bom ver você! Como vai?"
+    ]
   }
 };
 
