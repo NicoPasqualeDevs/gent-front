@@ -551,6 +551,39 @@ export const commonStyles = {
             background: (theme: Theme) => theme.palette.action.hover,
         },
     },
+    implementationButton: {
+        flex: '1 1 auto',
+        minWidth: '40px',
+        '& .MuiButton-startIcon': {
+            margin: { xl: '0' }
+        },
+        '& .MuiButton-endIcon': {
+            margin: { xl: '0' }
+        },
+        '& .MuiButton-startIcon>*:nth-of-type(1)': {
+            fontSize: '20px'
+        },
+        px: { xl: 1 }
+    },
+    configButton: {
+        color: (theme: Theme) => theme.palette.primary.main,
+        textTransform: 'none',
+        fontSize: '0.9rem',
+        p: 0,
+        minWidth: 0,
+        justifyContent: 'flex-start',
+        width: '100%',
+        '& span': {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            display: 'block',
+            textAlign: 'left'
+        },
+        '&:hover': {
+            backgroundColor: 'transparent'
+        }
+    }
 };
 
 // Nuevo componente PaginationFooter
