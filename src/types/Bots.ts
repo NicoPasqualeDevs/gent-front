@@ -67,6 +67,7 @@ export interface AgentData {
     email: string;
   };
   widget_url?: string;
+  status?: 'online' | 'offline' | 'busy' | 'error' | 'updating';
 }
 
 export interface AgentMetaData {

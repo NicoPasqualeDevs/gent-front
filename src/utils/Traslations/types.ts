@@ -104,6 +104,7 @@ export interface TranslationType {
     widgetCopied: string;
     modelAI: string;
     errorMissingParams: string;
+    noModelSpecified: string;
   };
   chatView: {
     agentPanel: string;
@@ -367,6 +368,23 @@ export interface TranslationType {
       error: string;
     };
   };
+  robotCard: {
+    agentStatus: string;
+    widget: string;
+    customization: string;
+    useAPI: string;
+    tools: string;
+    edit: string;
+    testAgent: string;
+    delete: string;
+    defaultStatus: string;
+    statusOnline: string;
+    statusOffline: string;
+    statusBusy: string;
+    statusError: string;
+    statusUpdating: string;
+    greetings: string[];
+  };
 }
 
 export interface GreetingsType {
@@ -407,7 +425,7 @@ export const greetings: GreetingsType = {
   hi: [
     "नमस्ते! आप कैसे हैं?",
     "स्वागत है! मैं आपकी कैसे मदद कर सकता हूं?",
-    "अभिवादन! आपका दिन कैसा जा रहा है?",
+    "अभिवादन! आपका दि कैसा जा रहा है?",
     "आपको देखकर अच्छा लगा! आप कैसे हैं?"
   ]
 };

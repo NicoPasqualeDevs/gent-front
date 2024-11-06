@@ -613,7 +613,9 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     gap: 2,
-                    flexDirection: { xs: 'column', sm: 'row' }
+                    flexDirection: { xs: 'column', sm: 'row' },
+                    flex: 1,
+                    justifyContent: 'flex-start'
                 }}>
                     <Pagination
                         count={totalPages}
@@ -630,26 +632,43 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
                     />
                 </Box>
                 {/* Botón de acción en el centro (opcional) */}
-                {createButton?.show && (
-                    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                        <Button
-                            variant="contained"
-                            onClick={createButton.onClick}
-                            startIcon={<AddIcon />}
-                            sx={{
+                <Box sx={{ 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    flex: 1,
+                    position: 'absolute',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '240px',
+                    pointerEvents: createButton?.show ? 'auto' : 'none',
+                    visibility: createButton?.show ? 'visible' : 'hidden'
+                }}>
+                    <Button
+                        variant="contained"
+                        onClick={createButton?.onClick}
+                        startIcon={<AddIcon />}
+                        sx={{
+                            color: 'white',
+                            padding: '6px 32px',
+                            minWidth: '240px',
+                            width: '100%',
+                            '&:hover': {
                                 color: 'white',
-                                padding: '6px 32px',
-                                '&:hover': {
-                                    color: 'white',
-                                },
-                            }}
-                        >
-                            {createButton.label}
-                        </Button>
-                    </Box>
-                )}
+                            },
+                        }}
+                    >
+                        {createButton?.label}
+                    </Button>
+                </Box>
                 {/* Contador de páginas a la derecha */}
-                <Box sx={{ textAlign: { xs: 'center', sm: 'right' }, display: 'flex', flexDirection: 'row', gap: 1 }}>
+                <Box sx={{ 
+                    textAlign: { xs: 'center', sm: 'right' }, 
+                    display: 'flex', 
+                    flexDirection: 'row', 
+                    gap: 1,
+                    flex: 1,
+                    justifyContent: 'flex-end'
+                }}>
                     <Typography variant="body2" color="text.secondary" sx={{mr: -0.5}}>
                         {endItem.toString()}
                     </Typography>

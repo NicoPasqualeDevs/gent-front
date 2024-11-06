@@ -1,24 +1,18 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
-  Grid, Typography, Card, Button, Divider,
-  Select, MenuItem, Box, Paper, SelectChangeEvent, CardContent, IconButton, Tooltip
+  Grid, Typography, Button,
+  Select, MenuItem, Box, Paper, SelectChangeEvent
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import useBotsApi from "@/hooks/useBots";
 import { AgentData } from "@/types/Bots";
 import ActionAllower from "@/components/ActionAllower";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context/app";
-import theme from "@/styles/theme";
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import useApi from "@/hooks/api/useApi";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import WidgetsIcon from "@mui/icons-material/Widgets";
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
-import ApiIcon from '@mui/icons-material/Api';
-import EditIcon from '@mui/icons-material/Edit';
 import { languages } from "@/utils/Traslations";
 import { PageProps } from '@/types/Page';
 import { IaPanelState } from '../../../types/IaPanel';
@@ -30,7 +24,6 @@ import {
   commonStyles,
   SkeletonCard
 } from "@/utils/DashboardsUtils";
-import { alpha } from '@mui/material/styles';
 import { PaginationFooter } from "@/utils/DashboardsUtils";
 import { builderNavigationUtils } from '@/utils/NavigationUtils';
 import { buildBreadcrumbs } from '@/utils/NavigationConfig';
@@ -216,7 +209,7 @@ const IaPanel: React.FC<PageProps> = () => {
   const renderBotCard = (bot: AgentData) => (
     <RobotCard
       name={bot.name}
-      description={modelAIOptions.find(option => option.value === bot.model_ai)?.label || 'No especificado'}
+      description={modelAIOptions.find(option => option.value === bot.model_ai)?.label || t.iaPanel.noModelSpecified}
       lastUpdate={/* t.iaPanel?.lastUpdate.replace("{date}", "2 hours ago") || */ "Updates"}
       onTest={() => navigate(`/builder/agents/chat/${bot.id}`)}
       onWidget={() => window.open(apiBase.slice(0, -1) + bot.widget_url, "_blank")}
@@ -229,7 +222,9 @@ const IaPanel: React.FC<PageProps> = () => {
       }))}
       onCustomize={() => navigate(`/builder/agents/widgetCustomizer/${bot.id}`)}
       onTools={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
-      t={t.iaPanel}
+      t={t.robotCard}
+      language={language}
+      status={bot.status}
     />
   );
 
@@ -249,10 +244,14 @@ const IaPanel: React.FC<PageProps> = () => {
       return;
     }
 
-    builderNavigationUtils.toAgentContext(navigate, {
-      aiTeamId,
-      botId: bot.id
-    });
+    builderNavigationUtils.toAgentContext(
+      navigate,
+      { replacePath },
+      {
+        aiTeamId,
+        botId: bot.id
+      },
+    );
   };
 
   const handleCreateBot = () => {

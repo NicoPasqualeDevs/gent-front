@@ -8,36 +8,27 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BuildIcon from '@mui/icons-material/Build';
+import { TranslationType } from '@/utils/Traslations/types';
 
 interface RobotCardProps {
-  name?: string;
-  description?: string;
-  lastUpdate?: string;
-  onTest?: () => void;
-  onWidget?: () => void;
-  onApi?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onCustomize?: () => void;
-  onTools?: () => void;
-  t?: any;
+  name: string;
+  description: string;
+  lastUpdate: string;
+  onTest: () => void;
+  onWidget: () => void;
+  onApi: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onCustomize: () => void;
+  onTools: () => void;
+  t: TranslationType['robotCard'];
+  language?: string;
+  status?: 'online' | 'offline' | 'busy' | 'error' | 'updating';
 }
-
-const GREETINGS = [
-  "¡Hola! 👋",
-  "¡Hey! 😊",
-  "¡Saludos! 🌟",
-  "¡Bienvenido! 🎉",
-  "¡Hola humano! 🤖",
-  "¡Qué tal! ✨",
-  "¡Hi there! 🌈",
-  "¡A sus órdenes! 💫"
-];
 
 const RobotCard: React.FC<RobotCardProps> = ({
   name,
   description,
-  lastUpdate,
   onTest,
   onWidget,
   onApi,
@@ -45,13 +36,55 @@ const RobotCard: React.FC<RobotCardProps> = ({
   onDelete,
   onCustomize,
   onTools,
-  t
+  t,
+  status
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const eyesRef = useRef<HTMLDivElement>(null);
   const [showBubble, setShowBubble] = useState(false);
   const [greeting, setGreeting] = useState('');
   const bubbleTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // Función para obtener el estado traducido
+  const getStatusText = () => {
+    if (!status) return t?.defaultStatus || 'Agent working normally';
+    
+    const statusMap: Record<string, string | undefined> = {
+      online: t?.statusOnline,
+      offline: t?.statusOffline,
+      busy: t?.statusBusy,
+      error: t?.statusError,
+      updating: t?.statusUpdating
+    };
+    
+    return statusMap[status] || t?.defaultStatus || 'Agent working normally';
+  };
+
+  // Función para obtener el color del estado
+  const getStatusColor = () => {
+    if (!status) return 'text.primary';
+    
+    const colorMap: Record<string, string> = {
+      online: 'success.main',
+      offline: 'text.disabled',
+      busy: 'warning.main',
+      error: 'error.main',
+      updating: 'info.main'
+    };
+    
+    return colorMap[status] || 'text.primary';
+  };
+
+  // Función para obtener un saludo aleatorio
+  const getRandomGreeting = () => {
+    const greetings = t?.greetings || [
+      "Hello! How are you?",
+      "Welcome! How can I help you?",
+      "Greetings! How's your day going?",
+      "Nice to see you! How are you doing?"
+    ];
+    return greetings[Math.floor(Math.random() * greetings.length)];
+  };
 
   useEffect(() => {
     const card = cardRef.current;
@@ -63,18 +96,12 @@ const RobotCard: React.FC<RobotCardProps> = ({
       const cardCenterX = cardRect.left + cardRect.width / 2;
       const cardCenterY = cardRect.top + cardRect.height / 2;
       
-      // Calcular el ángulo entre el centro de la tarjeta y la posición del mouse
       const angle = Math.atan2(e.clientY - cardCenterY, e.clientX - cardCenterX);
       
-      // Convertir el ángulo a grados
-      const degrees = angle * 180 / Math.PI;
-      
-      // Limitar el movimiento de las pupilas
-      const radius = 3; // Radio máximo de movimiento en píxeles
+      const radius = 3;
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
 
-      // Aplicar la transformación a todas las pupilas
       const pupils = eyes.getElementsByClassName('eye');
       Array.from(pupils).forEach(pupil => {
         const afterElement = (pupil as HTMLElement);
@@ -102,23 +129,18 @@ const RobotCard: React.FC<RobotCardProps> = ({
   }, []);
 
   const handleFaceClick = () => {
-    // Limpiar el timeout anterior si existe
     if (bubbleTimeoutRef.current) {
       clearTimeout(bubbleTimeoutRef.current);
     }
 
-    // Seleccionar un saludo aleatorio
-    const randomGreeting = GREETINGS[Math.floor(Math.random() * GREETINGS.length)];
-    setGreeting(randomGreeting);
+    setGreeting(getRandomGreeting());
     setShowBubble(true);
 
-    // Ocultar la burbuja después de 2 segundos
     bubbleTimeoutRef.current = setTimeout(() => {
       setShowBubble(false);
     }, 2000);
   };
 
-  // Limpiar el timeout cuando el componente se desmonte
   useEffect(() => {
     return () => {
       if (bubbleTimeoutRef.current) {
@@ -133,13 +155,17 @@ const RobotCard: React.FC<RobotCardProps> = ({
         {/* Sección de actualizaciones */}
         <div className="action-row top">
           <div className="update-info">
-            <Typography variant="caption" className="update-text">
-              {t?.agentStatus || "Agente trabajando con normalidad"}
+            <Typography 
+              variant="caption" 
+              className="update-text"
+              sx={{ color: getStatusColor() }}
+            >
+              {getStatusText()}
             </Typography>
           </div>
         </div>
 
-        {/* Botones laterales izquierdos */}
+        {/* Resto del código sin cambios... */}
         <div className="action-column left">
           <Tooltip title={t?.widget || "Widget"}>
             <IconButton className="action-button" onClick={onWidget}>
@@ -153,7 +179,6 @@ const RobotCard: React.FC<RobotCardProps> = ({
           </Tooltip>
         </div>
 
-        {/* Robot central */}
         <div className="robot">
           <div className="robot-head">
             <div className="antenna"></div>
@@ -168,7 +193,6 @@ const RobotCard: React.FC<RobotCardProps> = ({
           </div>
         </div>
 
-        {/* Botones laterales derechos */}
         <div className="action-column right">
           <Tooltip title={t?.useAPI || "Use API"}>
             <IconButton className="action-button" onClick={onApi}>
@@ -182,7 +206,6 @@ const RobotCard: React.FC<RobotCardProps> = ({
           </Tooltip>
         </div>
 
-        {/* Botones inferiores */}
         <div className="action-row bottom">
           <Tooltip title={t?.edit || "Edit"}>
             <IconButton className="action-button" onClick={onEdit}>

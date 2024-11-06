@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Typography, Container, Box, Paper } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
@@ -7,7 +7,6 @@ import useToolsApi from "@/hooks/useTools";
 import { ToolData } from "@/types/Tools";
 import { useAppContext } from "@/context/app";
 import { languages } from "@/utils/Traslations";
-import { builderNavigationUtils } from '@/utils/NavigationUtils';
 import { FormHeader } from "@/utils/FormsViewUtils";
 import ToolCard from '@/components/ToolCard';
 
@@ -20,7 +19,6 @@ interface ToolsState {
 }
 
 const Tools: React.FC = () => {
-  const navigate = useNavigate();
   const { aiTeamId, clientName, botName, botId } = useParams<{
     aiTeamId: string;
     clientName: string;
@@ -136,17 +134,22 @@ const Tools: React.FC = () => {
     }
   }, [botId, addToolToBot, removeToolFromBot, loadToolsData, t.tools]);
 
-  useCallback(() => {
+  // Reemplazar el useCallback mal formado con una función normal
+/*   const handleToolsForm = () => {
     if (!aiTeamId || !botId) {
       ErrorToast(t.iaPanel.errorMissingParams);
       return;
     }
 
-    builderNavigationUtils.toToolsForm(navigate, {
-      aiTeamId,
-      botId
-    });
-  }, [aiTeamId, botId, navigate, t.iaPanel.errorMissingParams]);
+    builderNavigationUtils.toToolsForm(
+      navigate,
+      { replacePath }, // Añadimos el contexto de navegación
+      {
+        aiTeamId,
+        botId,
+      }
+    );
+  }; */
 
   if (state.isLoading) {
     return <PageCircularProgress />;

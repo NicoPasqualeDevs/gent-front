@@ -13,10 +13,11 @@ import { modelAIOptions } from "@/utils/LargeModelsUtils";
 import theme from "@/styles/theme";
 import { commonStyles } from "@/utils/DashboardsUtils";
 import { alpha } from '@mui/material/styles';
+import { TranslationFunction } from '@/types/Translations';
 
 interface IaPanelCardProps {
   bot: AgentData;
-  t: any;
+  t: TranslationFunction;
   apiBase: string;
   onEdit: (bot: AgentData) => void;
   onDelete: (botId: string) => void;

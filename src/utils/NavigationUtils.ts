@@ -1,14 +1,13 @@
 import { NavigateFunction } from 'react-router-dom';
 import { 
   ROOT_PATHS, 
-  BUILDER_PATHS,
   NavigationType,
   NavigationConfig,
   NAVIGATION_CONFIG,
   buildBreadcrumbs,
-  NavigationExtraData
+  NavigationExtraData,
 } from './NavigationConfig';
-import { useAppContext } from '@/context/app';
+import { PathData } from "@/types/Pathbar";
 
 interface NavigationOptions {
   replace?: boolean;
@@ -61,14 +60,19 @@ const filterStringParams = (params: NavigationParams): Record<string, string> =>
   return filtered;
 };
 
+// Actualizamos la interfaz del contexto con el tipo correcto
+interface NavigationContext {
+  replacePath: (breadcrumbs: PathData[]) => void;
+}
+
 // Función helper para navegar y actualizar breadcrumbs
 const navigateWithBreadcrumbs = (
   navigate: NavigateFunction,
   type: NavigationType,
   params: NavigationParams,
+  context: NavigationContext,
   options?: NavigationOptions
 ) => {
-  const { replacePath } = useAppContext();
   const config = NAVIGATION_CONFIG[type];
   
   validateParams(config, params);
@@ -79,7 +83,7 @@ const navigateWithBreadcrumbs = (
   if (options?.updateBreadcrumbs !== false) {
     const stringParams = filterStringParams(params);
     const breadcrumbs = buildBreadcrumbs(type, stringParams, params.extraData);
-    replacePath(breadcrumbs);
+    context.replacePath(breadcrumbs);
   }
 };
 
@@ -102,48 +106,55 @@ export const authNavigationUtils = {
 
 // Funciones del builder
 export const builderNavigationUtils = {
-  toAiTeamsList: (navigate: NavigateFunction, options?: NavigationOptions) => 
-    navigateWithBreadcrumbs(navigate, 'aiTeams', {}, options),
+  toAiTeamsList: (navigate: NavigateFunction, context: NavigationContext, options?: NavigationOptions) => 
+    navigateWithBreadcrumbs(navigate, 'aiTeams', {}, context, options),
     
   toAiTeamForm: (
-    navigate: NavigateFunction, 
+    navigate: NavigateFunction,
+    context: NavigationContext, 
     params: { aiTeamId: string; label?: string }, 
     options?: NavigationOptions
-  ) => navigateWithBreadcrumbs(navigate, 'agents', params, options),
+  ) => navigateWithBreadcrumbs(navigate, 'agents', params, context, options),
     
   toAgentsList: (
-    navigate: NavigateFunction, 
+    navigate: NavigateFunction,
+    context: NavigationContext, 
     params: { aiTeamId: string; clientName: string; label?: string }, 
     options?: NavigationOptions
-  ) => navigateWithBreadcrumbs(navigate, 'agents', params, options),
+  ) => navigateWithBreadcrumbs(navigate, 'agents', params, context, options),
     
   toAgentContext: (
-    navigate: NavigateFunction, 
+    navigate: NavigateFunction,
+    context: NavigationContext, 
     params: { aiTeamId: string; botId?: string; label?: string }, 
     options?: NavigationOptions
-  ) => navigateWithBreadcrumbs(navigate, 'context', params, options),
+  ) => navigateWithBreadcrumbs(navigate, 'context', params, context, options),
   
   toChat: (
     navigate: NavigateFunction, 
+    context: NavigationContext, 
     params: { botId: string; label?: string }, 
     options?: NavigationOptions
-  ) => navigateWithBreadcrumbs(navigate, 'chat', params, options),
+  ) => navigateWithBreadcrumbs(navigate, 'chat', params, context, options),
   
   toWidget: (
     navigate: NavigateFunction, 
+    context: NavigationContext, 
     params: { botId: string; label?: string }, 
     options?: NavigationOptions
-  ) => navigateWithBreadcrumbs(navigate, 'widget', params, options),
+  ) => navigateWithBreadcrumbs(navigate, 'widget', params, context, options),
   
   toToolsForm: (
     navigate: NavigateFunction, 
+    context: NavigationContext, 
     params: { aiTeamId: string; botId: string; label?: string }, 
     options?: NavigationOptions
-  ) => navigateWithBreadcrumbs(navigate, 'tools', params, options),
+  ) => navigateWithBreadcrumbs(navigate, 'tools', params, context, options),
   
   toToolsRelationship: (
     navigate: NavigateFunction, 
+    context: NavigationContext, 
     params: { aiTeamId: string; botId: string; label?: string }, 
     options?: NavigationOptions
-  ) => navigateWithBreadcrumbs(navigate, 'tools', params, options)
+  ) => navigateWithBreadcrumbs(navigate, 'tools', params, context, options)
 }; 
