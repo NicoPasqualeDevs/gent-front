@@ -1,73 +1,149 @@
 import { NavigateFunction } from 'react-router-dom';
+import { 
+  ROOT_PATHS, 
+  BUILDER_PATHS,
+  NavigationType,
+  NavigationConfig,
+  NAVIGATION_CONFIG,
+  buildBreadcrumbs,
+  NavigationExtraData
+} from './NavigationConfig';
+import { useAppContext } from '@/context/app';
 
 interface NavigationOptions {
   replace?: boolean;
+  updateBreadcrumbs?: boolean;
 }
 
-interface BuilderNavigationParams {
-  aiTeamId: string;
-  botId?: string;
-  clientName?: string;
-  toolId?: string;
+// Separamos los tipos base de navegación
+interface BaseNavigationParams {
+  label?: string;
+  extraData?: NavigationExtraData;
 }
+
+// Extendemos para parámetros dinámicos
+type NavigationParams = BaseNavigationParams & {
+  [key: string]: string | NavigationExtraData | undefined;
+};
+
+// Función helper para validar parámetros requeridos
+const validateParams = (config: NavigationConfig, params: NavigationParams) => {
+  if (!config.requiresParams) return true;
+  
+  return config.paramKeys?.every(key => {
+    if (!params[key]) {
+      throw new Error(`Parameter ${key} is required`);
+    }
+    return true;
+  });
+};
+
+// Función helper para construir la ruta
+const buildPath = (config: NavigationConfig, params: NavigationParams): string => {
+  let path = config.path;
+  config.paramKeys?.forEach(key => {
+    const value = params[key];
+    if (typeof value === 'string') {
+      path = path.replace(`:${key}`, value);
+    }
+  });
+  return path;
+};
+
+// Función helper para filtrar y convertir parámetros
+const filterStringParams = (params: NavigationParams): Record<string, string> => {
+  const filtered: Record<string, string> = {};
+  Object.entries(params).forEach(([key, value]) => {
+    if (typeof value === 'string') {
+      filtered[key] = value;
+    }
+  });
+  return filtered;
+};
+
+// Función helper para navegar y actualizar breadcrumbs
+const navigateWithBreadcrumbs = (
+  navigate: NavigateFunction,
+  type: NavigationType,
+  params: NavigationParams,
+  options?: NavigationOptions
+) => {
+  const { replacePath } = useAppContext();
+  const config = NAVIGATION_CONFIG[type];
+  
+  validateParams(config, params);
+  const path = buildPath(config, params);
+  
+  navigate(path, { replace: options?.replace });
+  
+  if (options?.updateBreadcrumbs !== false) {
+    const stringParams = filterStringParams(params);
+    const breadcrumbs = buildBreadcrumbs(type, stringParams, params.extraData);
+    replacePath(breadcrumbs);
+  }
+};
 
 // Funciones de autenticación
 export const authNavigationUtils = {
   postAuthRedirect: (navigate: NavigateFunction, options?: NavigationOptions) => {
-    navigate('/builder', { replace: options?.replace ?? true });
+    navigate(ROOT_PATHS.BUILDER, { replace: options?.replace ?? true });
   },
   
   postRegisterRedirect: (navigate: NavigateFunction, options?: NavigationOptions) => {
-    navigate('/builder', { replace: options?.replace ?? true });
+    navigate(ROOT_PATHS.BUILDER, { replace: options?.replace ?? true });
   },
   
   toLogin: (navigate: NavigateFunction) => 
-    navigate('/auth/login'),
+    navigate(`${ROOT_PATHS.AUTH}/login`),
     
   toRegister: (navigate: NavigateFunction) => 
-    navigate('/builder/register-user')
+    navigate(`${ROOT_PATHS.BUILDER}/register-user`)
 };
 
 // Funciones del builder
 export const builderNavigationUtils = {
-  // Navegación principal
-  toAiTeamsList: (navigate: NavigateFunction) => 
-    navigate('/builder'),
+  toAiTeamsList: (navigate: NavigateFunction, options?: NavigationOptions) => 
+    navigateWithBreadcrumbs(navigate, 'aiTeams', {}, options),
     
-  toAiTeamForm: (navigate: NavigateFunction, params: Pick<BuilderNavigationParams, 'aiTeamId'>) => {
-    if (!params.aiTeamId) throw new Error('aiTeamId is required');
-    navigate(`/builder/form/${params.aiTeamId}`);
-  },
+  toAiTeamForm: (
+    navigate: NavigateFunction, 
+    params: { aiTeamId: string; label?: string }, 
+    options?: NavigationOptions
+  ) => navigateWithBreadcrumbs(navigate, 'agents', params, options),
     
-  // Navegación de agentes
-  toAgentsList: (navigate: NavigateFunction, params: Pick<BuilderNavigationParams, 'aiTeamId' | 'clientName'>) => {
-    if (!params.aiTeamId || !params.clientName) throw new Error('aiTeamId and clientName are required');
-    navigate(`/builder/agents/${params.aiTeamId}/${params.clientName}`);
-  },
+  toAgentsList: (
+    navigate: NavigateFunction, 
+    params: { aiTeamId: string; clientName: string; label?: string }, 
+    options?: NavigationOptions
+  ) => navigateWithBreadcrumbs(navigate, 'agents', params, options),
     
-  toAgentContext: (navigate: NavigateFunction, params: Pick<BuilderNavigationParams, 'aiTeamId' | 'botId'>) => {
-    if (!params.aiTeamId) throw new Error('aiTeamId is required');
-    navigate(`/builder/agents/contextEntry/${params.aiTeamId}/${params.botId || ''}`);
-  },
+  toAgentContext: (
+    navigate: NavigateFunction, 
+    params: { aiTeamId: string; botId?: string; label?: string }, 
+    options?: NavigationOptions
+  ) => navigateWithBreadcrumbs(navigate, 'context', params, options),
   
-  // Agregar nuevas funciones
-  toChat: (navigate: NavigateFunction, params: Pick<BuilderNavigationParams, 'botId'>) => {
-    if (!params.botId) throw new Error('botId is required');
-    navigate(`/builder/agents/chat/${params.botId}`);
-  },
+  toChat: (
+    navigate: NavigateFunction, 
+    params: { botId: string; label?: string }, 
+    options?: NavigationOptions
+  ) => navigateWithBreadcrumbs(navigate, 'chat', params, options),
   
-  toWidget: (navigate: NavigateFunction, params: Pick<BuilderNavigationParams, 'aiTeamId' | 'botId'>) => {
-    if (!params.aiTeamId || !params.botId) throw new Error('aiTeamId and botId are required');
-    navigate(`/builder/agents/widgetCustomizer/${params.aiTeamId}/${params.botId}`);
-  },
+  toWidget: (
+    navigate: NavigateFunction, 
+    params: { botId: string; label?: string }, 
+    options?: NavigationOptions
+  ) => navigateWithBreadcrumbs(navigate, 'widget', params, options),
   
-  toToolsForm: (navigate: NavigateFunction, params: Pick<BuilderNavigationParams, 'aiTeamId' | 'botId'>) => {
-    if (!params.aiTeamId || !params.botId) throw new Error('aiTeamId and botId are required');
-    navigate(`/builder/agents/tools/form/${params.aiTeamId}/${params.botId}`);
-  },
+  toToolsForm: (
+    navigate: NavigateFunction, 
+    params: { aiTeamId: string; botId: string; label?: string }, 
+    options?: NavigationOptions
+  ) => navigateWithBreadcrumbs(navigate, 'tools', params, options),
   
-  toToolsRelationship: (navigate: NavigateFunction, params: Pick<BuilderNavigationParams, 'aiTeamId' | 'botId'>) => {
-    if (!params.aiTeamId || !params.botId) throw new Error('aiTeamId and botId are required');
-    navigate(`/builder/agents/tools/relationship/${params.aiTeamId}/${params.botId}`);
-  }
+  toToolsRelationship: (
+    navigate: NavigateFunction, 
+    params: { aiTeamId: string; botId: string; label?: string }, 
+    options?: NavigationOptions
+  ) => navigateWithBreadcrumbs(navigate, 'tools', params, options)
 }; 

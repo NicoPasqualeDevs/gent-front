@@ -33,6 +33,7 @@ import {
 import { alpha } from '@mui/material/styles';
 import { PaginationFooter } from "@/utils/DashboardsUtils";
 import { builderNavigationUtils } from '@/utils/NavigationUtils';
+import { buildBreadcrumbs } from '@/utils/NavigationConfig';
 
 const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
@@ -76,26 +77,18 @@ const IaPanel: React.FC<PageProps> = () => {
 
   useEffect(() => {
     if (aiTeamId && aiTeamName) {
-      replacePath([
-        {
-          label: t.leftMenu.aiTeams,
-          current_path: "/builder",
-          preview_path: "/builder",
-          translationKey: "leftMenu.aiTeams"
-        },
-        {
-          label: aiTeamName,
-          current_path: `/builder/agents/${aiTeamName}/${aiTeamId}`,
-          preview_path: "",
-          translationKey: "aiTeamName",
-          extraData: {
-            aiTeamId,
-            aiTeamName
-          }
-        }
-      ]);
+      const breadcrumbs = buildBreadcrumbs('agents', {
+        clientName: aiTeamName,
+        aiTeamId: aiTeamId,
+        label: aiTeamName
+      }, {
+        aiTeamId,
+        aiTeamName
+      });
+      
+      replacePath(breadcrumbs);
     }
-  }, [aiTeamId, aiTeamName, replacePath, t]);
+  }, [aiTeamId, aiTeamName, replacePath]);
 
   const getBotsData = useCallback(async (filterParams: string) => {
     if (!aiTeamId || !auth?.uuid) {
