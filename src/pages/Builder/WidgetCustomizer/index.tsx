@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 
 // Hooks
 import useWidget from "@/hooks/useWidget";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 
 // Components
 import { ReactWidget } from './components/ReactWidget';

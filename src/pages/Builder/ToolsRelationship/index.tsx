@@ -1,6 +1,6 @@
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import useBotsApi from "@/hooks/useBots";
 import theme from "@/styles/theme";
 import { ToolData } from "@/types/Tools";

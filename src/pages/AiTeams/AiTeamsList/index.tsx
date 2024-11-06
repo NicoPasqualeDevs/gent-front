@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, lazy } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { PageProps, PaginatedPageState } from "@/types/Page";
 import { ErrorToast } from "@/components/Toast";
 import { languages } from "@/utils/Traslations";

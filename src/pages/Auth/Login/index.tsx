@@ -5,7 +5,7 @@ import { useFormik } from "formik";
 import { AuthLoginData, AuthUser } from "@/types/Auth";
 import useAuth from "@/hooks/useAuth";
 import { ErrorToast } from "@/components/Toast";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
 import { motion, AnimatePresence } from "framer-motion";

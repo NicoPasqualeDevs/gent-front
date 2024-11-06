@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
 import useLoadingState from '@/hooks/useLoadingState';
 

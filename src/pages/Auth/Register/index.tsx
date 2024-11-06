@@ -16,7 +16,7 @@ import {
 } from "@/utils/FormsViewUtils";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { authNavigationUtils } from '@/utils/NavigationUtils';
 
 const Register: React.FC = () => {

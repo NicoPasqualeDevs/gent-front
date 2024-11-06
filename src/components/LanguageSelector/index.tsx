@@ -1,6 +1,6 @@
 import React from 'react';
 import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useAppContext } from '@/context/app';
+import { useAppContext } from '@/context';
 import ReactCountryFlag from 'react-country-flag';
 
 const countryCodeMap: { [key: string]: string } = {

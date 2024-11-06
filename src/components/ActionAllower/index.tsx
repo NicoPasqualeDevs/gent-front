@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from "@mui/material";
 import { languages } from "@/utils/Traslations";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { ActionAllowerProps } from "./types";
 
 const ActionAllower: React.FC<ActionAllowerProps> = ({ 

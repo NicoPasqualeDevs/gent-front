@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAppContext } from '@/context/app';
+import { useAppContext } from '@/context';
 
 interface AuthCheckerProps {
   children: ReactNode;

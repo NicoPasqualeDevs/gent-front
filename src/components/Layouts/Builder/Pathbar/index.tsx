@@ -1,5 +1,5 @@
 import { Box, Breadcrumbs, Typography } from "@mui/material";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { PathData } from "@/types/Pathbar";

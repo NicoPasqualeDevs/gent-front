@@ -9,7 +9,7 @@ import useBotsApi from "@/hooks/useBots";
 import { AgentData } from "@/types/Bots";
 import ActionAllower from "@/components/ActionAllower";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import useApi from "@/hooks/api/useApi";
 import { modelAIOptions } from "@/utils/LargeModelsUtils";

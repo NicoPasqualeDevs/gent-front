@@ -4,7 +4,7 @@ import { styled } from "@mui/material/styles";
 import EmailIcon from "@mui/icons-material/Email";
 import WorkIcon from "@mui/icons-material/Work";
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: 800,

@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useState, useRef } from "react";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import { CSSObject } from '@mui/material/styles';

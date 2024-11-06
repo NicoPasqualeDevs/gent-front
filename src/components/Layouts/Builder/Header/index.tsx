@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Typography, Avatar, Tooltip, Box } from "@mui/material";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import {
   BrandContainer,
   BrandMenuBtn,

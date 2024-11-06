@@ -1,5 +1,5 @@
 import { alpha, Box, Stack, Typography } from "@mui/material";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { useNavigate } from "react-router-dom";
 import { LeftMenuContainer } from "@/components/styledComponents/Layout";
 import { SuccessToast } from "@/components/Toast";

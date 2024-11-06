@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { BotFormData } from "@/types/Bots";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { languages } from "@/utils/Traslations";

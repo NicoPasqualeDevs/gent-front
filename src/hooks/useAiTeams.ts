@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { AiTeamsDetails } from '@/types/AiTeams';
 import { ApiResponse } from '@/types/Api';
-import useApi from './api/useApi';
-import { useAppContext } from '@/context/app';
+import useApi from './api/useApi'
+import { useAppContext } from '@/context';
 
 interface UseAiTeamsApiHook {
   getMyAiTeams: (filterParams: string) => Promise<ApiResponse<AiTeamsDetails[]>>;

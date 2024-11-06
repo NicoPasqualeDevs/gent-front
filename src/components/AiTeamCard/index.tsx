@@ -13,7 +13,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PersonIcon from '@mui/icons-material/Person';
 import { AiTeamsDetails } from '@/types/AiTeams';
-import { useAppContext } from '@/context/app';
+import { useAppContext } from '@/context';
 import { languages } from '@/utils/Traslations';
 import { 
     spacing, 

@@ -5,7 +5,7 @@ declare global {
     };
   }
 }
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { ApiResponse } from "@/types/Api";
 
 // Primero definimos un tipo para los datos que se pueden enviar a la API
