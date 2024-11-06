@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import WellcomeContainer from "./Wellcome";
 import UserPanel from "./Main/User/Panel";
 import { useNavigate, } from "react-router-dom";
-import { useAppContext } from '"@/context"';
+import { useAppContext } from '@/context';
 
 const HomeComponent: React.FC = () => {
   const { auth } = useAppContext();

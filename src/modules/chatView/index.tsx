@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAppContext } from '"@/context"';
+import { useAppContext } from '@/context';
 import { ModuleProps } from '@/types/Module';
 import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
