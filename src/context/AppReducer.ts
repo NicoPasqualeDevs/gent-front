@@ -16,7 +16,8 @@ export type AppContextActions =
   | { type: "replacePath"; payload: PathData[] }
   | { type: "setLanguage"; payload: string }
   | { type: "setClientPage"; payload: number }
-  | { type: "cleanState" };
+  | { type: "cleanState" }
+  | { type: "setShowRobotCardHelp"; payload: boolean };
 
 type Layout = {
   breakpoint: Breakpoint | undefined;
@@ -101,6 +102,11 @@ export const AppReducer = (
         navElevation: INITIAL_STATE.navElevation,
         appNavigation: INITIAL_STATE.appNavigation,
         language: INITIAL_STATE.language,
+      };
+    case "setShowRobotCardHelp":
+      return {
+        ...state,
+        showRobotCardHelp: action.payload,
       };
     default:
       return state;

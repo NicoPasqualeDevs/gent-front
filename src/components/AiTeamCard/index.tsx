@@ -49,7 +49,14 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         mb: spacing.sectionMarginBottom,
                         fontSize: typography.title.fontSize,
                         fontWeight: typography.title.fontWeight,
-                        height: dimensions.card.titleHeight
+                        height: dimensions.card.titleHeight,
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: 'vertical',
+                        lineHeight: '28px',
+                        wordSpacing: 'normal'
                     }}
                 >
                     {aiTeam.name}

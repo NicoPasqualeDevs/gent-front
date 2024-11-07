@@ -24,13 +24,13 @@ interface ChatHistory {
   }>;
 }
 
-interface UpdatedChatHistoryType {
+/* interface UpdatedChatHistoryType {
   messages: Array<{
     role: string;
     content: string;
     timestamp: string;
   }>;
-}
+} */
 
 interface ConversationData {
   id: string;

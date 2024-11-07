@@ -19,6 +19,7 @@ export interface AppContextState {
   appNavigation: PathData[];
   language: string;
   clientPage: number;
+  showRobotCardHelp: boolean;
   setAiTeams: React.Dispatch<React.SetStateAction<AiTeamsDetails[]>>;
   setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   setMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,6 +30,7 @@ export interface AppContextState {
   cleanState: () => void;
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   setClientPage: (page: number) => void;
+  setShowRobotCardHelp: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const INITIAL_STATE: AppContextState = {
@@ -44,6 +46,7 @@ export const INITIAL_STATE: AppContextState = {
   appNavigation: [],
   language: languageStorage().getLanguage(),
   clientPage: 1,
+  showRobotCardHelp: true,
   setAiTeams: () => { /* noop */ },
   setLoaded: () => { /* noop */ },
   setMenu: () => { /* noop */ },
@@ -54,6 +57,7 @@ export const INITIAL_STATE: AppContextState = {
   cleanState: () => { /* noop */ },
   setLanguage: () => { /* noop */ },
   setClientPage: () => { /* noop */ },
+  setShowRobotCardHelp: () => { /* noop */ },
 };
 
 export const AppContext = createContext<AppContextState | undefined>(undefined);

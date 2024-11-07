@@ -108,14 +108,14 @@
   grid-area: left;
   justify-self: end;
   padding-right: 0;
-  margin-right: -8px;
+  margin-right: 16px;
 }
 
 .action-column.right {
   grid-area: right;
   justify-self: start;
   padding-left: 0;
-  margin-left: -8px;
+  margin-left: 16px;
 }
 
 .robot {
@@ -355,13 +355,19 @@
   padding: 8px 12px;
   font-size: 0.9rem;
   color: #121928;
-  top: -60px;
+  top: -75px;
   left: 50%;
   transform: translateX(-50%);
-  white-space: nowrap;
   z-index: 10;
   animation: popIn 0.3s ease-out;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  max-width: 212px;
+  width: 212px;
+  white-space: normal;
+  word-wrap: break-word;
+  word-spacing: normal;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .speech-bubble::after {

@@ -68,13 +68,17 @@ export const DashboardContainer: React.FC<DashboardContainerProps> = ({
 }) => (
     <Container
         maxWidth={maxWidth}
+        disableGutters
         sx={{
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            overflow: 'hidden',
-            py: 2,
-            px: { xs: 1, sm: 2, md: 3 },
+            overflow: 'auto',
+            py: { xs: 0, lg: 2 },
+            px: { xs: 0, lg: 3 },
+            width: '100%',
+            maxWidth: '100% !important',
+            m: 0,
             ...sx
         }}
     >
@@ -92,15 +96,50 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
         elevation={3}
         sx={{
             ...headerStyles.container,
+            p: { xs: 3, md: 2 },
+            mb: { xs: 2, md: 2 },
+            mx: { xs: 0, md: 0 },
+            borderRadius: { xs: 0, md: 1 },
+            width: '100%',
+            minHeight: { xs: '160px', md: 'auto' },
+            display: 'flex',
+            alignItems: 'center',
             ...sx
         }}
     >
-        <Box sx={headerStyles.wrapper}>
-            <Typography variant="h5" sx={headerStyles.title}>
+        <Box sx={{
+            ...headerStyles.wrapper,
+            flexDirection: { xs: 'column', md: 'row' },
+            gap: { xs: 4, md: 0 },
+            alignItems: { xs: 'stretch', md: 'center' },
+            width: '100%',
+            py: { xs: 1, md: 0 }
+        }}>
+            <Typography 
+                variant="h5" 
+                sx={{
+                    ...headerStyles.title,
+                    textAlign: { xs: 'center', md: 'left' },
+                    mb: { xs: 0, md: 0 },
+                    fontSize: { xs: '1.5rem', md: '1.5rem' },
+                    px: { xs: 0, md: 0 }
+                }}
+            >
                 {title}
             </Typography>
             {actions && (
-                <Box sx={headerStyles.actionsContainer}>
+                <Box sx={{
+                    ...headerStyles.actionsContainer,
+                    width: { xs: '100%', md: 'auto' },
+                    justifyContent: { xs: 'center', md: 'flex-end' },
+                    px: { xs: 0, md: 0 },
+                    '& .MuiInputBase-root': {
+                        height: { xs: '42px', md: '32px' }
+                    },
+                    '& .MuiOutlinedInput-root': {
+                        width: { xs: '100%', md: 'auto' }
+                    }
+                }}>
                     {actions}
                 </Box>
             )}
@@ -116,10 +155,17 @@ export const DashboardContent: React.FC<DashboardContentProps> = ({
     <Box
         sx={{
             flexGrow: 1,
-            overflow: 'hidden',
+            overflowY: 'auto',
+            overflowX: 'hidden',
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
+            mx: { xs: 0, lg: 0 },
+            width: '100%',
+            '& .MuiPaper-root': {
+                borderRadius: { xs: 0, lg: 1 },
+                width: '100%'
+            },
             ...sx
         }}
     >
@@ -135,18 +181,23 @@ export const DashboardFooter: React.FC<DashboardFooterProps> = ({
     <Paper
         elevation={3}
         sx={{
-            p: 2,
-            mt: 2,
+            p: { xs: 1.5, lg: 2 },
+            mt: { xs: 1, lg: 2 },
+            mb: { xs: 2, lg: 0 },
+            mx: { xs: 0, lg: 0 },
+            borderRadius: { xs: 0, lg: 1 },
             flexShrink: 0,
+            width: '100%',
             ...sx
         }}
     >
         <Box sx={{
             display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
+            flexDirection: { xs: 'column', lg: 'row' },
             justifyContent: 'space-between',
             alignItems: 'center',
             gap: 2,
+            width: '100%'
         }}>
             {children}
         </Box>
@@ -602,20 +653,21 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
         <DashboardFooter>
             <Box sx={{
                 display: 'flex',
-                flexDirection: { xs: 'column', sm: 'row' },
-                justifyContent: 'space-between',
+                flexDirection: { xs: 'column', lg: 'row' },
                 alignItems: 'center',
-                gap: 2,
-                width: '100%'
+                gap: { xs: 2, lg: 2 },
+                width: '100%',
+                position: 'relative',
+                py: { xs: 1, lg: 0 }
             }}>
-                {/* Paginación y selector de items por página */}
+                {/* Paginación */}
                 <Box sx={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 2,
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    flex: 1,
-                    justifyContent: 'flex-start'
+                    justifyContent: { xs: 'center', lg: 'flex-start' },
+                    flex: { lg: 1 },
+                    width: '100%',
+                    order: { xs: 2, lg: 1 }
                 }}>
                     <Pagination
                         count={totalPages}
@@ -631,48 +683,57 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
                         }}
                     />
                 </Box>
-                {/* Botón de acción en el centro (opcional) */}
+
+                {/* Botón de crear */}
+                {createButton?.show && (
+                    <Box sx={{ 
+                        display: 'flex',
+                        justifyContent: 'center',
+                        order: { xs: 1, lg: 2 },
+                        position: { lg: 'absolute' },
+                        left: { lg: '50%' },
+                        transform: { lg: 'translateX(-50%)' },
+                        width: { xs: '100%', lg: 'auto' }
+                    }}>
+                        <Button
+                            variant="contained"
+                            onClick={createButton?.onClick}
+                            startIcon={<AddIcon />}
+                            sx={{
+                                color: 'white',
+                                padding: '6px 16px',
+                                minWidth: { xs: '200px', lg: '240px' },
+                                maxWidth: { xs: '300px', lg: 'none' },
+                                '&:hover': {
+                                    color: 'white',
+                                },
+                            }}
+                        >
+                            {createButton?.label}
+                        </Button>
+                    </Box>
+                )}
+
+                {/* Contador de páginas */}
                 <Box sx={{ 
                     display: 'flex',
-                    justifyContent: 'center',
-                    flex: 1,
-                    position: 'absolute',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '240px',
-                    pointerEvents: createButton?.show ? 'auto' : 'none',
-                    visibility: createButton?.show ? 'visible' : 'hidden'
+                    alignItems: 'center',
+                    justifyContent: { xs: 'center', lg: 'flex-end' },
+                    flex: { lg: 1 },
+                    width: '100%',
+                    order: { xs: 3, lg: 3 }
                 }}>
-                    <Button
-                        variant="contained"
-                        onClick={createButton?.onClick}
-                        startIcon={<AddIcon />}
-                        sx={{
-                            color: 'white',
-                            padding: '6px 32px',
-                            minWidth: '240px',
-                            width: '100%',
-                            '&:hover': {
-                                color: 'white',
-                            },
-                        }}
+                    <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                        sx={{ mr: 0.5 }}
                     >
-                        {createButton?.label}
-                    </Button>
-                </Box>
-                {/* Contador de páginas a la derecha */}
-                <Box sx={{ 
-                    textAlign: { xs: 'center', sm: 'right' }, 
-                    display: 'flex', 
-                    flexDirection: 'row', 
-                    gap: 1,
-                    flex: 1,
-                    justifyContent: 'flex-end'
-                }}>
-                    <Typography variant="body2" color="text.secondary" sx={{mr: -0.5}}>
                         {endItem.toString()}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography 
+                        variant="body2" 
+                        color="text.secondary"
+                    >
                         {translations.itemsCount
                             .replace("{total}", totalItems.toString())}
                     </Typography>

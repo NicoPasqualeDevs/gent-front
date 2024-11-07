@@ -19,6 +19,8 @@ import {
   CardContent,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 import ActionAllower from "@/components/ActionAllower";
 import { SuccessToast } from "@/components/Toast";
@@ -44,13 +46,15 @@ interface AiTeamsListState extends PaginatedPageState {
 
 const AiTeamsList: React.FC<PageProps> = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const { auth, language, setClientPage } = useAppContext();
   const { getMyAiTeams, getAiTeamsByOwner, deleteAiTeamDetails } = useAiTeamsApi();
   const [state, setState] = useState<AiTeamsListState>({
     isLoading: true,
     isError: false,
     searchQuery: "",
-    contentPerPage: "5",
+    contentPerPage: isLargeScreen ? "5" : "20",
     currentPage: 1,
     isSearching: false,
     pageContent: [],
@@ -82,6 +86,13 @@ const AiTeamsList: React.FC<PageProps> = () => {
       loadData();
     }
   }, [auth, state.contentPerPage, state.currentPage]);
+
+  useEffect(() => {
+    setState(prev => ({
+      ...prev,
+      contentPerPage: isLargeScreen ? prev.contentPerPage : "20"
+    }));
+  }, [isLargeScreen]);
 
   const getAiTeamsData = useCallback(async (filterParams: string) => {
     if (!auth?.uuid) {
@@ -194,23 +205,25 @@ const AiTeamsList: React.FC<PageProps> = () => {
                 onChange={handleSearch}
               />
             </Search>
-            <Select
-              value={state.contentPerPage}
-              onChange={handleContentPerPageChange}
-              size="small"
-              sx={{ width: { xs: '83.33%', sm: 'auto' } }}
-            >
-              <MenuItem value="5">5 {t.aiTeamsList.perPage}</MenuItem>
-              <MenuItem value="10">10 {t.aiTeamsList.perPage}</MenuItem>
-              <MenuItem value="20">20 {t.aiTeamsList.perPage}</MenuItem>
-            </Select>
+            {isLargeScreen && (
+              <Select
+                value={state.contentPerPage}
+                onChange={handleContentPerPageChange}
+                size="small"
+                sx={{ width: { xs: '83.33%', sm: 'auto' } }}
+              >
+                <MenuItem value="5">5 {t.aiTeamsList.perPage}</MenuItem>
+                <MenuItem value="10">10 {t.aiTeamsList.perPage}</MenuItem>
+                <MenuItem value="20">20 {t.aiTeamsList.perPage}</MenuItem>
+              </Select>
+            )}
           </Box>
         }
       />
 
       <DashboardContent>
         {state.isLoading ? (
-          <Paper elevation={3} sx={{ p: 2, flexGrow: 1}}>
+          <Paper elevation={3} sx={{ p: 2, flexGrow: 1 }}>
             <Grid container spacing={3}>
               {[...Array(parseInt(state.contentPerPage))].map((_, index) => (
                 <Grid item xs={12} md={6} xl={4} key={`skeleton-${index}`}>
@@ -222,11 +235,41 @@ const AiTeamsList: React.FC<PageProps> = () => {
         ) : (
           <>
             {state.pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{ p: 2, flexGrow: 1, overflow: 'auto', scrollbarColor: "auto", ...commonStyles.scrollableContent }}>
-                <Grid container spacing={3}>
+              <Paper 
+                elevation={3} 
+                sx={{ 
+                  p: 2, 
+                  flexGrow: 1,
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  scrollbarColor: "auto",
+                  ...commonStyles.scrollableContent 
+                }}
+              >
+                <Grid 
+                  container 
+                  spacing={3}
+                  justifyContent={{ xs: 'center', lg: 'flex-start' }}
+                >
                   {state.pageContent.map((aiTeam, index) => (
-                    <Grid item xs={12} md={6} xl={4} key={`aiTeam-${index}`}>
-                      <Card sx={commonStyles.card}>
+                    <Grid 
+                      item 
+                      xs={12} 
+                      sm={6} 
+                      md={6} 
+                      lg={4} 
+                      key={`aiTeam-${index}`}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        maxWidth: { xs: '500px', lg: 'none' }
+                      }}
+                    >
+                      <Card sx={{
+                        ...commonStyles.card,
+                        width: '100%',
+                        maxWidth: '460px'
+                      }}>
                         <CardContent sx={{
                           ...commonStyles.cardContent,
                           pb: 2,
@@ -239,8 +282,6 @@ const AiTeamsList: React.FC<PageProps> = () => {
                             onManage={() => navigate(`/builder/agents/${aiTeam.name}/${aiTeam.id}`)}
                           />
                         </CardContent>
-                        
-
                       </Card>
                     </Grid>
                   ))}

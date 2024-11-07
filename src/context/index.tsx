@@ -168,6 +168,14 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     dispatch({ type: "cleanState" });
   };
 
+  const setShowRobotCardHelp: Dispatch<SetStateAction<boolean>> = React.useCallback((value) => {
+    if (typeof value === 'function') {
+      dispatch({ type: "setShowRobotCardHelp", payload: value(state.showRobotCardHelp) });
+    } else {
+      dispatch({ type: "setShowRobotCardHelp", payload: value });
+    }
+  }, [state.showRobotCardHelp]);
+
   if (!isInitialized) {
     return null;
   }
@@ -184,6 +192,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         appNavigation,
         language,
         clientPage,
+        showRobotCardHelp: state.showRobotCardHelp,
         setAiTeams,
         setLoaded,
         setMenu,
@@ -194,6 +203,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         cleanState,
         setLanguage,
         setClientPage,
+        setShowRobotCardHelp,
       }}
     >
       {children}

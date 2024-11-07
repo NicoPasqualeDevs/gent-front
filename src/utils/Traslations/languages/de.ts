@@ -96,7 +96,9 @@ const de: TranslationType = {
     widgetCopied: "Code in die Zwischenablage kopiert",
     modelAI: "KI-Modell: {model}",
     errorMissingParams: "Erforderliche Parameter für diese Aktion fehlen",
-    noModelSpecified: "Modell nicht angegeben"
+    noModelSpecified: "Modell nicht angegeben",
+    tooltipsEnabled: "Hilfetexte deaktivieren",
+    tooltipsDisabled: "Hilfetexte aktivieren"
   },
   chatView: {
     agentPanel: "Panel von {agentName}",
@@ -395,7 +397,16 @@ const de: TranslationType = {
       "Willkommen! Wie kann ich Ihnen helfen?",
       "Grüß Gott! Wie läuft Ihr Tag?",
       "Schön Sie zu sehen! Wie geht es Ihnen?"
-    ]
+    ],
+    helpTexts: {
+      widget: "Sie können das reine JS-Widget Ihres Assistenten herunterladen, um es einfach in Ihre Website einzubinden",
+      customization: "Passen Sie Ihren Assistenten mit Ihren Markeninformationen, Stil, Sicherheit, Begrüßungen und mehr an",
+      api: "Integrieren Sie Ihren Assistenten über API in andere Systeme und Kanäle wie WhatsApp, SMS, E-Mail, etc",
+      tools: "Greifen Sie auf Werkzeuge zu, mit denen Sie die Fähigkeiten Ihres Assistenten speziell für Ihr Unternehmen erweitern oder automatisieren können",
+      edit: "Bearbeiten Sie die Grundkonfiguration Ihres Assistenten",
+      test: "Testen und beobachten Sie das Verhalten Ihres Assistenten in Echtzeit und nehmen Sie an Gesprächen teil",
+      delete: "Löschen Sie Ihren Assistenten von der Plattform, Vorsicht Sie werden die vorgenommenen Einstellungen verlieren"
+    }
   }
 };
 

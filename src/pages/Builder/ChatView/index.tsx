@@ -4,7 +4,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
 import useBotsApi from "@/hooks/useBots";
 import { useParams, useNavigate } from "react-router-dom";
-import { AgentData, ChatMessage, ConversationData } from "@/types/Bots";
+import { AgentData } from "@/types/Bots";
 import { useTheme } from "@mui/material/styles";
 import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";

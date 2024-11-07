@@ -96,7 +96,9 @@ const en: TranslationType = {
     widgetCopied: "Code copied to clipboard",
     modelAI: "AI Model: {model}",
     errorMissingParams: "Missing required parameters for this action",
-    noModelSpecified: "Model not specified"
+    noModelSpecified: "Model not specified",
+    tooltipsEnabled: "Disable help texts",
+    tooltipsDisabled: "Enable help texts"
   },
   chatView: {
     agentPanel: "Panel of {agentName}",
@@ -395,7 +397,16 @@ const en: TranslationType = {
       "Welcome! How can I help you?",
       "Greetings! How's your day going?",
       "Nice to see you! How are you doing?"
-    ]
+    ],
+    helpTexts: {
+      widget: "You can download your assistant's pure JS widget to easily add it to your website",
+      customization: "Customize your assistant with your brand information, style, security, greetings and more",
+      api: "Integrate your assistant via API to other systems and channels like WhatsApp, SMS, Email, etc",
+      tools: "Access tools that allow you to expand or automate your assistant's capabilities specifically for your business",
+      edit: "Edit your assistant's basic configuration",
+      test: "Test and observe your assistant's behavior in real time and participate in conversations",
+      delete: "Delete your assistant from the platform, be careful you will lose the configurations made"
+    }
   }
 };
 

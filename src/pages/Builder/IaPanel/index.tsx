@@ -28,11 +28,17 @@ import { PaginationFooter } from "@/utils/DashboardsUtils";
 import { builderNavigationUtils } from '@/utils/NavigationUtils';
 import { buildBreadcrumbs } from '@/utils/NavigationConfig';
 import RobotCard from "@/components/RobotCard";
+import HelpIcon from '@mui/icons-material/Help';
+import { IconButton, Tooltip } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
 const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
   const { aiTeamId, aiTeamName } = useParams();
-  const { auth, language, replacePath } = useAppContext();
+  const { auth, language, replacePath, showRobotCardHelp, setShowRobotCardHelp } = useAppContext();
   const { getBotsList, deleteBot } = useBotsApi();
   const { apiBase } = useApi();
   const t = languages[language as keyof typeof languages];
@@ -42,7 +48,7 @@ const IaPanel: React.FC<PageProps> = () => {
     isLoading: true,
     isError: false,
     searchQuery: '',
-    contentPerPage: '5',
+    contentPerPage: isLargeScreen ? '5' : '20',
     currentPage: 1,
     isSearching: false,
     pageContent: [],
@@ -51,6 +57,13 @@ const IaPanel: React.FC<PageProps> = () => {
     botToDelete: "",
     isDeleting: false
   });
+
+  useEffect(() => {
+    setState(prev => ({
+      ...prev,
+      contentPerPage: isLargeScreen ? prev.contentPerPage : "20"
+    }));
+  }, [isLargeScreen]);
 
   useEffect(() => {
     const initializeAuth = () => {
@@ -264,10 +277,6 @@ const IaPanel: React.FC<PageProps> = () => {
     navigate(`/builder/agents/contextEntry/${aiTeamId}`);
   };
 
-  const handleChatNavigation = (botId: string) => {
-    navigate(`/chat/${botId}`);
-  };
-
   return (
     <DashboardContainer>
       <DashboardHeader
@@ -280,6 +289,25 @@ const IaPanel: React.FC<PageProps> = () => {
             gap: 2,
             width: { xs: '100%', sm: 'auto' }
           }}>
+            <Box sx={{ 
+              display: { xs: 'none', md: 'block' }
+            }}>
+              <Tooltip title={showRobotCardHelp ? t.iaPanel.tooltipsEnabled : t.iaPanel.tooltipsDisabled}>
+                <IconButton
+                  onClick={() => setShowRobotCardHelp(prev => !prev)}
+                  sx={{ 
+                    color: showRobotCardHelp ? 'white' : 'rgba(255, 255, 255, 0.3)',
+                    transition: 'color 0.3s ease',
+                    '&:hover': {
+                      color: showRobotCardHelp ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.5)'
+                    },
+                    mr: 1
+                  }}
+                >
+                  <HelpIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
             <Search sx={commonStyles.searchContainer}>
               <SearchIconWrapper>
                 <SearchIcon />
@@ -290,16 +318,18 @@ const IaPanel: React.FC<PageProps> = () => {
                 onChange={(e) => handleSearch(e.target.value)}
               />
             </Search>
-            <Select
-              value={state.contentPerPage}
-              onChange={handleContentPerPageChange}
-              size="small"
-              sx={{ width: { xs: '100%', sm: 'auto' } }}
-            >
-              <MenuItem value="5">5 {t.iaPanel.perPage}</MenuItem>
-              <MenuItem value="10">10 {t.iaPanel.perPage}</MenuItem>
-              <MenuItem value="20">20 {t.iaPanel.perPage}</MenuItem>
-            </Select>
+            {isLargeScreen && (
+              <Select
+                value={state.contentPerPage}
+                onChange={handleContentPerPageChange}
+                size="small"
+                sx={{ width: { xs: '100%', sm: 'auto' } }}
+              >
+                <MenuItem value="5">5 {t.iaPanel.perPage}</MenuItem>
+                <MenuItem value="10">10 {t.iaPanel.perPage}</MenuItem>
+                <MenuItem value="20">20 {t.iaPanel.perPage}</MenuItem>
+              </Select>
+            )}
           </Box>
         }
       />
@@ -318,24 +348,21 @@ const IaPanel: React.FC<PageProps> = () => {
         ) : (
           <>
             {state.pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{
-                p: 2,
-                flexGrow: 1,
-                overflow: 'auto',
-                scrollbarColor: "auto",
-                ...commonStyles.scrollableContent
-              }}>
+              <Paper 
+                elevation={3} 
+                sx={{ 
+                  p: 2, 
+                  flexGrow: 1,
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  scrollbarColor: "auto",
+                  ...commonStyles.scrollableContent 
+                }}
+              >
                 <Grid 
                   container 
-                  spacing={3} 
-                  justifyContent="center"
-                  sx={{
-                    maxWidth: '100%',
-                    margin: '0 auto',
-                    '& .MuiGrid-item:nth-of-type(-n+3)': {  // Selecciona los primeros 3 items
-                      paddingTop: 0
-                    }
-                  }}
+                  spacing={2}
+                  justifyContent={{ xs: 'center', lg: 'flex-start' }}
                 >
                   {state.pageContent.map((bot, index) => (
                     <Grid 
@@ -348,8 +375,8 @@ const IaPanel: React.FC<PageProps> = () => {
                       sx={{ 
                         display: 'flex',
                         justifyContent: 'center',
-                        minWidth: { xs: '300px', sm: '340px' },
-                        maxWidth: { xs: '100%', sm: '460px' }
+                        maxWidth: { xs: '500px', lg: 'none' },
+                        width: '100%'
                       }} 
                       key={`bot-${bot.id || index}`}
                     >

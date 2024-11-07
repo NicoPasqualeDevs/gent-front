@@ -105,6 +105,8 @@ export interface TranslationType {
     modelAI: string;
     errorMissingParams: string;
     noModelSpecified: string;
+    tooltipsEnabled: string;
+    tooltipsDisabled: string;
   };
   chatView: {
     agentPanel: string;
@@ -384,6 +386,15 @@ export interface TranslationType {
     statusError: string;
     statusUpdating: string;
     greetings: string[];
+    helpTexts: {
+      widget: string;
+      customization: string;
+      api: string;
+      tools: string;
+      edit: string;
+      test: string;
+      delete: string;
+    };
   };
 }
 
@@ -483,4 +494,8 @@ export interface ToolsTranslations {
   deleteSuccess: string;
   deleteError: string;
   errorMissingParams: string;
+  noToolsAvailable: string;
+  noType: string;
+  noRelatedTools: string;
+  errorMissingBot: string;
 } 

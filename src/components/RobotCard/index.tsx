@@ -9,7 +9,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BuildIcon from '@mui/icons-material/Build';
 import { TranslationType } from '@/utils/Traslations/types';
-import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '@/context';
 
 interface RobotCardProps {
   name: string;
@@ -32,7 +32,6 @@ interface RobotCardProps {
 const RobotCard: React.FC<RobotCardProps> = ({
   name,
   description,
-  onTest,
   onWidget,
   onApi,
   onEdit,
@@ -41,15 +40,15 @@ const RobotCard: React.FC<RobotCardProps> = ({
   onTools,
   onChat,
   t,
-  status,
-  botId
+  status
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const eyesRef = useRef<HTMLDivElement>(null);
   const [showBubble, setShowBubble] = useState(false);
-  const [greeting, setGreeting] = useState('');
+  const [displayText, setDisplayText] = useState('');
   const bubbleTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
-  const navigate = useNavigate();
+  const streamTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const { showRobotCardHelp } = useAppContext();
 
   // Función para obtener el estado traducido
   const getStatusText = () => {
@@ -134,13 +133,58 @@ const RobotCard: React.FC<RobotCardProps> = ({
     };
   }, []);
 
+  const streamText = (text: string) => {
+    let index = 0;
+    setDisplayText('');
+    
+    const stream = () => {
+      if (index <= text.length) {
+        setDisplayText(text.slice(0, index));
+        index++;
+        streamTimeoutRef.current = setTimeout(stream, 30); // Velocidad del streaming
+      }
+    };
+    
+    stream();
+  };
+
+  const handleButtonHover = (buttonType: 'widget' | 'customization' | 'api' | 'tools' | 'edit' | 'test' | 'delete') => {
+    if (!showRobotCardHelp) return;
+    
+    if (bubbleTimeoutRef.current) {
+      clearTimeout(bubbleTimeoutRef.current);
+    }
+    if (streamTimeoutRef.current) {
+      clearTimeout(streamTimeoutRef.current);
+    }
+
+    const helpText = t?.helpTexts?.[buttonType];
+    setShowBubble(true);
+    streamText(helpText);
+  };
+
+  const handleButtonLeave = () => {
+    if (!showRobotCardHelp) return;
+    
+    bubbleTimeoutRef.current = setTimeout(() => {
+      setShowBubble(false);
+      if (streamTimeoutRef.current) {
+        clearTimeout(streamTimeoutRef.current);
+      }
+    }, 300);
+  };
+
   const handleFaceClick = () => {
     if (bubbleTimeoutRef.current) {
       clearTimeout(bubbleTimeoutRef.current);
     }
+    if (streamTimeoutRef.current) {
+      clearTimeout(streamTimeoutRef.current);
+    }
 
-    setGreeting(getRandomGreeting());
+    const randomGreeting = getRandomGreeting();
     setShowBubble(true);
+    streamText(randomGreeting);
 
     bubbleTimeoutRef.current = setTimeout(() => {
       setShowBubble(false);
@@ -151,6 +195,9 @@ const RobotCard: React.FC<RobotCardProps> = ({
     return () => {
       if (bubbleTimeoutRef.current) {
         clearTimeout(bubbleTimeoutRef.current);
+      }
+      if (streamTimeoutRef.current) {
+        clearTimeout(streamTimeoutRef.current);
       }
     };
   }, []);
@@ -182,13 +229,23 @@ const RobotCard: React.FC<RobotCardProps> = ({
 
         {/* Resto del código sin cambios... */}
         <div className="action-column left">
-          <Tooltip title={t?.widget || "Widget"}>
-            <IconButton className="action-button" onClick={onWidget}>
+          <Tooltip title={t?.widget || "Widget"} placement="left">
+            <IconButton 
+              className="action-button" 
+              onClick={onWidget}
+              onMouseEnter={() => handleButtonHover('widget')}
+              onMouseLeave={handleButtonLeave}
+            >
               <WidgetsIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t?.customization || "Customization"}>
-            <IconButton className="action-button" onClick={onCustomize}>
+          <Tooltip title={t?.customization || "Customization"} placement="left">
+            <IconButton 
+              className="action-button" 
+              onClick={onCustomize}
+              onMouseEnter={() => handleButtonHover('customization')}
+              onMouseLeave={handleButtonLeave}
+            >
               <MenuBookIcon />
             </IconButton>
           </Tooltip>
@@ -198,7 +255,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
           <div className="robot-head">
             <div className="antenna"></div>
             <div className="face" onClick={handleFaceClick}>
-              {showBubble && <div className="speech-bubble">{greeting}</div>}
+              {showBubble && <div className="speech-bubble">{displayText}</div>}
               <div className="eyes" ref={eyesRef}>
                 <div className="eye"></div>
                 <div className="eye"></div>
@@ -209,13 +266,23 @@ const RobotCard: React.FC<RobotCardProps> = ({
         </div>
 
         <div className="action-column right">
-          <Tooltip title={t?.useAPI || "Use API"}>
-            <IconButton className="action-button" onClick={onApi}>
+          <Tooltip title={t?.useAPI || "Use API"} placement="right">
+            <IconButton 
+              className="action-button" 
+              onClick={onApi}
+              onMouseEnter={() => handleButtonHover('api')}
+              onMouseLeave={handleButtonLeave}
+            >
               <ApiIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t?.tools || "Tools"}>
-            <IconButton className="action-button" onClick={onTools}>
+          <Tooltip title={t?.tools || "Tools"} placement="right">
+            <IconButton 
+              className="action-button" 
+              onClick={onTools}
+              onMouseEnter={() => handleButtonHover('tools')}
+              onMouseLeave={handleButtonLeave}
+            >
               <BuildIcon />
             </IconButton>
           </Tooltip>
@@ -223,7 +290,12 @@ const RobotCard: React.FC<RobotCardProps> = ({
 
         <div className="action-row bottom">
           <Tooltip title={t?.edit || "Edit"}>
-            <IconButton className="action-button" onClick={onEdit}>
+            <IconButton 
+              className="action-button" 
+              onClick={onEdit}
+              onMouseEnter={() => handleButtonHover('edit')}
+              onMouseLeave={handleButtonLeave}
+            >
               <EditIcon />
             </IconButton>
           </Tooltip>
@@ -231,13 +303,20 @@ const RobotCard: React.FC<RobotCardProps> = ({
             <IconButton 
               className="action-button test" 
               onClick={onChat}
+              onMouseEnter={() => handleButtonHover('test')}
+              onMouseLeave={handleButtonLeave}
               sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}
             >
               <PlayArrowIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title={t?.delete || "Delete"}>
-            <IconButton className="action-button delete" onClick={onDelete}>
+            <IconButton 
+              className="action-button delete" 
+              onClick={onDelete}
+              onMouseEnter={() => handleButtonHover('delete')}
+              onMouseLeave={handleButtonLeave}
+            >
               <DeleteIcon />
             </IconButton>
           </Tooltip>

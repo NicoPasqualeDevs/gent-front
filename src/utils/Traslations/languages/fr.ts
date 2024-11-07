@@ -96,7 +96,9 @@ const fr: TranslationType = {
     widgetCopied: "Code copié dans le presse-papiers",
     modelAI: "Modèle d'IA : {model}",
     errorMissingParams: "Paramètres requis manquants pour cette action",
-    noModelSpecified: "Modèle non spécifié"
+    noModelSpecified: "Modèle non spécifié",
+    tooltipsEnabled: "Désactiver les textes d'aide",
+    tooltipsDisabled: "Activer les textes d'aide"
   },
   chatView: {
     agentPanel: "Panneau de {agentName}",
@@ -395,7 +397,16 @@ const fr: TranslationType = {
       "Bienvenue ! Comment puis-je vous aider ?",
       "Salutations ! Comment se passe votre journée ?",
       "Ravi de vous voir ! Comment ça va ?"
-    ]
+    ],
+    helpTexts: {
+      widget: "Vous pouvez télécharger le widget JS pur de votre assistant pour l'ajouter facilement à votre site web",
+      customization: "Personnalisez votre assistant avec les informations de votre marque, style, sécurité, salutations et plus",
+      api: "Intégrez votre assistant via API à d'autres systèmes et canaux comme WhatsApp, SMS, Email, etc",
+      tools: "Accédez aux outils qui vous permettent d'étendre ou d'automatiser les capacités de votre assistant spécifiquement pour votre entreprise",
+      edit: "Modifiez la configuration de base de votre assistant",
+      test: "Testez et observez le comportement de votre assistant en temps réel et participez aux conversations",
+      delete: "Supprimez votre assistant de la plateforme, attention vous perdrez les configurations effectuées"
+    }
   }
 };
 
