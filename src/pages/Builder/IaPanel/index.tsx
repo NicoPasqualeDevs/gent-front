@@ -208,10 +208,10 @@ const IaPanel: React.FC<PageProps> = () => {
 
   const renderBotCard = (bot: AgentData) => (
     <RobotCard
+      botId={bot.id}
       name={bot.name}
       description={modelAIOptions.find(option => option.value === bot.model_ai)?.label || t.iaPanel.noModelSpecified}
       lastUpdate={/* t.iaPanel?.lastUpdate.replace("{date}", "2 hours ago") || */ "Updates"}
-      onTest={() => navigate(`/builder/agents/chat/${bot.id}`)}
       onWidget={() => window.open(apiBase.slice(0, -1) + bot.widget_url, "_blank")}
       onApi={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
       onEdit={() => handleEditClick(bot)}
@@ -220,6 +220,7 @@ const IaPanel: React.FC<PageProps> = () => {
         allowerState: true,
         botToDelete: bot.id
       }))}
+      onChat={() => navigate(`/chat/${bot.id}`)}
       onCustomize={() => navigate(`/builder/agents/widgetCustomizer/${bot.id}`)}
       onTools={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
       t={t.robotCard}
@@ -261,6 +262,10 @@ const IaPanel: React.FC<PageProps> = () => {
     }
     
     navigate(`/builder/agents/contextEntry/${aiTeamId}`);
+  };
+
+  const handleChatNavigation = (botId: string) => {
+    navigate(`/chat/${botId}`);
   };
 
   return (

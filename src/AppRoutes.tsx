@@ -18,6 +18,7 @@ const HomeModule = lazy(() => import("./modules/home"));
 const BuilderModule = lazy(() => import("./modules/builder"));
 const NotFoundModule = lazy(() => import("./modules/notFound"));
 const AuthModule = lazy(() => import("./modules/auth"));
+const ChatViewModule = lazy(() => import("./modules/chatView"));
 
 // Layout components
 const UserL = (
@@ -85,6 +86,14 @@ const AppRoutes = () => {
                 <BuilderLayout>
                   <BuilderModule />
                 </BuilderLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="chat/*"
+            element={
+              <ProtectedRoute>
+                <ChatViewModule />
               </ProtectedRoute>
             }
           />

@@ -9,18 +9,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BuildIcon from '@mui/icons-material/Build';
 import { TranslationType } from '@/utils/Traslations/types';
+import { useNavigate } from 'react-router-dom';
 
 interface RobotCardProps {
   name: string;
   description: string;
   lastUpdate: string;
-  onTest: () => void;
+  botId: string;
+  onTest?: () => void;
   onWidget: () => void;
   onApi: () => void;
   onEdit: () => void;
   onDelete: () => void;
   onCustomize: () => void;
   onTools: () => void;
+  onChat: () => void;
   t: TranslationType['robotCard'];
   language?: string;
   status?: 'online' | 'offline' | 'busy' | 'error' | 'updating';
@@ -36,14 +39,17 @@ const RobotCard: React.FC<RobotCardProps> = ({
   onDelete,
   onCustomize,
   onTools,
+  onChat,
   t,
-  status
+  status,
+  botId
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const eyesRef = useRef<HTMLDivElement>(null);
   const [showBubble, setShowBubble] = useState(false);
   const [greeting, setGreeting] = useState('');
   const bubbleTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const navigate = useNavigate();
 
   // Función para obtener el estado traducido
   const getStatusText = () => {
@@ -149,6 +155,10 @@ const RobotCard: React.FC<RobotCardProps> = ({
     };
   }, []);
 
+/*   const handleTestClick = () => {
+    navigate(`/builder/agents/chat/${botId}`);
+  }; */
+
   return (
     <div className="robot-card" ref={cardRef}>
       <div className="robot-actions">
@@ -215,7 +225,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
           <Tooltip title={t?.testAgent || "Test Agent"}>
             <IconButton 
               className="action-button test" 
-              onClick={onTest}
+              onClick={onChat}
               sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}
             >
               <PlayArrowIcon />

@@ -13,7 +13,6 @@ const AiTeamsForm = lazy(() => import("@/pages/AiTeams/AiTeamsForm"));
 const ToolsForm = lazy(() => import("@/pages/Builder/ToolsForm/Admin"));
 const AgentsDetailsModule = lazy(() => import("./agents"));
 const ProfileModule = lazy(() => import("../../modules/profile"));
-const ChatViewModule = lazy(() => import("@/pages/Builder/ChatView"));
 
 const BuilderModule: React.FC<ModuleProps> = () => {
   const navigate = useNavigate();
@@ -60,7 +59,6 @@ const BuilderModule: React.FC<ModuleProps> = () => {
       <Route path="/profile/*" element={<ProfileModule />} />
       <Route path="/agents/*" element={<AgentsDetailsModule />} />
       <Route path="/admin-tools-form" element={<ToolsForm />} />
-      <Route path="/chat/:botId" element={<ChatViewModule />} />
       <Route path="register-user" element={<Register />} />
     </Routes>
   );

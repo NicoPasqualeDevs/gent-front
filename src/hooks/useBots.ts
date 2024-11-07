@@ -1,5 +1,6 @@
 import { ApiResponse } from "@/types/Api";
 import { AgentData } from "@/types/Bots";
+import { ServerMessageResponse } from "@/types/ChatView";
 import useApi from "./api/useApi";
 
 interface BotFormData {
@@ -54,7 +55,7 @@ interface UseBotsApi {
   deleteBot: (botId: string) => Promise<ApiResponse<void>>;
   uploadDocument: (file: File, botId: string, onProgress?: (progress: number) => void) => Promise<ApiResponse<void>>;
   getChatHistory: (botId: string) => Promise<ApiResponse<ChatHistory>>;
-  sendMessage: (botId: string, data: { message: string }) => Promise<ApiResponse<UpdatedChatHistoryType>>;
+  sendMessage: (botId: string, data: { message: string }) => Promise<ApiResponse<ServerMessageResponse>>;
   closeChat: (conversationId: string) => Promise<void>;
   getAgentData: (botId: string) => Promise<ApiResponse<AgentData>>;
   getClientBotConversations: (botId: string) => Promise<ConversationData[]>;
@@ -121,24 +122,24 @@ const useBotsApi = (): UseBotsApi => {
   };
 
   const getChatHistory = (botId: string): Promise<ApiResponse<ChatHistory>> => {
-    return apiGet(`api/bot/${botId}/chat-history/`);
+    return apiGet(`api/chat/${botId}/`);
   };
 
-  const sendMessage = async (botId: string, data: { message: string }): Promise<ApiResponse<UpdatedChatHistoryType>> => {
-    return apiPost(`api/bot/${botId}/send-message/`, data);
+  const sendMessage = async (botId: string, data: { message: string }): Promise<ApiResponse<ServerMessageResponse>> => {
+    return apiPost(`api/chat/${botId}/`, data);
   };
 
   const closeChat = async (conversationId: string): Promise<void> => {
-    await apiDelete(`api/bot/close-chat/${conversationId}/`);
+    await apiPost(`api/chat/clean-chat/`, { conversation_id: conversationId });
     return;
   };
 
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiGet(`api/bot/${botId}/agent-data/`);
+    return apiGet(`api/bot/modify/${botId}/`);
   };
 
   const getClientBotConversations = async (botId: string): Promise<ConversationData[]> => {
-    const response = await apiGet(`api/bot/${botId}/client-bot-conversations/`);
+    const response = await apiGet(`api/chat/conversations/${botId}/`);
     return response.data as ConversationData[];
   };
 
