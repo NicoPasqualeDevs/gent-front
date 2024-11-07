@@ -160,7 +160,12 @@ const RobotCard: React.FC<RobotCardProps> = ({
   }; */
 
   return (
-    <div className="robot-card" ref={cardRef}>
+    <div className="robot-card" ref={cardRef} style={{
+      width: '100%',         // Ocupar todo el ancho disponible del contenedor
+      minWidth: '300px',     // Ancho mínimo aumentado
+      maxWidth: '460px',     // Ancho máximo aumentado
+      margin: '0 auto'       // Centrar la tarjeta en su contenedor
+    }}>
       <div className="robot-actions">
         {/* Sección de actualizaciones */}
         <div className="action-row top">

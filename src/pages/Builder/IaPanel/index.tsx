@@ -325,18 +325,31 @@ const IaPanel: React.FC<PageProps> = () => {
                 scrollbarColor: "auto",
                 ...commonStyles.scrollableContent
               }}>
-                <Grid container spacing={3} justifyContent="center">
+                <Grid 
+                  container 
+                  spacing={3} 
+                  justifyContent="center"
+                  sx={{
+                    maxWidth: '100%',
+                    margin: '0 auto',
+                    '& .MuiGrid-item:nth-of-type(-n+3)': {  // Selecciona los primeros 3 items
+                      paddingTop: 0
+                    }
+                  }}
+                >
                   {state.pageContent.map((bot, index) => (
                     <Grid 
                       item 
-                      xs={12} 
+                      xs={12}
                       sm={6}
-                      md={4}
+                      md={6}
                       lg={4}
+                      xl={4}
                       sx={{ 
                         display: 'flex',
                         justifyContent: 'center',
-                        p: 2
+                        minWidth: { xs: '300px', sm: '340px' },
+                        maxWidth: { xs: '100%', sm: '460px' }
                       }} 
                       key={`bot-${bot.id || index}`}
                     >
