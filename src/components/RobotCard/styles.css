@@ -1,5 +1,5 @@
 .robot-card {
-  background: linear-gradient(145deg, #065042 0%, #081c48 100%);
+  background: linear-gradient(145deg, #065046 25%, #9060ff 100%);
   border-radius: 12px;
   padding: 16px;
   position: relative;
@@ -35,18 +35,18 @@
 }
 
 .update-info {
-  background-color: rgba(33, 150, 243, 0.1);
+  background-color: rgba(0, 255, 0, 0.02);
   padding: 12px 20px;
   border-radius: 20px;
   width: 100%;
   text-align: center;
-  border: 1px solid rgba(64, 169, 255, 0.4);
+  border: 1px solid rgba(0, 255, 0, 0.15);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 15px rgba(64, 169, 255, 0.1);
+  box-shadow: none;
 }
 
-/* Efecto de cuadrícula matrix */
+/* Actualizar el efecto de cuadrícula matrix */
 .update-info::before {
   content: '';
   position: absolute;
@@ -55,16 +55,15 @@
   right: 0;
   bottom: 0;
   background-image: 
-    linear-gradient(rgba(64, 169, 255, 0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(64, 169, 255, 0.15) 1px, transparent 1px);
+    linear-gradient(rgba(0, 255, 0, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 0, 0.07) 1px, transparent 1px);
   background-size: 10px 10px;
   animation: matrixMove 25s linear infinite;
   pointer-events: none;
-  opacity: 1;
-  backdrop-filter: blur(1px);
+  opacity: 0.4;
 }
 
-/* Línea de escaneo */
+/* Actualizar la línea de escaneo */
 .update-info::after {
   content: '';
   position: absolute;
@@ -74,16 +73,16 @@
   height: 2px;
   background: linear-gradient(
     90deg,
-    rgba(64, 169, 255, 0) 0%,
-    rgba(64, 169, 255, 0.9) 50%,
-    rgba(64, 169, 255, 0) 100%
+    rgba(0, 255, 0, 0) 0%,
+    rgba(0, 255, 0, 0.5) 50%,
+    rgba(0, 255, 0, 0) 100%
   );
   animation: scanline 2s linear infinite;
-  box-shadow: 0 0 8px rgba(64, 169, 255, 0.4);
+  box-shadow: none;
 }
 
 .update-text {
-  color: #40a9ff;
+  color: rgba(0, 255, 0, 0.8);
   font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.3px;
@@ -91,7 +90,7 @@
   text-align: center;
   position: relative;
   z-index: 1;
-  text-shadow: 0 0 10px rgba(33, 150, 243, 0.3);
+  text-shadow: none;
 }
 
 .action-row.bottom {
@@ -139,7 +138,7 @@
 
 .action-button:hover {
   background-color: rgba(255, 64, 129, 0.2) !important;
-  color: #ff4081 !important;
+  color: #b6ff40 !important;
   transform: scale(1.1);
 }
 
@@ -155,7 +154,7 @@
 }
 
 .action-button.test:hover {
-  background-color: #ff4081 !important;
+  background-color: #4caf50 !important;
   color: white !important;
 }
 

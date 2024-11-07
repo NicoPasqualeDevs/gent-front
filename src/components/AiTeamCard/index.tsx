@@ -40,6 +40,10 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
     const { language } = useAppContext();
     const t = languages[language as keyof typeof languages];
 
+    const truncateEmail = (email: string) => {
+        return email.length > 15 ? `${email.substring(0, 15)}...` : email;
+    };
+
     return (
         <>
             <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', mb: 0 }}>
@@ -134,18 +138,22 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         fontSize: dimensions.card.iconSize.person,
                         color: theme.palette.text.secondary 
                     }} />
-                    <Typography 
-                        variant="body2" 
-                        color="text.secondary"
-                        sx={{
-                            pt:"2px",
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                        }}
-                    >
-                        {aiTeam.owner_data?.name || t.aiTeamsList.noOwner}
-                    </Typography>
+                    <Tooltip title={aiTeam.owner_data?.email || t.aiTeamsList.noOwner}>
+                        <Typography 
+                            variant="body2" 
+                            color="text.secondary"
+                            sx={{
+                                pt:"2px",
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {aiTeam.owner_data?.email 
+                                ? truncateEmail(aiTeam.owner_data.email)
+                                : t.aiTeamsList.noOwner}
+                        </Typography>
+                    </Tooltip>
                 </Box>
 
                 <Box sx={{
