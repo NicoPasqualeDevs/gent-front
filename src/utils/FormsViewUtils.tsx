@@ -99,32 +99,34 @@ export const formStyles: FormStylesType = {
         minWidth: '120px',
         backgroundColor: 'primary.main',
         color: '#FFFFFF',
-        transition: 'background-color 300ms cubic-bezier(0.4, 0, 0.2, 1), color 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'background-color 300ms cubic-bezier(0.4, 0, 0.2, 1)',
         '&:hover': {
             backgroundColor: 'primary.dark',
-            color: '#000000'
+            color: '#FFFFFF'
         }
     },
     secondaryButton: {
         ...buttonBaseStyles,
         minWidth: '120px',
-        color: 'primary.main',
+        color: '#FFFFFF',
         borderColor: 'primary.main',
         '&:hover': {
             borderColor: 'primary.dark',
-            backgroundColor: 'rgba(0, 0, 0, 0.04)'
+            backgroundColor: 'rgba(255, 255, 255, 0.04)',
+            color: '#FFFFFF'
         }
     },
     cancelButton: {
         ...buttonBaseStyles,
         marginRight: '10px',
         minWidth: '120px',
-        color: 'primary.main',
+        color: '#FFFFFF',
         borderColor: 'primary.main',
-        transition: 'color 300ms cubic-bezier(0.4, 0, 0.2, 1), border-color 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+        transition: 'border-color 300ms cubic-bezier(0.4, 0, 0.2, 1)',
         '&:hover': {
             borderColor: 'primary.dark',
-            color: 'primary.dark'
+            color: '#FFFFFF',
+            backgroundColor: 'rgba(255, 255, 255, 0.04)'
         }
     },
     fileInput: {

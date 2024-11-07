@@ -46,6 +46,14 @@ interface ToolRelationshipData extends Record<string, unknown> {
   agent_tool_ids: number[];
 }
 
+interface KnowledgeTag extends Record<string, unknown> {
+  id?: string;
+  name: string;
+  description: string;
+  value: string;
+  customer_bot: string;
+}
+
 interface UseBotsApi {
   getBotDetails: (botId: string) => Promise<ApiResponse<AgentData>>;
   getBotsList: (aiTeamId: string, filterParams: string) => Promise<ApiResponse<AgentData[]>>;
@@ -64,6 +72,12 @@ interface UseBotsApi {
   getBotTools: (botId: string) => Promise<unknown>;
   setToolRelationship: (data: ToolRelationshipData) => Promise<unknown>;
   removeToolRelationship: (data: ToolRelationshipData) => Promise<unknown>;
+  getKnowledgeTags: (botId: string) => Promise<ApiResponse<KnowledgeTag[]>>;
+  createKnowledgeTag: (botId: string, data: KnowledgeTag) => Promise<ApiResponse<KnowledgeTag>>;
+  updateKnowledgeTag: (tagId: string, data: KnowledgeTag) => Promise<ApiResponse<KnowledgeTag>>;
+  deleteKnowledgeTag: (tagId: string) => Promise<ApiResponse<void>>;
+  getPromptTemplate: (botId: string) => Promise<ApiResponse<string>>;
+  savePromptTemplate: (botId: string, promptTemplate: string) => Promise<ApiResponse<void>>;
 }
 
 const useBotsApi = (): UseBotsApi => {
@@ -163,6 +177,32 @@ const useBotsApi = (): UseBotsApi => {
     return apiDelete(`api/tools/relationship/`, { data });
   };
 
+  const getKnowledgeTags = (botId: string): Promise<ApiResponse<KnowledgeTag[]>> => {
+    return apiGet(`api/ktag/${botId}/`);
+  };
+
+  const createKnowledgeTag = (botId: string, data: KnowledgeTag): Promise<ApiResponse<KnowledgeTag>> => {
+    return apiPost(`api/ktag/${botId}/`, data as Record<string, unknown>);
+  };
+
+  const updateKnowledgeTag = (tagId: string, data: KnowledgeTag): Promise<ApiResponse<KnowledgeTag>> => {
+    return apiPut(`api/ktag/modify/${tagId}/`, data as Record<string, unknown>);
+  };
+
+  const deleteKnowledgeTag = (tagId: string): Promise<ApiResponse<void>> => {
+    return apiDelete(`api/ktag/modify/${tagId}/`);
+  };
+
+  const getPromptTemplate = (botId: string): Promise<ApiResponse<string>> => {
+    return apiGet(`api/bot/prompt/${botId}/`);
+  };
+
+  const savePromptTemplate = (botId: string, promptTemplate: string): Promise<ApiResponse<void>> => {
+    return apiPost(`api/bot/prompt/${botId}/`, {
+      prompt_template: promptTemplate
+    });
+  };
+
   return {
     getBotDetails,
     getBotsList,
@@ -180,7 +220,13 @@ const useBotsApi = (): UseBotsApi => {
     getAllTools,
     getBotTools,
     setToolRelationship,
-    removeToolRelationship
+    removeToolRelationship,
+    getKnowledgeTags,
+    createKnowledgeTag,
+    updateKnowledgeTag,
+    deleteKnowledgeTag,
+    getPromptTemplate,
+    savePromptTemplate
   };
 };
 

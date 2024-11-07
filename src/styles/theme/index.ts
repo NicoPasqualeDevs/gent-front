@@ -26,7 +26,7 @@ let theme = createThemeDefault({
   palette: {
     mode: "dark", // Cambiamos el modo a oscuro
     primary: {
-      main: "#535e9d", 
+      main: "#7580c3", 
       light: "#535e9d", 
       dark: "#384279",
       contrastText: "#000000", // Negro

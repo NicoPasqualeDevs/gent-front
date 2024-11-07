@@ -706,6 +706,7 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
                                 maxWidth: { xs: '300px', lg: 'none' },
                                 '&:hover': {
                                     color: 'white',
+                                    backgroundColor: 'primary.dark',
                                 },
                             }}
                         >

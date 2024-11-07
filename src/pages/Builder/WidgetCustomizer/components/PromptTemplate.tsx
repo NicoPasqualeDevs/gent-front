@@ -1,7 +1,16 @@
-import React from 'react';
-import { Box, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, TextField, Typography, Button, CircularProgress } from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import useBots from '@/hooks/useBots';
+import { useParams } from 'react-router-dom';
+import { ErrorToast, SuccessToast } from "@/components/Toast";
 
 export const PromptTemplate: React.FC = () => {
+  const [promptText, setPromptText] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const { botId } = useParams();
+  const { getPromptTemplate, savePromptTemplate } = useBots();
+
   const placeholderTemplate = `### Contexto
 Eres un asistente virtual especializado en atención al cliente para nuestra empresa. Tu objetivo es proporcionar información precisa y útil basada en el conocimiento proporcionado.
 
@@ -15,6 +24,48 @@ Eres un asistente virtual especializado en atención al cliente para nuestra emp
 ### Ejemplo
 Usuario: "¿Cuál es el horario de atención?"
 Asistente: "¡Hola! Con gusto te ayudo. Nuestro horario de atención es de lunes a viernes de 9:00 AM a 6:00 PM. ¿Hay algo más en lo que pueda ayudarte?"`;
+
+  useEffect(() => {
+    const loadPromptTemplate = async () => {
+      if (botId) {
+        try {
+          const response = await getPromptTemplate(botId);
+          if (response.data) {
+            if (response.data.trim() === "Prompt template file not initialized.") {
+              setPromptText(placeholderTemplate);
+            } else {
+              setPromptText(response.data);
+            }
+          }
+        } catch (error) {
+          console.error('Error al cargar el prompt template:', error);
+          ErrorToast("Error al cargar el prompt template");
+          setPromptText(placeholderTemplate);
+        }
+      }
+    };
+
+    loadPromptTemplate();
+  }, [botId]);
+
+  const handleSave = async () => {
+    if (botId && !isSaving) {
+      setIsSaving(true);
+      try {
+        await savePromptTemplate(botId, promptText);
+        SuccessToast("Prompt template guardado exitosamente");
+      } catch (error) {
+        console.error('Error al guardar el prompt template:', error);
+        if (error instanceof Error) {
+          ErrorToast("Error: no se pudo establecer conexión con el servidor");
+        } else {
+          ErrorToast("Error al guardar el prompt template");
+        }
+      } finally {
+        setIsSaving(false);
+      }
+    }
+  };
 
   return (
     <Box sx={{ 
@@ -31,16 +82,33 @@ Asistente: "¡Hola! Con gusto te ayudo. Nuestro horario de atención es de lunes
       <TextField
         label="Prompt Template"
         multiline
-        rows={20}
-        placeholder={placeholderTemplate}
+        rows={25}
+        value={promptText}
+        onChange={(e) => setPromptText(e.target.value)}
         sx={{
           '& .MuiOutlinedInput-root': {
             fontFamily: 'monospace',
             fontSize: '0.9rem'
-          }
+          },
+          flex: 1,
+          minHeight: '500px'
         }}
         helperText="Utiliza las secciones ### Contexto, ### Instrucciones y ### Ejemplo para estructurar tu prompt"
       />
+
+      <Button
+        variant="contained"
+        startIcon={isSaving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+        onClick={handleSave}
+        disabled={isSaving}
+        sx={{ 
+          alignSelf: 'flex-end',
+          color: 'white',
+          minWidth: '160px'
+        }}
+      >
+        {isSaving ? 'Guardando...' : 'Guardar Prompt'}
+      </Button>
     </Box>
   );
 };

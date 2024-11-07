@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '@/context';
 import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useBotsApi from "@/hooks/useBots";
-import { Box, TextField, Button, Typography, LinearProgress } from '@mui/material';
+import { Box, TextField, Button, Typography, LinearProgress, CircularProgress } from '@mui/material';
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import SaveIcon from '@mui/icons-material/Save';
+import ChatIcon from '@mui/icons-material/Chat';
 
 // Constantes
 const MAX_FILE_SIZE = 10; // MB
@@ -15,6 +17,7 @@ const ALLOWED_FILE_TYPES = ['application/pdf', 'text/plain', 'application/msword
 
 // Interfaces
 interface KnowledgeSet {
+  id?: string;
   knowledge_key: string;
   context: string;
 }
@@ -32,13 +35,14 @@ interface FormState {
   error: string | null;
   dragActive: boolean;
   uploadProgress: number;
+  loadingKnowledge: boolean;
 }
 
 export const DataEntry: React.FC = () => {
   const navigate = useNavigate();
   const { botId } = useParams();
   const { auth, language, replacePath } = useAppContext();
-  const { getBotDetails, updateBotData, uploadDocument } = useBotsApi();
+  const { getBotDetails, updateBotData, uploadDocument, getKnowledgeTags, createKnowledgeTag, updateKnowledgeTag, deleteKnowledgeTag } = useBotsApi();
   const t = languages[language];
 
   // Estados principales
@@ -47,7 +51,8 @@ export const DataEntry: React.FC = () => {
     isSubmitting: false,
     error: null,
     dragActive: false,
-    uploadProgress: 0
+    uploadProgress: 0,
+    loadingKnowledge: true
   });
 
   // Estado del formulario usando formik o estado simple
@@ -79,10 +84,13 @@ export const DataEntry: React.FC = () => {
 
   // Filtramos los conjuntos basados en la búsqueda
   const filteredKnowledgeSets = useMemo(() => {
-    return formValues.knowledgeSets.filter(set => 
-      set.knowledge_key.toLowerCase().includes(searchQuery.toLowerCase())
+    return formValues.knowledgeSets.filter((set, index) => 
+      set.knowledge_key.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      `${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase())
     );
-  }, [formValues.knowledgeSets, searchQuery]);
+  }, [formValues.knowledgeSets, searchQuery, t.dataEntry.knowledgeSet]);
 
   // Efecto para cargar datos iniciales
   useEffect(() => {
@@ -255,6 +263,17 @@ export const DataEntry: React.FC = () => {
     }
   }, [config.botId, handleFileUpload, validateFile]);
 
+  // Agregamos una referencia para el contenedor de scroll
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Función para hacer scroll a la última etiqueta
+  const scrollToLastTag = useCallback(() => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, []);
+
   // Función para agregar un nuevo conjunto
   const handleAddSet = useCallback(() => {
     console.log('Adding new knowledge set');
@@ -262,7 +281,9 @@ export const DataEntry: React.FC = () => {
       ...prev,
       knowledgeSets: [...prev.knowledgeSets, { knowledge_key: '', context: '' }]
     }));
-  }, []);
+    // Agregamos un pequeño delay para asegurar que el DOM se ha actualizado
+    setTimeout(scrollToLastTag, 100);
+  }, [scrollToLastTag]);
 
   // Función para actualizar un conjunto específico
   const handleSetChange = useCallback((index: number, field: keyof KnowledgeSet, value: string) => {
@@ -275,6 +296,75 @@ export const DataEntry: React.FC = () => {
     }));
   }, []);
 
+  // Efecto para cargar los ktags iniciales
+  useEffect(() => {
+    const loadKnowledgeTags = async () => {
+      if (!config.botId) return;
+
+      try {
+        setFormState(prev => ({ ...prev, loadingKnowledge: true }));
+        const response = await getKnowledgeTags(config.botId);
+        if (response?.data) {
+          setFormValues(prev => ({
+            ...prev,
+            knowledgeSets: response.data.map(tag => ({
+              id: tag.id,
+              knowledge_key: tag.name,
+              context: tag.value
+            }))
+          }));
+          // Agregamos scroll después de cargar las etiquetas
+          setTimeout(scrollToLastTag, 100);
+        }
+      } catch (error) {
+        console.error('Error loading knowledge tags:', error);
+        ErrorToast('Error al cargar los conjuntos de conocimiento');
+      } finally {
+        setFormState(prev => ({ ...prev, loadingKnowledge: false }));
+      }
+    };
+
+    loadKnowledgeTags();
+  }, [config.botId, scrollToLastTag]);
+
+  // Agregamos un estado para controlar qué etiqueta se está guardando
+  const [savingTagIndex, setSavingTagIndex] = useState<number | null>(null);
+
+  // Modificamos la función handleSaveSet
+  const handleSaveSet = async (index: number) => {
+    const set = formValues.knowledgeSets[index];
+    if (!config.botId) return;
+
+    const tagData = {
+      name: set.knowledge_key,
+      value: set.context,
+      description: set.knowledge_key,
+      customer_bot: config.botId
+    };
+
+    try {
+      setSavingTagIndex(index); // Indicamos qué etiqueta se está guardando
+      
+      if (set.id) {
+        await updateKnowledgeTag(set.id, tagData);
+      } else {
+        const response = await createKnowledgeTag(config.botId, tagData);
+        setFormValues(prev => ({
+          ...prev,
+          knowledgeSets: prev.knowledgeSets.map((s, i) => 
+            i === index ? { ...s, id: response.data.id } : s
+          )
+        }));
+      }
+      SuccessToast('Conjunto de conocimiento guardado correctamente');
+    } catch (error) {
+      console.error('Error saving knowledge tag:', error);
+      ErrorToast('Error al guardar el conjunto de conocimiento');
+    } finally {
+      setSavingTagIndex(null); // Limpiamos el índice al terminar
+    }
+  };
+
   return (
     <Box sx={{ 
       display: 'flex', 
@@ -282,13 +372,13 @@ export const DataEntry: React.FC = () => {
       gap: 3,
       height: 'auto', // Aseguramos que el contenedor principal se ajuste al contenido
     }}>
-      {/* Barra de búsqueda y botón de agregar */}
+      {/* Barra de búsqueda y botones */}
       <Box sx={{ 
         display: 'flex', 
         gap: 2,
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: '100%' // Aseguramos que ocupe todo el ancho
+        width: '100%'
       }}>
         <Search sx={{ 
           flex: 1,
@@ -307,20 +397,34 @@ export const DataEntry: React.FC = () => {
           />
         </Search>
 
-        <Button
-          variant="contained"
-          onClick={handleAddSet}
-          sx={{
-            minWidth: '180px',
-            whiteSpace: 'nowrap',
-            color: 'white',  // Agregamos el color blanco al texto
-            '&:hover': {
-              color: 'white'  // Mantenemos el color blanco en hover
-            }
-          }}
-        >
-          {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            onClick={() => navigate(`/chat/${botId}`)}
+            startIcon={<ChatIcon />}
+            sx={{
+              minWidth: '140px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {"Probar Bot"}
+          </Button>
+
+          <Button
+            variant="contained"
+            onClick={handleAddSet}
+            sx={{
+              minWidth: '180px',
+              whiteSpace: 'nowrap',
+              color: 'white',
+              '&:hover': {
+                color: 'white'
+              }
+            }}
+          >
+            {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
+          </Button>
+        </Box>
       </Box>
 
       {/* Contenedor principal sin overflow */}
@@ -332,104 +436,181 @@ export const DataEntry: React.FC = () => {
         height: 'auto'
       }}>
         {/* Contenedor con scroll para los conjuntos */}
-        <Box sx={{ 
-          maxHeight: '510px', // Cambiado de 525px a 510px
-          overflow: 'auto',
-          p: 1.5
-        }}>
-          <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: 1.5,
-          }}>
-            {filteredKnowledgeSets.length > 0 ? (
-              filteredKnowledgeSets.map((set, index) => (
-                <Box 
-                  key={index}
-                  sx={{ 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    gap: 1.5,
-                    p: 1.5,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    borderRadius: 1,
-                    bgcolor: 'background.default',
-                    position: 'relative'
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      setFormValues(prev => ({
-                        ...prev,
-                        knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
-                      }));
+        <Box 
+          ref={scrollContainerRef}
+          sx={{ 
+            maxHeight: '510px',
+            overflow: 'auto',
+            p: 1.5,
+            minHeight: '200px',
+          }}
+        >
+          {formState.loadingKnowledge ? (
+            <Box sx={{ 
+              display: 'flex', 
+              justifyContent: 'center', 
+              alignItems: 'center',
+              height: '100%',
+              minHeight: '200px' 
+            }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: 1.5,
+              width: '100%',
+              minHeight: 'min-content'
+            }}>
+              {filteredKnowledgeSets.length > 0 ? (
+                filteredKnowledgeSets.map((set, index) => (
+                  <Box 
+                    key={index}
+                    sx={{ 
+                      display: 'flex', 
+                      flexDirection: 'column', 
+                      gap: 1.5,
+                      p: 1.5,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      borderRadius: 1,
+                      bgcolor: 'background.default',
+                      position: 'relative'
                     }}
-                    sx={{
+                  >
+                    {/* Botones de acción */}
+                    <Box sx={{ 
                       position: 'absolute',
                       right: '12px',
                       top: '12px',
-                      minWidth: '32px',
-                      width: '32px',
-                      height: '32px',
-                      padding: 0,
-                      borderRadius: '50%',
-                      color: 'error.main',
-                      '&:hover': {
-                        backgroundColor: 'error.lighter',
-                      }
-                    }}
-                  >
-                    <DeleteOutlineIcon sx={{ fontSize: 20 }} />
-                  </Button>
+                      display: 'flex',
+                      gap: 1
+                    }}>
+                      <Button
+                        onClick={() => handleSaveSet(index)}
+                        disabled={savingTagIndex === index}
+                        sx={{
+                          minWidth: '32px',
+                          width: '32px',
+                          height: '32px',
+                          padding: 0,
+                          borderRadius: '50%',
+                          color: 'success.main',
+                          '&:hover': {
+                            backgroundColor: 'success.lighter',
+                          }
+                        }}
+                      >
+                        {savingTagIndex === index ? (
+                          <CircularProgress
+                            size={20}
+                            sx={{ color: 'success.main' }}
+                          />
+                        ) : (
+                          <SaveIcon sx={{ fontSize: 20 }} />
+                        )}
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (set.id) {
+                            deleteKnowledgeTag(set.id)
+                              .then(() => {
+                                setFormValues(prev => ({
+                                  ...prev,
+                                  knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                                }));
+                                SuccessToast('Conjunto de conocimiento eliminado correctamente');
+                              })
+                              .catch(() => {
+                                ErrorToast('Error al eliminar el conjunto de conocimiento');
+                              });
+                          } else {
+                            setFormValues(prev => ({
+                              ...prev,
+                              knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                            }));
+                          }
+                        }}
+                        sx={{
+                          minWidth: '32px',
+                          width: '32px',
+                          height: '32px',
+                          padding: 0,
+                          borderRadius: '50%',
+                          color: 'error.main',
+                          '&:hover': {
+                            backgroundColor: 'error.lighter',
+                          }
+                        }}
+                      >
+                        <DeleteOutlineIcon sx={{ fontSize: 20 }} />
+                      </Button>
+                    </Box>
 
-                  <Typography variant="subtitle1" sx={{ 
-                    fontWeight: 'bold',
-                    fontSize: '0.95rem',
-                    pr: 5
-                  }}>
-                    {`${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
+                    <Typography variant="subtitle1" sx={{ 
+                      fontWeight: 'bold',
+                      fontSize: '0.95rem',
+                      pr: 5,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1
+                    }}>
+                      {`${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
+                      {set.id && (
+                        <Typography 
+                          component="span" 
+                          sx={{ 
+                            color: 'success.main',
+                            fontSize: '0.75rem',
+                            fontWeight: 'normal'
+                          }}
+                        >
+                          ({'Guardado'})
+                        </Typography>
+                      )}
+                    </Typography>
+                    
+                    <TextField
+                      name={`knowledge_key_${index}`}
+                      label={t.dataEntry.knowledgeKey || "Clave de conocimiento"}
+                      value={set.knowledge_key}
+                      onChange={(e) => handleSetChange(index, 'knowledge_key', e.target.value)}
+                      fullWidth
+                      required
+                      size="small"
+                      helperText={t.dataEntry.knowledgeKeyHelper || "Ingrese una clave para identificar este conocimiento"}
+                    />
+
+                    <TextField
+                      name={`context_${index}`}
+                      label={t.dataEntry.context}
+                      value={set.context}
+                      onChange={(e) => handleSetChange(index, 'context', e.target.value)}
+                      multiline
+                      rows={4}
+                      fullWidth
+                      required
+                      size="small"
+                    />
+                  </Box>
+                ))
+              ) : (
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  alignItems: 'center',
+                  minHeight: '200px'
+                }}>
+                  <Typography color="text.secondary">
+                    {searchQuery 
+                      ? (t.dataEntry.noKnowledgeFound || "No se encontraron conjuntos con esa clave")
+                      : (t.dataEntry.noKnowledgeSets || "No hay conjuntos de conocimiento")}
                   </Typography>
-                  
-                  <TextField
-                    name={`knowledge_key_${index}`}
-                    label={t.dataEntry.knowledgeKey || "Clave de conocimiento"}
-                    value={set.knowledge_key}
-                    onChange={(e) => handleSetChange(index, 'knowledge_key', e.target.value)}
-                    fullWidth
-                    required
-                    size="small"
-                    helperText={t.dataEntry.knowledgeKeyHelper || "Ingrese una clave para identificar este conocimiento"}
-                  />
-
-                  <TextField
-                    name={`context_${index}`}
-                    label={t.dataEntry.context}
-                    value={set.context}
-                    onChange={(e) => handleSetChange(index, 'context', e.target.value)}
-                    multiline
-                    rows={4}
-                    fullWidth
-                    required
-                    size="small"
-                  />
                 </Box>
-              ))
-            ) : (
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center',
-                p: 4
-              }}>
-                <Typography color="text.secondary">
-                  {searchQuery 
-                    ? (t.dataEntry.noKnowledgeFound || "No se encontraron conjuntos con esa clave")
-                    : (t.dataEntry.noKnowledgeSets || "No hay conjuntos de conocimiento")}
-                </Typography>
-              </Box>
-            )}
-          </Box>
+              )}
+            </Box>
+          )}
         </Box>
       </Box>
 
