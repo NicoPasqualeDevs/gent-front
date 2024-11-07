@@ -19,6 +19,7 @@ import { MultilineInput, TextInput, CheckboxInput } from "@/components/Inputs";
 import { ShortInput } from "@/components/Inputs/ShortInput";
 import { FormFileInput } from "@/utils/FormsViewUtils";
 import DataEntry from "@/pages/Builder/WidgetCustomizer/components/DataEntry";
+import PromptTemplate from './components/PromptTemplate';
 
 // Utils & Types
 import {
@@ -449,6 +450,14 @@ export const WidgetCustomizer: React.FC = () => {
   });
   const [emptyMessagesTemplate, setEmptyMessagesTemplate] = useState<CustomGreetingData[]>([]);
 
+  // Actualizar el tipo para incluir la nueva vista
+  const [activeView, setActiveView] = useState<'customization' | 'knowledge' | 'prompt'>('customization');
+
+  // Función para manejar el cambio de vista
+  const handleViewChange = (view: 'customization' | 'knowledge' | 'prompt') => {
+    setActiveView(view);
+  };
+
   // Actualizar la configuración de formik
   const formik = useFormik({
     initialValues: getInitialValues(theme),
@@ -827,173 +836,249 @@ export const WidgetCustomizer: React.FC = () => {
     <DashboardContainer>
       <DashboardHeader
         title="Widget Customizer"
+        actions={
+          <Box sx={{ 
+            display: 'flex', 
+            gap: 2,
+            '& .MuiButton-root': {
+              minWidth: '140px'
+            }
+          }}>
+            <Button
+              variant={activeView === 'customization' ? 'contained' : 'outlined'}
+              onClick={() => handleViewChange('customization')}
+              sx={{
+                color: 'white',
+                borderColor: activeView === 'customization' ? 'primary.main' : 'primary.light',
+                backgroundColor: activeView === 'customization' ? 'primary.main' : 'transparent',
+                '&:hover': {
+                  color: 'white',
+                  borderColor: activeView === 'customization' ? 'primary.main' : 'primary.light',
+                  backgroundColor: activeView === 'customization' ? 'primary.main' : 'transparent'
+                }
+              }}
+            >
+              Personalización
+            </Button>
+            <Button
+              variant={activeView === 'knowledge' ? 'contained' : 'outlined'}
+              onClick={() => handleViewChange('knowledge')}
+              sx={{
+                color: 'white',
+                borderColor: activeView === 'knowledge' ? 'primary.main' : 'primary.light',
+                backgroundColor: activeView === 'knowledge' ? 'primary.main' : 'transparent',
+                '&:hover': {
+                  color: 'white',
+                  borderColor: activeView === 'knowledge' ? 'primary.main' : 'primary.light',
+                  backgroundColor: activeView === 'knowledge' ? 'primary.main' : 'transparent'
+                }
+              }}
+            >
+              Conocimiento
+            </Button>
+            <Button
+              variant={activeView === 'prompt' ? 'contained' : 'outlined'}
+              onClick={() => handleViewChange('prompt')}
+              sx={{
+                color: 'white',
+                borderColor: activeView === 'prompt' ? 'primary.main' : 'primary.light',
+                backgroundColor: activeView === 'prompt' ? 'primary.main' : 'transparent',
+                '&:hover': {
+                  color: 'white',
+                  borderColor: activeView === 'prompt' ? 'primary.main' : 'primary.light',
+                  backgroundColor: activeView === 'prompt' ? 'primary.main' : 'transparent'
+                }
+              }}
+            >
+              Instrucciones
+            </Button>
+          </Box>
+        }
       />
 
       <DashboardContent>
-        <Paper elevation={3} sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-          flex: 1,
-          minHeight: 0
-        }}>
-          {/* Tabs */}
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={tabValue} onChange={handleTabChange}>
-              <Tab label="Colores" />
-              <Tab label="Tipografía" />
-              <Tab label="Imágenes" />
-              <Tab label="Seguridad" />
-              <Tab label="Saludos" />
-              <Tab label="Datos" />
-            </Tabs>
-          </Box>
-
-          {/* Contenedor del contenido */}
-          <Box sx={{
+        {activeView === 'customization' ? (
+          <Paper elevation={3} sx={{
             display: 'flex',
-            gap: 4,
+            flexDirection: 'column',
+            overflow: 'hidden',
             flex: 1,
-            p: 3,
-            minHeight: 0,
-            overflow: 'auto',
-            ...commonStyles.scrollableContent
+            minHeight: 0
           }}>
-            {/* Panel izquierdo - Widget Preview */}
+            {/* Contenedor del contenido */}
             <Box sx={{
-              width: '40%',
               display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'flex-start',
-              pt: 2
+              gap: 4,
+              flex: 1,
+              p: 3,
+              minHeight: 0,
+              overflow: 'auto',
+              ...commonStyles.scrollableContent
             }}>
+              {/* Panel izquierdo - Widget Preview */}
               <Box sx={{
-                maxHeight: '600px',
-                transform: 'scale(0.9)',
-                transformOrigin: 'top center'
+                width: '40%',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+                pt: 2
               }}>
-                <ReactWidget widgetData={getWidgetDataForPreview()} />
+                <Box sx={{
+                  maxHeight: '600px',
+                  transform: 'scale(0.9)',
+                  transformOrigin: 'top center'
+                }}>
+                  <ReactWidget widgetData={getWidgetDataForPreview()} />
+                </Box>
+              </Box>
+
+              {/* Panel derecho - Opciones de configuración */}
+              <Box sx={{
+                width: '60%',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
+                minHeight: 0
+              }}>
+                {!isLoaded ? (
+                  <Box sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%'
+                  }}>
+                    <PageCircularProgress />
+                  </Box>
+                ) : (
+                  <Box 
+                    component="form"
+                    onSubmit={handleFormSubmit}
+                    sx={{
+                      height: '100%',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      minHeight: 0
+                    }}
+                  >
+                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                      <Tabs value={tabValue} onChange={handleTabChange}>
+                        <Tab label="Colores" />
+                        <Tab label="Tipografía" />
+                        <Tab label="Imágenes" />
+                        <Tab label="Seguridad" />
+                        <Tab label="Saludos" />
+                      </Tabs>
+                    </Box>
+                    <Box sx={{
+                      flex: 1,
+                      ...commonStyles.scrollableContent,
+                      pr: 2
+                    }}>
+                      <TabPanel value={tabValue} index={0}>
+                        <ColorsTab
+                          values={formik.values}
+                          handleColorChange={handleColorChange}
+                          errors={formik.errors}
+                        />
+                      </TabPanel>
+
+                      <TabPanel value={tabValue} index={1}>
+                        <TypographyTab
+                          values={formik.values}
+                          handleChange={formik.handleChange}
+                          errors={formik.errors}
+                        />
+                      </TabPanel>
+
+                      <TabPanel value={tabValue} index={2}>
+                        <ImagesTab
+                          values={formik.values}
+                          handleChange={handleImageChange}
+                          errors={formik.errors}
+                        />
+                      </TabPanel>
+
+                      <TabPanel value={tabValue} index={3}>
+                        <SecurityTab
+                          values={formik.values}
+                          handleChange={formik.handleChange}
+                        />
+                      </TabPanel>
+
+                      <TabPanel value={tabValue} index={4}>
+                        <GreetingsTab
+                          messages={messages}
+                          emptyMessagesTemplate={emptyMessagesTemplate}
+                          newMessage={newMessage}
+                          handleUpdate={handleUpdate}
+                          handleDelete={handleDelete}
+                          handleNew={handleNew}
+                        />
+                      </TabPanel>
+                    </Box>
+                  </Box>
+                )}
               </Box>
             </Box>
-
-            {/* Panel derecho - Opciones de configuración */}
-            <Box sx={{
-              width: '60%',
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-              minHeight: 0
-            }}>
-              {!isLoaded ? (
-                <Box sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  height: '100%'
-                }}>
-                  <PageCircularProgress />
-                </Box>
-              ) : (
-                <Box 
-                  component="form"
-                  onSubmit={handleFormSubmit}
-                  sx={{
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minHeight: 0
-                  }}
-                >
-                  <Box sx={{
-                    flex: 1,
-                    ...commonStyles.scrollableContent,
-                    pr: 2
-                  }}>
-                    <TabPanel value={tabValue} index={0}>
-                      <ColorsTab
-                        values={formik.values}
-                        handleColorChange={handleColorChange}
-                        errors={formik.errors}
-                      />
-                    </TabPanel>
-
-                    <TabPanel value={tabValue} index={1}>
-                      <TypographyTab
-                        values={formik.values}
-                        handleChange={formik.handleChange}
-                        errors={formik.errors}
-                      />
-                    </TabPanel>
-
-                    <TabPanel value={tabValue} index={2}>
-                      <ImagesTab
-                        values={formik.values}
-                        handleChange={handleImageChange}
-                        errors={formik.errors}
-                      />
-                    </TabPanel>
-
-                    <TabPanel value={tabValue} index={3}>
-                      <SecurityTab
-                        values={formik.values}
-                        handleChange={formik.handleChange}
-                      />
-                    </TabPanel>
-
-                    <TabPanel value={tabValue} index={4}>
-                      <GreetingsTab
-                        messages={messages}
-                        emptyMessagesTemplate={emptyMessagesTemplate}
-                        newMessage={newMessage}
-                        handleUpdate={handleUpdate}
-                        handleDelete={handleDelete}
-                        handleNew={handleNew}
-                      />
-                    </TabPanel>
-
-                    <TabPanel value={tabValue} index={5}>
-                      <DataEntry />
-                    </TabPanel>
-                  </Box>
-                </Box>
-              )}
-            </Box>
-          </Box>
-        </Paper>
+          </Paper>
+        ) : activeView === 'knowledge' ? (
+          <Paper elevation={3} sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            flex: 1,
+            minHeight: 0,
+            p: 3
+          }}>
+            <DataEntry />
+          </Paper>
+        ) : (
+          <Paper elevation={3} sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            overflow: 'hidden',
+            flex: 1,
+            minHeight: 0
+          }}>
+            <PromptTemplate />
+          </Paper>
+        )}
       </DashboardContent>
 
-      {/* Footer con botón específico para cada tab */}
-      <DashboardFooter>
-        <Box sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', sm: 'row' },
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: 2,
-          width: '100%'
-        }}>
-          {tabActions[tabValue].map((action, index) => (
-            action.show !== false && (
-              <Button
-                key={`action-${index}`}
-                variant="contained"
-                onClick={action.onClick}
-                type="submit"
-                sx={{
-                  color: 'white',
-                  maxWidth: '222px !important',
-                  padding: '6px 16px',
-                  '&:hover': {
+      {/* Footer solo visible en la vista de personalización */}
+      {activeView === 'customization' && (
+        <DashboardFooter>
+          <Box sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', sm: 'row' },
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 2,
+            width: '100%'
+          }}>
+            {tabActions[tabValue].map((action, index) => (
+              action.show !== false && (
+                <Button
+                  key={`action-${index}`}
+                  variant="contained"
+                  onClick={action.onClick}
+                  type="submit"
+                  sx={{
                     color: 'white',
-                  },
-                }}
-              >
-                {action.label}
-              </Button>
-            )
-          ))}
-        </Box>
-      </DashboardFooter>
+                    maxWidth: '222px !important',
+                    padding: '6px 16px',
+                    '&:hover': {
+                      color: 'white',
+                    },
+                  }}
+                >
+                  {action.label}
+                </Button>
+              )
+            ))}
+          </Box>
+        </DashboardFooter>
+      )}
     </DashboardContainer>
   );
 };

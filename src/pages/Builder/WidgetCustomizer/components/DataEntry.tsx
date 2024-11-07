@@ -7,6 +7,7 @@ import useBotsApi from "@/hooks/useBots";
 import { Box, TextField, Button, Typography, LinearProgress } from '@mui/material';
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import SearchIcon from "@mui/icons-material/Search";
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 // Constantes
 const MAX_FILE_SIZE = 10; // MB
@@ -310,8 +311,12 @@ export const DataEntry: React.FC = () => {
           variant="contained"
           onClick={handleAddSet}
           sx={{
-            minWidth: 'auto',
-            whiteSpace: 'nowrap'
+            minWidth: '180px',
+            whiteSpace: 'nowrap',
+            color: 'white',  // Agregamos el color blanco al texto
+            '&:hover': {
+              color: 'white'  // Mantenemos el color blanco en hover
+            }
           }}
         >
           {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
@@ -323,12 +328,12 @@ export const DataEntry: React.FC = () => {
         bgcolor: 'background.paper',
         borderRadius: 1,
         boxShadow: 1,
-        width: '100%', // Aseguramos que ocupe todo el ancho
-        height: 'auto' // Altura automática
+        width: '100%',
+        height: 'auto'
       }}>
         {/* Contenedor con scroll para los conjuntos */}
         <Box sx={{ 
-          maxHeight: '350px', // Altura máxima para el scroll
+          maxHeight: '510px', // Cambiado de 525px a 510px
           overflow: 'auto',
           p: 1.5
         }}>
@@ -344,17 +349,44 @@ export const DataEntry: React.FC = () => {
                   sx={{ 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    gap: 1.5, // Reducimos el gap de 2 a 1.5
-                    p: 1.5, // Reducimos el padding de 2 a 1.5
+                    gap: 1.5,
+                    p: 1.5,
                     border: '1px solid',
                     borderColor: 'divider',
                     borderRadius: 1,
-                    bgcolor: 'background.default'
+                    bgcolor: 'background.default',
+                    position: 'relative'
                   }}
                 >
+                  <Button
+                    onClick={() => {
+                      setFormValues(prev => ({
+                        ...prev,
+                        knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                      }));
+                    }}
+                    sx={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '12px',
+                      minWidth: '32px',
+                      width: '32px',
+                      height: '32px',
+                      padding: 0,
+                      borderRadius: '50%',
+                      color: 'error.main',
+                      '&:hover': {
+                        backgroundColor: 'error.lighter',
+                      }
+                    }}
+                  >
+                    <DeleteOutlineIcon sx={{ fontSize: 20 }} />
+                  </Button>
+
                   <Typography variant="subtitle1" sx={{ 
                     fontWeight: 'bold',
-                    fontSize: '0.95rem' // Reducimos ligeramente el tamaño del título
+                    fontSize: '0.95rem',
+                    pr: 5
                   }}>
                     {`${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
                   </Typography>
@@ -366,7 +398,7 @@ export const DataEntry: React.FC = () => {
                     onChange={(e) => handleSetChange(index, 'knowledge_key', e.target.value)}
                     fullWidth
                     required
-                    size="small" // Hacemos el input más compacto
+                    size="small"
                     helperText={t.dataEntry.knowledgeKeyHelper || "Ingrese una clave para identificar este conocimiento"}
                   />
 
@@ -376,10 +408,10 @@ export const DataEntry: React.FC = () => {
                     value={set.context}
                     onChange={(e) => handleSetChange(index, 'context', e.target.value)}
                     multiline
-                    rows={4} // Reducimos las filas de 6 a 4
+                    rows={4}
                     fullWidth
                     required
-                    size="small" // Hacemos el input más compacto
+                    size="small"
                   />
                 </Box>
               ))
@@ -416,7 +448,12 @@ export const DataEntry: React.FC = () => {
           textAlign: 'center',
           cursor: 'pointer',
           transition: 'border-color 0.2s',
-          width: '100%', // Aseguramos que ocupe todo el ancho
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '120px',
           '&:hover': {
             borderColor: 'primary.main',
           },
@@ -437,11 +474,11 @@ export const DataEntry: React.FC = () => {
             cursor: 'pointer'
           }}
         />
-        <Typography>{t.dataEntry.dragAndDrop}</Typography>
+        <Typography variant="body1" sx={{ mb: 1 }}>{t.dataEntry.dragAndDrop}</Typography>
         <Typography variant="caption" color="text.secondary">
           {t.dataEntry.maxSize.replace("{size}", MAX_FILE_SIZE.toString())}
         </Typography>
-        {formState.uploadProgress && formState.uploadProgress > 0 && (
+        {formState.uploadProgress > 0 && (
           <Box sx={{ width: '100%', mt: 2 }}>
             <LinearProgress variant="determinate" value={formState.uploadProgress} />
             <Typography variant="caption" color="text.secondary">
