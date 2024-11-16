@@ -1,5 +1,5 @@
 import { PathButton } from "@/components/styledComponents/Layout";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import theme from "@/styles/theme";
 import { Box, Breadcrumbs, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";

@@ -7,7 +7,7 @@ import {
   AccordionSummary,
   AccordionDetails,
 } from "@mui/material";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import theme from "@/styles/theme";

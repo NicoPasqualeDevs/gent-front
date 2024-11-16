@@ -1,12 +1,21 @@
-import { PathButton } from "@/components/styledComponents/Layout";
-import { useAppContext } from "@/context/app";
-import theme from "@/styles/theme";
 import { Box, Breadcrumbs, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useAppContext } from "@/context";
+import { languages } from "@/utils/Traslations";
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import { PathData } from "@/types/Pathbar";
 
 const Pathbar: React.FC = () => {
-  const navigate = useNavigate();
-  const { appNavigation } = useAppContext();
+  const { appNavigation, language } = useAppContext();
+  const t = languages[language as keyof typeof languages];
+
+  const getTranslation = (path: PathData) => {
+    const key = path.translationKey as keyof typeof t.leftMenu;
+    return t.leftMenu[key] || path.label;
+  };
+
+  if (!appNavigation.length) {
+    return null;
+  }
 
   return (
     <Box
@@ -15,41 +24,27 @@ const Pathbar: React.FC = () => {
         display: "flex",
         alignItems: "center",
         flexGrow: 1,
-        minWidth: "400px", // Añadido ancho mínimo de 400px
-        overflow: "auto", // Añadido para manejar contenido que exceda el ancho mínimo
+        minWidth: "400px",
+        overflow: "auto",
       }}
     >
       <Breadcrumbs
-        separator={<Typography>/</Typography>}
-        sx={{
-          color: "white",
-          maxHeight: "50px",
-          marginTop: "4px",
-          overflowY: "auto",
-          whiteSpace: "nowrap",
-          scrollBehavior: "smooth",
-          scrollbarGutter: "none",
-          scrollbarWidth: "thin",
-          scrollbarColor: `${theme.palette.primary.main} transparent`,
-          width: "100%", // Asegura que el Breadcrumbs ocupe todo el ancho disponible
-        }}
+        separator={<NavigateNextIcon fontSize="small" />}
+        aria-label="breadcrumb"
       >
-        {appNavigation.map((item, index) => {
-          if (appNavigation.length - 1 === index) {
-            return <Typography sx={{color:"secondary.light", paddingLeft:"5px"}} variant="body2" key={index}>{item.label}</Typography>;
-          }
-          return (
-            <PathButton
-              size="small"
-              key={index}
-              onClick={() => {
-                navigate(item.current_path);
-              }}
-            >
-              {item.label}
-            </PathButton>
-          );
-        })}
+        {appNavigation.map((path, index) => (
+          <Typography
+            key={`path-${index}`}
+            color="text.primary"
+            sx={{
+              cursor: "default",
+              fontSize: "0.9rem",
+              pt: "2px"
+            }}
+          >
+            {getTranslation(path)}
+          </Typography>
+        ))}
       </Breadcrumbs>
     </Box>
   );

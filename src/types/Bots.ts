@@ -56,16 +56,18 @@ export interface Ktag {
 }
 
 export interface AgentData {
-  [propKey: string]: string | undefined | Ktag[] | null;
-  api_bot: string | null;
-  api_details: string;
-  description: string;
   id: string;
-  iframe_code: string;
-  labels: Ktag[];
   name: string;
-  widget_url: string;
-  model_ai: string 
+  description?: string;
+  model_ai: string;
+  context: string;
+  owner?: string;
+  owner_data?: {
+    name: string;
+    email: string;
+  };
+  widget_url?: string;
+  status?: 'online' | 'offline' | 'busy' | 'error' | 'updating';
 }
 
 export interface AgentMetaData {
@@ -77,9 +79,7 @@ export interface AgentMetaData {
 }
 
 export interface WidgetData {
-  [propKey: string]: string | boolean | undefined;
   id: string;
-  customer_bot?: string;
   primary_color?: string;
   primary_textContrast?: string;
   secondary_color?: string;
@@ -87,17 +87,17 @@ export interface WidgetData {
   badge_color?: string;
   badge_contrast?: string;
   font_family?: string;
-  faq_questions?: string;
   brand_alt?: string;
-  brand_logo?: string;
-  icon_chat?: string;
-  icon_bot?: string;
-  icon_send?: string;
-  icon_hidden?: string;
-  band_list?: string;
+  brand_logo?: string | File;
+  icon_bot?: string | File;
+  icon_chat?: string | File;
+  icon_hidden?: string | File;
+  icon_send?: string | File;
   sql_injection_tester?: boolean;
   php_injection_tester?: boolean;
   strange_chars_tester?: boolean;
+  band_list?: string;
+  faq_questions?: string;
 }
 
 export interface CustomGreetingData {
@@ -118,20 +118,6 @@ export interface GetCustomGreetingData {
   data: CustomGreetingData[];
 }
 
-export interface ToolData {
-  [propKey: string]: string | File | undefined | string[];
-  id?: string;
-  tool_name: string;
-  type?: string;
-  tool_code?: string | File;
-  instruction?: string;
-  user_id?: string;  // Cambiamos aiTeam_id por user_id
-}
-
-export interface ToolRelationshipData {
-  agent_tool_ids: number[];
-}
-
 export interface AiTeam {
   id: string;
   name: string;
@@ -139,5 +125,18 @@ export interface AiTeam {
   address: string;
   code: string;
   user_email: string;
-  // Añade cualquier otro campo que pueda tener un cliente
+}
+
+export interface BotFormData {
+  name: string;
+  description: string;
+  model_ai: string;
+  [key: string]: string;
+}
+
+export interface BotDataFormData {
+  context: string;
+  knowledge_key?: string;
+  documents?: File[];
+  [key: string]: string | File[] | undefined;
 }

@@ -1,14 +1,35 @@
-export interface AiTeamsDetails {
-  id?: string;
+import { PageState } from '@/types/Page';
+
+export interface OwnerData {
   name: string;
-  address: string;
-  description: string;
-  code?: string;
-  user_email?: string;
-  owner_data?: {
-    id: string;
-    name: string;
-    email: string;
-  };
+  email: string;
+  id: string;
 }
 
+export interface AiTeamsDetails {
+  id: string;
+  name: string;
+  description?: string;
+  address?: string;
+  owner_data?: OwnerData;
+  email?: string;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+}
+
+export interface AiTeamsFormState extends PageState {
+  formData: AiTeamsDetails;
+  isSubmitting: boolean;
+  isEditing: boolean;
+  searchQuery: string;
+  contentPerPage: string;
+  isSearching: boolean;
+  users: User[];
+  errorMessage?: string;
+} 

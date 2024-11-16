@@ -1,7 +1,6 @@
 import React from 'react';
 import { Select, MenuItem, SelectChangeEvent } from '@mui/material';
-import { useAppContext } from '@/context/app';
-import { useTranslation } from 'react-i18next';
+import { useAppContext } from '@/context';
 import ReactCountryFlag from 'react-country-flag';
 
 const countryCodeMap: { [key: string]: string } = {
@@ -10,38 +9,54 @@ const countryCodeMap: { [key: string]: string } = {
   fr: 'FR',
   de: 'DE',
   br: 'BR',
+  hi: 'IN',
 };
 
 const LanguageSelector: React.FC = () => {
   const { language, setLanguage } = useAppContext();
-  const { i18n } = useTranslation();
+  const [open, setOpen] = React.useState(false);
+
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
 
   const handleChange = (event: SelectChangeEvent<string>) => {
     const newLang = event.target.value;
-    setLanguage(newLang);
-    i18n.changeLanguage(newLang);
+    if (language !== newLang) {
+      setLanguage(newLang);
+      handleClose();
+    }
   };
+
 
   return (
     <Select
       value={language}
+      open={open}
+      onClose={handleClose}
+      onOpen={handleOpen}
       onChange={handleChange}
-      sx={{ 
-        minWidth: 80, 
-        height: '36px', 
-        '& .MuiSelect-select': { 
+      sx={{
+        minWidth: 80,
+        height: '36px',
+        '& .MuiSelect-select': {
           display: 'flex',
           alignItems: 'center',
           padding: '6px'
-        } 
+        }
       }}
     >
       {Object.entries(countryCodeMap).map(([lang, countryCode]) => (
-        <MenuItem 
-          key={lang} 
-          value={lang} 
-          sx={{ 
-            display: 'flex', 
+        <MenuItem
+          key={lang}
+          value={lang}
+          sx={{
+            display: 'flex',
             alignItems: 'center',
             justifyContent: 'flex-start',
             height: '36px'  // Aseguramos que el MenuItem tenga la misma altura que el Select

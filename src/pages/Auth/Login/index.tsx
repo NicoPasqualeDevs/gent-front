@@ -1,32 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { MainGridContainer } from "@/utils/ContainerUtil";
-import { Button, Grid, Typography, Box } from "@mui/material";
+import { Button, Grid, Typography, Box, CircularProgress } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { AuthLoginData } from "@/types/Auth";
+import { AuthLoginData, AuthUser } from "@/types/Auth";
 import useAuth from "@/hooks/useAuth";
 import { ErrorToast } from "@/components/Toast";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { useNavigate } from "react-router-dom";
 import { PasswordInput, TextInput } from "@/components/Inputs";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from '@mui/material/styles';
 import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
 import { languages } from "@/utils/Traslations";
+import GlowingText from '@/components/GlowingText';
+
+interface LoginInputError {
+  email: string;
+  password: string;
+}
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { setAuth, setNavElevation, language } = useAppContext();
   const { loginUser } = useAuth();
-  const [inputError, setInputError] = useState<AuthLoginData>({
+  const [inputError, setInputError] = useState<LoginInputError>({
     email: " ",
-    code: " ",
+    password: " ",
   });
   const [showLoginForm, setShowLoginForm] = useState(false);
   const theme = useTheme();
   const [rotatingText, setRotatingText] = useState(0);
   const t = languages[language as keyof typeof languages].login;
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -37,7 +43,7 @@ const Login: React.FC = () => {
   }, [t.rotatingTexts.length]);
 
   const initialValues: AuthLoginData = {
-    code: "",
+    password: "",
     email: "",
   };
 
@@ -45,43 +51,49 @@ const Login: React.FC = () => {
     email: Yup.string()
       .email(t.invalidEmail)
       .required(t.fieldRequired),
-    code: Yup.string().required(t.fieldRequired),
+    password: Yup.string().required(t.fieldRequired),
   });
 
-  const onSubmit = (values: AuthLoginData) => {
-    loginUser(values)
-      .then((response) => {
-        console.log(response.data, "<-- loguin");
-        setAuth({
-          email: response.data.email,
-          first_name: response.data.first_name ?? "Admin",
-          last_name: response.data.last_name ?? "Admin",
-          token: response.data.token,
-          is_superuser: response.data.is_superuser ?? false,
-          uuid: response.data.uuid,
+  const onSubmit = async (values: AuthLoginData) => {
+    setIsLoading(true);
+    try {
+      const response = await loginUser(values);
+      const userData = response.data;
+
+      if (!userData.token || !userData.email || !userData.uuid) {
+        throw new Error(t.invalidServerResponse);
+      }
+
+      const authData: AuthUser = {
+        email: userData.email,
+        token: userData.token,
+        uuid: userData.uuid,
+        first_name: userData.first_name || "",
+        last_name: userData.last_name || "",
+        is_superuser: userData.is_superuser || false,
+      };
+
+      await Promise.all([
+        setAuth(authData),
+        setNavElevation("builder")
+      ]);
+
+      navigate("/builder", { replace: true });
+
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        ErrorToast(t.connectionError);
+      } else if (typeof error === 'object' && error !== null && 'message' in error) {
+        const errorMessage = (error as { message: string }).message;
+        ErrorToast(errorMessage);
+        setInputError({
+          email: errorMessage === t.invalidEmail ? t.invalidEmail : "",
+          password: errorMessage === t.invalidCredentials ? t.invalidCredentials : "",
         });
-        sessionStorage.setItem("user_email", response.data.email);
-        sessionStorage.setItem("user_token", response.data.token);
-        setNavElevation("builder");
-        navigate("/builder");
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.connectionError);
-        } else {
-          ErrorToast(error.data.message);
-          setInputError({
-            email:
-              error.data.message === t.invalidEmail
-                ? t.invalidEmail
-                : "",
-            code:
-              error.data.message === t.invalidCredentials
-                ? t.invalidCredentials
-                : "",
-          });
-        }
-      });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formik = useFormik({
@@ -96,44 +108,43 @@ const Login: React.FC = () => {
     e.preventDefault();
     setInputError({
       email: formik.errors.email || "",
-      code: formik.errors.code || "",
+      password: formik.errors.password || "",
     });
     formik.handleSubmit(e);
   };
 
   return (
-    <MainGridContainer
-      container
-      alignItems={"center"}
-      justifyContent={"center"}
-      sx={{
-        overflow: "hidden",
-        position: 'relative',
-        minHeight: '100vh',
-      }}
-    >
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 16,
-          right: 16,
-          zIndex: 3,
-        }}
-      >
+    <Box sx={{
+      textAlign: "center",
+      height: "100vh",
+      width: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      alignItems: "center",
+      position: 'relative',
+    }}>
+      {/* Language Selector */}
+      <Box sx={{
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        zIndex: 3,
+      }}>
         <LanguageSelector />
       </Box>
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          overflow: 'hidden',
-          zIndex: 1,
-          pointerEvents: 'none',
-        }}
-      >
+
+      {/* Snowfall Effect */}
+      <Box sx={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        overflow: 'hidden',
+        zIndex: 1,
+        pointerEvents: 'none',
+      }}>
         <Snowfall
           snowflakeCount={200}
           style={{
@@ -144,161 +155,249 @@ const Login: React.FC = () => {
           }}
         />
       </Box>
-      <Grid
-        item
-        xs={12}
-        sm={8}
-        md={6}
-        lg={4}
+
+      {/* Main Content */}
+      <Box
+        component={motion.div}
+        layout
+        initial={false}
+        animate={{
+          height: showLoginForm ? "460px" : "320px",
+        }}
+        transition={{
+          height: {
+            duration: 0.5,
+            ease: "anticipate",
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+          }
+        }}
         sx={{
           zIndex: 2,
           backgroundColor: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(5px)',
           borderRadius: '15px',
-          padding: '2rem',
+          padding: '2.5rem',
+          pt: '0rem',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-          maxHeight: '80vh',
-          overflowY: 'auto',
+          width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' },
+          overflow: 'none',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          position: 'relative'
         }}
       >
-        <Grid item xs={12}>
-          <Typography
-            variant="h1"
-            textAlign={"center"}
-            sx={{
-              mb: 1,
-              fontSize: '3rem',
-            }}
-          >
-            {t.title}
-          </Typography>
+        <motion.div
+          initial={{ scale: 1 }}
+          animate={{
+            y: showLoginForm ? -0 : 0
+          }}
+          transition={{ duration: 0.5 }}
+          style={{
+            width: '100%',
+            position: 'absolute',
+            top: '-12px'
+          }}
+        >
+
+          <GlowingText>Gents</GlowingText>
+
+        </motion.div>
+
+        <AnimatePresence mode="wait">
           {showLoginForm ? (
-            <>
-              <Typography textAlign={"center"} sx={{ mt: 1 }}>
-                {t.subtitle}
-              </Typography>
-              <Typography
-                fontSize={"75%"}
-                textAlign={"center"}
-                sx={{
-                  mt: 0.5,
-                  mb: 4,
-                }}
+            <motion.div
+              key="loginForm"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              transition={{ duration: 0.5 }}
+              style={{
+                width: '80%',
+                position: 'absolute',
+                top: '296px'
+              }}
+            >
+              <Box sx={{ mt: "-162px" }}>
+                <Typography
+                  textAlign="center"
+                  sx={{
+                    fontSize: "12px",
+                    mt: 0.5,
+                    opacity: 0.9,
+                    transform: 'translateY(0)',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {t.subtitle}
+                </Typography>
+                <Typography
+                  fontSize="60%"
+                  textAlign="center"
+                  sx={{
+                    mt: 0.5,
+                    mb: 2,
+                    opacity: 0.7
+                  }}
+                >
+                  {t.version}
+                </Typography>
+              </Box>
+
+              <motion.form
+                onSubmit={formSubmit}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
               >
-                {t.version}
-              </Typography>
-            </>
+                <motion.div
+                  initial={{ x: -10, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                >
+                  <TextInput
+                    name="email"
+                    label={t.emailLabel}
+                    value={values.email}
+                    helperText={inputError.email}
+                    error={Boolean(inputError.email && inputError.email.trim())}
+                    onChange={handleChange}
+                  />
+                </motion.div>
+
+                <motion.div
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                >
+                  <PasswordInput
+                    name="password"
+                    label={t.passwordLabel}
+                    value={values.password}
+                    helperText={inputError.password}
+                    error={Boolean(inputError.password && inputError.password.trim())}
+                    onChange={handleChange}
+                  />
+                </motion.div>
+
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  <Grid
+                    item
+                    xs={12}
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      mt: 2,
+                    }}
+                  >
+                    {isLoading ? (
+                      <CircularProgress size={36} color="primary" />
+                    ) : (
+                      <Button
+                        variant="contained"
+                        type="submit"
+                        sx={{
+                          paddingTop: "10px",
+                          paddingBottom: "10px",
+                          color: "white",
+                          transition: 'all 0.3s ease',
+                          '&:hover': {
+                            color: theme.palette.secondary.contrastText,
+                          },
+                          [theme.breakpoints.between("xs", "sm")]: {
+                            maxWidth: "100%",
+                          },
+                        }}
+                      >
+                        {t.loginButton}
+                      </Button>
+                    )}
+                  </Grid>
+                </motion.div>
+              </motion.form>
+            </motion.div>
           ) : (
             <motion.div
-              key={rotatingText}
+              key="welcomeScreen"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
+              style={{
+                width: '100%',
+                position: 'absolute',
+                top: "296px"
+              }}
             >
-              <Typography
-                textAlign={"center"}
-                variant="h5"
-                sx={{
-                  mt: 1,
-                  mb: -2,
-                  fontWeight: 'normal',
-                  color: theme.palette.text.secondary,
-                  textShadow: '0 0 5px rgba(0,0,0,0.3)',
-                  minHeight: '3em',
-                  lineHeight: '3em',
-                  fontSize: '1.2rem',
-                }}
+              <motion.div
+                key={rotatingText}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
               >
-                {t.rotatingTexts[rotatingText]}
-              </Typography>
-            </motion.div>
-          )}
-        </Grid>
-
-        {showLoginForm ? (
-          <Grid item xs={12} sx={{ mt: 2 }}>
-            <form onSubmit={formSubmit}>
-              <TextInput
-                name="email"
-                label={t.emailLabel}
-                value={values.email}
-                helperText={inputError.email}
-                error={
-                  inputError.email && inputError.email.trim() !== "" ? true : false
-                }
-                onChange={handleChange}
-              />
-              <PasswordInput
-                name="code"
-                label={t.passwordLabel}
-                value={values.code}
-                helperText={inputError.code}
-                error={
-                  inputError.code && inputError.code.trim() !== "" ? true : false
-                }
-                onChange={handleChange}
-              />
-              <Grid
-                item
-                xs={12}
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  mt: 2,
-                }}
-              >
-                <Button
-                  variant="contained"
-                  type="submit"
+                <Typography
+                  textAlign="center"
                   sx={{
-                    paddingTop: "10px",
-                    paddingBottom: "10px",
-                    [theme.breakpoints.between("xs", "sm")]: {
-                      maxWidth: "100%",
-                    },
+                    mt: "-172px",
+                    fontWeight: 'normal',
+                    color: theme.palette.text.secondary,
+                    textShadow: '0 0 5px rgba(0,0,0,0.3)',
+                    lineHeight: '78px',
+                    fontSize: '24px',
                   }}
                 >
-                  {t.loginButton}
-                </Button>
+                  {t.rotatingTexts[rotatingText]}
+                </Typography>
+              </motion.div>
+
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                <motion.div
+                  whileHover={{
+                    scale: 1.05,
+                    rotate: [0, -1, 1, -1, 0],
+                    transition: { duration: 0.3 }
+                  }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Button
+                    variant="contained"
+                    size="large"
+                    onClick={() => {
+                      setShowLoginForm(true);
+                    }}
+                    sx={{
+                      mb: 1,
+                      fontSize: '1.5rem',
+                      padding: '20px 40px',
+                      borderRadius: '50px',
+                      boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
+                      backgroundColor: theme.palette.secondary.main,
+                      color: theme.palette.secondary.contrastText,
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                      '&:hover': {
+                        color: "white",
+                        backgroundColor: theme.palette.secondary.dark,
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 15px 25px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
+                      },
+                    }}
+                  >
+                    {t.startButton}
+                  </Button>
+                </motion.div>
               </Grid>
-            </form>
-          </Grid>
-        ) : (
-          <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
-            <motion.div
-              whileHover={{
-                scale: 1.1,
-                rotate: [0, -1, 1, -1, 0],
-                transition: { duration: 0.3 }
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                variant="contained"
-                size="large"
-                onClick={() => setShowLoginForm(true)}
-                sx={{
-                  mb: 1,
-                  fontSize: '1.5rem',
-                  padding: '20px 40px',
-                  borderRadius: '50px',
-                  boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
-                  backgroundColor: theme.palette.secondary.main,
-                  color: theme.palette.secondary.contrastText,
-                  '&:hover': {
-                    color: "white",
-                    backgroundColor: theme.palette.secondary.dark,
-                  },
-                }}
-              >
-                {t.startButton}
-              </Button>
             </motion.div>
-          </Grid>
-        )}
-      </Grid>
-    </MainGridContainer>
+          )}
+        </AnimatePresence>
+      </Box>
+    </Box>
   );
 };
 

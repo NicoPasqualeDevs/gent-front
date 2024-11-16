@@ -1,17 +1,17 @@
-import React, { useContext, useState, useEffect } from "react";
-import { AppContext } from "@/context/app/AppContext";
+import React, { useState, useEffect } from "react";
 import WellcomeContainer from "./Wellcome";
 import UserPanel from "./Main/User/Panel";
 import { useNavigate, } from "react-router-dom";
+import { useAppContext } from '@/context';
 
 const HomeComponent: React.FC = () => {
-  const { auth } = useContext(AppContext);
+  const { auth } = useAppContext();
   const [isWellcome, setIsWellcome] = useState<boolean>(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (auth.user) {
-      console.log("User data loaded", { user: auth.user, isWellcome });
+    if (auth) {
+      console.log("User data loaded", { user: auth, isWellcome });
     }
   }, [auth, isWellcome]);
 
@@ -21,7 +21,7 @@ const HomeComponent: React.FC = () => {
 
   return (
      <>
-      {auth.user?.is_superuser ? ()=> navigate("/builder") : (
+      {auth?.is_superuser ? ()=> navigate("/builder") : (
         isWellcome ? <WellcomeContainer onStartClick={handleStartClick} /> : <UserPanel />
       )}
     </> 

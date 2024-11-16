@@ -1,391 +1,382 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Box, Button, Typography, Paper, Container, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { AiTeamsDetails } from "@/types/AiTeams";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useMemo } from "react";
+import { MenuItem } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import useCustomersApi from "@/hooks/useCustomers";
-import useAdmin from "@/hooks/useAdmin"; // Importamos el nuevo hook
-import { PageCircularProgress } from "@/components/CircularProgress";
-import * as Yup from "yup";
+import useAdmin from "@/hooks/useAdmin";
+import * as Yup from "yup";  
 import { useFormik } from "formik";
-import { MultilineInput, TextInput } from "@/components/Inputs";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
+import useAiTeams from "@/hooks/useAiTeams";
+import { AiTeamsDetails } from "@/types/AiTeams";
+import {
+  FormLayout,
+  FormHeader,
+  FormContent,
+  FormInputGroup,
+  FormTextField,
+  FormSelect,
+  FormActions,
+  FormCancelButton,
+  FormButton,
+} from "@/utils/FormsViewUtils";
+import { User } from "@/types/AiTeams";
+
+// Definimos la interfaz para los valores del formulario
+interface FormValues {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  owner_data: {
+    id: string;
+    email: string;
+    name: string;
+  };
+}
+
+interface FormState {
+  loaded: boolean;
+  isSubmitting: boolean;
+  error: string | null;
+}
 
 const AiTeamsForm: React.FC = () => {
   const navigate = useNavigate();
-  const { aiTeamName, aiTeamId } = useParams();
-  const { setNavElevation, appNavigation, replacePath, setAgentsPage, language, auth } = useAppContext();
-  const { getAiTeamDetails, postAiTeamDetails, putAiTeamDetails } = useCustomersApi();
-  const { listNonSuperUsers } = useAdmin(); // Utilizamos el nuevo hook
-  const t = languages[language as keyof typeof languages].aiTeamsForm;
+  const { aiTeamId, aiTeamName } = useParams();
+  const { language, auth, replacePath } = useAppContext();
+  const { getAiTeamDetails, createAiTeam, updateAiTeam } = useAiTeams();
+  const { listNonSuperUsers } = useAdmin();
+  const t = languages[language];
 
-  const [loaded, setLoaded] = useState<boolean>(false);
-  const [isTeamDataLoaded, setIsTeamDataLoaded] = useState<boolean>(false);
-  const [isUsersDataLoaded, setIsUsersDataLoaded] = useState<boolean>(false);
-  const [initialValues, setInitialValues] = useState<AiTeamsDetails>({
-    name: "",
-    address: "",
-    description: "",
-    owner_data: undefined,
-  });
-
-  const [inputError, setInputError] = useState<AiTeamsDetails>({
-    name: "",
-    address: "",
-    description: "",
-  });
-
-  // Modifica la definición del tipo NonSuperUser
-  type NonSuperUser = { id: number; username: string; email: string; first_name: string; last_name: string };
-
-  const [nonSuperUsers, setNonSuperUsers] = useState<NonSuperUser[]>([]);
-
-  const validationSchema = Yup.object({
-    name: Yup.string().required(t.fieldRequired),
-    address: Yup.string().required(t.fieldRequired),
-    description: Yup.string().required(t.fieldRequired),
-  });
-
-  const onSubmit = (values: AiTeamsDetails) => {
-    const submissionValues = { ...values };
-    if (auth?.user?.is_superuser && submissionValues.owner_data?.name === "") {
-      submissionValues.owner_data.name = "Admin";
+  // Verificar autenticación al inicio
+  useEffect(() => {
+    if (!auth?.token) {
+      navigate('/auth/login');
+      return;
     }
-    if (aiTeamId) {
-      updateClient(submissionValues, aiTeamId);
-    } else {
-      createNewClient(submissionValues);
-    }
-  };
+  }, [auth?.token, navigate]);
 
-  const { values, errors, handleSubmit, handleChange, setValues } = useFormik({
-    initialValues,
-    onSubmit,
-    validationSchema,
-  });
-
-  const formSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    setInputError({
-      name: errors.name || " ",
-      address: errors.address || " ",
-      description: errors.description || " ",
-    });
-    handleSubmit(e);
-  };
-
-  const fetchNonSuperUsers = useCallback(() => {
-    return listNonSuperUsers()
-      .then((response) => {
-        setNonSuperUsers(prevUsers => {
-          const newUsers = response.data.map(user => ({
-            ...user,
-            id: Number(user.id)
-          }));
-          
-          // Asegurarse de que el usuario actual esté incluido
-          let updatedUsers = [...newUsers];
-          if (auth?.user) {
-            const currentUser : NonSuperUser = {
-              id: Number(auth.user.uuid),
-              username: auth.user.first_name,
-              email: auth.user.email,
-              first_name: auth.user.first_name,
-              last_name: auth.user.last_name || '' // Usa un string vacío si last_name no está disponible
-            };
-            updatedUsers = [currentUser, ...updatedUsers];
-            
-          }
-          
-          // Filtrar para evitar duplicados con usuarios previamente cargados
-          const uniqueUsers = updatedUsers.filter(newUser => 
-            !prevUsers.some(prevUser => prevUser.id === newUser.id)
-          );
-          
-          return [...prevUsers, ...uniqueUsers];
-        });
-        setIsUsersDataLoaded(true);
+  // Definimos el schema de validación
+  const validationSchema = useMemo(() => 
+    Yup.object({
+      name: Yup.string().required(t.actionAllower.fieldRequired),
+      description: Yup.string(),
+      address: Yup.string(),
+      owner_data: Yup.object({
+        id: Yup.string().required(t.actionAllower.fieldRequired),
+        email: Yup.string().email(),
+        name: Yup.string()
       })
-      .catch((error) => {
-        console.error("Error al obtener usuarios no superusuarios:", error);
-        // En caso de error, asegurarse de que al menos el usuario actual esté incluido
-        if (auth?.user) {
-          setNonSuperUsers(prevUsers => {
-            const currentUser: NonSuperUser = {
-              id: Number(auth.user?.uuid || ''),
-              username: auth.user?.first_name || "",
-              email: auth?.user?.email || "",
-              first_name: auth.user?.first_name || "",
-              last_name: auth.user?.last_name || '' // Usa un string vacío si last_name no está disponible
-            };
-            const currentUserExists = prevUsers.some(user => user.id === currentUser.id);
-            if (!currentUserExists) {
-              return [currentUser, ...prevUsers];
+    }), [t]);
+
+  // 1. Reducimos los estados al mínimo necesario
+  const [formState, setFormState] = useState<FormState>({
+    loaded: false,
+    isSubmitting: false,
+    error: null
+  });
+
+  const [nonSuperUsers, setNonSuperUsers] = useState<User[]>([]);
+
+  // 2. Estabilizamos las funciones API
+  const apiMethods = useMemo(() => ({
+    getAiTeamDetails,
+    createAiTeam,
+    updateAiTeam,
+    listNonSuperUsers
+  }), []); // Dependencia vacía porque estas funciones no deberían cambiar
+
+  // 3. Estabilizamos la configuración inicial
+  const config = useMemo(() => ({
+    auth,
+    aiTeamId,
+    aiTeamName,
+    language
+  }), [auth?.uuid, aiTeamId]); // Solo dependemos de los valores que realmente necesitamos
+
+  // 4. Configuración de Formik con valores iniciales estables
+  const formik = useFormik<FormValues>({
+    initialValues: {
+      id: '',
+      name: aiTeamName || '',
+      description: '',
+      address: '',
+      owner_data: {
+        name: `${auth?.first_name || ''} ${auth?.last_name || ''}`.trim(),
+        email: auth?.email || '',
+        id: auth?.uuid || ''
+      }
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      if (!auth?.token) {
+        ErrorToast(t.common.sessionExpired);
+        navigate('/auth/login');
+        return;
+      }
+
+      setFormState(prev => ({ ...prev, isSubmitting: true }));
+      try {
+        // Formateamos los datos antes de enviar
+        const formattedData: AiTeamsDetails = {
+          id: values.id,
+          name: values.name,
+          description: values.description,
+          address: values.address,
+          owner_data: {
+            id: values.owner_data.id,
+            email: values.owner_data.email,
+            name: values.owner_data.name
+          }
+        };
+
+        const response = aiTeamId
+          ? await apiMethods.updateAiTeam(formattedData, aiTeamId)
+          : await apiMethods.createAiTeam(formattedData);
+
+        if (response?.data) {
+          SuccessToast(aiTeamId ? t.aiTeamsForm.successUpdate : t.aiTeamsForm.successCreate);
+          navigate('/builder');
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error && error.message === t.common.sessionExpired) {
+          ErrorToast(t.common.sessionExpired);
+          navigate('/auth/login');
+        } else {
+          console.error('Error submitting form:', error);
+          ErrorToast(t.common.errorSavingData);
+        }
+      } finally {
+        setFormState(prev => ({ ...prev, isSubmitting: false }));
+      }
+    },
+    enableReinitialize: false
+  });
+
+  // 5. Un solo efecto para la carga inicial de datos
+  useEffect(() => {
+    let mounted = true;
+    
+    const loadData = async () => {
+      if (!config.auth?.uuid) {
+        navigate('/auth/login');
+        return;
+      }
+
+      try {
+        setFormState(prev => ({ ...prev, loaded: false }));
+
+        // Cargamos el usuario actual
+        const currentUser: User = {
+          id: Number(config.auth.uuid),
+          username: config.auth.first_name || '',
+          email: config.auth.email || '',
+          first_name: config.auth.first_name || '',
+          last_name: config.auth.last_name || ''
+        };
+
+        // Cargamos datos en paralelo
+        const [usersResponse, teamResponse] = await Promise.all([
+          config.auth.is_superuser 
+            ? apiMethods.listNonSuperUsers()
+            : Promise.resolve({ data: [currentUser] }),
+          config.aiTeamId 
+            ? apiMethods.getAiTeamDetails(config.aiTeamId)
+            : Promise.resolve(null)
+        ]);
+
+        if (!mounted) return;
+
+        // Actualizamos usuarios
+        setNonSuperUsers(
+          config.auth.is_superuser 
+            ? [currentUser, ...usersResponse.data]
+            : [currentUser]
+        );
+
+        // Actualizamos datos del equipo si existe
+        if (teamResponse?.data) {
+          formik.setValues({
+            id: teamResponse.data.id || '',
+            name: teamResponse.data.name || '',
+            description: teamResponse.data.description || '',
+            address: teamResponse.data.address || '',
+            owner_data: {
+              id: teamResponse.data.owner_data?.id || '',
+              email: teamResponse.data.owner_data?.email || '',
+              name: teamResponse.data.owner_data?.name || ''
             }
-            return prevUsers;
           });
         }
-        setIsUsersDataLoaded(true);
-      })
-      .finally(() => {
-        setIsUsersDataLoaded(true);
-      });
-  }, [listNonSuperUsers, auth?.user]);
 
-  const getAiTeamData = useCallback((aiTeamId: string) => {
-    return getAiTeamDetails(aiTeamId)
-      .then((response) => {
-        setValues({
-          name: response.name,
-          address: response.address,
-          description: response.description,
-          owner_data: response.owner_data,
-        });
-        setInitialValues({
-          name: response.name,
-          address: response.address,
-          description: response.description,
-          owner_data: response.owner_data,
-        });
-        setIsTeamDataLoaded(true);
-      })
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.errorConnection);
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-            }`
-          );
-        }
-        setIsTeamDataLoaded(true); // Asegurarse de que se marque como cargado incluso en caso de error
-      })
-      .finally(() => {
-        setIsTeamDataLoaded(true);
-      });
-  }, []);
-
-  const updateClient = (values: AiTeamsDetails, aiTeamId: string) => {
-    putAiTeamDetails(values, aiTeamId)
-      .then(() => SuccessToast(t.successUpdate))
-      .catch((error) => {
-        if (error instanceof Error) {
-          ErrorToast(t.errorConnection);
-        } else {
-          ErrorToast(
-            `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-            }`
-          );
-        }
-      });
-  };
-
-  const createNewClient = (values: AiTeamsDetails) => {
-    if (auth?.user?.email) {
-      const dataWithEmail = { ...values, email: auth.user.email };
-      postAiTeamDetails(dataWithEmail)
-        .then(() => {
-          SuccessToast(t.successCreate);
-          navigate(`/builder`);
-        })
-        .catch((error) => {
-          if (error instanceof Error) {
-            ErrorToast(t.errorConnection);
-          } else {
-            ErrorToast(
-              `${error.status} - ${error.error} ${error.data ? ": " + error.data : ""
-              }`
-            );
-          }
-        });
-    }
-  }
-
-  useEffect(() => {
-    const initializeForm = () => {
-      setLoaded(false);
-      setIsTeamDataLoaded(false);
-      setIsUsersDataLoaded(false);
-      setValues({
-        name: "",
-        address: "",
-        description: "",
-      });
-      setInitialValues({
-        name: "",
-        address: "",
-        description: "",
-      });
-    };
-    initializeForm();
-    if (aiTeamId && aiTeamName) {
-      replacePath([
-        ...appNavigation.slice(0, 2),
-        {
-          label: aiTeamName,
-          current_path: "/builder",
-          preview_path: "",
-        },
-        {
-          label: t.edit,
-          current_path: `bots/builder/agents/form/${aiTeamId}`,
-          preview_path: "",
-        },
-      ]);
-      setNavElevation("builder");
-      getAiTeamData(aiTeamId);
-    } else {
-      setAgentsPage(1);
-      replacePath([
-        {
-          label: t.register,
-          current_path: `bots/builder/agents/form`,
-          preview_path: "",
-        },
-      ]);
-      setIsTeamDataLoaded(true);
-    }
-    if (auth.user) {
-      auth.user.is_superuser ? fetchNonSuperUsers() : setIsUsersDataLoaded(true);
-    } else {
-      setIsUsersDataLoaded(true);
-    }
-  }, [aiTeamId, aiTeamName]);
-
-  useEffect(() => {
-    if (isTeamDataLoaded && isUsersDataLoaded) {
-      setLoaded(true);
-      if (auth?.user) {
-        const currentUser: NonSuperUser = {
-          id: Number(auth.user.uuid),
-          username: auth.user.first_name,
-          email: auth.user.email,
-          first_name: auth.user.first_name,
-          last_name: auth.user.last_name || ''
-        };
-        
-        setNonSuperUsers(prevUsers => {
-          if (!auth.user?.is_superuser) {
-            return [currentUser];
-          }
-          const userExists = prevUsers.some(user => user.id === currentUser.id);
-          if (!userExists) {
-            console.log("Agregando usuario actual:", currentUser);
-            return [currentUser, ...prevUsers];
-          }
-          return prevUsers;
-        });
-
-        if (!values.owner_data) {
-          setValues(prevValues => ({
-            ...prevValues,
-            owner_data: {
-              id: currentUser.id.toString(),
-              name: auth?.user?.is_superuser ? "Admin" : currentUser.username,
-              email: currentUser.email
-            }
+        setFormState(prev => ({ ...prev, loaded: true }));
+      } catch (error) {
+        if (mounted) {
+          console.error('Error loading data:', error);
+          setFormState(prev => ({
+            ...prev,
+            loaded: true,
+            error: t.common.errorLoadingData
           }));
         }
       }
-    }
-  }, [isTeamDataLoaded, isUsersDataLoaded, auth?.user, values.owner_data, setValues]);
+    };
 
-  // Efecto para actualizar el estado de carga
+    loadData();
+
+    return () => {
+      mounted = false;
+    };
+  }, [config.auth?.uuid, config.aiTeamId]); // Solo las dependencias esenciales
+
+  // 6. Efecto separado para el pathbar
   useEffect(() => {
-    if (isTeamDataLoaded && isUsersDataLoaded) {
-      setLoaded(true);
-    }
-  }, [isTeamDataLoaded, isUsersDataLoaded]);
+    replacePath([
+      {
+        label: t.leftMenu.aiTeams,
+        current_path: "/builder",
+        preview_path: "/builder",
+        translationKey: "aiTeams"
+      },
+      {
+        label: config.aiTeamId ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
+        current_path: config.aiTeamId ? `/builder/form/${config.aiTeamName}/${config.aiTeamId}` : "/builder/form",
+        preview_path: "",
+        translationKey: config.aiTeamId ? "editTeam" : "createTeam"
+      }
+    ]);
+  }, [config.aiTeamId, config.aiTeamName, t.leftMenu.aiTeams, t.aiTeamsForm.editTitle, t.aiTeamsForm.createTitle]);
+
+  // Componente de error memoizado
+  const ErrorMessage = useMemo(() => {
+    if (!formState.error) return null;
+    return (
+      <FormInputGroup>
+        <div className="error-message">
+          {formState.error}
+        </div>
+      </FormInputGroup>
+    );
+  }, [formState.error]);
+
+  // Memoizamos la lista de usuarios para el select
+  const userOptions = useMemo(() => 
+    nonSuperUsers.map((user) => (
+      <MenuItem key={user.id} value={user.id.toString()}>
+        {`${user.first_name} ${user.last_name} (${user.email})`}
+        {user.id === Number(auth?.uuid) && ` (${t.aiTeamsForm.currentUser})`}
+      </MenuItem>
+    )), [nonSuperUsers, auth?.uuid, t]);
+
+  // Memoizamos el título del formulario
+  const formTitle = useMemo(() => 
+    aiTeamId 
+      ? t.aiTeamsForm.editTitle.replace('{teamName}', formik.values.name || aiTeamName || '')
+      : t.aiTeamsForm.createTitle,
+    [aiTeamId, formik.values.name, aiTeamName, t]
+  );
+
+  // Memoizamos los botones de acción
+  const ActionButtons = useMemo(() => (
+    <FormActions>
+      <FormCancelButton
+        onClick={() => navigate(-1)}
+        disabled={!formState.loaded || formState.isSubmitting}
+      >
+        {t.aiTeamsForm.cancel}
+      </FormCancelButton>
+      
+      <FormButton
+        type="submit"
+        variant="contained"
+        disabled={!formState.loaded || formState.isSubmitting}
+      >
+        {aiTeamId ? t.aiTeamsForm.update : t.aiTeamsForm.create}
+      </FormButton>
+    </FormActions>
+  ), [formState.loaded, formState.isSubmitting, aiTeamId, navigate, t]);
+
+  // Verificación de estado de carga
+  if (!auth?.uuid) return null;
 
   return (
-    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <Box component={"form"} onSubmit={formSubmit} width={"100%"}>
-          {!loaded ? (
-            <PageCircularProgress />
-          ) : (
-            <>
-              <Typography variant="h4" gutterBottom>
-                {aiTeamId ? t.editTitle : t.createTitle}
-              </Typography>
-              <Box marginTop={"20px"}>
-                <TextInput
-                  name="name"
-                  label={t.teamName}
-                  value={values.name}
-                  helperText={inputError.name}
-                  onChange={handleChange}
-                />
-              </Box>
-              <Box marginTop={"20px"}>
-                <TextInput
-                  name="address"
-                  label={t.address}
-                  value={values.address}
-                  helperText={inputError.address}
-                  onChange={handleChange}
-                />
-              </Box>
-              <Box marginTop={"30px"} >
-                <MultilineInput
-                  name="description"
-                  label={t.description}
-                  value={values.description}
-                  rows={6}
-                  helperText={inputError.description}
-                  onChange={handleChange}
-                />
-              </Box>
-              {auth?.user?.is_superuser && (
-                <Box marginTop={"20px"}>
-                  <FormControl fullWidth>
-                    <InputLabel id="user-select-label">{t.selectUser}</InputLabel>
-                    <Select
-                      labelId="user-select-label"
-                      id="user-select"
-                      value={values.owner_data?.id || ''}
-                      label={t.selectUser}
-                      onChange={(e) => {
-                        const selectedUser = nonSuperUsers.find(user => user.id.toString() === e.target.value);
-                        if (selectedUser) {
-                          setValues(prevValues => ({
-                            ...prevValues,
-                            owner_data: {
-                              id: selectedUser.id.toString(),
-                              name: selectedUser.username, // Cambiado a username
-                              email: selectedUser.email
-                            }
-                          }));
-                        }
-                      }}
-                      name="owner_data.id"
-                    >
-                      {nonSuperUsers.map((user) => (
-                        <MenuItem key={user.id} value={user.id.toString()}>
-                          {user.username} - {user.email}
-                          {user.id === Number(auth?.user?.uuid) && ` (${t.currentUser})`}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              )}
-              <Button
-                variant="contained"
-                type="submit"
-                sx={{
-                  marginTop: "20px",
-                }}
+    <FormLayout>
+      <FormHeader title={formTitle} />
+
+      <FormContent
+        onSubmit={formik.handleSubmit}
+        isLoading={!formState.loaded}
+        isSubmitting={formState.isSubmitting}
+      >
+        {formState.error && ErrorMessage}
+        
+        {formState.loaded && (
+          <>
+            <FormInputGroup>
+              <FormTextField
+                name="name"
+                label={t.aiTeamsForm.teamName}
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={(formik.touched.name && formik.errors.name) || undefined}
+                required
+                disabled={formState.isSubmitting}
+              />
+            </FormInputGroup>
+            <FormInputGroup>
+              <FormTextField
+                name="description"
+                label={t.aiTeamsForm.description}
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                error={formik.touched.description && Boolean(formik.errors.description)}
+                helperText={(formik.touched.description && formik.errors.description) || undefined}
+                multiline
+                rows={4}
+                disabled={formState.isSubmitting}
+              />
+            </FormInputGroup>
+
+            <FormInputGroup>
+              <FormTextField
+                name="address"
+                label={t.aiTeamsForm.address}
+                value={formik.values.address}
+                onChange={formik.handleChange}
+                error={formik.touched.address && Boolean(formik.errors.address)}
+                helperText={(formik.touched.address && formik.errors.address) || undefined}
+                disabled={formState.isSubmitting}
+              />
+            </FormInputGroup>
+
+            <FormInputGroup>
+              <FormSelect
+                name="owner_data.id"
+                label={t.aiTeamsForm.selectUser}
+                value={formik.values.owner_data.id}
+                onChange={formik.handleChange}
+                error={
+                  formik.touched.owner_data?.id && 
+                  Boolean(formik.errors.owner_data?.id)
+                }
+                helperText={
+                  (formik.touched.owner_data?.id && 
+                  formik.errors.owner_data?.id as string) || undefined
+                }
+                disabled={formState.isSubmitting}
               >
-                {aiTeamId ? t.edit : t.register}
-              </Button>
-            </>
-          )}
-        </Box>
-      </Paper>
-    </Container>
+                {userOptions}
+              </FormSelect>
+            </FormInputGroup>
+
+            {ActionButtons}
+          </>
+        )}
+      </FormContent>
+    </FormLayout>
   );
 };
 
-export default AiTeamsForm;
+export default React.memo(AiTeamsForm);

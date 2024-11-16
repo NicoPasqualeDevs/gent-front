@@ -26,9 +26,9 @@ let theme = createThemeDefault({
   palette: {
     mode: "dark", // Cambiamos el modo a oscuro
     primary: {
-      main: "#D27B9A", // Magenta pastel principal con toque de lila y más brillo
-      light: "#EACBDF", // Magenta claro pastel con toque de lila y más brillo
-      dark: "#DAB3C7", // Magenta oscuro pastel con toque de lila y más brillo
+      main: "#7580c3", 
+      light: "#535e9d", 
+      dark: "#384279",
       contrastText: "#000000", // Negro
     },
     secondary: {
@@ -112,7 +112,7 @@ let theme = createThemeDefault({
       styleOverrides: {
         root: {
           backgroundColor: "#1A1A1A", // Gris muy oscuro para las tarjetas
-          border: "1px solid #E2BFD3", // Borde magenta pastel con toque de lila y más brillo
+          border: "1px solid #E2BFD3", //
           boxShadow: "0 4px 8px rgba(226, 191, 211, 0.2)", // Sombra magenta pastel con toque de lila y más brillo
           marginTop: "0px",
           marginBottom: "20px",
@@ -148,8 +148,8 @@ let theme = createThemeDefault({
       styleOverrides: {
         root: {
           marginRight: "10px",
-          backgroundColor: "#E2BFD3", // Fondo magenta pastel con toque de lila y más brillo
-          color: "#000000", // Texto negro
+          backgroundColor: "#c2a8ff",
+          color: "#000000",
         },
       },
     },

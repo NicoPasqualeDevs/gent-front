@@ -5,7 +5,7 @@ import { Box, Button, Typography, TextField } from "@mui/material";
 // import { PageCircularProgress } from "@/components/CircularProgress";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { useNavigate } from "react-router-dom";
 
 interface ProfileDetails {
@@ -141,11 +141,13 @@ const ProfileEdit: React.FC = () => {
         label: "Perfil",
         current_path: "/profile",
         preview_path: "",
+        translationKey: "profile"
       },
       {
         label: "Editar",
         current_path: "/profile/edit",
         preview_path: "",
+        translationKey: "edit"
       },
     ]);
     setNavElevation("profile");

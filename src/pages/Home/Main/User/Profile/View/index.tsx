@@ -4,8 +4,7 @@ import { styled } from "@mui/material/styles";
 import EmailIcon from "@mui/icons-material/Email";
 import WorkIcon from "@mui/icons-material/Work";
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from "@/context/app";
-
+import { useAppContext } from "@/context";
 
 const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: 800,
@@ -35,11 +34,7 @@ const ProfileView: React.FC = () => {
   const { auth } = useAppContext();
   const navigate = useNavigate();
 
-  if (!auth.user) {
-    return <Typography>No se ha encontrado información del usuario.</Typography>;
-  }
-
-  const { first_name, last_name, email } = auth.user;
+  const { first_name, last_name, email } = auth || {};
 
   return (
     <Box width="100%">
@@ -50,10 +45,10 @@ const ProfileView: React.FC = () => {
               <Avatar
                 alt={first_name}
                 src="/ruta/a/tu/imagen/de/perfil.jpg"
-                sx={{ 
-                  width: 150, 
-                  height: 150, 
-                  margin: 'auto', 
+                sx={{
+                  width: 150,
+                  height: 150,
+                  margin: 'auto',
                   border: '5px solid white',
                   boxShadow: 3,
                 }}
@@ -77,9 +72,9 @@ const ProfileView: React.FC = () => {
               <Chip
                 key={skill}
                 label={skill}
-                sx={{ 
-                  margin: 0.5, 
-                  backgroundColor: 'primary.light', 
+                sx={{
+                  margin: 0.5,
+                  backgroundColor: 'primary.light',
                   color: 'primary.contrastText'
                 }}
               />
@@ -93,8 +88,8 @@ const ProfileView: React.FC = () => {
           onClick={() => {
             navigate("edit");
           }}
-          sx={{ 
-            backgroundColor: 'primary.main', 
+          sx={{
+            backgroundColor: 'primary.main',
             color: 'primary.contrastText',
             '&:hover': {
               backgroundColor: 'primary.dark',

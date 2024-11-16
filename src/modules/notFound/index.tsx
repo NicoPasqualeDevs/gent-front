@@ -1,18 +1,29 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
+import useLoadingState from '@/hooks/useLoadingState';
+
+interface CountdownState {
+  countdown: number;
+}
 
 const NotFoundModule: React.FC = () => {
   const navigate = useNavigate();
-  const [countdown, setCountdown] = useState(5);
   const { language } = useAppContext();
+  const { state, setData } = useLoadingState<CountdownState>();
   const t = languages[language as keyof typeof languages].notFound;
 
   useEffect(() => {
+    setData({ countdown: 5 });
+    
     const timer = setInterval(() => {
-      setCountdown((prevCount) => prevCount - 1);
+      if (state.data) {
+        setData({ 
+          countdown: state.data.countdown - 1 
+        });
+      }
     }, 1000);
 
     const redirectTimer = setTimeout(() => {
@@ -23,7 +34,7 @@ const NotFoundModule: React.FC = () => {
       clearInterval(timer);
       clearTimeout(redirectTimer);
     };
-  }, [navigate]);
+  }, [navigate, setData]);
 
   return (
     <Grid container direction="column" alignItems="center" justifyContent="center" style={{ minHeight: '100vh' }}>
@@ -34,7 +45,7 @@ const NotFoundModule: React.FC = () => {
         {t.message}
       </Typography>
       <Typography variant="body2">
-        {t.redirectMessage.replace("{countdown}", countdown.toString())}
+        {t.redirectMessage.replace("{countdown}", (state.data?.countdown || 0).toString())}
       </Typography>
     </Grid>
   );

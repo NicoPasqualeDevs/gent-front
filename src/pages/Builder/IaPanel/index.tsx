@@ -1,484 +1,383 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import {
-  Grid, Typography, Pagination, Card, CardActions, Button, Divider,
-  Select, MenuItem, Box, Container, Paper, SelectChangeEvent, CardContent, IconButton, CardHeader, Avatar, Tooltip
+  Grid, Typography, Button,
+  Select, MenuItem, Box, Paper, SelectChangeEvent
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import useBotsApi from "@/hooks/useBots";
-import { PageCircularProgress } from "@/components/CircularProgress";
 import { AgentData } from "@/types/Bots";
-import { Metadata } from "@/types/Api";
 import ActionAllower from "@/components/ActionAllower";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import { useAppContext } from "@/context/app";
-import theme from "@/styles/theme";
+import { useAppContext } from "@/context";
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
-import useApi from "@/hooks/useApi";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import WidgetsIcon from "@mui/icons-material/Widgets";
+import useApi from "@/hooks/api/useApi";
 import { modelAIOptions } from "@/utils/LargeModelsUtils";
-import ApiIcon from '@mui/icons-material/Api'; // Añade esta importación
-import EditIcon from '@mui/icons-material/Edit';
 import { languages } from "@/utils/Traslations";
+import { PageProps } from '@/types/Page';
+import { IaPanelState } from '../../../types/IaPanel';
+import AddIcon from "@mui/icons-material/Add";
+import {
+  DashboardContainer,
+  DashboardHeader,
+  DashboardContent,
+  commonStyles,
+  SkeletonCard
+} from "@/utils/DashboardsUtils";
+import { PaginationFooter } from "@/utils/DashboardsUtils";
+import { builderNavigationUtils } from '@/utils/NavigationUtils';
+import { buildBreadcrumbs } from '@/utils/NavigationConfig';
+import RobotCard from "@/components/RobotCard";
+import HelpIcon from '@mui/icons-material/Help';
+import { IconButton, Tooltip } from '@mui/material';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 
-const IaPanel: React.FC = () => {
-  const { clientName, aiTeamId } = useParams();
+const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
-  const { replacePath, appNavigation, agentsPage, setAgentsPage, language, auth } = useAppContext();
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
+  const { aiTeamId, aiTeamName } = useParams();
+  const { auth, language, replacePath, showRobotCardHelp, setShowRobotCardHelp } = useAppContext();
   const { getBotsList, deleteBot } = useBotsApi();
-  const [allowerState, setAllowerState] = useState(false);
-  const [botToDelete, setbotToDelete] = useState("");
-  const [pageContent, setPageContent] = useState<AgentData[]>([]);
-  const [paginationData, setPaginationData] = useState<Metadata>();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [contentPerPage, setContentPerPage] = useState("5");
   const { apiBase } = useApi();
   const t = languages[language as keyof typeof languages];
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const location = useLocation();
+
+  const [state, setState] = useState<IaPanelState>({
+    isLoading: true,
+    isError: false,
+    searchQuery: '',
+    contentPerPage: isLargeScreen ? '5' : '20',
+    currentPage: 1,
+    isSearching: false,
+    pageContent: [],
+    aiTeamName: aiTeamName,
+    allowerState: false,
+    botToDelete: "",
+    isDeleting: false
+  });
+
+  useEffect(() => {
+    setState(prev => ({
+      ...prev,
+      contentPerPage: isLargeScreen ? prev.contentPerPage : "20"
+    }));
+  }, [isLargeScreen]);
+
+  useEffect(() => {
+    const initializeAuth = () => {
+      if (!auth) {
+        console.log('No auth found, redirecting to login');
+        navigate('/auth/login');
+        return;
+      }
+
+      if (!aiTeamId || !aiTeamName) {
+        console.log('Missing required params:', { aiTeamId, aiTeamName });
+        return;
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  useEffect(() => {
+    if (aiTeamId && aiTeamName) {
+      const breadcrumbs = buildBreadcrumbs('agents', {
+        clientName: aiTeamName,
+        aiTeamId: aiTeamId,
+        label: aiTeamName
+      }, {
+        aiTeamId,
+        aiTeamName
+      });
+      
+      replacePath(breadcrumbs);
+    }
+  }, [aiTeamId, aiTeamName, replacePath]);
 
   const getBotsData = useCallback(async (filterParams: string) => {
-    if (!aiTeamId) {
-      setIsLoading(false);
+    if (!aiTeamId || !auth?.uuid) {
+      console.log('Missing required data:', { aiTeamId, authUuid: auth?.uuid });
       return;
     }
 
     try {
-      setIsLoading(true);
-      const response = await getBotsList(aiTeamId, filterParams);
-      
-      if (response && response.data) {
-        console.log('Bots data received:', response.data); // Debug log
-        setAgentsPage(response.metadata.current_page || 1);
-        setPageContent(response.data);
-        setPaginationData(response.metadata);
+      setState(prev => ({ ...prev, isLoading: true }));
+      const params = filterParams.startsWith('?') ? filterParams : `?${filterParams}`;
+      const response = await getBotsList(aiTeamId, params);
+
+      if (response?.data) {
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          isSearching: false,
+          currentPage: response.metadata?.current_page || 1,
+          pageContent: Array.isArray(response.data) ? response.data : [],
+          paginationData: response.metadata
+        }));
       }
-    } catch (error: any) {
-      console.error('Error fetching bots:', error); // Debug log
-      ErrorToast(error instanceof Error
-        ? "Error: no se pudo establecer conexión con el servidor"
-        : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
-      );
-    } finally {
-      setIsLoading(false);
-      setIsSearching(false);
+    } catch (error) {
+      console.error('Error fetching bots:', error);
+      setState(prev => ({
+        ...prev,
+        isLoading: false,
+        isError: true,
+        errorMessage: error instanceof Error ? error.message : 'Unknown error',
+        pageContent: []
+      }));
+      ErrorToast(t.iaPanel.errorConnection);
     }
-  }, [aiTeamId, getBotsList]);
+  }, [aiTeamId, auth?.uuid, getBotsList, t]);
 
-  // Efecto para forzar el renderizado cuando los datos se cargan
   useEffect(() => {
-    if (pageContent && pageContent.length > 0) {
-      console.log('Page content updated:', pageContent); // Debug log;
-    }
-  }, [pageContent]);
-
-  // Efecto inicial para cargar los datos
-  useEffect(() => {
-    let isSubscribed = true;
-
-    const initializeData = async () => {
-      if (!aiTeamId || !clientName) {
-        ErrorToast("Error al cargar aiTeamId en esta vista");
+    const loadData = async () => {
+      if (!auth?.uuid || !aiTeamId) {
+        console.log('No auth UUID or aiTeamId found, skipping data load');
         return;
       }
 
-      replacePath([
-        ...appNavigation.slice(0, 1),
-        { label: clientName, current_path: `/builder/agents/${clientName}/${aiTeamId}`, preview_path: "" },
-      ]);
-      
-      if (isSubscribed) {
-        try {
-          await getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
-        } catch (error) {
-          console.error('Error loading bots:', error);
-        }
+      try {
+        console.log('Loading bots data...');
+        const filterParams = `?page_size=${state.contentPerPage}&page=${state.currentPage}`;
+        await getBotsData(filterParams);
+      } catch (error) {
+        console.error('Error loading data:', error);
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          isError: true,
+          errorMessage: error instanceof Error ? error.message : 'Unknown error'
+        }));
+        ErrorToast(t.actionAllower.fieldRequired);
       }
     };
 
-    initializeData();
-
-    return () => {
-      isSubscribed = false;
-    };
-  }, [aiTeamId, clientName]);
-
-  // Función para forzar una recarga de datos
-  const refreshData = useCallback(() => {
-    if (aiTeamId) {
-      getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
+    if (location.state?.refreshData) {
+      loadData();
+      navigate(location.pathname, { replace: true, state: {} });
+    } else if (auth?.uuid && aiTeamId) {
+      loadData();
     }
-  }, [aiTeamId, contentPerPage, agentsPage, getBotsData]);
+  }, [auth?.uuid, aiTeamId, state.contentPerPage, state.currentPage, location.state?.refreshData]);
 
   const handleSearch = useCallback((value: string) => {
-    if (isSearching) return;
-    
-    setSearchQuery(value);
-    setIsSearching(true);
-    
-    const params = value.trim() !== "" 
-      ? `?name__icontains=${value}&page_size=${contentPerPage}`
-      : `?page_size=${contentPerPage}&page=${agentsPage}`;
-    
-    getBotsData(params);
-  }, [contentPerPage, agentsPage, isSearching, getBotsData]);
+    setState(prev => ({ ...prev, searchQuery: value }));
+
+    if (value.trim() === "") {
+      getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+    } else {
+      getBotsData(`?name__icontains=${value}&page_size=${state.contentPerPage}`);
+    }
+  }, [state.contentPerPage, state.currentPage, getBotsData]);
 
   const handlePagination = useCallback((event: React.ChangeEvent<unknown>, value: number) => {
     event.preventDefault();
-    if (isLoading) return;
-    
-    setAgentsPage(value);
-    getBotsData(`?page_size=${contentPerPage}&page=${value}`);
-  }, [contentPerPage, isLoading, setAgentsPage, getBotsData]);
+    if (state.isLoading) return;
 
-  const deleteAction = useCallback(async (botId: string) => {
-    if (!botId || isLoading) return;
+    setState(prev => ({ ...prev, currentPage: value }));
+    getBotsData(`?page_size=${state.contentPerPage}&page=${value}`);
+  }, [state.contentPerPage, state.isLoading, getBotsData]);
+
+  const handleDelete = useCallback(async (botId: string) => {
+    if (!botId || state.isLoading || state.isDeleting) return;
 
     try {
-      setIsLoading(true);
+      setState(prev => ({ ...prev, isDeleting: true }));
       await deleteBot(botId);
-      
-      setPageContent(prev => prev.filter(item => item.id !== botId));
-      setAllowerState(false);
-      setbotToDelete("");
-      SuccessToast("Chatbot eliminado satisfactoriamente");
-      
-      // Recargar la lista después de eliminar
-      await getBotsData(`?page_size=${contentPerPage}&page=${agentsPage}`);
-    } catch (error: any) {
-      ErrorToast(error instanceof Error
-        ? "Error: no se pudo establecer conexión con el servidor"
-        : `${error.status} - ${error.error}${error.data ? ": " + error.data : ""}`
-      );
+
+      setState(prev => ({
+        ...prev,
+        pageContent: prev.pageContent.filter(item => item.id !== botId),
+        allowerState: false,
+        botToDelete: "",
+        isDeleting: false
+      }));
+      SuccessToast(t.iaPanel.deleteSuccess);
+
+      await getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        ErrorToast(t.iaPanel.errorConnection);
+      } else {
+        const apiError = error as { status: string; error: string; data?: string };
+        ErrorToast(`${apiError.status} - ${apiError.error}${apiError.data ? ": " + apiError.data : ""}`);
+      }
     } finally {
-      setIsLoading(false);
+      setState(prev => ({ ...prev, isDeleting: false }));
     }
-  }, [deleteBot, contentPerPage, agentsPage, getBotsData]);
+  }, [deleteBot, state.contentPerPage, state.currentPage, getBotsData, t]);
+
+  const refreshData = useCallback(() => {
+    getBotsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+  }, [state.contentPerPage, state.currentPage, getBotsData]);
 
   const handleContentPerPageChange = useCallback((event: SelectChangeEvent) => {
     const newValue = event.target.value;
-    setContentPerPage(newValue);
+    setState(prev => ({ ...prev, contentPerPage: newValue }));
     getBotsData(`?page_size=${newValue}&page=1`);
   }, [getBotsData]);
 
   const renderBotCard = (bot: AgentData) => (
-    <Card sx={{
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: theme.palette.background.paper,
-      border: `1px solid ${theme.palette.divider}`,
-      borderRadius: '12px',
-      overflow: 'hidden',
-      position: 'relative'
-    }}>
-      <Box sx={{ 
-        position: 'relative', 
-        zIndex: 2, 
-        height: '100%', 
-        display: 'flex', 
-        flexDirection: 'column' 
-      }}>
-        <CardHeader
-          avatar={
-            <Avatar aria-label="bot">
-              {bot.name.charAt(0).toUpperCase()}
-            </Avatar>
-          }
-          title={bot.name}
-          subheader={t.iaPanel.created.replace("{date}", "20/10/2024")}
-          sx={{
-            p: 1.5,
-            '& .MuiCardHeader-title': {
-              fontSize: '1.1rem',
-              fontWeight: 'bold',
-            },
-            '& .MuiCardHeader-subheader': {
-              fontSize: '0.9rem',
-            },
-            '& .MuiCardHeader-avatar': {
-              marginRight: 1,
-            },
-          }}
-          action={
-            <Tooltip title={t.iaPanel.edit} arrow placement="top">
-              <IconButton
-                onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}/${bot.id}`)}
-                size="small"
-                sx={{ 
-                  zIndex: 3,
-                  '&:hover': {
-                    backgroundColor: 'transparent',
-                  },
-                }}
-              >
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          }
-        />
-        
-        <CardContent sx={{ flexGrow: 1, p: 0 }}>
-          <Box sx={{ p: 2 }}>
-            <Typography variant="body2" sx={{
-              color: theme.palette.secondary.main,
-              backgroundColor: theme.palette.primary.main,
-              display: 'inline-block',
-              padding: '7px 14px',
-              borderRadius: '16px',
-              fontSize: '0.95rem',
-              fontWeight: 'medium',
-              mb: 1,
-              mt: 1,
-              minWidth: '200px',
-              textAlign: 'center',
-            }}>
-              {modelAIOptions.find(option => option.value === bot.model_ai)?.label || 'No especificado'}
-            </Typography>
-          </Box>
-          
-          <Divider />
-          
-          <Box sx={{ p: 2 }}>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
-              {t.iaPanel.implementation}
-            </Typography>
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: { xs: 'column', md: 'row' },
-              justifyContent: 'space-between', 
-              alignItems: { xs: 'stretch', md: 'center' },
-              gap: 0.5,
-              mt: 2 
-            }}>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => navigate(`/builder/agents/chat/${bot.id}`)}
-                startIcon={<PlayArrowIcon />}
-                fullWidth
-                sx={{ 
-                  flex: 1,
-                  padding: '4px 8px',
-                  '& .MuiButton-startIcon': {
-                    marginRight: 0.5,
-                  },
-                  '& .MuiButton-label': {
-                    marginTop: '2px',
-                    lineHeight: 1,
-                  }
-                }}
-              >
-                {t.iaPanel.testAgent}
-              </Button>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
-                startIcon={<ApiIcon />}
-                fullWidth
-                sx={{ 
-                  flex: 1,
-                  padding: '4px 8px',
-                  '& .MuiButton-startIcon': {
-                    marginRight: 0.5,
-                  },
-                  '& .MuiButton-label': {
-                    marginTop: '2px',
-                    lineHeight: 1,
-                  }
-                }}
-              >
-                {t.iaPanel.useAPI}
-              </Button>
-              <Button
-                variant="outlined"
-                size="small"
-                onClick={() => window.open(apiBase.slice(0, -1) + bot.widget_url, "_blank")}
-                startIcon={<WidgetsIcon />}
-                fullWidth
-                sx={{ 
-                  flex: 1,
-                  padding: '4px 8px',
-                  '& .MuiButton-startIcon': {
-                    marginRight: 0.5,
-                  },
-                  '& .MuiButton-label': {
-                    marginTop: '2px',
-                    lineHeight: 1,
-                  }
-                }}
-              >
-                {t.iaPanel.widget}
-              </Button>
-            </Box>
-          </Box>
-          
-          <Divider />
-          
-          <Box sx={{ p: 2 }}>
-            <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 'bold', fontSize: '1rem' }}>
-              {t.iaPanel.configuration}
-            </Typography>
-            <Box sx={{ 
-              display: 'flex', 
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              gap: 1,
-              flexWrap: 'wrap',
-              ml: '-4px'
-            }}>
-              {[t.iaPanel.data, t.iaPanel.customization, t.iaPanel.tools].map((action) => (
-                <Button
-                  key={action}
-                  variant="text"
-                  size="small"
-                  onClick={() => {
-                    const routes: { [key: string]: string } = {
-                      [t.iaPanel.data]: `/builder/agents/dataEntry/${bot.id}`,
-                      [t.iaPanel.customization]: `/builder/agents/customMessages/${bot.id}`,
-                      [t.iaPanel.tools]: `/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`,
-                    };
-                    navigate(routes[action]);
-                  }}
-                  disabled={action === t.iaPanel.customization}
-                  sx={{ 
-                    textTransform: 'none',
-                    color: action === t.iaPanel.customization ? theme.palette.text.disabled : theme.palette.primary.main,
-                    fontSize: '0.9rem',
-                  }}
-                >
-                  {action}
-                </Button>
-              ))}
-            </Box>
-          </Box>
-        </CardContent>
-        
-        <CardActions sx={{ justifyContent: 'flex-end', p: 1 }}>
-          <IconButton
-            size="small"
-            color="error"
-            onClick={() => {
-              setAllowerState(true);
-              setbotToDelete(bot.id);
-            }}
-          >
-            <DeleteIcon fontSize="small" />
-          </IconButton>
-        </CardActions>
-      </Box>
-    </Card>
+    <RobotCard
+      botId={bot.id}
+      name={bot.name}
+      description={modelAIOptions.find(option => option.value === bot.model_ai)?.label || t.iaPanel.noModelSpecified}
+      lastUpdate={/* t.iaPanel?.lastUpdate.replace("{date}", "2 hours ago") || */ "Updates"}
+      onWidget={() => window.open(apiBase.slice(0, -1) + bot.widget_url, "_blank")}
+      onApi={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
+      onEdit={() => handleEditClick(bot)}
+      onDelete={() => setState(prev => ({
+        ...prev,
+        allowerState: true,
+        botToDelete: bot.id
+      }))}
+      onChat={() => navigate(`/chat/${bot.id}`)}
+      onCustomize={() => navigate(`/builder/agents/widgetCustomizer/${bot.id}`)}
+      onTools={() => navigate(`/builder/agents/tools/${aiTeamId}/${bot.name}/${bot.id}`)}
+      t={t.robotCard}
+      language={language}
+      status={bot.status}
+    />
   );
 
-  if (!aiTeamId || !clientName) {
-    return null;
-  }
+  const handleAllowerStateChange = (value: boolean) => {
+    if (!value) {
+      setState(prev => ({
+        ...prev,
+        allowerState: false,
+        botToDelete: ""
+      }));
+    }
+  };
+
+  const handleEditClick = (bot: AgentData) => {
+    if (!aiTeamId || !bot.id) {
+      ErrorToast(t.iaPanel.errorMissingParams);
+      return;
+    }
+
+    builderNavigationUtils.toAgentContext(
+      navigate,
+      { replacePath },
+      {
+        aiTeamId,
+        botId: bot.id
+      },
+    );
+  };
+
+  const handleCreateBot = () => {
+    if (!aiTeamId) {
+      ErrorToast(t.iaPanel.errorMissingParams);
+      return;
+    }
+    
+    navigate(`/builder/agents/contextEntry/${aiTeamId}`);
+  };
 
   return (
-    <Container maxWidth="xl" sx={{ py: 2, px: { xs: 1, sm: 2, md: 3 } }}>
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Paper elevation={0} sx={{ backgroundColor: 'transparent', p: 0 }}>
+    <DashboardContainer>
+      <DashboardHeader
+        title={t.iaPanel.agentsOf.replace("{clientName}", aiTeamName || "")}
+        actions={
           <Box sx={{
             display: 'flex',
             flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
             alignItems: 'center',
             gap: 2,
+            width: { xs: '100%', sm: 'auto' }
           }}>
-            {auth?.user?.is_superuser && (
-              <Button
-                variant="contained"
-                onClick={() => navigate(`/builder/agents/contextEntry/${aiTeamId}`)}
-                fullWidth
-                sx={{
-                  width: '100%',
-                  maxWidth: { xs: '100%', sm: '200px' },
-                  color: 'white',
-                  '&:hover': {
-                    color: 'white',
-                  },
-                }}
-              >
-                {t.iaPanel.createAgent}
-              </Button>
-            )}
-            <Box sx={{
-              width: '100%',
-              display: 'flex',
-              justifyContent: { xs: 'center', sm: 'flex-end' }
+            <Box sx={{ 
+              display: { xs: 'none', md: 'block' }
             }}>
-              <Search sx={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: { xs: '100%', sm: '300px' },
-              }}>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder={t.iaPanel.searchPlaceholder}
-                  value={searchQuery}
-                  inputProps={{
-                    "aria-label": "search",
-                    style: { padding: '8px 40px 8px 16px' }
+              <Tooltip title={showRobotCardHelp ? t.iaPanel.tooltipsEnabled : t.iaPanel.tooltipsDisabled}>
+                <IconButton
+                  onClick={() => setShowRobotCardHelp(prev => !prev)}
+                  sx={{ 
+                    color: showRobotCardHelp ? 'white' : 'rgba(255, 255, 255, 0.3)',
+                    transition: 'color 0.3s ease',
+                    '&:hover': {
+                      color: showRobotCardHelp ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.5)'
+                    },
+                    mr: 1
                   }}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  fullWidth
-                />
-              </Search>
+                >
+                  <HelpIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
+            <Search sx={commonStyles.searchContainer}>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder={t.iaPanel.searchPlaceholder}
+                value={state.searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </Search>
+            {isLargeScreen && (
+              <Select
+                value={state.contentPerPage}
+                onChange={handleContentPerPageChange}
+                size="small"
+                sx={{ width: { xs: '100%', sm: 'auto' } }}
+              >
+                <MenuItem value="5">5 {t.iaPanel.perPage}</MenuItem>
+                <MenuItem value="10">10 {t.iaPanel.perPage}</MenuItem>
+                <MenuItem value="20">20 {t.iaPanel.perPage}</MenuItem>
+              </Select>
+            )}
           </Box>
-        </Paper>
+        }
+      />
 
-        <Paper elevation={3} sx={{ p: 2 }}>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 2,
-          }}>
-            <Typography variant="h5" sx={{ mr: 2 }}>
-              {t.iaPanel.agentsOf.replace("{clientName}", clientName || "")}
-            </Typography>
-            <Select
-              value={contentPerPage}
-              onChange={handleContentPerPageChange}
-              size="small"
-              sx={{ width: { xs: '100%', sm: 'auto' } }}
-            >
-              {[5, 10, 20].map((value) => (
-                <MenuItem key={value} value={value.toString()}>
-                  {value} {t.iaPanel.perPage}
-                </MenuItem>
+      <DashboardContent>
+        {state.isLoading ? (
+          <Paper elevation={3} sx={{ p: 2, flexGrow: 1 }}>
+            <Grid container spacing={3}>
+              {[...Array(parseInt(state.contentPerPage))].map((_, index) => (
+                <Grid item xs={12} md={6} xl={4} key={`skeleton-${index}`}>
+                  <SkeletonCard variant="agent" />
+                </Grid>
               ))}
-            </Select>
-          </Box>
-        </Paper>
-
-        {isLoading ? (
-          <PageCircularProgress />
+            </Grid>
+          </Paper>
         ) : (
           <>
-            {Array.isArray(pageContent) && pageContent.length > 0 ? (
-              <Paper elevation={3} sx={{
-                p: 2,
-                border: `2px solid transparent`,
-                backgroundColor: 'background.paper',
-                minHeight: '33vh'
-              }}>
-                <Grid container spacing={2}>
-                  {pageContent.map((bot, index) => (
+            {state.pageContent.length > 0 ? (
+              <Paper 
+                elevation={3} 
+                sx={{ 
+                  p: 2, 
+                  flexGrow: 1,
+                  overflowY: 'auto',
+                  overflowX: 'hidden',
+                  scrollbarColor: "auto",
+                  ...commonStyles.scrollableContent 
+                }}
+              >
+                <Grid 
+                  container 
+                  spacing={2}
+                  justifyContent={{ xs: 'center', lg: 'flex-start' }}
+                >
+                  {state.pageContent.map((bot, index) => (
                     <Grid 
                       item 
-                      xs={12} 
-                      sm={12} 
-                      md={6} 
-                      lg={6} 
-                      xl={6} 
+                      xs={12}
+                      sm={6}
+                      md={6}
+                      lg={4}
+                      xl={4}
+                      sx={{ 
+                        display: 'flex',
+                        justifyContent: 'center',
+                        maxWidth: { xs: '500px', lg: 'none' },
+                        width: '100%'
+                      }} 
                       key={`bot-${bot.id || index}`}
                     >
                       {renderBotCard(bot)}
@@ -488,59 +387,70 @@ const IaPanel: React.FC = () => {
               </Paper>
             ) : (
               <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-                <Typography variant="subtitle1">
-                  {searchQuery && searchQuery.trim() !== ""
+                <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                  {state.searchQuery
                     ? t.iaPanel.noAgentsFound
                     : t.iaPanel.noAgentsToShow}
                 </Typography>
-                <Button 
-                  variant="contained" 
-                  onClick={refreshData}
-                  sx={{ mt: 2 }}
-                >
-                  Recargar datos
-                </Button>
-              </Paper>
-            )}
-
-            {Array.isArray(pageContent) && pageContent.length > 0 && paginationData && (
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Box sx={{
-                  display: 'flex',
-                  flexDirection: { xs: 'column', sm: 'row' },
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  gap: 2,
-                }}>
-                  <Pagination
-                    count={paginationData.total_pages}
-                    page={agentsPage}
-                    onChange={handlePagination}
-                    color="primary"
-                    size="small"
-                  />
-                  {paginationData && (
-                    <Typography variant="body2" color="text.secondary">
-                      {`${(agentsPage - 1) * (paginationData?.page_size ?? 0) + 1} - ${Math.min(
-                        agentsPage * (paginationData?.page_size ?? 0),
-                        paginationData?.total_items ?? 0
-                      )} ${t.iaPanel.agentsCount.replace("{total}", paginationData?.total_items?.toString() || "0")}`}
-                    </Typography>
-                  )}
-                </Box>
+                {auth?.is_superuser && !state.searchQuery && (
+                  <Button
+                    variant="contained"
+                    onClick={handleCreateBot}
+                    startIcon={<AddIcon />}
+                    sx={{
+                      color: 'white',
+                      '&:hover': {
+                        color: 'white',
+                      },
+                      mb: 2
+                    }}
+                  >
+                    {t.iaPanel.createAgent}
+                  </Button>
+                )}
+                {state.searchQuery && (
+                  <Button
+                    variant="contained"
+                    onClick={refreshData}
+                    sx={{ mb: 2 }}
+                  >
+                    {t.iaPanel.reloadData}
+                  </Button>
+                )}
               </Paper>
             )}
           </>
         )}
-      </Box>
-      {allowerState && (
-        <ActionAllower
-          allowerStateCleaner={setAllowerState}
-          actionToDo={deleteAction}
-          actionParams={botToDelete}
+      </DashboardContent>
+
+      {state.pageContent.length > 0 && state.paginationData && (
+        <PaginationFooter
+          currentPage={state.currentPage}
+          totalPages={state.paginationData.total_pages}
+          totalItems={state.paginationData.total_items}
+          itemsPerPage={state.contentPerPage}
+          onPageChange={handlePagination}
+          onItemsPerPageChange={handleContentPerPageChange}
+          createButton={auth?.is_superuser ? {
+            onClick: () => navigate(`/builder/agents/contextEntry/${aiTeamId}`),
+            label: t.iaPanel.createAgent,
+            show: true
+          } : undefined}
+          translations={{
+            itemsCount: t.iaPanel.agentsCount,
+            perPage: t.iaPanel.perPage
+          }}
         />
       )}
-    </Container>
+
+      {state.allowerState && (
+        <ActionAllower
+          allowerStateCleaner={handleAllowerStateChange}
+          actionToDo={handleDelete}
+          actionParams={state.botToDelete}
+        />
+      )}
+    </DashboardContainer>
   );
 };
 

@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const saudacoes = [
-    "Olá! Como você está?",
-    "Bem-vindo! Em que posso ajudar?",
-    "Saudações! Como está seu dia?",
-    "Que bom ver você! Como vai?"
-  ];
-  return saudacoes[Math.floor(Math.random() * saudacoes.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const br = {
+const br: TranslationType = {
   greeting: "Olá",
   farewell: "Tchau",
   actionAllower: {
@@ -20,16 +12,16 @@ const br = {
     cancel: "Cancelar"
   },
   leftMenu: {
-    aiTeams: "Equipes de IA",
-    registerTeam: "Nova equipe",
-    logout: "Sair",
-    logoutSuccess: "Você saiu com sucesso",
-    registerUser: "Novo Usuário",
+    aiTeams: "Times IA",
+    registerTeam: "Registrar Time",
+    registerUser: "Registrar Usuário",
     tools: "Ferramentas",
-    workShop: "Oficina"
+    workShop: "Oficina",
+    logout: "Sair",
+    logoutSuccess: "Sessão encerrada com sucesso"
   },
   aiTeamsForm: {
-    editTitle: "Editar equipe de Equipes IA",
+    editTitle: "Editar equipe {teamName}",
     createTitle: "Registrar nova equipe de Equipes IA",
     teamName: "Nome da Equipe",
     address: "Endereço",
@@ -42,7 +34,12 @@ const br = {
     errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
     selectUser: "Selecionar usuário",
     noUsersAvailable: "Nenhum usuário disponível",
-    currentUser: "Usuário atual"
+    currentUser: "Usuário atual",
+    saving: "Salvando...",
+    update: "Atualizar",
+    create: "Criar",
+    cancel: "Cancelar",
+    owner: "Proprietário"
   },
   aiTeamsList: {
     newAiTeam: "Nova Equipe IA",
@@ -51,11 +48,20 @@ const br = {
     perPage: "por página",
     manageTeam: "Gerenciar Equipe",
     edit: "Editar",
+    delete: "Excluir",
+    confirmDelete: "Tem certeza que deseja excluir esta equipe?",
+    deleteTeam: "Excluir Equipe",
     noTeamsFound: "Nenhuma Equipe IA encontrada com esse nome",
     noTeamsToShow: "Nenhuma Equipe IA para mostrar",
     teamsCount: "de {total} Equipes IA",
     successDelete: "Cliente excluído com sucesso",
     owner: "Proprietário",
+    noDescription: "Sem descrição",
+    manage: "Gerenciar",
+    comingSoon: "Em breve",
+    noAddress: "Sem endereço",
+    llmKeyBadge: "Equipe com LLM Key",
+    noOwner: "Sem proprietário"
   },
   iaPanel: {
     createAgent: "Criar Agente",
@@ -78,14 +84,28 @@ const br = {
     errorDeletingBot: "Erro ao carregar botId para exclusão",
     edit: "Editar",
     created: "Criado em: {date}",
-    implementation: "Implementação"
+    implementation: "Implementação",
+    reloadData: "Recarregar dados",
+    deleteConfirmation: "Tem certeza que deseja excluir este agente?",
+    deletingAgent: "Excluindo agente...",
+    deleteButton: "Excluir",
+    manageButton: "Gerenciar",
+    reloadButton: "Recarregar",
+    configureButton: "Configurar",
+    copyWidget: "Copiar código do widget",
+    widgetCopied: "Código copiado para a área de transferência",
+    modelAI: "Modelo de IA: {model}",
+    errorMissingParams: "Parâmetros necessários ausentes para esta ação",
+    noModelSpecified: "Modelo não especificado",
+    tooltipsEnabled: "Desativar textos de ajuda",
+    tooltipsDisabled: "Ativar textos de ajuda"
   },
   chatView: {
     agentPanel: "Painel de {agentName}",
     defaultAgentName: "Agente IA",
     history: "Histórico",
     comingSoon: "(Em breve)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('br'),
     inputPlaceholder: "Digite sua mensagem para o agente IA...",
     sendButton: "Enviar",
     finishSession: "Finalizar Sessão",
@@ -112,9 +132,9 @@ const br = {
     version: "v 0.1",
     rotatingTexts: [
       "Crie e compartilhe agentes de IA",
-      "Implemente rápido e fácil",
+      "Implemente rpido e fácil",
       "Comercialize soluções de IA",
-      "Importe e publique sua soluço",
+      "Importe e publique sua solução",
     ],
     emailLabel: "E-mail",
     passwordLabel: "Senha",
@@ -125,7 +145,8 @@ const br = {
     invalidEmail: "E-mail inválido",
     invalidCredentials: "Credenciais inválidas",
     fieldRequired: "Este campo é obrigatório",
-    connectionError: "Erro: Não foi possível estabelecer conexão com o servidor"
+    connectionError: "Erro: Não foi possível estabelecer conexão com o servidor",
+    invalidServerResponse: "Resposta do servidor inválida"
   },
   toolsForm: {
     required: "Este campo é obrigatório",
@@ -140,6 +161,7 @@ const br = {
     toolType: "Tipo de ferramenta",
     instructions: "Instruções",
     toolFile: "Arquivo da ferramenta",
+    fileInput: "Arquivo da ferramenta",
     update: "Atualizar",
     create: "Criar",
     edit: "Editar",
@@ -154,12 +176,13 @@ const br = {
     editTitle: "Editar ferramenta {toolName}",
     createTitle: "Criar nova ferramenta",
     selectUser: "Selecionar usuário",
-    currentUser: "Usuário atual"
+    currentUser: "Usuário atual",
+    cancel: "Cancelar"
   },
   tools: {
+    type: "Ferramentas",
     libraryTitle: "Biblioteca de Ferramentas",
     relatedTitle: "Ferramentas Relacionadas",
-    type: "Tipo",
     relateButton: "Relacionar",
     unrelateButton: "Desvincular",
     successRelate: "Ferramenta relacionada com sucesso",
@@ -168,7 +191,222 @@ const br = {
     errorUnrelate: "Erro ao desvincular ferramenta",
     errorToken: "Erro de autenticação",
     errorLoading: "Erro ao carregar ferramentas",
-    createToolButton: "Criar Ferramenta"
+    createToolButton: "Criar Ferramenta",
+    title: "Ferramentas",
+    description: "Gerencie suas ferramentas",
+    searchPlaceholder: "Buscar ferramenta...",
+    noToolsFound: "Nenhuma ferramenta encontrada com esse nome",
+    noToolsToShow: "Nenhuma ferramenta para mostrar",
+    toolsCount: "de {total} ferramentas",
+    perPage: "por página",
+    reloadData: "Recarregar dados",
+    manage: "Gerenciar",
+    edit: "Editar",
+    delete: "Excluir",
+    deleteConfirmation: "Tem certeza que deseja excluir esta ferramenta?",
+    deleteSuccess: "Ferramenta excluída com sucesso",
+    deleteError: "Erro ao excluir ferramenta",
+    errorMissingParams: "Parâmetros necessários ausentes para esta ação",
+    noToolsAvailable: "Nenhuma ferramenta disponível",
+    noType: "Sem tipo",
+    noRelatedTools: "Nenhuma ferramenta relacionada",
+    errorMissingBot: "Erro: ID do bot não encontrado"
+  },
+  contextEntry: {
+    title: "Criar Agente",
+    editTitle: "Editar Agente",
+    createTitle: "Criar Agente",
+    name: "Nome do Agente",
+    description: "Descrição",
+    modelAI: "Modelo de IA",
+    saving: "Salvando...",
+    update: "Atualizar",
+    create: "Criar",
+    cancel: "Cancelar",
+    successUpdate: "Agente atualizado com sucesso",
+    successCreate: "Agente criado com sucesso",
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
+    fieldRequired: "Este campo é obrigatório",
+    errorMissingTeamId: "ID da equipe não encontrado",
+    errorMissingBotId: "ID do bot não encontrado"
+  },
+  dataEntry: {
+    title: "Dados do Agente",
+    editTitle: "Editar Dados do Agente",
+    context: "Contexto",
+    documents: "Documentos",
+    upload: "Enviar",
+    saving: "Salvando...",
+    update: "Atualizar",
+    cancel: "Cancelar",
+    successUpdate: "Dados atualizados com sucesso",
+    errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
+    fieldRequired: "Este campo é obrigatório",
+    dragAndDrop: "Arraste e solte arquivos aqui ou clique para selecionar",
+    maxSize: "Tamanho máximo por arquivo: {size}MB",
+    invalidType: "Tipo de arquivo inválido",
+    uploadError: "Erro ao enviar o arquivo",
+    uploadProgress: "Progresso do upload: {progress}%",
+    removeFile: "Remover arquivo",
+    uploadSuccess: "Arquivo enviado com sucesso",
+    knowledgeKey: "Chave de conhecimento",
+    knowledgeKeyHelper: "Digite uma chave para identificar este conhecimento",
+    knowledgeSet: "Conjunto de conhecimento",
+    addKnowledgeSet: "Adicionar novo conjunto",
+    searchKnowledge: "Buscar conhecimento",
+    noKnowledgeFound: "Nenhum conhecimento encontrado",
+    noKnowledgeSets: "Nenhum conjunto de conhecimento"
+  },
+  header: {
+    profile: "Perfil"
+  },
+  auth: {
+    register: "Registrar",
+    login: "Entrar",
+    logout: "Sair",
+    registerTitle: "Registro de Usuário",
+    registerSuccess: "Usuário registrado com sucesso",
+    registerError: "Erro ao registrar usuário"
+  },
+  widgetCustomizer: {
+    title: "Personalizador de Widget",
+    tabs: {
+      colors: "Cores",
+      typography: "Tipografia",
+      images: "Imagens",
+      security: "Segurança",
+      greetings: "Saudações",
+      data: "Dados"
+    },
+    colors: {
+      primaryColor: "Cor Primária",
+      primaryTextContrast: "Contraste do Texto Primário",
+      secondaryColor: "Cor Secundria",
+      secondaryTextContrast: "Contraste do Texto Secundário",
+      badgeColor: "Cor do Badge",
+      badgeContrast: "Cor do Texto do Badge"
+    },
+    typography: {
+      fontFamily: "Família da Fonte",
+      fontFamilyPlaceholder: "Digite o valor desejado para font-family",
+      faqQuestions: "Perguntas Frequentes",
+      faqQuestionsPlaceholder: "Digite as perguntas (separadas por |)",
+      bannedWords: "Palavras Proibidas",
+      bannedWordsPlaceholder: "Digite as palavras (separadas por |)"
+    },
+    images: {
+      brandAlt: "Texto Alternativo do Logo",
+      brandAltPlaceholder: "Digite o texto alternativo",
+      brandLogo: "Logo do Cliente",
+      botIcon: "Ícone do Bot",
+      chatIcon: "Ícone do Chat",
+      hiddenIcon: "Ícone de Ocultar",
+      sendIcon: "Ícone de Enviar"
+    },
+    security: {
+      sqlInjection: "Verificação de Injeção SQL",
+      phpInjection: "Verificação de Injeção PHP",
+      strangeChars: "Verificação de Caracteres Estranhos"
+    },
+    greetings: {
+      newMessage: "Criar nova mensagem",
+      update: "Atualizar",
+      delete: "Excluir",
+      create: "Criar"
+    },
+    actions: {
+      save: "Salvar",
+      saveColors: "Salvar Cores",
+      saveTypography: "Salvar Tipografia",
+      saveImages: "Salvar Imagens",
+      saveSecurity: "Salvar Segurança",
+      saveGreetings: "Salvar Saudações",
+      saveData: "Salvar Dados"
+    },
+    messages: {
+      updateSuccess: "Widget atualizado com sucesso",
+      updateError: "Erro ao atualizar o widget",
+      colorsSaved: "Cores salvas com sucesso",
+      typographySaved: "Tipografia salva com sucesso",
+      imagesSaved: "Imagens salvas com sucesso",
+      securitySaved: "Configurações de segurança salvas com sucesso",
+      greetingsSaved: "Saudações salvas com sucesso",
+      dataSaved: "Dados salvos com sucesso"
+    },
+    inputs: {
+      fontFamily: {
+        label: "Família da Fonte",
+        placeholder: "Digite o valor do atributo font-family desejado",
+        helperText: "Exemplo: Arial, Helvetica, sans-serif"
+      },
+      faqQuestions: {
+        label: "Perguntas Frequentes",
+        placeholder: "Digite as perguntas (separadas por |)",
+        helperText: "Exemplo: Como funciona? | Quanto custa?"
+      },
+      bandList: {
+        label: "Palavras Banidas",
+        placeholder: "Digite as palavras (separadas por |)",
+        helperText: "Exemplo: spam | ofensivo | inapropriado"
+      },
+      brandAlt: {
+        label: "Texto Alternativo do Logo",
+        placeholder: "Digite o texto alternativo",
+        helperText: "Texto que será mostrado se a imagem não carregar"
+      }
+    },
+    validation: {
+      required: "Este campo é obrigatório",
+      invalidColor: "Cor inválida",
+      invalidFile: "Arquivo inválido",
+      maxFileSize: "O arquivo excede o tamanho máximo permitido"
+    },
+    preview: {
+      title: "Pré-visualizaço do Widget",
+      loading: "Carregando pré-visualização...",
+      error: "Erro ao carregar pré-visualização"
+    }
+  },
+  common: {
+    errorLoadingData: "Erro ao carregar dados",
+    errorSavingData: "Erro ao salvar dados",
+    loading: "Carregando...",
+    saving: "Salvando...",
+    success: "Operação bem-sucedida",
+    error: "Ocorreu um erro",
+    sessionExpired: "Sessão expirada, por favor faça login novamente",
+    errorConnection: "Erro: não foi possível estabelecer conexão com o servidor"
+  },
+  robotCard: {
+    agentStatus: "Status do agente",
+    widget: "Widget",
+    customization: "Personalização",
+    useAPI: "Usar API",
+    tools: "Ferramentas",
+    edit: "Editar",
+    testAgent: "Testar Agente",
+    delete: "Excluir",
+    defaultStatus: "Agente funcionando normalmente",
+    statusOnline: "Agente online",
+    statusOffline: "Agente offline",
+    statusBusy: "Agente ocupado",
+    statusError: "Erro no agente",
+    statusUpdating: "Atualizando agente",
+    greetings: [
+      "Olá! Como você está?",
+      "Bem-vindo! Em que posso ajudar?",
+      "Saudações! Como está seu dia?",
+      "Que bom ver você! Como vai?"
+    ],
+    helpTexts: {
+      widget: "Você pode baixar o widget JS puro do seu assistente para adicioná-lo facilmente ao seu site",
+      customization: "Personalize seu assistente com informações da sua marca, estilo, segurança, saudações e mais",
+      api: "Integre seu assistente via API a outros sistemas e canais como WhatsApp, SMS, Email, etc",
+      tools: "Acesse ferramentas que permitem expandir ou automatizar as capacidades do seu assistente especificamente para seu negócio",
+      edit: "Edite a configuração básica do seu assistente",
+      test: "Teste e observe o comportamento do seu assistente em tempo real e participe das conversas",
+      delete: "Exclua seu assistente da plataforma, cuidado você perderá as configurações realizadas"
+    }
   }
 };
 

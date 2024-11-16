@@ -7,7 +7,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { LogoutSharp } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { useAppContext } from "@/context/app";
+import { useAppContext } from "@/context";
 import { SuccessToast } from "@/components/Toast";
 import PeopleIcon from '@mui/icons-material/People';
 import BuildIcon from '@mui/icons-material/Build';

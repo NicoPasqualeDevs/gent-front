@@ -1,0 +1,14 @@
+import { PageState } from '@/types/Page';
+
+export interface ContextEntryFormData {
+  name: string;
+  description: string;
+  model_ai: string;
+  [key: string]: string;
+}
+
+export interface ContextEntryState extends PageState {
+  formData: ContextEntryFormData;
+  isSubmitting: boolean;
+  isEditing: boolean;
+} 

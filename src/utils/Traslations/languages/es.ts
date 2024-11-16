@@ -1,14 +1,6 @@
-const randomGreeting = (): string => {
-  const saludos = [
-    "¡Hola! ¿Cómo estás?",
-    "¡Bienvenido! ¿En qué puedo ayudarte?",
-    "¡Saludos! ¿Qué tal tu día?",
-    "¡Qué gusto verte! ¿Cómo te va?"
-  ];
-  return saludos[Math.floor(Math.random() * saludos.length)];
-};
+import { TranslationType, getRandomGreeting } from '../types';
 
-const es = {
+const es: TranslationType = {
   greeting: "Hola",
   farewell: "Adiós",
   actionAllower: {
@@ -21,28 +13,33 @@ const es = {
   },
   leftMenu: {
     aiTeams: "Equipos IA",
-    registerTeam: "Nuevo equipo",
-    logout: "Cerrar Sesión",
-    logoutSuccess: "Has cerrado sesión correctamente",
-    registerUser: "Nuevo Usuario",
+    registerTeam: "Registrar Equipo",
+    registerUser: "Registrar Usuario",
     tools: "Herramientas",
-    workShop: "Taller"  // Nueva traducción
+    workShop: "Taller",
+    logout: "Cerrar Sesión",
+    logoutSuccess: "Sesión cerrada exitosamente"
   },
   aiTeamsForm: {
-    editTitle: "Editar equipo de Equipos IA",
+    editTitle: "Editar equipo {teamName}",
     createTitle: "Registrar nuevo equipo de Equipos IA",
     teamName: "Nombre del Equipo",
     address: "Dirección",
     description: "Descripción",
     edit: "Editar",
     register: "Registrar",
-    fieldRequired: "Este es un campo requerido",
+    fieldRequired: "Este campo es requerido",
     successUpdate: "Cliente actualizado satisfactoriamente",
     successCreate: "Cliente creado satisfactoriamente",
     errorConnection: "Error: no se pudo establecer conexión con el servidor",
     selectUser: "Seleccionar usuario",
     noUsersAvailable: "No hay usuarios disponibles",
-    currentUser: "Usuario actual"
+    currentUser: "Usuario actual",
+    saving: "Guardando...",
+    update: "Actualizar",
+    create: "Crear",
+    cancel: "Cancelar",
+    owner: "Propietario"
   },
   aiTeamsList: {
     newAiTeam: "Nuevo Equipo IA",
@@ -51,11 +48,20 @@ const es = {
     perPage: "por página",
     manageTeam: "Administrar Equipo",
     edit: "Editar",
+    delete: "Eliminar",
+    confirmDelete: "¿Está seguro que desea eliminar este equipo?",
+    deleteTeam: "Eliminar Equipo",
     noTeamsFound: "No se encontraron Equipos IA con ese nombre",
     noTeamsToShow: "No hay Equipos IA para mostrar",
     teamsCount: "de {total} Equipos IA",
     successDelete: "Cliente eliminado satisfactoriamente",
-    owner: "Propietario"
+    owner: "Propietario",
+    noDescription: "Sin descripción",
+    manage: "Gestionar",
+    comingSoon: "Próximamente",
+    noAddress: "Sin dirección",
+    llmKeyBadge: "Equipo con LLM Key",
+    noOwner: "Sin propietario"
   },
   iaPanel: {
     createAgent: "Crear Agente",
@@ -78,14 +84,28 @@ const es = {
     errorDeletingBot: "Error al cargar botId al borrar",
     edit: "Editar",
     created: "Creado: {date}",
-    implementation: "Implementación"
+    implementation: "Implementación",
+    reloadData: "Recargar datos",
+    deleteConfirmation: "¿Está seguro de que desea eliminar este agente?",
+    deletingAgent: "Eliminando agente...",
+    deleteButton: "Eliminar",
+    manageButton: "Gestionar",
+    reloadButton: "Recargar",
+    configureButton: "Configurar",
+    copyWidget: "Copiar código del widget",
+    widgetCopied: "Código copiado al portapapeles",
+    modelAI: "Modelo de IA: {model}",
+    errorMissingParams: "Faltan parámetros requeridos para esta acción",
+    noModelSpecified: "Modelo no especificado",
+    tooltipsEnabled: "Desactivar textos de ayuda",
+    tooltipsDisabled: "Activar textos de ayuda"
   },
   chatView: {
     agentPanel: "Panel de {agentName}",
     defaultAgentName: "Agente IA",
     history: "Historial",
     comingSoon: "(Próximamente)",
-    noMessages: randomGreeting(),
+    noMessages: () => getRandomGreeting('es'),
     inputPlaceholder: "Escribe tu mensaje para el agente IA...",
     sendButton: "Enviar",
     finishSession: "Finalizar sesión",
@@ -125,7 +145,8 @@ const es = {
     invalidEmail: "Correo no válido",
     invalidCredentials: "Credenciales incorrectas",
     fieldRequired: "Este campo es requerido",
-    connectionError: "Error: no se pudo establecer conexión con el servidor"
+    connectionError: "Error: no se pudo establecer conexión con el servidor",
+    invalidServerResponse: "Respuesta del servidor inválida"
   },
   toolsForm: {
     required: "Este campo es requerido",
@@ -140,6 +161,7 @@ const es = {
     toolType: "Tipo de herramienta",
     instructions: "Instrucciones",
     toolFile: "Archivo de la herramienta",
+    fileInput: "Archivo de la herramienta",
     update: "Actualizar",
     create: "Crear",
     edit: "Editar",
@@ -154,12 +176,13 @@ const es = {
     editTitle: "Editar herramienta {toolName}",
     createTitle: "Crear nueva herramienta",
     selectUser: "Seleccionar usuario",
-    currentUser: "Usuario actual"
+    currentUser: "Usuario actual",
+    cancel: "Cancelar"
   },
   tools: {
+    type: "Herramientas",
     libraryTitle: "Biblioteca de Herramientas",
     relatedTitle: "Herramientas Relacionadas",
-    type: "Tipo",
     relateButton: "Relacionar",
     unrelateButton: "Desvincular",
     successRelate: "Herramienta relacionada con éxito",
@@ -168,7 +191,222 @@ const es = {
     errorUnrelate: "Error al desvincular la herramienta",
     errorToken: "Error de autenticación",
     errorLoading: "Error al cargar las herramientas",
-    createToolButton: "Crear Herramienta"
+    createToolButton: "Crear Herramienta",
+    title: "Herramientas",
+    description: "Gestiona tus herramientas",
+    searchPlaceholder: "Buscar herramienta...",
+    noToolsFound: "No se encontraron herramientas con ese nombre",
+    noToolsToShow: "No hay herramientas para mostrar",
+    toolsCount: "de {total} herramientas",
+    perPage: "por página",
+    reloadData: "Recargar datos",
+    manage: "Gestionar",
+    edit: "Editar",
+    delete: "Eliminar",
+    deleteConfirmation: "¿Estás seguro de que deseas eliminar esta herramienta?",
+    deleteSuccess: "Herramienta eliminada con éxito",
+    deleteError: "Error al eliminar la herramienta",
+    errorMissingParams: "Faltan parámetros requeridos para esta acción",
+    noToolsAvailable: "No hay herramientas disponibles",
+    noType: "Sin tipo",
+    noRelatedTools: "No hay herramientas relacionadas",
+    errorMissingBot: "Error: ID del bot no encontrado"
+  },
+  contextEntry: {
+    title: "Crear Agente",
+    editTitle: "Editar Agente",
+    createTitle: "Crear Agente",
+    name: "Nombre del Agente",
+    description: "Descripción",
+    modelAI: "Modelo de IA",
+    saving: "Guardando...",
+    update: "Actualizar",
+    create: "Crear",
+    cancel: "Cancelar",
+    successUpdate: "Agente actualizado correctamente",
+    successCreate: "Agente creado correctamente",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    fieldRequired: "Este campo es requerido",
+    errorMissingTeamId: "ID del equipo no encontrado",
+    errorMissingBotId: "ID del bot no encontrado"
+  },
+  dataEntry: {
+    title: "Datos del Agente",
+    editTitle: "Editar Datos del Agente",
+    context: "Contexto",
+    documents: "Documentos",
+    upload: "Subir",
+    saving: "Guardando...",
+    update: "Actualizar",
+    cancel: "Cancelar",
+    successUpdate: "Datos actualizados correctamente",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    fieldRequired: "Este campo es requerido",
+    dragAndDrop: "Arrastra y suelta archivos aquí o haz clic para seleccionar",
+    maxSize: "Tamaño máximo por archivo: {size}MB",
+    invalidType: "Tipo de archivo no válido",
+    uploadError: "Error al subir el archivo",
+    uploadProgress: "Progreso de carga: {progress}%",
+    removeFile: "Eliminar archivo",
+    uploadSuccess: "Archivo subido correctamente",
+    knowledgeKey: "Clave de conocimiento",
+    knowledgeKeyHelper: "Ingrese una clave para identificar este conocimiento",
+    knowledgeSet: "Conjunto de conocimiento",
+    addKnowledgeSet: "Agregar nuevo conjunto",
+    searchKnowledge: "Buscar conocimiento",
+    noKnowledgeFound: "No se encontró ningún conocimiento",
+    noKnowledgeSets: "No hay conjuntos de conocimiento"
+  },
+  header: {
+    profile: "Perfil"
+  },
+  auth: {
+    register: "Registro",
+    login: "Iniciar sesión",
+    logout: "Cerrar sesión",
+    registerTitle: "Registro de Usuario",
+    registerSuccess: "Usuario registrado exitosamente",
+    registerError: "Error al registrar usuario"
+  },
+  widgetCustomizer: {
+    title: "Personalizador de Widget",
+    tabs: {
+      colors: "Colores",
+      typography: "Tipografía",
+      images: "Imágenes",
+      security: "Seguridad",
+      greetings: "Saludos",
+      data: "Datos"
+    },
+    colors: {
+      primaryColor: "Color Primario",
+      primaryTextContrast: "Contraste de Texto Primario",
+      secondaryColor: "Color Secundario",
+      secondaryTextContrast: "Contraste de Texto Secundario",
+      badgeColor: "Color de Insignia",
+      badgeContrast: "Color de Texto de Insignia"
+    },
+    typography: {
+      fontFamily: "Familia de Fuente",
+      fontFamilyPlaceholder: "Ingrese el valor de font-family deseado",
+      faqQuestions: "Preguntas Frecuentes",
+      faqQuestionsPlaceholder: "Ingrese las preguntas (separadas por |)",
+      bannedWords: "Palabras Prohibidas",
+      bannedWordsPlaceholder: "Ingrese las palabras (separadas por |)"
+    },
+    images: {
+      brandAlt: "Texto Alternativo del Logo",
+      brandAltPlaceholder: "Ingrese el texto alternativo",
+      brandLogo: "Logo del Cliente",
+      botIcon: "cono del Bot",
+      chatIcon: "Ícono del Chat",
+      hiddenIcon: "Ícono de Ocultar",
+      sendIcon: "Ícono de Enviar"
+    },
+    security: {
+      sqlInjection: "Comprobación de Inyección SQL",
+      phpInjection: "Comprobación de Inyección PHP",
+      strangeChars: "Comprobación de Caracteres Extraños"
+    },
+    greetings: {
+      newMessage: "Crear nuevo mensaje",
+      update: "Actualizar",
+      delete: "Eliminar",
+      create: "Crear"
+    },
+    actions: {
+      save: "Guardar",
+      saveColors: "Guardar Colores",
+      saveTypography: "Guardar Tipografía",
+      saveImages: "Guardar Imágenes",
+      saveSecurity: "Guardar Seguridad",
+      saveGreetings: "Guardar Saludos",
+      saveData: "Guardar Datos"
+    },
+    messages: {
+      updateSuccess: "Widget actualizado correctamente",
+      updateError: "Error al actualizar el widget",
+      colorsSaved: "Colores guardados correctamente",
+      typographySaved: "Tipografía guardada correctamente",
+      imagesSaved: "Imágenes guardadas correctamente",
+      securitySaved: "Configuración de seguridad guardada correctamente",
+      greetingsSaved: "Saludos guardados correctamente",
+      dataSaved: "Datos guardados correctamente"
+    },
+    inputs: {
+      fontFamily: {
+        label: "Tipo de Fuente",
+        placeholder: "Ingrese el valor de atributo font-family deseado",
+        helperText: "Ejemplo: Arial, Helvetica, sans-serif"
+      },
+      faqQuestions: {
+        label: "Preguntas Frecuentes",
+        placeholder: "Ingrese las preguntas (separadas por |)",
+        helperText: "Ejemplo: ¿Cómo funciona? | ¿Cuánto cuesta?"
+      },
+      bandList: {
+        label: "Palabras Baneadas",
+        placeholder: "Ingrese las palabras (separadas por |)",
+        helperText: "Ejemplo: spam | ofensivo | inapropiado"
+      },
+      brandAlt: {
+        label: "Texto alternativo de Logo",
+        placeholder: "Ingrese el texto alternativo",
+        helperText: "Texto que se mostrará si la imagen no carga"
+      }
+    },
+    validation: {
+      required: "Este campo es requerido",
+      invalidColor: "Color inválido",
+      invalidFile: "Archivo inválido",
+      maxFileSize: "El archivo excede el tamaño máximo permitido"
+    },
+    preview: {
+      title: "Vista previa del Widget",
+      loading: "Cargando vista previa...",
+      error: "Error al cargar la vista previa"
+    }
+  },
+  common: {
+    errorLoadingData: "Error al cargar los datos",
+    errorSavingData: "Error al guardar los datos",
+    loading: "Cargando...",
+    saving: "Guardando...",
+    success: "Operación exitosa",
+    error: "Ha ocurrido un error",
+    sessionExpired: "La sesión ha expirado, por favor inicie sesión nuevamente",
+    errorConnection: "Error: no se pudo establecer conexión con el servidor"
+  },
+  robotCard: {
+    agentStatus: "Estado del agente",
+    widget: "Widget",
+    customization: "Personalización",
+    useAPI: "Usar API",
+    tools: "Herramientas",
+    edit: "Editar",
+    testAgent: "Probar Agente",
+    delete: "Eliminar",
+    defaultStatus: "Agente trabajando con normalidad",
+    statusOnline: "Agente en línea",
+    statusOffline: "Agente fuera de línea",
+    statusBusy: "Agente ocupado",
+    statusError: "Error en el agente",
+    statusUpdating: "Actualizando agente",
+    greetings: [
+      "¡Hola! ¿Cómo estás?",
+      "¡Bienvenido! ¿En qué puedo ayudarte?",
+      "¡Saludos! ¿Qué tal tu día?",
+      "¡Qué gusto verte! ¿Cómo te va?"
+    ],
+    helpTexts: {
+      widget: "Puedes descargar el widget en JS puro de tu asistente para agregarlo a tu sitio web de forma sencilla",
+      customization: "Personaliza tu asistente con información de tu marca, estilo, seguridad, saludos y más",
+      api: "Integra tu asistente vía API a otros sistemas y canales como WhatsApp, SMS, Email, etc",
+      tools: "Accede a herramientas que te permiten ampliar o automatizar las capacidades de tu asistente de forma específica para tu negocio",
+      edit: "Edita la configuración básica de tu asistente",
+      test: "Prueba y observa el comportamiento de tu asistente en tiempo real y participa en las conversaciones",
+      delete: "Elimina tu asistente de la plataforma, cuidado perderás las configuraciones realizadas"
+    }
   }
 };
 

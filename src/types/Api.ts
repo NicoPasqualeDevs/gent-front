@@ -2,20 +2,23 @@ export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
-  metadata: Metadata;
+  metadata?: Metadata;
 }
 
-export interface ApiResponseList<T> {
-  success: boolean;
-  message: string;
+export interface Metadata {
+  current_page: number;
+  total_pages: number;
+  page_size: number;
+  total_items: number;
+}
+
+export interface PaginatedResponse<T> {
   data: T[];
   metadata: Metadata;
 }
 
-export interface Metadata {
-  current_page?: number;
-  total_pages?: number;
-  total_items?: number;
-  page_size?: number;
-  [key: string]: number | string | undefined;
+export interface ApiError {
+  status: string;
+  error: string;
+  data?: string;
 }

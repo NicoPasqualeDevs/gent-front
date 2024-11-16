@@ -1,15 +1,16 @@
 export interface AuthUser {
   email: string;
-  first_name: string;
-  last_name: string;
   token: string;
-  is_superuser: boolean;
   uuid: string;
+  first_name?: string;
+  last_name?: string;
+  is_superuser?: boolean;
 }
 
-export type SendRegister = {
+export interface AuthLoginData {
   email: string;
-};
+  password: string;
+}
 
 export interface AuthRegisterData {
   email: string;
@@ -17,32 +18,11 @@ export interface AuthRegisterData {
   last_name: string;
   password: string;
   confirm_password: string;
-  is_superuser: boolean;
-}
-
-export interface AuthRegisterResponse {
-  message: string;
-  user: {
-    email: string;
-    first_name: string;
-    last_name: string;
-  };
-  token: string;
-  is_superuser: boolean;
-}
-
-export type AuthLoginData = {
-  [propKey: string]: string;
-  email: string;
-  code: string;
-};
-
-export type AuthLoginResponse = {
-  email: string;
-  token: string;
-  error?: string;
-  first_name: string;
   is_superuser?: boolean;
-  last_name: string;
-  uuid: string;
-};
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  user?: AuthUser;
+}
+
