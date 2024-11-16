@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
@@ -7,7 +8,14 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     emptyOutDir: true,
-    sourcemap: false,
   },
-  base: '/',
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://www.gentsbuilder.com',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })
