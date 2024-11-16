@@ -55,7 +55,7 @@ const AppRoutes = () => {
   }, []);
 
   return (
-    <BrowserRouter>
+    <>
       <BackgroundLines />
       <Box
         sx={{
@@ -111,7 +111,7 @@ const AppRoutes = () => {
           <Route path="*" element={<NotFoundModule />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 

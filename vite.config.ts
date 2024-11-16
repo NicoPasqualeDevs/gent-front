@@ -18,7 +18,6 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: './runtimeConfig', replacement: './runtimeConfig.browser' },
-      // Removemos la línea de @mui/material
     ],
   },
   define: {
@@ -26,9 +25,34 @@ export default defineConfig({
   },
   build: {
     outDir: './build',
+    sourcemap: false,
+    chunkSizeWarningLimit: 1600,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', '@mui/material'],
+        },
+        // Asegura que los assets coincidan con la configuración de Nginx
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+      },
+    },
   },
   server: {
     port: 3000,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false, // Necesario para desarrollo local
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/ws': {
+        target: 'ws://localhost:8001',
+        ws: true,
+      }
+    }
   },
   optimizeDeps: {
     include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
