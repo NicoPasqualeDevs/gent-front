@@ -308,6 +308,12 @@ const AiTeamsForm: React.FC = () => {
         onSubmit={formik.handleSubmit}
         isLoading={!formState.loaded}
         isSubmitting={formState.isSubmitting}
+        skeletonFields={[
+          { type: 'text' },      // name
+          { type: 'textarea' },   // description
+          { type: 'text' },      // address
+          { type: 'select' }      // owner_data
+        ]}
       >
         {formState.error && ErrorMessage}
         

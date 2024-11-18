@@ -138,7 +138,7 @@ const LeftMenu: React.FC = () => {
                   transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
                   color:
                     navElevation === option.navElevation
-                      ? theme.palette.primary.main
+                      ? theme.palette.primary.light
                       : theme.palette.text.primary,
                   ":hover": {
                     color: option.disabled ? "inherit" : theme.palette.primary.main,

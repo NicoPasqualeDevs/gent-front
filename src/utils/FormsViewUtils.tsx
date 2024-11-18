@@ -14,7 +14,7 @@ import {
     Skeleton,
     FormHelperText
 } from '@mui/material';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -84,17 +84,26 @@ export const formStyles: FormStylesType = {
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: 2
+        gap: 3
     },
     inputGroup: {
-        marginTop: '12px'
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+        width: '100%',
+        '&:first-of-type': {
+            marginTop: 0
+        },
+        '&:not(:first-of-type)': {
+            marginTop: 0
+        }
     },
     actions: {
         display: 'flex',
         flexDirection: { xs: 'column', lg: 'row' },
         gap: { xs: 2, lg: 2 },
         justifyContent: { xs: 'stretch', lg: 'flex-end' },
-        marginTop: '24px',
+        marginTop: 3,
         width: '100%'
     },
     buttonBase: {
@@ -219,61 +228,115 @@ export const FormHeader: React.FC<HeaderBaseProps> = ({
     </Paper>
 );
 
+// Definimos una interfaz para la configuración del skeleton
+interface SkeletonConfig {
+  type: 'text' | 'textarea' | 'select' | 'file';
+  height?: number;
+}
+
 // Componente para el skeleton del formulario
-export const FormSkeleton: React.FC = () => (
-    <Box sx={formStyles.form}>
-        {[1, 2, 3].map((index) => (
+export const FormSkeleton: React.FC<{
+  fields?: SkeletonConfig[];
+  showActions?: boolean;
+}> = ({ 
+  fields = [
+    { type: 'text', height: 56 },
+  ], 
+  showActions = true 
+}) => (
+    <Box sx={{
+        ...formStyles.form,
+        '& > *:not(:last-child)': {
+            mb: 0
+        }
+    }}>
+        {fields.map((field, index) => (
             <FormInputGroup key={index}>
                 <Skeleton 
                     variant="rectangular" 
-                    height={56}  // Altura estándar de un TextField de MUI
+                    height={field.type === 'textarea' ? 128 : field.height || 56}
                     sx={{ 
                         borderRadius: '4px',
-                        bgcolor: 'rgba(255, 255, 255, 0.1)'  // Color más suave para el skeleton
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                        width: '100%'
                     }} 
                 />
             </FormInputGroup>
         ))}
-        <FormActions>
-            <Skeleton 
-                variant="rectangular" 
-                width={120}
-                height={48}
-                sx={{ 
-                    borderRadius: '8px',
-                    bgcolor: 'rgba(255, 255, 255, 0.1)'
-                }} 
-            />
-            <Skeleton 
-                variant="rectangular" 
-                width={120}
-                height={48}
-                sx={{ 
-                    borderRadius: '8px',
-                    bgcolor: 'rgba(255, 255, 255, 0.1)'
-                }} 
-            />
-        </FormActions>
+
+        {showActions && (
+            <Box sx={{
+                ...formStyles.actions,
+                mt: 3
+            }}>
+                <Skeleton 
+                    variant="rectangular" 
+                    height={48}
+                    sx={{ 
+                        borderRadius: '8px',
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                        width: { xs: '100%', lg: '200px' }
+                    }} 
+                />
+                <Skeleton 
+                    variant="rectangular" 
+                    height={48}
+                    sx={{ 
+                        borderRadius: '8px',
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                        width: { xs: '100%', lg: '200px' }
+                    }} 
+                />
+            </Box>
+        )}
     </Box>
 );
 
-// Actualizar FormContent para incluir el skeleton
-export const FormContent: React.FC<{
+// Actualizar FormContent para incluir la animación
+interface FormContentProps {
     children: React.ReactNode;
     onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
     encType?: string;
     isLoading?: boolean;
     isSubmitting?: boolean;
-}> = ({ children, onSubmit, encType, isLoading, isSubmitting }) => (
+    skeletonFields?: SkeletonConfig[];
+}
+
+export const FormContent: React.FC<FormContentProps> = ({ 
+    children, 
+    onSubmit, 
+    encType, 
+    isLoading, 
+    isSubmitting,
+    skeletonFields 
+}) => (
     <Paper elevation={3} sx={formStyles.paper}>
-        <Box
-            component="form"
-            onSubmit={onSubmit}
-            sx={formStyles.form}
-            encType={encType}
-        >
-            {isLoading || isSubmitting ? <FormSkeleton /> : children}
-        </Box>
+        <AnimatePresence mode="wait">
+            <Box
+                component="form"
+                onSubmit={onSubmit}
+                sx={formStyles.form}
+                encType={encType}
+            >
+                {isLoading || isSubmitting ? (
+                    <FormSkeleton fields={skeletonFields} />
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        style={{ 
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '24px'
+                        }}
+                    >
+                        {children}
+                    </motion.div>
+                )}
+            </Box>
+        </AnimatePresence>
     </Paper>
 );
 

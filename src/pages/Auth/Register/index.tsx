@@ -84,10 +84,10 @@ const Register: React.FC = () => {
     const timer = setTimeout(() => {
       replacePath([
         {
-          label: t('login.registerLink'),
+          label: t('registerUser'),
           current_path: "/auth/register",
           preview_path: "",
-          translationKey: "login.registerLink"
+          translationKey: "registerUser"
         }
       ]);
     }, 0);
@@ -102,6 +102,13 @@ const Register: React.FC = () => {
       <FormContent 
         onSubmit={handleSubmit}
         isLoading={isLoading}
+        skeletonFields={[
+          { type: 'text' },    // email
+          { type: 'text' },    // first_name
+          { type: 'text' },    // last_name
+          { type: 'text' },    // password
+          { type: 'text' }     // confirm_password
+        ]}
       >
         <FormInputGroup>
           <FormTextField
