@@ -10,6 +10,7 @@ import { languages } from "@/utils/Traslations";
 import { useEffect } from "react";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { Fab } from "@mui/material";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -177,6 +178,19 @@ const LeftMenu: React.FC = () => {
               paddingBottom: "20px"
             }}
           >
+            {!isLargeScreen && menu && (
+              <Box sx={{ 
+                opacity: `${menu ? "1" : "0"}`,
+                transition: 'opacity 0.3s ease-in-out',
+                paddingBottom: "10px",
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "center"
+              }}>
+                <LanguageSelector />
+              </Box>
+            )}
+
             <Typography
               sx={{
                 opacity: `${menu ? "1" : "0"}`,
@@ -186,7 +200,7 @@ const LeftMenu: React.FC = () => {
                 alignItems: "center",
                 paddingBottom: "20px",
                 cursor: "pointer",
-                color: theme.palette.text.primary, // Cambiado a color de texto primario
+                color: theme.palette.text.primary,
                 ":hover": {
                   color: theme.palette.primary.main,
                 },
