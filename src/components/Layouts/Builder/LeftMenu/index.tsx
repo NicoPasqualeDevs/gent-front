@@ -93,14 +93,18 @@ const LeftMenu: React.FC = () => {
           paddingLeft: "5px",
           flexShrink: "0",
           width: { 
-            xs: menu ? "100%" : "0px", 
-            lg: menu ? "160px" : "0px" 
+            xs: "100%", 
+            lg: menu ? "176px" : "0px" 
           },
           height: { 
             xs: menu ? "calc(99% - 35px)" : "0px", 
             lg: "calc(100% - 70px)" 
           },
-          background: theme.palette.background.default, // Añadido color de fondo
+          transform: {
+            xs: menu ? 'translateY(0)' : 'translateY(calc(-100% + 140px))',
+            lg: 'none'
+          },
+          background: theme.palette.background.default,
           borderRight: {
             xs: "none",
             lg: `1px solid ${menu ? alpha(theme.palette.primary.light, 0.5) : "transparent"}`,
@@ -109,7 +113,10 @@ const LeftMenu: React.FC = () => {
             xs: `0px solid ${menu ? alpha(theme.palette.primary.light, 0.5) : "transparent"}`,
             lg: "none",
           },
-          transition: "width 0.3s ease-in-out, height 0.3s ease-in-out",
+          transition: {
+            xs: "transform 0.3s ease-in-out, height 0.3s ease-in-out",
+            lg: "width 0.3s ease-in-out"
+          },
           overflow: "hidden",
           zIndex: 103,
         }}
@@ -133,9 +140,17 @@ const LeftMenu: React.FC = () => {
                 key={`menu-option-${index}`}
                 sx={{
                   cursor: option.disabled ? "not-allowed" : "pointer",
-                  opacity: `${menu ? (option.disabled ? "0.5" : "1") : "0"}`,
+                  opacity: {
+                    xs: menu ? (option.disabled ? "0.5" : "1") : "0",
+                    lg: menu ? (option.disabled ? "0.5" : "1") : "0"
+                  },
                   fontSize: `${menu ? "110%" : "0px"}`,
-                  transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
+                  transition: {
+                    xs: `font-size ${theme.transitions.duration.complex}ms, color ${theme.transitions.duration.complex}ms`,
+                    lg: menu 
+                      ? `all ${theme.transitions.duration.complex}ms ${index * 100 + 300}ms`
+                      : `all ${theme.transitions.duration.complex}ms`
+                  },
                   color:
                     navElevation === option.navElevation
                       ? theme.palette.primary.light
@@ -198,7 +213,7 @@ const LeftMenu: React.FC = () => {
               sx={{
                 opacity: `${menu ? "1" : "0"}`,
                 fontSize: `${menu ? "100%" : "0px"}`,
-                transition: `font-size ${theme.transitions.duration.complex}ms, color ${theme.transitions.duration.standard}ms`,
+                transition: `font-size ${theme.transitions.duration.complex}ms, color ${theme.transitions.duration.complex}ms`,
                 display: "flex",
                 alignItems: "center",
                 paddingBottom: "20px",

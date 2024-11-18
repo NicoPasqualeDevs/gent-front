@@ -79,7 +79,9 @@ const Header: React.FC = () => {
   };
 
   return (
-    <HeaderContainer container>
+    <HeaderContainer container sx={{ 
+      zIndex: 104  // Aumentamos el z-index para que esté por encima del LeftMenu (que tiene 103)
+    }}>
       <BrandContainer 
         item 
         xs={2} 
