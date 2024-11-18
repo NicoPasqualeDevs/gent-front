@@ -21,8 +21,7 @@ import {
   DashboardContainer,
   DashboardHeader,
   DashboardContent,
-  commonStyles,
-  SkeletonCard
+  commonStyles
 } from "@/utils/DashboardsUtils";
 import { PaginationFooter } from "@/utils/DashboardsUtils";
 import { builderNavigationUtils } from '@/utils/NavigationUtils';
