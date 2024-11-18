@@ -95,6 +95,7 @@ const Header: React.FC = () => {
             color={"white"}
             sx={{
               fontSize: "30px",
+              fontFamily: "ROBO",
               padding: "0px 5px",
               marginLeft: "10px",
               cursor: "pointer",
@@ -103,7 +104,7 @@ const Header: React.FC = () => {
               transition: "all 0.25s ease-in-out",
             }}
           >
-            {showFullName || isTransitioning ? "Gents" : "G"}
+            {showFullName || isTransitioning ? "gENTS" : "g"}
           </Typography>
         </Box>
         {isLargeScreen && <Pathbar />}
@@ -116,12 +117,13 @@ const Header: React.FC = () => {
           <UserBubble>
             <Typography
               variant="body1"
-              color={theme.palette.secondary.main}
+              color={theme.palette.secondary.contrastText}
               onClick={handleProfileClick}
               sx={{
                 display: 'flex',
-                fontWeight: '300',
+                fontWeight: '700',
                 alignItems: 'center',
+                padding: '0px 10px',
                 height: '100%',
                 cursor: 'pointer'
               }}
@@ -131,7 +133,11 @@ const Header: React.FC = () => {
           </UserBubble>
         ) : (
           <Avatar
-            sx={{ cursor: "pointer" }}
+            sx={{ cursor: "pointer" ,
+              backgroundColor: theme.palette.secondary.main,
+              fontWeight: '700',
+              color: theme.palette.secondary.contrastText
+            }}
             onClick={handleProfileClick}
           >
             {auth && auth.email.trim() !== ""
