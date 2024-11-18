@@ -160,6 +160,9 @@ const LeftMenu: React.FC = () => {
                       },
                     ]);
                     navigate(option.path);
+                    if (!isLargeScreen) {
+                      setMenu(false);
+                    }
                   }
                 }}
               >
@@ -211,6 +214,9 @@ const LeftMenu: React.FC = () => {
                 sessionStorage.setItem("user_token", "");
                 navigate("/auth/login", { replace: true });
                 SuccessToast(t.leftMenu.logoutSuccess);
+                if (!isLargeScreen) {
+                  setMenu(false);
+                }
               }}
             >
               <LogoutSharp />

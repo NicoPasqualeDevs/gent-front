@@ -72,10 +72,12 @@ const inputBaseStyles: SxProps<Theme> = {
 export const formStyles: FormStylesType = {
     container: {
         py: 2,
-        px: { xs: 1, sm: 2, md: 3 }
+        px: { xs: 1, sm: 2, md: 3 },
+        width: '100%',
+        maxWidth: '100%'
     },
     paper: {
-        p: 3,
+        p: { xs: 2, sm: 3 },
         mt: 2
     },
     form: {
@@ -89,14 +91,20 @@ export const formStyles: FormStylesType = {
     },
     actions: {
         display: 'flex',
-        gap: 2,
-        justifyContent: 'flex-end',
-        marginTop: '24px'
+        flexDirection: { xs: 'column', lg: 'row' },
+        gap: { xs: 2, lg: 2 },
+        justifyContent: { xs: 'stretch', lg: 'flex-end' },
+        marginTop: '24px',
+        width: '100%'
     },
-    buttonBase: buttonBaseStyles,
+    buttonBase: {
+        ...buttonBaseStyles,
+        width: { xs: '100%', lg: '200px' },
+    },
     primaryButton: {
         ...buttonBaseStyles,
-        minWidth: '120px',
+        width: { xs: '100%', lg: '200px' },
+        minWidth: { xs: '100%', lg: '120px' },
         backgroundColor: 'primary.main',
         color: '#FFFFFF',
         transition: 'background-color 300ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -107,7 +115,8 @@ export const formStyles: FormStylesType = {
     },
     secondaryButton: {
         ...buttonBaseStyles,
-        minWidth: '120px',
+        width: { xs: '100%', lg: '200px' },
+        minWidth: { xs: '100%', lg: '120px' },
         color: '#FFFFFF',
         borderColor: 'primary.main',
         '&:hover': {
@@ -118,8 +127,9 @@ export const formStyles: FormStylesType = {
     },
     cancelButton: {
         ...buttonBaseStyles,
-        marginRight: '10px',
-        minWidth: '120px',
+        width: { xs: '100%', lg: '200px' },
+        minWidth: { xs: '100%', lg: '120px' },
+        marginRight: { xs: 0, lg: '10px' },
         color: '#FFFFFF',
         borderColor: 'primary.main',
         transition: 'border-color 300ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -171,15 +181,37 @@ export const FormHeader: React.FC<HeaderBaseProps> = ({
         elevation={3}
         sx={{
             ...headerStyles.container,
+            p: { xs: 2, sm: 3 },
+            '& .MuiTypography-h5': {
+                fontSize: {
+                    xs: '1.2rem',
+                    sm: '1.4rem',
+                    md: '1.5rem',
+                    lg: '1.7rem'
+                },
+                lineHeight: {
+                    xs: 1.3,
+                    sm: 1.4,
+                    md: 1.5
+                },
+                wordBreak: 'break-word'
+            },
             ...sx
         }}
     >
-        <Box sx={headerStyles.wrapper}>
+        <Box sx={{
+            ...headerStyles.wrapper,
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 1, sm: 2 }
+        }}>
             <Typography variant="h5" sx={headerStyles.title}>
                 {title}
             </Typography>
             {actions && (
-                <Box sx={headerStyles.actionsContainer}>
+                <Box sx={{
+                    ...headerStyles.actionsContainer,
+                    mt: { xs: 1, sm: 0 }
+                }}>
                     {actions}
                 </Box>
             )}
