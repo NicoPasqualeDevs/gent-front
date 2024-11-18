@@ -726,14 +726,12 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
                 }}>
                     <Typography 
                         variant="body2" 
-                        color="text.secondary"
                         sx={{ mr: 0.5 }}
                     >
                         {endItem.toString()}
                     </Typography>
                     <Typography 
                         variant="body2" 
-                        color="text.secondary"
                     >
                         {translations.itemsCount
                             .replace("{total}", totalItems.toString())}

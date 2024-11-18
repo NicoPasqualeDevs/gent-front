@@ -92,7 +92,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                             px: typography.badge.padding.x,
                             py: typography.badge.padding.y,
                             borderRadius: borders.badgeRadius,
-                            backgroundColor: alpha(theme.palette.secondary.main, 0.875),
+                            backgroundColor: alpha(theme.palette.secondary.main, 0.75),
                             height: dimensions.card.badgeHeight
                         }}
                     >
@@ -143,6 +143,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
+                                ml: '-8px',
                             }}
                         >
                             {aiTeam.owner_data?.email 
@@ -168,7 +169,12 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                                 size="small"
                                 sx={{ 
                                     width: dimensions.card.actionButtonSize,
-                                    height: dimensions.card.actionButtonSize
+                                    height: dimensions.card.actionButtonSize,
+                                    pl: index === 0 ? '7px' : '6pxpx',
+                                    backgroundColor: index !== 2 ? alpha(theme.palette.primary.light, 0.5) : alpha(theme.palette.error.main, 0.125),
+                                    '&:hover': {
+                                        backgroundColor: index !== 2 ? alpha(theme.palette.primary.light, 0.75) : alpha(theme.palette.error.main, 0.25),
+                                    }
                                 }}
                             >
                                 {action.icon}

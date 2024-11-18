@@ -96,16 +96,16 @@ const LeftMenu: React.FC = () => {
             lg: menu ? "160px" : "0px" 
           },
           height: { 
-            xs: menu ? "calc(50% - 35px)" : "0px", 
+            xs: menu ? "calc(99% - 35px)" : "0px", 
             lg: "calc(100% - 70px)" 
           },
           background: theme.palette.background.default, // Añadido color de fondo
           borderRight: {
             xs: "none",
-            lg: `1px solid ${menu ? theme.palette.primary.main : "transparent"}`,
+            lg: `1px solid ${menu ? alpha(theme.palette.primary.light, 0.5) : "transparent"}`,
           },
           borderBottom: {
-            xs: `1px solid ${menu ? theme.palette.primary.main : "transparent"}`,
+            xs: `0px solid ${menu ? alpha(theme.palette.primary.light, 0.5) : "transparent"}`,
             lg: "none",
           },
           transition: "width 0.3s ease-in-out, height 0.3s ease-in-out",
@@ -207,7 +207,7 @@ const LeftMenu: React.FC = () => {
               display: { xs: menu ? 'flex' : 'none', lg: 'none' }, 
               justifyContent: 'center',
               position: 'absolute',
-              bottom: '20px',
+              bottom: '28px',
               left: '50%',
               transform: 'translateX(-50%)'
             }}>
@@ -216,8 +216,8 @@ const LeftMenu: React.FC = () => {
                 onClick={() => setMenu(!menu)}
                 size="medium"
                 sx={{
-                  backgroundColor: alpha(theme.palette.primary.main, 0.85),
-                  color: theme.palette.secondary.main,
+                  backgroundColor: alpha(theme.palette.primary.dark, 0.25),
+                  color: theme.palette.primary.contrastText,
                 }}
               >
                 <KeyboardArrowUp />

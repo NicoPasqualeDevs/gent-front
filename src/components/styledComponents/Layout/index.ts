@@ -1,5 +1,5 @@
 import { Menu } from "@mui/icons-material";
-import { Box, Button, Grid, styled } from "@mui/material";
+import { Box, Button, Grid, styled, alpha } from "@mui/material";
 
 export const HeaderContainer = styled(Grid)(({ theme }) => ({
   width: "100%",
@@ -8,7 +8,7 @@ export const HeaderContainer = styled(Grid)(({ theme }) => ({
   alignItems: "center",
   zIndex: "103",
   backgroundColor: theme.palette.background.default,
-  borderBottom: `1px solid ${theme.palette.primary.main}`,
+  borderBottom: `1px solid ${alpha(theme.palette.primary.light, 0.5)}`,
 }));
 
 export const BrandContainer = styled(Grid)(() => ({
