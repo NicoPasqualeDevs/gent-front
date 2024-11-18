@@ -32,6 +32,7 @@ import HelpIcon from '@mui/icons-material/Help';
 import { IconButton, Tooltip } from '@mui/material';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { CircularProgress } from '@mui/material';
 
 const IaPanel: React.FC<PageProps> = () => {
   const navigate = useNavigate();
@@ -336,14 +337,18 @@ const IaPanel: React.FC<PageProps> = () => {
 
       <DashboardContent>
         {state.isLoading ? (
-          <Paper elevation={3} sx={{ p: 2, flexGrow: 1 }}>
-            <Grid container spacing={3}>
-              {[...Array(parseInt(state.contentPerPage))].map((_, index) => (
-                <Grid item xs={12} md={6} xl={4} key={`skeleton-${index}`}>
-                  <SkeletonCard variant="agent" />
-                </Grid>
-              ))}
-            </Grid>
+          <Paper 
+            elevation={3} 
+            sx={{ 
+              p: 2, 
+              flexGrow: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '400px'
+            }}
+          >
+            <CircularProgress />
           </Paper>
         ) : (
           <>
