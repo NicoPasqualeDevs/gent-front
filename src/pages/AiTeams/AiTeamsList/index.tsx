@@ -289,7 +289,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
               </Paper>
             ) : (
               <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
-                <Typography variant="subtitle1">
+                <Typography color={theme.palette.secondary.light}>
                   {state.searchQuery
                     ? t.aiTeamsList.noTeamsFound
                     : t.aiTeamsList.noTeamsToShow}

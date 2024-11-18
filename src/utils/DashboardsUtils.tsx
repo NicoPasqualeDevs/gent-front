@@ -426,7 +426,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ variant = 'team' }) 
                             height={24}
                             sx={{
                                 borderRadius: 1,
-                                backgroundColor: alpha(theme.palette.primary.main, 0.1)
+                                backgroundColor: alpha(theme.palette.secondary.main, 0.1)
                             }}
                         />
                     </Box>

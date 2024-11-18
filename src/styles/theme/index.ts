@@ -1,23 +1,31 @@
 import { createTheme as createThemeDefault, responsiveFontSizes } from "@mui/material/styles";
 
+const primaryMainColor = "#6b8bbd";
+const primaryLightColor = "#8FA9D3";
+const primaryDarkColor = "#4F6995";
+
+const secondaryMainColor = "#E0B4CB";
+const secondaryLightColor = "#F0D3E1";
+const secondaryDarkColor = "#B2809D";
+
+
 let theme = createThemeDefault({
   typography: {
     fontFamily: "Nunito",
     fontSize: 13,
     h1: {
-      color: "#EACBDF", // Magenta pastel con toque de lila y más brillo
+      color: "#EACBDF",
     },
-    // ... aplicar el mismo color magenta pastel a h2-h6 ...
     body1: {
-      color: "#8CCBC8", // Mantenemos el turquesa como está
+      color: primaryLightColor, 
       textAlign: "justify",
     },
     body2: {
-      color: "#FFFFFF", // Gris medio-oscuro
+      color: "#FFFFFF",
       textAlign: "justify",
     },
     subtitle1: {
-      color: "#E2BFD3", // Magenta pastel con toque de lila y más brillo
+      color: "#E2BFD3",
     },
     subtitle2: {
       color: "#FFFFFF",
@@ -26,24 +34,24 @@ let theme = createThemeDefault({
   palette: {
     mode: "dark", // Cambiamos el modo a oscuro
     primary: {
-      main: "#7580c3", 
-      light: "#535e9d", 
-      dark: "#384279",
-      contrastText: "#000000", // Negro
+      main: primaryMainColor,  
+      light: primaryLightColor, 
+      dark: primaryDarkColor,
+      contrastText: "#f5f5f5", // Negro
     },
     secondary: {
-      main: "#F5F5F5", // Blanco ahumado
-      light: "#A0E6EC", // Turquesa más claro y brillante
-      dark: "#4A9396", // Turquesa más oscuro y pastel
-      contrastText: "#1A1A1A", // Gris muy oscuro para contraste (sin cambios)
+      main: secondaryMainColor,
+      light: secondaryLightColor, 
+      dark: secondaryDarkColor, 
+      contrastText: "#1A1A1A", 
     },
     background: {
       default: "#101010", // Gris muy oscuro (fondo principal)
       paper: "#151515", // Gris muy oscuro (elementos de papel)
     },
     text: {
-      primary: "#FFFFFF", // Blanco
-      secondary: "#8CCBC8", // Mantenemos el turquesa como está
+      primary: "#FFFFFF",
+      secondary: primaryLightColor, 
     },
     error: {
       main: "#F44336",
@@ -171,7 +179,7 @@ let theme = createThemeDefault({
         select:-webkit-autofill,
         select:-webkit-autofill:hover,
         select:-webkit-autofill:focus {
-          -webkit-text-fill-color: #8CCBC8;
+          -webkit-text-fill-color: ${primaryLightColor};
           -webkit-box-shadow: 0 0 0px 1000px rgba(16, 16, 16, 0.01) inset;
           transition: background-color 5000s ease-in-out 0s;
         }
@@ -182,7 +190,7 @@ let theme = createThemeDefault({
         input: {
           '&:-webkit-autofill': {
             WebkitBoxShadow: '0 0 0px 1000px rgba(16, 16, 16, 0.01) inset',
-            WebkitTextFillColor: '#8CCBC8',
+            WebkitTextFillColor: primaryLightColor,
           },
         },
       },
