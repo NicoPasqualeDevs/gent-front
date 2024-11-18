@@ -1,12 +1,12 @@
 import { createTheme as createThemeDefault, responsiveFontSizes } from "@mui/material/styles";
 
-const primaryMainColor = "#6b8bbd";
-const primaryLightColor = "#8FA9D3";
-const primaryDarkColor = "#4F6995";
+export const primaryMainColor = "#6b8bbd";
+export const primaryLightColor = "#8FA9D3";
+export const primaryDarkColor = "#4F6995";
 
-const secondaryMainColor = "#E0B4CB";
-const secondaryLightColor = "#F0D3E1";
-const secondaryDarkColor = "#B2809D";
+export const secondaryMainColor = "#E0B4CB";
+export const secondaryLightColor = "#F0D3E1";
+export const secondaryDarkColor = "#B2809D";
 
 
 let theme = createThemeDefault({

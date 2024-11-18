@@ -49,6 +49,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
   const bubbleTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const streamTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const { showRobotCardHelp } = useAppContext();
+  const [isTalking, setIsTalking] = useState(false);
 
   // Función para obtener el estado traducido
   const getStatusText = () => {
@@ -136,12 +137,15 @@ const RobotCard: React.FC<RobotCardProps> = ({
   const streamText = (text: string) => {
     let index = 0;
     setDisplayText('');
+    setIsTalking(true);
     
     const stream = () => {
       if (index <= text.length) {
         setDisplayText(text.slice(0, index));
         index++;
-        streamTimeoutRef.current = setTimeout(stream, 30); // Velocidad del streaming
+        streamTimeoutRef.current = setTimeout(stream, 30);
+      } else {
+        setIsTalking(false);
       }
     };
     
@@ -168,6 +172,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
     
     bubbleTimeoutRef.current = setTimeout(() => {
       setShowBubble(false);
+      setIsTalking(false);
       if (streamTimeoutRef.current) {
         clearTimeout(streamTimeoutRef.current);
       }
@@ -260,7 +265,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
                 <div className="eye"></div>
                 <div className="eye"></div>
               </div>
-              <div className="mouth"></div>
+              <div className={`mouth ${isTalking ? 'talking' : ''}`}></div>
             </div>
           </div>
         </div>
