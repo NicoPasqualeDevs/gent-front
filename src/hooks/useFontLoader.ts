@@ -15,7 +15,7 @@ export const useFontLoader = () => {
                 context.setFontLoaded(true);
                 setTimeout(() => {
                     saveFontLoaded(true);
-                }, 1000);
+                }, 500);
             } else {
                 throw new Error('No se pudo cargar la fuente');
             }
