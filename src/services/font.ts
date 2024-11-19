@@ -1,3 +1,4 @@
+import { useFontLoader } from "@/hooks/useFontLoader";
 const FONT_STORAGE_KEY = 'gents-font-loaded';
 
 export const fontStorage = () => {
@@ -5,8 +6,9 @@ export const fontStorage = () => {
         try {
             if (sessionStorage.getItem(FONT_STORAGE_KEY)) {
                 return true;
+            }else{
+                return useFontLoader();
             }
-            return false;
         } catch {
             return false;
         }

@@ -37,6 +37,7 @@ const StyledGlowingText = styled(motion.h1)(({ theme }) => ({
 
 const GlowingText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { fontLoaded } = useAppContext();
+
     return (
         <>
             {fontLoaded && (
@@ -49,7 +50,17 @@ const GlowingText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 </StyledGlowingText>
             )}
             {!fontLoaded && (
-                <Skeleton variant="text" width="100%" height="100%" />
+                <Skeleton sx={{
+                    color: '#fff',
+                    fontSize: '4.5rem',
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    letterSpacing: '8px',
+                    textTransform: 'none',
+                    marginBottom: '180px',
+                    lineHeight: 1.2,
+                    fontFamily: "ROBO",
+                }} variant="text" width="100%" height="100%" />
             )}
         </>
     );
