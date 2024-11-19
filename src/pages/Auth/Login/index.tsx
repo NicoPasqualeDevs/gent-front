@@ -24,7 +24,7 @@ interface LoginInputError {
 const Login: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
   const navigate = useNavigate();
-  const { setAuth, setNavElevation, language, fontLoaded } = useAppContext();
+  const { setAuth, setNavElevation, language } = useAppContext();
   const { loginUser } = useAuth();
   const [inputError, setInputError] = useState<LoginInputError>({
     email: " ",
