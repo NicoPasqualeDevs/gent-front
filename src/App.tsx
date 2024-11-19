@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import theme from "@/styles/theme";
+import "@/assets/fonts/ROBO.css"
 import AppRoutes from "./AppRoutes.tsx";
 import { AppProvider } from "@/context";
 import { CssBaseline, ThemeProvider } from "@mui/material";

@@ -12,6 +12,7 @@ export const fontStorage = () => {
   const saveFontLoaded = (loaded: boolean): void => {
     try {
       sessionStorage.setItem(FONT_STORAGE_KEY, String(loaded));
+      localStorage.setItem(FONT_STORAGE_KEY, String(loaded));
     } catch (error) {
       console.error('Error saving font state:', error);
     }
