@@ -162,7 +162,7 @@ const Login: React.FC = () => {
         layout
         initial={false}
         animate={{
-          height: showLoginForm ? "452px" : "360px",
+          minHeight: showLoginForm ? "452px" : "360px",
         }}
         transition={{
           height: {
