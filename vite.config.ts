@@ -22,6 +22,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
+          mui: ['@mui/material', '@mui/icons-material'],
         },
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.')
@@ -37,7 +38,9 @@ export default defineConfig({
           return `assets/${extType}/[name]-[hash][extname]`
         },
       },
-    }
+    },
+    chunkSizeWarningLimit: 1000,
+    sourcemap: true,
   },
   server: {
     proxy: {
@@ -46,6 +49,9 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       }
-    }
-  }
+    },
+    host: true,
+    port: 3000,
+  },
+  base: '/',
 })

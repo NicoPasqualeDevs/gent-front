@@ -14,7 +14,6 @@ import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
 import { languages } from "@/utils/Traslations";
 import GlowingText from '@/components/GlowingText';
-import textLogo from '@/assets/site/text-logo.png';
 
 interface LoginInputError {
   email: string;
@@ -23,7 +22,7 @@ interface LoginInputError {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { setAuth, setNavElevation, language, fontLoaded } = useAppContext();
+  const { setAuth, setNavElevation, language } = useAppContext();
   const { loginUser } = useAuth();
   const [inputError, setInputError] = useState<LoginInputError>({
     email: " ",
@@ -129,51 +128,11 @@ const Login: React.FC = () => {
         display: { xs: showLoginForm ? 'none' : 'block', sm: 'block' },
       }}
       component={motion.div}
-      animate={showLoginForm ? {
-        top: 'calc(50% + 18px)'
-      } : undefined}
-      transition={{ duration: 0.5, ease: "anticipate", type: "spring", stiffness: 100, damping: 15 }}
+      transition={{ duration: 0.5, ease: "anticipate", type: "spring", stiffness: 100 }}
     >
       <GlowingText>gENTS</GlowingText>
     </Box>
   );
-
-  if (!fontLoaded) {
-    return (
-      <Box 
-        sx={{
-          height: "100vh",
-          width: "100%",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: theme.palette.background.default
-        }}
-      >
-        <Box sx={{ mb: 4 }}>
-          <img 
-            src={textLogo} 
-            alt="gENTS"
-            style={{
-              width: '300px',
-              marginTop: "-162px",
-              height: '88px',
-              filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.2))'
-            }}
-          />
-        </Box>
-        <CircularProgress 
-          size={60}
-          thickness={4}
-          sx={{
-            color: theme.palette.primary.main,
-            filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.2))'
-          }}
-        />
-      </Box>
-    );
-  }
 
   return (
     <>

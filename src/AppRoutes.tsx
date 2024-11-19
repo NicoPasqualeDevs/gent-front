@@ -1,11 +1,12 @@
-import React, { lazy, ReactNode } from "react";
-import { Box } from "@mui/material";
+import React, { lazy, ReactNode, useState, useEffect } from "react";
+import { Box, CircularProgress } from "@mui/material";
 import { Outlet, Routes, Route, Navigate } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines";
 import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
 import { useAppContext } from '@/context';
 import { useLocation } from 'react-router-dom';
+import LoadingFallback from "@/components/LoadingFallback";
 
 // Interfaces
 interface ProtectedRouteProps {
@@ -31,15 +32,26 @@ const UserL = (
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = true }) => {
   const { auth, replacePath } = useAppContext();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Si requireAuth es true y no hay auth, redirigir a login
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
   if (requireAuth && !auth?.token) {
     return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
   }
 
-  // Si requireAuth es false y hay auth, redirigir a builder sin establecer navegación
   if (!requireAuth && auth?.token) {
-    replacePath([]); // Limpiamos la navegación
+    replacePath([]);
     return <Navigate to="/builder" replace />;
   }
 
