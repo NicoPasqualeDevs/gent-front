@@ -33,6 +33,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     appNavigation,
     language,
     clientPage,
+    fontLoaded,
   } = state;
 
   const width = useWidth();
@@ -176,6 +177,14 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     }
   }, [state.showRobotCardHelp]);
 
+  const setFontLoaded: Dispatch<SetStateAction<boolean>> = React.useCallback((value) => {
+    if (typeof value === 'function') {
+      dispatch({ type: "setFontLoaded", payload: value(state.fontLoaded) });
+    } else {
+      dispatch({ type: "setFontLoaded", payload: value });
+    }
+  }, [state.fontLoaded]);
+
   if (!isInitialized) {
     return null;
   }
@@ -204,6 +213,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         setLanguage,
         setClientPage,
         setShowRobotCardHelp,
+        fontLoaded,
+        setFontLoaded,
       }}
     >
       {children}

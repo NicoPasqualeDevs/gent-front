@@ -1,5 +1,6 @@
 import { styled } from "@mui/material";
 import "@/assets/fonts/ROBO.css"
+import { useAppContext } from "@/context";
 import { useFontLoader } from "@/hooks/useFontLoader";
 
 const StyledGlowingText = styled('h1')(({ theme }) => ({
@@ -39,7 +40,7 @@ const GlowingText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const fontLoaded = useFontLoader();
 
     if (!fontLoaded) {
-        return <div style={{ height: '4.5rem' }} />; // Placeholder mientras carga
+        return <div style={{ height: '4.5rem' }} />;
     }
 
     return <StyledGlowingText>{children}</StyledGlowingText>;

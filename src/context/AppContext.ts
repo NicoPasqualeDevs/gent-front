@@ -5,6 +5,7 @@ import { PathData } from "@/types/Pathbar";
 import { Breakpoint } from "@mui/material";
 import { menuStorage } from "@/services/menu";
 import { languageStorage } from "@/services/language";
+import { fontStorage } from '@/services/font';
 
 export interface AppContextState {
   menu: boolean;
@@ -20,6 +21,7 @@ export interface AppContextState {
   language: string;
   clientPage: number;
   showRobotCardHelp: boolean;
+  fontLoaded: boolean;
   setAiTeams: React.Dispatch<React.SetStateAction<AiTeamsDetails[]>>;
   setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   setMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,6 +33,7 @@ export interface AppContextState {
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   setClientPage: (page: number) => void;
   setShowRobotCardHelp: React.Dispatch<React.SetStateAction<boolean>>;
+  setFontLoaded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const INITIAL_STATE: AppContextState = {
@@ -47,6 +50,7 @@ export const INITIAL_STATE: AppContextState = {
   language: languageStorage().getLanguage(),
   clientPage: 1,
   showRobotCardHelp: true,
+  fontLoaded: fontStorage().getFontLoaded(),
   setAiTeams: () => { /* noop */ },
   setLoaded: () => { /* noop */ },
   setMenu: () => { /* noop */ },
@@ -58,6 +62,7 @@ export const INITIAL_STATE: AppContextState = {
   setLanguage: () => { /* noop */ },
   setClientPage: () => { /* noop */ },
   setShowRobotCardHelp: () => { /* noop */ },
+  setFontLoaded: () => { /* noop */ },
 };
 
 export const AppContext = createContext<AppContextState | undefined>(undefined);

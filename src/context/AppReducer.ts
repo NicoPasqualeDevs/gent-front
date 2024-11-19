@@ -17,7 +17,8 @@ export type AppContextActions =
   | { type: "setLanguage"; payload: string }
   | { type: "setClientPage"; payload: number }
   | { type: "cleanState" }
-  | { type: "setShowRobotCardHelp"; payload: boolean };
+  | { type: "setShowRobotCardHelp"; payload: boolean }
+  | { type: "setFontLoaded"; payload: boolean };
 
 type Layout = {
   breakpoint: Breakpoint | undefined;
@@ -102,11 +103,17 @@ export const AppReducer = (
         navElevation: INITIAL_STATE.navElevation,
         appNavigation: INITIAL_STATE.appNavigation,
         language: INITIAL_STATE.language,
+        fontLoaded: state.fontLoaded,
       };
     case "setShowRobotCardHelp":
       return {
         ...state,
         showRobotCardHelp: action.payload,
+      };
+    case "setFontLoaded":
+      return {
+        ...state,
+        fontLoaded: action.payload,
       };
     default:
       return state;
