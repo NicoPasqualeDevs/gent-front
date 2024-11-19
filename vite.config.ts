@@ -29,6 +29,11 @@ export default defineConfig({
           if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
             return `assets/fonts/[name][extname]`
           }
+          if (assetInfo.name === 'favicon.ico' || 
+              assetInfo.name.startsWith('logo') || 
+              assetInfo.name === 'manifest.json') {
+            return `[name].[ext]`
+          }
           return `assets/${extType}/[name]-[hash][extname]`
         },
       },

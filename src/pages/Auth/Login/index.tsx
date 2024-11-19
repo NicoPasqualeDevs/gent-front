@@ -335,7 +335,10 @@ const Login: React.FC = () => {
               }}
             >
               <Box sx={{
-                width:"70%",
+                width: {
+                  xs: "100%",
+                  sm: "70%"
+                },
                 mr:"auto",
                 ml:"auto",
                 borderRadius:"24px",
@@ -355,7 +358,27 @@ const Login: React.FC = () => {
                     color: theme.palette.secondary.light,
                     textShadow: '0 0 5px rgba(0,0,0,0.3)',
                     lineHeight: '96px',
-                    fontSize: '24px',
+                    fontSize: {
+                      xs: '18px',
+                      sm: '20px',
+                      md: '24px'
+                    },
+                    width: {
+                      xs: '100%',
+                      md: '100%'
+                    },
+                    mx: 'auto',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: {
+                      xs: '-webkit-box',
+                      sm: 'block'
+                    },
+                    WebkitLineClamp: {
+                      xs: 1,
+                      sm: 'unset'
+                    },
+                    WebkitBoxOrient: 'vertical'
                   }}
                 >
                   {t.rotatingTexts[rotatingText]}
