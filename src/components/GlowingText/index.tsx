@@ -1,6 +1,7 @@
 import { styled, Skeleton } from "@mui/material";
 import { motion } from "framer-motion";
 import { useAppContext } from "@/context";
+import { useEffect } from "react";
 
 const StyledGlowingText = styled(motion.h1)(({ theme }) => ({
     color: '#fff',
@@ -37,6 +38,12 @@ const StyledGlowingText = styled(motion.h1)(({ theme }) => ({
 
 const GlowingText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { fontLoaded } = useAppContext();
+
+    useEffect(() => {
+        if(fontLoaded){
+            console.log('Font loaded');
+        }
+    }, [fontLoaded]);
 
     return (
         <>

@@ -7,7 +7,7 @@ export const menuStorage = () => {
 
   const getMenuState = (): boolean => {
     const menuState = localStorage.getItem(MENU_KEY);
-    return menuState ? JSON.parse(menuState) : true; // Por defecto true
+    return menuState ? JSON.parse(menuState) : false; // Por defecto true
   };
 
   return {

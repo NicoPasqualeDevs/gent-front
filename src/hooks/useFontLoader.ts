@@ -1,39 +1,31 @@
-import { useEffect, useState, useCallback } from 'react';
-import { useAppContext } from '@/context';
+import { useState, useCallback } from 'react';
 import { fontStorage } from '@/services/font';
 
 export const useFontLoader = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const context = useAppContext();
-    const { saveFontLoaded } = fontStorage();
 
     const loadFont = useCallback(async () => {
+        if (isLoading) return;
+        
+        setIsLoading(true);
         try {
             const response = await fetch('https://gentsbuilder.com/fonts/ROBO.woff2');
-            console.log(response);
             if (response.ok) {
-                context.setFontLoaded(true);
                 setTimeout(() => {
-                    saveFontLoaded(true);
+                    fontStorage.saveFontLoaded(true);
                 }, 500);
+                return true;
             } else {
                 throw new Error('No se pudo cargar la fuente');
             }
         } catch (error) {
             console.error('Error al cargar la fuente:', error);
-            saveFontLoaded(false);
-            context.setFontLoaded(false);
+            fontStorage.saveFontLoaded(false);
+            return false;
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [isLoading]);
 
-    useEffect(() => {
-        if (!isLoading) {
-            setIsLoading(true);
-            loadFont();
-        }
-    }, [loadFont]);
-
-    return context.fontLoaded;
+    return { loadFont, isLoading };
 }; 
