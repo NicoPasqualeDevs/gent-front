@@ -1,5 +1,5 @@
 import { styled } from "@mui/material";
-import "../../../public/fonts/ROBO.css"
+import "@/assets/fonts/ROBO.css"
 
 const GlowingText = styled('h1')(({ theme }) => ({
     color: '#fff',
