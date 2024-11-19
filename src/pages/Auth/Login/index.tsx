@@ -36,12 +36,6 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    if (isMobile) {
-      setShowLoginForm(true);
-    }
-
     const interval = setInterval(() => {
       setRotatingText((prevText) => (prevText + 1) % t.rotatingTexts.length);
     }, 5000);
