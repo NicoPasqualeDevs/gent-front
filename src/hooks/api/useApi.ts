@@ -29,8 +29,8 @@ interface UseApiHook {
 const useApi = (): UseApiHook => {
   const { auth } = useAppContext();
   const token = auth?.token;
-  //const apiBase = import.meta.env.VITE_API_URL || '127.0.0.1:8000/';
-  const apiBase = "http://127.0.0.1:8000/api/";
+  //const apiBase = '127.0.0.1:8000/';
+  const apiBase = "https://www.gentsbuilder.com/api/";
   const handleResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
     if (!response.ok) {
       const error = await response.json();
@@ -48,7 +48,7 @@ const useApi = (): UseApiHook => {
 
   // Función para obtener el CSRF token
   const getCsrfToken = async (): Promise<string> => {
-    const response = await fetch(`${apiBase}access/api/csrf/`, {
+    const response = await fetch(`${apiBase}access/csrf/`, {
       method: 'GET',
     });
     const data = await response.json();
