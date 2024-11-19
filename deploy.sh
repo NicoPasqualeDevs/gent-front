@@ -3,7 +3,7 @@
 echo "Iniciando despliegue del frontend..."
 
 # Directorio del frontend
-FRONTEND_DIR="/home/nicolas_german_pasquale/gent-front"
+FRONTEND_DIR="/home/nicolas_german_pasquale/gents-front"
 # Directorio de Django static
 DJANGO_STATIC_DIR="/home/nicolas_german_pasquale/gents-ia/static"
 DJANGO_FRONTEND_DIR="/home/nicolas_german_pasquale/gents-ia/static/frontend"
@@ -15,7 +15,10 @@ cd $FRONTEND_DIR
 
 # Actualizar desde el repositorio
 echo "Actualizando código desde el repositorio..."
-git pull origin main
+git reset --hard
+git clean -fd
+git fetch origin
+git reset --hard origin/main
 
 # Instalar dependencias
 echo "Instalando dependencias..."
