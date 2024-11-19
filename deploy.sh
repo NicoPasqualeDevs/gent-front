@@ -15,7 +15,7 @@ cd $FRONTEND_DIR
 
 # Actualizar desde el repositorio
 echo "Actualizando código desde el repositorio..."
-git pull origin master
+git pull origin main
 
 # Instalar dependencias
 echo "Instalando dependencias..."
