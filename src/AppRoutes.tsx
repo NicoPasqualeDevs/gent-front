@@ -1,5 +1,5 @@
 import React, { lazy, ReactNode, useState, useEffect } from "react";
-import { Box, CircularProgress } from "@mui/material";
+import { Box } from "@mui/material";
 import { Outlet, Routes, Route, Navigate } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines";
 import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
