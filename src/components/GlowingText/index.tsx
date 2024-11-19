@@ -36,7 +36,7 @@ const StyledGlowingText = styled('h1')(({ theme }) => ({
 }));
 
 const GlowingText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const fontLoaded = useFontLoader('ROBO');
+    const fontLoaded = useFontLoader();
 
     if (!fontLoaded) {
         return <div style={{ height: '4.5rem' }} />; // Placeholder mientras carga
