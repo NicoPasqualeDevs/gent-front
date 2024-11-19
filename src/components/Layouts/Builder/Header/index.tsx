@@ -127,7 +127,7 @@ const Header: React.FC = () => {
         }}
       >
         <Box
-          width={showFullName ? "120px" : "38px"}
+          width={showFullName ? "120px" : "26px"}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           sx={{

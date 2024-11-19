@@ -211,9 +211,17 @@ const LeftMenu: React.FC = () => {
 
             <Typography
               sx={{
-                opacity: `${menu ? "1" : "0"}`,
+                opacity: {
+                  xs: menu ? "1" : "0",
+                  lg: menu ? "1" : "0"
+                },
                 fontSize: `${menu ? "100%" : "0px"}`,
-                transition: `font-size ${theme.transitions.duration.complex}ms, color ${theme.transitions.duration.complex}ms`,
+                transition: {
+                  xs: "none",
+                  lg: menu 
+                    ? `all ${theme.transitions.duration.complex}ms ${filteredOptions.length * 100 + 300}ms`
+                    : `all ${theme.transitions.duration.complex}ms`
+                },
                 display: "flex",
                 alignItems: "center",
                 paddingBottom: "20px",
