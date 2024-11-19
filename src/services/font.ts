@@ -1,4 +1,5 @@
-import { useFontLoader, setFontLoaded } from "@/hooks/useFontLoader";
+import { useFontLoader } from "@/hooks/useFontLoader";
+import { useAppContext } from "@/context";
 const FONT_STORAGE_KEY = 'gents-font-loaded';
 
 export const fontStorage = () => {
@@ -17,7 +18,8 @@ export const fontStorage = () => {
 
     const saveFontLoaded = (loaded: boolean): void => {
         try {
-            setFontLoaded(loaded);
+            const context = useAppContext();
+            context.setFontLoaded(loaded);
             sessionStorage.setItem(FONT_STORAGE_KEY, String(loaded));
         } catch (error) {
             console.error('Error saving font state:', error);
