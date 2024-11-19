@@ -14,7 +14,7 @@ import {
     Skeleton,
     FormHelperText
 } from '@mui/material';
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { HeaderBaseProps, headerStyles } from './VerticalVarsUtils';
 import { SelectChangeEvent } from '@mui/material/Select';
 
@@ -72,31 +72,48 @@ const inputBaseStyles: SxProps<Theme> = {
 export const formStyles: FormStylesType = {
     container: {
         py: 2,
-        px: { xs: 1, sm: 2, md: 3 }
+        px: { xs: 1, sm: 2, md: 3 },
+        width: '100%',
+        maxWidth: '100%'
     },
     paper: {
-        p: 3,
+        p: { xs: 2, sm: 3 },
         mt: 2
     },
     form: {
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
-        gap: 2
+        gap: 3
     },
     inputGroup: {
-        marginTop: '12px'
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+        width: '100%',
+        '&:first-of-type': {
+            marginTop: 0
+        },
+        '&:not(:first-of-type)': {
+            marginTop: 0
+        }
     },
     actions: {
         display: 'flex',
-        gap: 2,
-        justifyContent: 'flex-end',
-        marginTop: '24px'
+        flexDirection: { xs: 'column', lg: 'row' },
+        gap: { xs: 2, lg: 2 },
+        justifyContent: { xs: 'stretch', lg: 'flex-end' },
+        marginTop: 3,
+        width: '100%'
     },
-    buttonBase: buttonBaseStyles,
+    buttonBase: {
+        ...buttonBaseStyles,
+        width: { xs: '100%', lg: '200px' },
+    },
     primaryButton: {
         ...buttonBaseStyles,
-        minWidth: '120px',
+        width: { xs: '100%', lg: '200px' },
+        minWidth: { xs: '100%', lg: '120px' },
         backgroundColor: 'primary.main',
         color: '#FFFFFF',
         transition: 'background-color 300ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -107,7 +124,8 @@ export const formStyles: FormStylesType = {
     },
     secondaryButton: {
         ...buttonBaseStyles,
-        minWidth: '120px',
+        width: { xs: '100%', lg: '200px' },
+        minWidth: { xs: '100%', lg: '120px' },
         color: '#FFFFFF',
         borderColor: 'primary.main',
         '&:hover': {
@@ -118,8 +136,9 @@ export const formStyles: FormStylesType = {
     },
     cancelButton: {
         ...buttonBaseStyles,
-        marginRight: '10px',
-        minWidth: '120px',
+        width: { xs: '100%', lg: '200px' },
+        minWidth: { xs: '100%', lg: '120px' },
+        marginRight: { xs: 0, lg: '10px' },
         color: '#FFFFFF',
         borderColor: 'primary.main',
         transition: 'border-color 300ms cubic-bezier(0.4, 0, 0.2, 1)',
@@ -171,15 +190,37 @@ export const FormHeader: React.FC<HeaderBaseProps> = ({
         elevation={3}
         sx={{
             ...headerStyles.container,
+            p: { xs: 2, sm: 3 },
+            '& .MuiTypography-h5': {
+                fontSize: {
+                    xs: '1.2rem',
+                    sm: '1.4rem',
+                    md: '1.5rem',
+                    lg: '1.7rem'
+                },
+                lineHeight: {
+                    xs: 1.3,
+                    sm: 1.4,
+                    md: 1.5
+                },
+                wordBreak: 'break-word'
+            },
             ...sx
         }}
     >
-        <Box sx={headerStyles.wrapper}>
+        <Box sx={{
+            ...headerStyles.wrapper,
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: { xs: 1, sm: 2 }
+        }}>
             <Typography variant="h5" sx={headerStyles.title}>
                 {title}
             </Typography>
             {actions && (
-                <Box sx={headerStyles.actionsContainer}>
+                <Box sx={{
+                    ...headerStyles.actionsContainer,
+                    mt: { xs: 1, sm: 0 }
+                }}>
                     {actions}
                 </Box>
             )}
@@ -187,61 +228,115 @@ export const FormHeader: React.FC<HeaderBaseProps> = ({
     </Paper>
 );
 
+// Definimos una interfaz para la configuración del skeleton
+interface SkeletonConfig {
+  type: 'text' | 'textarea' | 'select' | 'file';
+  height?: number;
+}
+
 // Componente para el skeleton del formulario
-export const FormSkeleton: React.FC = () => (
-    <Box sx={formStyles.form}>
-        {[1, 2, 3].map((index) => (
+export const FormSkeleton: React.FC<{
+  fields?: SkeletonConfig[];
+  showActions?: boolean;
+}> = ({ 
+  fields = [
+    { type: 'text', height: 56 },
+  ], 
+  showActions = true 
+}) => (
+    <Box sx={{
+        ...formStyles.form,
+        '& > *:not(:last-child)': {
+            mb: 0
+        }
+    }}>
+        {fields.map((field, index) => (
             <FormInputGroup key={index}>
                 <Skeleton 
                     variant="rectangular" 
-                    height={56}  // Altura estándar de un TextField de MUI
+                    height={field.type === 'textarea' ? 128 : field.height || 56}
                     sx={{ 
                         borderRadius: '4px',
-                        bgcolor: 'rgba(255, 255, 255, 0.1)'  // Color más suave para el skeleton
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                        width: '100%'
                     }} 
                 />
             </FormInputGroup>
         ))}
-        <FormActions>
-            <Skeleton 
-                variant="rectangular" 
-                width={120}
-                height={48}
-                sx={{ 
-                    borderRadius: '8px',
-                    bgcolor: 'rgba(255, 255, 255, 0.1)'
-                }} 
-            />
-            <Skeleton 
-                variant="rectangular" 
-                width={120}
-                height={48}
-                sx={{ 
-                    borderRadius: '8px',
-                    bgcolor: 'rgba(255, 255, 255, 0.1)'
-                }} 
-            />
-        </FormActions>
+
+        {showActions && (
+            <Box sx={{
+                ...formStyles.actions,
+                mt: 3
+            }}>
+                <Skeleton 
+                    variant="rectangular" 
+                    height={48}
+                    sx={{ 
+                        borderRadius: '8px',
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                        width: { xs: '100%', lg: '200px' }
+                    }} 
+                />
+                <Skeleton 
+                    variant="rectangular" 
+                    height={48}
+                    sx={{ 
+                        borderRadius: '8px',
+                        bgcolor: 'rgba(255, 255, 255, 0.05)',
+                        width: { xs: '100%', lg: '200px' }
+                    }} 
+                />
+            </Box>
+        )}
     </Box>
 );
 
-// Actualizar FormContent para incluir el skeleton
-export const FormContent: React.FC<{
+// Actualizar FormContent para incluir la animación
+interface FormContentProps {
     children: React.ReactNode;
     onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
     encType?: string;
     isLoading?: boolean;
     isSubmitting?: boolean;
-}> = ({ children, onSubmit, encType, isLoading, isSubmitting }) => (
+    skeletonFields?: SkeletonConfig[];
+}
+
+export const FormContent: React.FC<FormContentProps> = ({ 
+    children, 
+    onSubmit, 
+    encType, 
+    isLoading, 
+    isSubmitting,
+    skeletonFields 
+}) => (
     <Paper elevation={3} sx={formStyles.paper}>
-        <Box
-            component="form"
-            onSubmit={onSubmit}
-            sx={formStyles.form}
-            encType={encType}
-        >
-            {isLoading || isSubmitting ? <FormSkeleton /> : children}
-        </Box>
+        <AnimatePresence mode="wait">
+            <Box
+                component="form"
+                onSubmit={onSubmit}
+                sx={formStyles.form}
+                encType={encType}
+            >
+                {isLoading || isSubmitting ? (
+                    <FormSkeleton fields={skeletonFields} />
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5 }}
+                        style={{ 
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '24px'
+                        }}
+                    >
+                        {children}
+                    </motion.div>
+                )}
+            </Box>
+        </AnimatePresence>
     </Paper>
 );
 

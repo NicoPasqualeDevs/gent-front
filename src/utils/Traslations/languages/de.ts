@@ -128,7 +128,7 @@ const de: TranslationType = {
   },
   login: {
     title: "Gents",
-    subtitle: "KI-basiertes Projekt von Nicolas Pasquale",
+    subtitle: "GENTS® System basierend auf generativer KI",
     version: "v 0.1",
     rotatingTexts: [
       "Erstellen und teilen Sie KI-Agenten",

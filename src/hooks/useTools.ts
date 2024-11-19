@@ -8,7 +8,7 @@ const useTools = () => {
 
   const postTool = useCallback(async (formData: FormData): Promise<ApiResponse<ToolData>> => {
     try {
-      return await apiPost("api/tool/create/", formData, {
+      return await apiPost("tool/create/", formData, {
         skipCsrf: true
       });
     } catch (error: unknown) {
@@ -19,7 +19,7 @@ const useTools = () => {
 
   const patchTool = useCallback(async (toolId: string, formData: FormData): Promise<ApiResponse<ToolData>> => {
     try {
-      return await apiPatch(`api/tool/modify/${toolId}/`, formData, {
+      return await apiPatch(`tool/modify/${toolId}/`, formData, {
       });
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al actualizar la herramienta");
@@ -28,7 +28,7 @@ const useTools = () => {
 
   const getTool = useCallback(async (toolId: string): Promise<ApiResponse<ToolData>> => {
     try {
-      return await apiGet(`api/tool/modify/${toolId}/`);
+      return await apiGet(`tool/modify/${toolId}/`);
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al obtener la herramienta");
     }
@@ -36,7 +36,7 @@ const useTools = () => {
 
   const getClientTools = useCallback(async (userId: string): Promise<ApiResponse<ToolData[]>> => {
     try {
-      return await apiGet(`api/tool/user/${userId}/`);
+      return await apiGet(`tool/user/${userId}/`);
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al obtener las herramientas del usuario");
     }
@@ -44,7 +44,7 @@ const useTools = () => {
 
   const getBotTools = useCallback(async (botId: string): Promise<ApiResponse<ToolData[]>> => {
     try {
-      return await apiGet(`api/tool/list/${botId}/`);
+      return await apiGet(`tool/list/${botId}/`);
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al obtener las herramientas del bot");
     }
@@ -52,7 +52,7 @@ const useTools = () => {
 
   const addToolToBot = useCallback(async (botId: string, toolIds: number[]): Promise<void> => {
     try {
-      await apiPost(`api/tool/relate/${botId}/`, { agent_tool_ids: toolIds });
+      await apiPost(`tool/relate/${botId}/`, { agent_tool_ids: toolIds });
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al relacionar las herramientas con el bot");
     }
@@ -60,7 +60,7 @@ const useTools = () => {
 
   const removeToolFromBot = useCallback(async (botId: string, toolIds: number[]): Promise<void> => {
     try {
-      await apiPost(`api/tool/remove/${botId}/`, { agent_tool_ids: toolIds });
+      await apiPost(`tool/remove/${botId}/`, { agent_tool_ids: toolIds });
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al desrelacionar las herramientas del bot");
     }

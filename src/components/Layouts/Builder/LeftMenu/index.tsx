@@ -10,6 +10,7 @@ import { languages } from "@/utils/Traslations";
 import { useEffect } from "react";
 import { KeyboardArrowUp } from "@mui/icons-material";
 import { Fab } from "@mui/material";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const LeftMenu: React.FC = () => {
   const navigate = useNavigate();
@@ -92,23 +93,30 @@ const LeftMenu: React.FC = () => {
           paddingLeft: "5px",
           flexShrink: "0",
           width: { 
-            xs: menu ? "100%" : "0px", 
-            lg: menu ? "160px" : "0px" 
+            xs: "100%", 
+            lg: menu ? "176px" : "0px" 
           },
           height: { 
-            xs: menu ? "calc(50% - 35px)" : "0px", 
+            xs: menu ? "calc(99% - 35px)" : "0px", 
             lg: "calc(100% - 70px)" 
           },
-          background: theme.palette.background.default, // Añadido color de fondo
+          transform: {
+            xs: menu ? 'translateY(0)' : 'translateY(calc(-100% + 140px))',
+            lg: 'none'
+          },
+          background: theme.palette.background.default,
           borderRight: {
             xs: "none",
-            lg: `1px solid ${menu ? theme.palette.primary.main : "transparent"}`,
+            lg: `1px solid ${menu ? alpha(theme.palette.primary.light, 0.5) : "transparent"}`,
           },
           borderBottom: {
-            xs: `1px solid ${menu ? theme.palette.primary.main : "transparent"}`,
+            xs: `0px solid ${menu ? alpha(theme.palette.primary.light, 0.5) : "transparent"}`,
             lg: "none",
           },
-          transition: "width 0.3s ease-in-out, height 0.3s ease-in-out",
+          transition: {
+            xs: "transform 0.3s ease-in-out, height 0.3s ease-in-out",
+            lg: "width 0.3s ease-in-out"
+          },
           overflow: "hidden",
           zIndex: 103,
         }}
@@ -132,12 +140,20 @@ const LeftMenu: React.FC = () => {
                 key={`menu-option-${index}`}
                 sx={{
                   cursor: option.disabled ? "not-allowed" : "pointer",
-                  opacity: `${menu ? (option.disabled ? "0.5" : "1") : "0"}`,
+                  opacity: {
+                    xs: menu ? (option.disabled ? "0.5" : "1") : "0",
+                    lg: menu ? (option.disabled ? "0.5" : "1") : "0"
+                  },
                   fontSize: `${menu ? "110%" : "0px"}`,
-                  transition: `font-size ${theme.transitions.duration.standard}ms, color ${theme.transitions.duration.standard}ms`,
+                  transition: {
+                    xs: `font-size ${theme.transitions.duration.complex}ms, color ${theme.transitions.duration.complex}ms`,
+                    lg: menu 
+                      ? `all ${theme.transitions.duration.complex}ms ${index * 100 + 300}ms`
+                      : `all ${theme.transitions.duration.complex}ms`
+                  },
                   color:
                     navElevation === option.navElevation
-                      ? theme.palette.primary.main
+                      ? theme.palette.primary.light
                       : theme.palette.text.primary,
                   ":hover": {
                     color: option.disabled ? "inherit" : theme.palette.primary.main,
@@ -159,6 +175,9 @@ const LeftMenu: React.FC = () => {
                       },
                     ]);
                     navigate(option.path);
+                    if (!isLargeScreen) {
+                      setMenu(false);
+                    }
                   }
                 }}
               >
@@ -177,16 +196,37 @@ const LeftMenu: React.FC = () => {
               paddingBottom: "20px"
             }}
           >
+            {!isLargeScreen && menu && (
+              <Box sx={{ 
+                opacity: `${menu ? "1" : "0"}`,
+                transition: 'opacity 0.3s ease-in-out',
+                paddingBottom: "10px",
+                display: "flex",
+                justifyContent: "flex-start",
+                alignItems: "center"
+              }}>
+                <LanguageSelector />
+              </Box>
+            )}
+
             <Typography
               sx={{
-                opacity: `${menu ? "1" : "0"}`,
+                opacity: {
+                  xs: menu ? "1" : "0",
+                  lg: menu ? "1" : "0"
+                },
                 fontSize: `${menu ? "100%" : "0px"}`,
-                transition: `font-size ${theme.transitions.duration.complex}ms, color ${theme.transitions.duration.standard}ms`,
+                transition: {
+                  xs: "none",
+                  lg: menu 
+                    ? `all ${theme.transitions.duration.complex}ms ${filteredOptions.length * 100 + 300}ms`
+                    : `all ${theme.transitions.duration.complex}ms`
+                },
                 display: "flex",
                 alignItems: "center",
                 paddingBottom: "20px",
                 cursor: "pointer",
-                color: theme.palette.text.primary, // Cambiado a color de texto primario
+                color: theme.palette.text.primary,
                 ":hover": {
                   color: theme.palette.primary.main,
                 },
@@ -197,6 +237,9 @@ const LeftMenu: React.FC = () => {
                 sessionStorage.setItem("user_token", "");
                 navigate("/auth/login", { replace: true });
                 SuccessToast(t.leftMenu.logoutSuccess);
+                if (!isLargeScreen) {
+                  setMenu(false);
+                }
               }}
             >
               <LogoutSharp />
@@ -207,7 +250,7 @@ const LeftMenu: React.FC = () => {
               display: { xs: menu ? 'flex' : 'none', lg: 'none' }, 
               justifyContent: 'center',
               position: 'absolute',
-              bottom: '20px',
+              bottom: '28px',
               left: '50%',
               transform: 'translateX(-50%)'
             }}>
@@ -216,8 +259,8 @@ const LeftMenu: React.FC = () => {
                 onClick={() => setMenu(!menu)}
                 size="medium"
                 sx={{
-                  backgroundColor: alpha(theme.palette.primary.main, 0.85),
-                  color: theme.palette.secondary.main,
+                  backgroundColor: alpha(theme.palette.primary.dark, 0.25),
+                  color: theme.palette.primary.contrastText,
                 }}
               >
                 <KeyboardArrowUp />

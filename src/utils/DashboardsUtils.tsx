@@ -426,7 +426,7 @@ export const SkeletonCard: React.FC<SkeletonCardProps> = ({ variant = 'team' }) 
                             height={24}
                             sx={{
                                 borderRadius: 1,
-                                backgroundColor: alpha(theme.palette.primary.main, 0.1)
+                                backgroundColor: alpha(theme.palette.secondary.main, 0.1)
                             }}
                         />
                     </Box>
@@ -726,14 +726,12 @@ export const PaginationFooter: React.FC<PaginationFooterProps> = ({
                 }}>
                     <Typography 
                         variant="body2" 
-                        color="text.secondary"
                         sx={{ mr: 0.5 }}
                     >
                         {endItem.toString()}
                     </Typography>
                     <Typography 
                         variant="body2" 
-                        color="text.secondary"
                     >
                         {translations.itemsCount
                             .replace("{total}", totalItems.toString())}

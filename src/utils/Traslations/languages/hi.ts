@@ -128,7 +128,7 @@ const hi: TranslationType = {
   },
   login: {
     title: "जेंट्स",
-    subtitle: "निकोलस पाक्वेल द्वारा एआई-आधारित परियोजना",
+    subtitle: "GENTS® जेनरेटिव एआई-आधारित सिस्टम",
     version: "v 0.1",
     rotatingTexts: [
       "एआई एजेंट बनाएं और साझा करें",
@@ -385,7 +385,7 @@ const hi: TranslationType = {
     tools: "उपकरण",
     edit: "संपादित करें",
     testAgent: "एजेंट का परीक्षण करें",
-    delete: "हट��एं",
+    delete: "हटाएं",
     defaultStatus: "एजेंट सामान्य रूप से का य कर रहा है",
     statusOnline: "एजेंट ऑनलाइन है",
     statusOffline: "एजेंट ऑफ़लाइन है",

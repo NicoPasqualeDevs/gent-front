@@ -1,6 +1,6 @@
 import React, { lazy, ReactNode } from "react";
 import { Box } from "@mui/material";
-import { Outlet, Routes, Route, Navigate, BrowserRouter } from "react-router-dom";
+import { Outlet, Routes, Route, Navigate } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines";
 import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";

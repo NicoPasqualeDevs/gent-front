@@ -162,7 +162,7 @@ const Login: React.FC = () => {
         layout
         initial={false}
         animate={{
-          height: showLoginForm ? "460px" : "320px",
+          height: showLoginForm ? "452px" : "360px",
         }}
         transition={{
           height: {
@@ -178,7 +178,7 @@ const Login: React.FC = () => {
           backgroundColor: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(5px)',
           borderRadius: '15px',
-          padding: '2.5rem',
+          padding: '2.rem',
           pt: '0rem',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
           width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' },
@@ -198,11 +198,11 @@ const Login: React.FC = () => {
           style={{
             width: '100%',
             position: 'absolute',
-            top: '-12px'
+            top: '-0px'
           }}
         >
 
-          <GlowingText>Gents</GlowingText>
+          <GlowingText>gENTS</GlowingText>
 
         </motion.div>
 
@@ -223,10 +223,11 @@ const Login: React.FC = () => {
               <Box sx={{ mt: "-162px" }}>
                 <Typography
                   textAlign="center"
+                  color={theme.palette.secondary.light}
                   sx={{
                     fontSize: "12px",
                     mt: 0.5,
-                    opacity: 0.9,
+                    opacity: 0.85,
                     transform: 'translateY(0)',
                     transition: 'all 0.3s ease'
                   }}
@@ -236,10 +237,11 @@ const Login: React.FC = () => {
                 <Typography
                   fontSize="60%"
                   textAlign="center"
+                  color={theme.palette.secondary.light}
                   sx={{
                     mt: 0.5,
                     mb: 2,
-                    opacity: 0.7
+                    opacity: 0.85
                   }}
                 >
                   {t.version}
@@ -305,11 +307,8 @@ const Login: React.FC = () => {
                         sx={{
                           paddingTop: "10px",
                           paddingBottom: "10px",
-                          color: "white",
+                          color: theme.palette.primary.contrastText,
                           transition: 'all 0.3s ease',
-                          '&:hover': {
-                            color: theme.palette.secondary.contrastText,
-                          },
                           [theme.breakpoints.between("xs", "sm")]: {
                             maxWidth: "100%",
                           },
@@ -335,6 +334,12 @@ const Login: React.FC = () => {
                 top: "296px"
               }}
             >
+              <Box sx={{
+                width:"70%",
+                mr:"auto",
+                ml:"auto",
+                borderRadius:"24px",
+              }}>
               <motion.div
                 key={rotatingText}
                 initial={{ opacity: 0, y: 20 }}
@@ -345,19 +350,19 @@ const Login: React.FC = () => {
                 <Typography
                   textAlign="center"
                   sx={{
-                    mt: "-172px",
+                    mt: "-156px",
                     fontWeight: 'normal',
-                    color: theme.palette.text.secondary,
+                    color: theme.palette.secondary.light,
                     textShadow: '0 0 5px rgba(0,0,0,0.3)',
-                    lineHeight: '78px',
+                    lineHeight: '96px',
                     fontSize: '24px',
                   }}
                 >
                   {t.rotatingTexts[rotatingText]}
                 </Typography>
-              </motion.div>
-
-              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                </motion.div>
+              </Box>
+              <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                 <motion.div
                   whileHover={{
                     scale: 1.05,
@@ -378,12 +383,11 @@ const Login: React.FC = () => {
                       padding: '20px 40px',
                       borderRadius: '50px',
                       boxShadow: '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23)',
-                      backgroundColor: theme.palette.secondary.main,
-                      color: theme.palette.secondary.contrastText,
+                      backgroundColor: theme.palette.primary.main,
+                      color: theme.palette.primary.contrastText,
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       '&:hover': {
-                        color: "white",
-                        backgroundColor: theme.palette.secondary.dark,
+                        backgroundColor: theme.palette.primary.light,
                         transform: 'translateY(-2px)',
                         boxShadow: '0 15px 25px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)',
                       },

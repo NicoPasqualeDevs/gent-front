@@ -39,7 +39,7 @@ const Header: React.FC = () => {
   };
 
   const isLargeScreen = breakpoint === "lg" || breakpoint === "xl";
-  const [showFullName, setShowFullName] = useState(false);
+  const [showFullName, setShowFullName] = useState(!isLargeScreen);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const theme = useTheme();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -52,27 +52,47 @@ const Header: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    setShowFullName(!isLargeScreen);
+  }, [isLargeScreen]);
+
   const handleMouseEnter = () => {
-    setShowFullName(true);
-    setIsTransitioning(true);
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    if (isLargeScreen) {
+      setShowFullName(true);
+      setIsTransitioning(true);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     }
   };
 
   const handleMouseLeave = () => {
-    setShowFullName(false);
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+    if (isLargeScreen) {
+      setShowFullName(false);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 500);
     }
-    timeoutRef.current = setTimeout(() => {
-      setIsTransitioning(false);
-    }, 500); // Ajusta este valor para que coincida con la duración de la transición
   };
 
   return (
-    <HeaderContainer container>
-      <BrandContainer item xs={8} md={3} sx={{ paddingLeft: "5px", display: "flex", alignItems: "center" }}>
+    <HeaderContainer container sx={{ 
+      zIndex: 104  // Aumentamos el z-index para que esté por encima del LeftMenu (que tiene 103)
+    }}>
+      <BrandContainer 
+        item 
+        xs={2} 
+        md={1} 
+        sx={{ 
+          paddingLeft: "5px", 
+          display: "flex", 
+          alignItems: "center",
+          justifyContent: "flex-start"
+        }}
+      >
         <Tooltip title={menu ? "Contraer menú" : " Expandir menú"} arrow>
           <BrandMenuBtn
             onClick={() => {
@@ -80,14 +100,38 @@ const Header: React.FC = () => {
             }}
           />
         </Tooltip>
+      </BrandContainer>
+
+      <BrandContainer 
+        item 
+        xs={8} 
+        md={2} 
+        sx={{ 
+          ...(isLargeScreen 
+            ? {
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                gap: "20px"
+              }
+            : {
+                position: 'absolute',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: "flex", 
+                alignItems: "center",
+                justifyContent: "center",
+                zIndex: 1
+              }
+          )
+        }}
+      >
         <Box
-          width={showFullName ? "120px" : "38px"}
+          width={showFullName ? "120px" : "26px"}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           sx={{
             transition: "0.5s",
-            marginLeft: "10px",
-            marginRight: "20px",
           }}
         >
           <Typography
@@ -95,33 +139,49 @@ const Header: React.FC = () => {
             color={"white"}
             sx={{
               fontSize: "30px",
+              fontFamily: "ROBO",
               padding: "0px 5px",
-              marginLeft: "10px",
               cursor: "pointer",
               overflow: "hidden",
               textShadow: showFullName ? "none" : `0 0 4.5px ${theme.palette.primary.light}`,
               transition: "all 0.25s ease-in-out",
             }}
           >
-            {showFullName || isTransitioning ? "Gents" : "G"}
+            {showFullName || isTransitioning ? "gENTS" : "g"}
           </Typography>
         </Box>
         {isLargeScreen && <Pathbar />}
       </BrandContainer>
-      <UserBubbleContainer item xs={4} md={9} sx={{ display: "flex", justifyContent: "flex-end", paddingRight: "5px", alignItems: "center" }}>
-        <Box sx={{ marginRight: 2 }}>
-          <LanguageSelector />
-        </Box>
+
+      <UserBubbleContainer 
+        item 
+        xs={2} 
+        md={9} 
+        sx={{ 
+          marginLeft: 'auto',
+          display: "flex", 
+          justifyContent: "flex-end", 
+          paddingRight: "5px", 
+          alignItems: "center",
+          zIndex: 2
+        }}
+      >
+        {isLargeScreen && (
+          <Box sx={{ marginRight: 2 }}>
+            <LanguageSelector />
+          </Box>
+        )}
         {auth && isLargeScreen ? (
           <UserBubble>
             <Typography
               variant="body1"
-              color={theme.palette.secondary.main}
+              color={theme.palette.secondary.contrastText}
               onClick={handleProfileClick}
               sx={{
                 display: 'flex',
-                fontWeight: '300',
+                fontWeight: '700',
                 alignItems: 'center',
+                padding: '0px 10px',
                 height: '100%',
                 cursor: 'pointer'
               }}
@@ -131,7 +191,12 @@ const Header: React.FC = () => {
           </UserBubble>
         ) : (
           <Avatar
-            sx={{ cursor: "pointer" }}
+            sx={{ 
+              cursor: "pointer",
+              backgroundColor: theme.palette.secondary.main,
+              fontWeight: '700',
+              color: theme.palette.secondary.contrastText
+            }}
             onClick={handleProfileClick}
           >
             {auth && auth.email.trim() !== ""

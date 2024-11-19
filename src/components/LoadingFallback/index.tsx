@@ -14,13 +14,13 @@ const LoadingFallback: React.FC = () => {
             justifyContent: "center",
             alignItems: "center"
         }}><Box>
-                <GlowingText>Gents</GlowingText>
+                <GlowingText>gENTS</GlowingText>
                 <LinearProgress
                     sx={{
                         height: "8px",
                         width: "70%",
                         margin: "0px auto",
-                        mt: "-142px",
+                        mt: "-126px",
                         mb: "163px",
                         borderRadius: "8px",
                     }}

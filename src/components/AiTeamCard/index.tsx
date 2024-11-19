@@ -78,7 +78,6 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                     }} />
                     <Typography 
                         variant="body2" 
-                        color="text.secondary"
                         sx={{pt:"2px"}}
                     >
                         {aiTeam.address || t.aiTeamsList.noAddress}
@@ -93,12 +92,11 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                             px: typography.badge.padding.x,
                             py: typography.badge.padding.y,
                             borderRadius: borders.badgeRadius,
-                            backgroundColor: alpha(theme.palette.primary.main, 0.1),
-                            color: theme.palette.primary.main,
+                            backgroundColor: alpha(theme.palette.secondary.main, 0.75),
                             height: dimensions.card.badgeHeight
                         }}
                     >
-                        <Typography sx={{pt:"2px"}} variant="body2">
+                        <Typography sx={{pt:"2px"}} color={theme.palette.primary.contrastText}>
                             {t.aiTeamsList.llmKeyBadge}
                         </Typography>
                     </Box>
@@ -107,7 +105,6 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                 <Box sx={{ mb: 0 }}>
                     <Typography 
                         variant="body2" 
-                        color="text.secondary"
                         sx={{
                             display: '-webkit-box',
                             WebkitLineClamp: typography.description.lines,
@@ -141,12 +138,12 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                     <Tooltip title={aiTeam.owner_data?.email || t.aiTeamsList.noOwner}>
                         <Typography 
                             variant="body2" 
-                            color="text.secondary"
                             sx={{
                                 pt:"2px",
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
                                 whiteSpace: 'nowrap',
+                                ml: '-8px',
                             }}
                         >
                             {aiTeam.owner_data?.email 
@@ -172,7 +169,12 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                                 size="small"
                                 sx={{ 
                                     width: dimensions.card.actionButtonSize,
-                                    height: dimensions.card.actionButtonSize
+                                    height: dimensions.card.actionButtonSize,
+                                    pl: index === 0 ? '7px' : '6pxpx',
+                                    backgroundColor: index !== 2 ? alpha(theme.palette.primary.light, 0.5) : alpha(theme.palette.error.main, 0.125),
+                                    '&:hover': {
+                                        backgroundColor: index !== 2 ? alpha(theme.palette.primary.light, 0.75) : alpha(theme.palette.error.main, 0.25),
+                                    }
                                 }}
                             >
                                 {action.icon}

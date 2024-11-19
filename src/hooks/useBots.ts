@@ -84,11 +84,11 @@ const useBotsApi = (): UseBotsApi => {
   const { apiGet, apiPost, apiPut, apiDelete } = useApi();
 
   const getBotDetails = (botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiGet(`api/bot/${botId}/`);
+    return apiGet(`bot/${botId}/`);
   };
 
   const getBotsList = (aiTeamId: string, filterParams: string): Promise<ApiResponse<AgentData[]>> => {
-    return apiGet(`api/bot/${aiTeamId}/${filterParams}`);
+    return apiGet(`bot/${aiTeamId}/${filterParams}`);
   };
 
   const createBot = (data: BotFormData, teamId: string): Promise<ApiResponse<AgentData>> => {

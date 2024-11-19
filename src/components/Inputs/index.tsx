@@ -25,13 +25,13 @@ import {
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   "& label": {
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.light,
     fontSize: "100%",
     paddingRight: "1%",
     backgroundColor: "transparent",
   },
   "& label.Mui-focused": {
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.light,
     fontSize: "100%",
   },
   "& label.Mui-error": {
@@ -44,10 +44,10 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
       borderColor: "white",
     },
     "&:hover fieldset": {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.light,
     },
     "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.light,
     },
     "&.MuiInput-placeholder": {
       color: "white",
@@ -60,13 +60,13 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
 
 const StyledMultilineTextField = styled(TextField)(({ theme }) => ({
   "& label": {
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.light,
     fontSize: "100%",
     paddingRight: "1%",
     backgroundColor: "transparent",
   },
   "& label.Mui-focused": {
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.light,
     fontSize: "100%",
   },
   "& label.Mui-error": {
@@ -79,15 +79,15 @@ const StyledMultilineTextField = styled(TextField)(({ theme }) => ({
     scrollBehavior: "smooth",
     scrollbarGutter: "none",
     scrollbarWidth: "thin",
-    scrollbarColor: `${theme.palette.primary.main} transparent`,
+    scrollbarColor: `${theme.palette.primary.light} transparent`,
     "& fieldset": {
       borderColor: "white",
     },
     "&:hover fieldset": {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.light,
     },
     "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.light,
     },
     "&.MuiInput-placeholder": {
       color: "white",
@@ -100,12 +100,12 @@ const StyledMultilineTextField = styled(TextField)(({ theme }) => ({
 
 const StyledPasswordField = styled(TextField)(({ theme }) => ({
   "& label": {
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.light,
     fontSize: "100%",
     paddingRight: "2%",
   },
   "& label.Mui-focused": {
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.light,
     fontSize: "100%",
   },
   "& label.Mui-error": {
@@ -118,10 +118,10 @@ const StyledPasswordField = styled(TextField)(({ theme }) => ({
       borderColor: "white",
     },
     "&:hover fieldset": {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.light,
     },
     "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.primary.light,
     },
     "&.MuiInput-placeholder": {
       color: "white",
@@ -139,12 +139,12 @@ const StyledPasswordField = styled(TextField)(({ theme }) => ({
 const StyledPasswordIconButton = styled(Button)(({ theme }) => ({
   color: "white",
   "&:hover": {
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.light,
   },
 }));
 
 const StyledCheckbox = styled(Checkbox)(({ theme }) => ({
-  color: theme.palette.primary.main,
+  color: theme.palette.primary.light,
 }));
 
 const StyledSelect = styled(Select)(({ theme }) => ({
@@ -153,13 +153,13 @@ const StyledSelect = styled(Select)(({ theme }) => ({
     borderColor: "white",
   },
   "&:hover .MuiOutlinedInput-notchedOutline": {
-    borderColor: theme.palette.primary.main,
+    borderColor: theme.palette.primary.light,
   },
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: theme.palette.primary.main,
+    borderColor: theme.palette.primary.light,
   },
   "& .MuiSelect-icon": {
-    color: theme.palette.primary.main,
+    color: theme.palette.primary.light,
   },
 }));
 
@@ -301,7 +301,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
         borderRadius: "5px",
         border: "1px solid #DDDDDD",
         "&:hover": {
-          borderColor: theme.palette.primary.main,
+          borderColor: theme.palette.primary.light,
         },
       }}
     >
@@ -309,7 +309,7 @@ export const ImageInput: React.FC<ImageInputProps> = ({
         <Typography
           sx={{
             fontSize: "100%",
-            color: theme.palette.primary.main,
+            color: theme.palette.primary.light,
           }}
         >
           {label}
@@ -322,9 +322,9 @@ export const ImageInput: React.FC<ImageInputProps> = ({
           }}
           sx={{
             backgroundColor: theme.palette.secondary.dark,
-            color: theme.palette.primary.main,
+            color: theme.palette.primary.light,
             "&:hover": {
-              backgroundColor: theme.palette.primary.main,
+              backgroundColor: theme.palette.primary.light,
               color: theme.palette.secondary.dark,
             },
           }}
@@ -380,7 +380,7 @@ export const FileInput: React.FC<FileInputProps> = ({
           borderRadius: "5px",
           border: "1px solid #DDDDDD",
           "&:hover": {
-            borderColor: theme.palette.primary.main,
+            borderColor: theme.palette.primary.light,
           },
         }}
       >
@@ -388,7 +388,7 @@ export const FileInput: React.FC<FileInputProps> = ({
           <Typography
             sx={{
               fontSize: "100%",
-              color: theme.palette.primary.main,
+              color: theme.palette.primary.light,
             }}
           >
             {label}
@@ -401,9 +401,9 @@ export const FileInput: React.FC<FileInputProps> = ({
             }}
             sx={{
               backgroundColor: theme.palette.secondary.dark,
-              color: theme.palette.primary.main,
+              color: theme.palette.primary.light,
               "&:hover": {
-                backgroundColor: theme.palette.primary.main,
+                backgroundColor: theme.palette.primary.light,
                 color: theme.palette.secondary.dark,
               },
             }}
@@ -433,7 +433,7 @@ export const CheckboxInput: React.FC<CheckboxInputProps> = ({
     <Box display={"flex"} flexDirection={"row"} alignItems={"center"}>
       <Typography
         sx={{
-          color: theme.palette.primary.main,
+          color: theme.palette.primary.light,
           marginRight: "1%",
           fontSize: "90%",
           textAlign: "center",
@@ -462,7 +462,7 @@ export const SelectInput: React.FC<SelectInputProps> = ({
     <Box>
       <Typography
         sx={{
-          color: theme.palette.primary.main,
+          color: theme.palette.primary.light,
           marginBottom: "8px",
           fontSize: "16px",
         }}
