@@ -120,7 +120,7 @@ const Login: React.FC = () => {
           component={motion.div}
           initial={false}
           animate={{
-            top: showLoginForm ? 'calc(50vh + 12px)' : 'calc(50vh + 67px)',
+            top: showLoginForm ? 'calc(50% + 12px)' : 'calc(50% + 67px)',
           }}
           transition={{
             duration: 0.5,
@@ -131,7 +131,7 @@ const Login: React.FC = () => {
           sx={{
             position: 'fixed',
             left: '50%',
-            transform: 'translate(-50vh, calc(-50vh - 90px))',
+            transform: 'translate(-50%, calc(-50% - 90px))',
             zIndex: 4,
             width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' },
             pointerEvents: 'none',
@@ -208,7 +208,7 @@ const Login: React.FC = () => {
           }}
           sx={{
             zIndex: 2,
-            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+            backgroundColor: { lg: 'rgba(255, 255, 255, 0.05)', md: 'rgba(255, 255, 255, 0.05)', xs: 'transparent' },
             backdropFilter: 'blur(5px)',
             borderRadius: '15px',
             padding: '2.rem',
