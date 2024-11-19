@@ -1,9 +1,8 @@
 import { styled } from "@mui/material";
 import "@/assets/fonts/ROBO.css"
-import { useAppContext } from "@/context";
-import { useFontLoader } from "@/hooks/useFontLoader";
+import { motion } from "framer-motion";
 
-const StyledGlowingText = styled('h1')(({ theme }) => ({
+const StyledGlowingText = styled(motion.h1)(({ theme }) => ({
     color: '#fff',
     fontSize: '4.5rem',
     fontWeight: 'bold',
@@ -37,13 +36,15 @@ const StyledGlowingText = styled('h1')(({ theme }) => ({
 }));
 
 const GlowingText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const fontLoaded = useFontLoader();
-
-    if (!fontLoaded) {
-        return <div style={{ height: '4.5rem' }} />;
-    }
-
-    return <StyledGlowingText>{children}</StyledGlowingText>;
+    return (
+        <StyledGlowingText
+            initial={{ opacity: 1 }}
+            animate={{ opacity: 1 }}
+            style={{ opacity: 1 }}
+        >
+            {children}
+        </StyledGlowingText>
+    );
 };
 
 export default GlowingText; 

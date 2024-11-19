@@ -1,28 +1,25 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppContext } from '@/context';
 import { fontStorage } from '@/services/font';
 
 export const useFontLoader = () => {
-  let contextFontLoaded, setContextFontLoaded;
+  const [localFontLoaded, setLocalFontLoaded] = useState(() => fontStorage().getFontLoaded());
+  let contextFontLoaded = false;
+  let setContextFontLoaded: ((value: boolean) => void) | null = null;
+
   try {
     const context = useAppContext();
     contextFontLoaded = context.fontLoaded;
-    setContextFontLoaded = context.setFontLoaded;
+    setContextFontLoaded = (value: boolean) => context.setFontLoaded(value);
   } catch (error) {
-    const { getFontLoaded } = fontStorage();
-    return getFontLoaded();
+    // Si no hay contexto, usamos el estado local
   }
 
   useEffect(() => {
-    if (contextFontLoaded) return;
+    // Si ya está cargada en el contexto o localmente, no hacemos nada
+    if (contextFontLoaded || localFontLoaded) return;
 
-    const { getFontLoaded, saveFontLoaded } = fontStorage();
-    const isFontLoaded = getFontLoaded();
-
-    if (isFontLoaded) {
-      setContextFontLoaded(true);
-      return;
-    }
+    const { saveFontLoaded } = fontStorage();
 
     const loadFont = async () => {
       try {
@@ -33,17 +30,20 @@ export const useFontLoader = () => {
 
         const loadedFont = await font.load();
         document.fonts.add(loadedFont);
-        setContextFontLoaded(true);
+        if (setContextFontLoaded) setContextFontLoaded(true);
+        setLocalFontLoaded(true);
         saveFontLoaded(true);
       } catch (error) {
         console.error('Error cargando la fuente:', error);
-        setContextFontLoaded(true);
+        if (setContextFontLoaded) setContextFontLoaded(true);
+        setLocalFontLoaded(true);
         saveFontLoaded(true);
       }
     };
 
     loadFont();
-  }, [contextFontLoaded, setContextFontLoaded]);
+  }, [contextFontLoaded, localFontLoaded, setContextFontLoaded]);
 
-  return contextFontLoaded;
+  // Retornamos el estado del contexto si está disponible, si no, el estado local
+  return contextFontLoaded || localFontLoaded;
 }; 

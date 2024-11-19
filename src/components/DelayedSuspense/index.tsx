@@ -1,32 +1,46 @@
-import React, { Suspense, useEffect, useState } from 'react';
-import LoadingFallback from '@/components/LoadingFallback';
+import React, { Suspense } from 'react';
+import LoadingFallback from '../LoadingFallback';
+import { Box } from '@mui/material';
+import GlowingText from '../GlowingText';
+import { useAppContext } from '@/context';
 
 interface DelayedSuspenseProps {
   children: React.ReactNode;
-  minimumDelay?: number;
 }
 
-const DelayedSuspense: React.FC<DelayedSuspenseProps> = ({ 
-  children, 
-  minimumDelay = 1000 
-}) => {
-  const [shouldRender, setShouldRender] = useState(false);
+const DelayedSuspense: React.FC<DelayedSuspenseProps> = ({ children }) => {
+  const { fontLoaded } = useAppContext();
 
-  useEffect(() => {
-    setShouldRender(false);
-    const timer = setTimeout(() => {
-      setShouldRender(true);
-    }, minimumDelay);
-
-    return () => {
-      clearTimeout(timer);
-      setShouldRender(false);
-    };
-  }, [minimumDelay, children]);
+  if (!fontLoaded) {
+    return (
+      <Box 
+        sx={{
+          height: "100vh",
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          position: 'relative'
+        }}
+      >
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' },
+          }}
+        >
+          <GlowingText>gENTS</GlowingText>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Suspense fallback={<LoadingFallback />}>
-      {shouldRender ? children : <LoadingFallback />}
+      {children}
     </Suspense>
   );
 };

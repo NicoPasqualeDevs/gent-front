@@ -11,12 +11,12 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <DelayedSuspense>
-        <AppProvider>
+      <AppProvider>
+        <DelayedSuspense>
           <AppRoutes />
           <ToastContainer theme={"colored"} />
-        </AppProvider>
-      </DelayedSuspense>
+        </DelayedSuspense>
+      </AppProvider>
     </ThemeProvider>
   );
 }
