@@ -1,7 +1,7 @@
 import { styled } from "@mui/material";
-import "@/assets/fonts/ROBO.css"
+import { useEffect, useState } from "react";
 
-const GlowingText = styled('h1')(({ theme }) => ({
+const StyledGlowingText = styled('h1')(({ theme }) => ({
     color: '#fff',
     fontSize: '4.5rem',
     fontWeight: 'bold',
@@ -33,5 +33,32 @@ const GlowingText = styled('h1')(({ theme }) => ({
         fontSize: '3rem',
     }
 }));
+
+const GlowingText = ({ children }: { children: React.ReactNode }) => {
+    const [fontLoaded, setFontLoaded] = useState(false);
+
+    useEffect(() => {
+        // Creamos una nueva instancia de FontFace
+        const font = new FontFace('ROBO', 'url(/fonts/ROBO.ttf)');
+        
+        // Esperamos a que la fuente se cargue
+        font.load().then(() => {
+            // Añadimos la fuente al registro de fuentes del documento
+            document.fonts.add(font);
+            setFontLoaded(true);
+        }).catch((err) => {
+            console.error('Error cargando la fuente ROBO:', err);
+            // Si hay error, mostramos el texto de todas formas
+            setFontLoaded(true);
+        });
+    }, []);
+
+    // Mientras la fuente se está cargando, podemos mostrar un espacio vacío o un loading
+    if (!fontLoaded) {
+        return <div style={{ height: '4.5rem' }} />;
+    }
+
+    return <StyledGlowingText>{children}</StyledGlowingText>;
+};
 
 export default GlowingText; 
