@@ -14,13 +14,14 @@ import Snowfall from 'react-snowfall';
 import LanguageSelector from '@/components/LanguageSelector';
 import { languages } from "@/utils/Traslations";
 import GlowingText from '@/components/GlowingText';
-
+import { useMediaQuery } from "@mui/material";
 interface LoginInputError {
   email: string;
   password: string;
 }
 
 const Login: React.FC = () => {
+  const isMobile = useMediaQuery('(max-width:600px)');
   const navigate = useNavigate();
   const { setAuth, setNavElevation, language } = useAppContext();
   const { loginUser } = useAuth();
@@ -120,7 +121,7 @@ const Login: React.FC = () => {
           component={motion.div}
           initial={false}
           animate={{
-            top: showLoginForm ? 'calc(50% + 12px)' : 'calc(50% + 67px)',
+            top: !isMobile ? showLoginForm ? 'calc(50% + 12px)' : 'calc(50% + 67px)' : showLoginForm ?  'calc(50% + 32px)' : 'calc(50% + 67px)',
           }}
           transition={{
             duration: 0.5,

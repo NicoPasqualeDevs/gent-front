@@ -5,7 +5,7 @@ import { PathData } from "@/types/Pathbar";
 import { Breakpoint } from "@mui/material";
 import { menuStorage } from "@/services/menu";
 import { languageStorage } from "@/services/language";
-import { fontStorage } from '@/services/font';
+import { fontStorage } from "@/services/font";
 
 export interface AppContextState {
   menu: boolean;

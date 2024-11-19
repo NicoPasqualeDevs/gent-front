@@ -3,10 +3,10 @@ import React from "react";
 import Box from "@mui/material/Box";
 import GlowingText from "../GlowingText";
 import textLogo from "@/assets/site/text-logo.png";
-import { useFontLoader } from "@/hooks/useFontLoader";
+import { useAppContext } from "@/context";
 
 const LoadingFallback: React.FC = () => {
-    const fontLoaded = useFontLoader();
+    const { fontLoaded } = useAppContext();
     
     return (
         <Box sx={{
