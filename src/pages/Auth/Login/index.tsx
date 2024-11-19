@@ -370,11 +370,11 @@ const Login: React.FC = () => {
                     <Typography
                       textAlign="center"
                       sx={{
-                        mt: "-156px",
+                        mt: !isMobile ? "-156px" : "-162px",
                         fontWeight: 'normal',
                         color: theme.palette.secondary.light,
                         textShadow: '0 0 5px rgba(0,0,0,0.3)',
-                        lineHeight: '96px',
+                        lineHeight: !isMobile ? '96px' : '72px',
                         fontSize: {
                           xs: '18px',
                           sm: '20px',

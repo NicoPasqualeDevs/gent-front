@@ -13,7 +13,9 @@ export const useFontLoader = () => {
             console.log(response);
             if (response.ok) {
                 context.setFontLoaded(true);
-                saveFontLoaded(true);
+                setTimeout(() => {
+                    saveFontLoaded(true);
+                }, 1000);
             } else {
                 throw new Error('No se pudo cargar la fuente');
             }

@@ -4,10 +4,13 @@ import Box from "@mui/material/Box";
 import GlowingText from "../GlowingText";
 import textLogo from "@/assets/site/text-logo.png";
 import { useAppContext } from "@/context";
+import { useMediaQuery } from "@mui/material";
+
 
 const LoadingFallback: React.FC = () => {
     const { fontLoaded } = useAppContext();
-    
+    const isMobile = useMediaQuery('(max-width:600px)');
+
     return (
         <Box sx={{
             textAlign: "center",
@@ -25,9 +28,9 @@ const LoadingFallback: React.FC = () => {
                             src={textLogo}
                             alt="gENTS"
                             style={{
-                                width: '300px',
+                                width: !isMobile ? '300px' : '236px',
                                 marginBottom: '132px',
-                                height: '76px',
+                                height: !isMobile ? '76px' : '62px',
                                 filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.2))'
                             }}
                         />
