@@ -1,26 +1,37 @@
 import { useState, useCallback } from 'react';
-import { fontStorage } from '@/services/font';
+
 
 export const useFontLoader = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const loadFont = useCallback(async () => {
-        if (isLoading) return;
+        if (isLoading) return false;
         
         setIsLoading(true);
         try {
-            const response = await fetch('https://gentsbuilder.com/fonts/ROBO.woff2');
-            if (response.ok) {
-                setTimeout(() => {
-                    fontStorage.saveFontLoaded(true);
-                }, 500);
+            // Verificamos si la fuente ya está disponible en el documento
+            const isFontAvailable = document.fonts.check('12px ROBO');
+            if (isFontAvailable) {
                 return true;
-            } else {
-                throw new Error('No se pudo cargar la fuente');
             }
+
+            const font = new FontFace('ROBO', 'url(https://gentsbuilder.com/fonts/ROBO.woff2)');
+            const loadedFont = await font.load();
+            document.fonts.add(loadedFont);
+            console.log(font, "<-- font")
+            // Esperamos a que la fuente esté realmente lista
+            await document.fonts.ready;
+            
+            // Verificación final
+            const finalCheck = document.fonts.check('12px ROBO');
+            console.log(finalCheck, "<-- finalCheck")
+            if (!finalCheck) {
+                throw new Error('La fuente no se cargó correctamente');
+            }
+            
+            return true;
         } catch (error) {
             console.error('Error al cargar la fuente:', error);
-            fontStorage.saveFontLoaded(false);
             return false;
         } finally {
             setIsLoading(false);

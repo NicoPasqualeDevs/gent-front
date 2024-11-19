@@ -9,10 +9,18 @@ export const useFontService = () => {
 
     useEffect(() => {
         const initializeFont = async () => {
-            if (!fontStorage.getFontLoaded()) {
+            const isFontLoaded = fontStorage.getFontLoaded();
+            
+            if (isFontLoaded) {
+                setFontLoaded(true);
+            } else {
                 const success = await loadFont();
                 if (success) {
+                    fontStorage.saveFontLoaded(true);
                     setFontLoaded(true);
+                } else {
+                    fontStorage.saveFontLoaded(false);
+                    setFontLoaded(false);
                 }
             }
         };
