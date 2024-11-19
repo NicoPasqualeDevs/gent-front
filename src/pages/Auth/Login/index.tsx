@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Grid, Typography, Box, CircularProgress } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
+import "@/assets/fonts/ROBO.css"
 import { AuthLoginData, AuthUser } from "@/types/Auth";
 import useAuth from "@/hooks/useAuth";
 import { ErrorToast } from "@/components/Toast";
@@ -23,7 +24,7 @@ interface LoginInputError {
 const Login: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
   const navigate = useNavigate();
-  const { setAuth, setNavElevation, language } = useAppContext();
+  const { setAuth, setNavElevation, language, fontLoaded } = useAppContext();
   const { loginUser } = useAuth();
   const [inputError, setInputError] = useState<LoginInputError>({
     email: " ",
@@ -121,7 +122,13 @@ const Login: React.FC = () => {
           component={motion.div}
           initial={false}
           animate={{
-            top: !isMobile ? showLoginForm ? 'calc(50% + 12px)' : 'calc(50% + 67px)' : showLoginForm ?  'calc(50% + 32px)' : 'calc(50% + 67px)',
+            top: !isMobile 
+              ? showLoginForm 
+                ? 'calc(50vh + 12px)' 
+                : 'calc(50vh + 67px)' 
+              : showLoginForm 
+                ? 'calc(50vh + 32px)' 
+                : 'calc(50vh + 67px)',
           }}
           transition={{
             duration: 0.5,
@@ -139,7 +146,9 @@ const Login: React.FC = () => {
             opacity: 1,
           }}
         >
-          <GlowingText>gENTS</GlowingText>
+          {fontLoaded && (
+            <GlowingText>gENTS</GlowingText>
+          )}
         </Box>
       </AnimatePresence>
       <Box

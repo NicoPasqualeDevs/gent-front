@@ -3,7 +3,10 @@ const FONT_STORAGE_KEY = 'gents-font-loaded';
 export const fontStorage = () => {
   const getFontLoaded = (): boolean => {
     try {
-      return sessionStorage.getItem(FONT_STORAGE_KEY) === 'true';
+      if(localStorage.getItem(FONT_STORAGE_KEY) || sessionStorage.getItem(FONT_STORAGE_KEY)) {
+        return true;
+      }
+      return false;
     } catch {
       return false;
     }
