@@ -1,7 +1,8 @@
 import { styled } from "@mui/material";
 import "@/assets/fonts/ROBO.css"
+import { useFontLoader } from "@/hooks/useFontLoader";
 
-const GlowingText = styled('h1')(({ theme }) => ({
+const StyledGlowingText = styled('h1')(({ theme }) => ({
     color: '#fff',
     fontSize: '4.5rem',
     fontWeight: 'bold',
@@ -33,5 +34,15 @@ const GlowingText = styled('h1')(({ theme }) => ({
         fontSize: '3rem',
     }
 }));
+
+const GlowingText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const fontLoaded = useFontLoader('ROBO');
+
+    if (!fontLoaded) {
+        return <div style={{ height: '4.5rem' }} />; // Placeholder mientras carga
+    }
+
+    return <StyledGlowingText>{children}</StyledGlowingText>;
+};
 
 export default GlowingText; 
