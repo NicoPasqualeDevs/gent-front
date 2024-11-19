@@ -36,6 +36,12 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      setShowLoginForm(true);
+    }
+
     const interval = setInterval(() => {
       setRotatingText((prevText) => (prevText + 1) % t.rotatingTexts.length);
     }, 5000);
@@ -125,10 +131,11 @@ const Login: React.FC = () => {
         width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' },
         pointerEvents: 'none',
         opacity: 1,
-        visibility: 'visible',
+        visibility: { xs: showLoginForm ? 'hidden' : 'visible', sm: 'visible' },
+        display: { xs: showLoginForm ? 'none' : 'block', sm: 'block' },
       }}
       component={motion.div}
-      animate={ showLoginForm ? {
+      animate={showLoginForm ? {
         top: 'calc(50% + 18px)'
       } : undefined}
       transition={{ duration: 0.5, ease: "anticipate", type: "spring", stiffness: 100, damping: 15 }}
