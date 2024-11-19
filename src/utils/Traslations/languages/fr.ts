@@ -128,7 +128,7 @@ const fr: TranslationType = {
   },
   login: {
     title: "Gents",
-    subtitle: "Projet basé sur l'IA par Nicolas Pasquale",
+    subtitle: "GENTS® système basé sur l'IA générative",
     version: "v 0.1",
     rotatingTexts: [
       "Créez et partagez des agents IA",

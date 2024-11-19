@@ -189,7 +189,7 @@ const br: TranslationType = {
     successUnrelate: "Ferramenta desvinculada com sucesso",
     errorRelate: "Erro ao relacionar ferramenta",
     errorUnrelate: "Erro ao desvincular ferramenta",
-    errorToken: "Erro de autenticação",
+    errorToken: "Erro de autenticaç��o",
     errorLoading: "Erro ao carregar ferramentas",
     createToolButton: "Criar Ferramenta",
     title: "Ferramentas",

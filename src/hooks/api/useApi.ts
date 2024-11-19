@@ -30,7 +30,7 @@ const useApi = (): UseApiHook => {
   const { auth } = useAppContext();
   const token = auth?.token;
   //const apiBase = import.meta.env.VITE_API_URL || '127.0.0.1:8000/';
-  const apiBase = "http://127.0.0.1:8000/";
+  const apiBase = "http://127.0.0.1:8000/api/";
   const handleResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
     if (!response.ok) {
       const error = await response.json();
