@@ -17,7 +17,7 @@ const useAdmin = (): UseAdminHook => {
   const { apiGet } = useApi();
 
   const listNonSuperUsers = async (): Promise<ApiResponse<NonSuperUser[]>> => {
-    const path = "api/list-non-super-users/";
+    const path = "list-non-super-users/";
     const response = await apiGet<NonSuperUser[]>(path);
     return response;
   };

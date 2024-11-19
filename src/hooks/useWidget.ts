@@ -13,7 +13,7 @@ const useWidget = (): UseWidgetApi => {
   const { apiGet, apiPatch } = useApi();
 
   const getWidget = useCallback(async (botId: string): Promise<ApiResponse<WidgetData>> => {
-    return apiGet(`api/widgets/${botId}`);
+    return apiGet(`widgets/${botId}`);
   }, [apiGet]);
 
   const patchWidget = useCallback(async (
