@@ -40,7 +40,6 @@ export default defineConfig({
       },
     },
     chunkSizeWarningLimit: 1000,
-    sourcemap: true,
   },
   server: {
     proxy: {
