@@ -1,5 +1,4 @@
 import { styled } from "@mui/material";
-import "@/assets/fonts/ROBO.css"
 import { motion } from "framer-motion";
 
 const StyledGlowingText = styled(motion.h1)(({ theme }) => ({

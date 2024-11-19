@@ -1,4 +1,5 @@
 import { createTheme as createThemeDefault, responsiveFontSizes } from "@mui/material/styles";
+import "@/assets/fonts/ROBO.css"
 
 export const primaryMainColor = "#6b8bbd";
 export const primaryLightColor = "#A3BDE6";
