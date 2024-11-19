@@ -50,7 +50,7 @@ export const INITIAL_STATE: AppContextState = {
   language: languageStorage().getLanguage(),
   clientPage: 1,
   showRobotCardHelp: true,
-  fontLoaded: localStorage.getItem('gents-font-loaded') === 'true' || fontStorage().getFontLoaded(),
+  fontLoaded: fontStorage().getFontLoaded(),
   setAiTeams: () => { /* noop */ },
   setLoaded: () => { /* noop */ },
   setMenu: () => { /* noop */ },

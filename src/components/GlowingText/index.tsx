@@ -1,5 +1,6 @@
-import { styled } from "@mui/material";
+import { styled, Skeleton } from "@mui/material";
 import { motion } from "framer-motion";
+import { useAppContext } from "@/context";
 
 const StyledGlowingText = styled(motion.h1)(({ theme }) => ({
     color: '#fff',
@@ -35,14 +36,22 @@ const StyledGlowingText = styled(motion.h1)(({ theme }) => ({
 }));
 
 const GlowingText: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { fontLoaded } = useAppContext();
     return (
-        <StyledGlowingText
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 1 }}
-            style={{ opacity: 1 }}
-        >
-            {children}
-        </StyledGlowingText>
+        <>
+            {fontLoaded && (
+                <StyledGlowingText
+                    initial={{ opacity: 1 }}
+                    animate={{ opacity: 1 }}
+                    style={{ opacity: 1 }}
+                >
+                    {children}
+                </StyledGlowingText>
+            )}
+            {!fontLoaded && (
+                <Skeleton variant="text" width="100%" height="100%" />
+            )}
+        </>
     );
 };
 

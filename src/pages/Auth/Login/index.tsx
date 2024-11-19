@@ -122,12 +122,12 @@ const Login: React.FC = () => {
           component={motion.div}
           initial={false}
           animate={{
-            top: !isMobile 
-              ? showLoginForm 
-                ? 'calc(50vh + 12px)' 
-                : 'calc(50vh + 67px)' 
-              : showLoginForm 
-                ? 'calc(50vh + 32px)' 
+            top: !isMobile
+              ? showLoginForm
+                ? 'calc(50vh + 12px)'
+                : 'calc(50vh + 67px)'
+              : showLoginForm
+                ? 'calc(50vh + 32px)'
                 : 'calc(50vh + 67px)',
           }}
           transition={{
@@ -146,9 +146,7 @@ const Login: React.FC = () => {
             opacity: 1,
           }}
         >
-          {fontLoaded && (
-            <GlowingText>gENTS</GlowingText>
-          )}
+          <GlowingText>gENTS</GlowingText>
         </Box>
       </AnimatePresence>
       <Box
