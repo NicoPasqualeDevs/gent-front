@@ -110,19 +110,19 @@ const useBotsApi = (): UseBotsApi => {
       owner: teamId
     };
 
-    return apiPost(`api/bot/${teamId}/`, payload);
+    return apiPost(`bot/${teamId}/`, payload);
   };
 
   const updateBot = (data: BotFormData, botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiPut(`api/bot/${botId}/`, data);
+    return apiPut(`bot/${botId}/`, data);
   };
 
   const updateBotData = (data: BotDataFormData, botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiPut(`api/bots/${botId}/data/`, data);
+    return apiPut(`bot/${botId}/data/`, data);
   };
 
   const deleteBot = (botId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`api/bot/${botId}/`);
+    return apiDelete(`bot/${botId}/`);
   };
 
   const uploadDocument = async (
@@ -132,73 +132,73 @@ const useBotsApi = (): UseBotsApi => {
     const formData = new FormData();
     formData.append('file', file);
 
-    return apiPost<void>(`api/bot/${botId}/upload/`, formData);
+    return apiPost<void>(`bot/${botId}/upload/`, formData);
   };
 
   const getChatHistory = (botId: string): Promise<ApiResponse<ChatHistory>> => {
-    return apiGet(`api/chat/${botId}/`);
+      return apiGet(`chat/${botId}/`);
   };
 
   const sendMessage = async (botId: string, data: { message: string }): Promise<ApiResponse<ServerMessageResponse>> => {
-    return apiPost(`api/chat/${botId}/`, data);
+    return apiPost(`chat/${botId}/`, data);
   };
 
   const closeChat = async (conversationId: string): Promise<void> => {
-    await apiPost(`api/chat/clean-chat/`, { conversation_id: conversationId });
+      await apiPost(`chat/clean-chat/`, { conversation_id: conversationId });
     return;
   };
 
   const getAgentData = (botId: string): Promise<ApiResponse<AgentData>> => {
-    return apiGet(`api/bot/modify/${botId}/`);
+    return apiGet(`bot/modify/${botId}/`);
   };
 
   const getClientBotConversations = async (botId: string): Promise<ConversationData[]> => {
-    const response = await apiGet(`api/chat/conversations/${botId}/`);
+    const response = await apiGet(`chat/conversations/${botId}/`);
     return response.data as ConversationData[];
   };
 
   const postTool = (data: FormData): Promise<unknown> => {
-    return apiPost('api/tools/', data);
+      return apiPost('tools/', data);
   };
 
   const getAllTools = (): Promise<unknown> => {
-    return apiGet('api/tools/');
+    return apiGet('tools/');
   };
 
   const getBotTools = (botId: string): Promise<unknown> => {
-    return apiGet(`api/bot/${botId}/tools/`);
+    return apiGet(`bot/${botId}/tools/`);
   };
 
   const setToolRelationship = (data: ToolRelationshipData): Promise<unknown> => {
-    return apiPost('api/tools/relationship/', data as Record<string, unknown>);
+    return apiPost('tools/relationship/', data as Record<string, unknown>);
   };
 
   const removeToolRelationship = (data: ToolRelationshipData): Promise<unknown> => {
-    return apiDelete(`api/tools/relationship/`, { data });
+    return apiDelete(`tools/relationship/`, { data });
   };
 
   const getKnowledgeTags = (botId: string): Promise<ApiResponse<KnowledgeTag[]>> => {
-    return apiGet(`api/ktag/${botId}/`);
+      return apiGet(`ktag/${botId}/`);
   };
 
   const createKnowledgeTag = (botId: string, data: KnowledgeTag): Promise<ApiResponse<KnowledgeTag>> => {
-    return apiPost(`api/ktag/${botId}/`, data as Record<string, unknown>);
+      return apiPost(`ktag/${botId}/`, data as Record<string, unknown>);
   };
 
   const updateKnowledgeTag = (tagId: string, data: KnowledgeTag): Promise<ApiResponse<KnowledgeTag>> => {
-    return apiPut(`api/ktag/modify/${tagId}/`, data as Record<string, unknown>);
+      return apiPut(`ktag/modify/${tagId}/`, data as Record<string, unknown>);
   };
 
   const deleteKnowledgeTag = (tagId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`api/ktag/modify/${tagId}/`);
+      return apiDelete(`ktag/modify/${tagId}/`);
   };
 
   const getPromptTemplate = (botId: string): Promise<ApiResponse<string>> => {
-    return apiGet(`api/bot/prompt/${botId}/`);
+    return apiGet(`bot/prompt/${botId}/`);
   };
 
   const savePromptTemplate = (botId: string, promptTemplate: string): Promise<ApiResponse<void>> => {
-    return apiPost(`api/bot/prompt/${botId}/`, {
+    return apiPost(`bot/prompt/${botId}/`, {
       prompt_template: promptTemplate
     });
   };
