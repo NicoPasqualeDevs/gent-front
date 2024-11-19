@@ -113,32 +113,35 @@ const Login: React.FC = () => {
     formik.handleSubmit(e);
   };
 
-  const GlowingTextContainer = () => (
-    <Box
-      sx={{
-        position: 'fixed',
-        top: 'calc(50% + 67px)',
-        left: '50%',
-        transform: 'translate(-50%, calc(-50% - 90px))',
-        zIndex: 4,
-        width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' },
-        pointerEvents: 'none',
-        opacity: 1,
-        visibility: { xs: showLoginForm ? 'hidden' : 'visible', sm: 'visible' },
-        display: { xs: showLoginForm ? 'none' : 'block', sm: 'block' },
-      }}
-      component={motion.div}
-      transition={{ duration: 0.5, ease: "anticipate", type: "spring", stiffness: 100 }}
-    >
-      <GlowingText>gENTS</GlowingText>
-    </Box>
-  );
-
   return (
     <>
-      <GlowingTextContainer />
-      
-      <Box 
+      <AnimatePresence mode="wait">
+        <Box
+          component={motion.div}
+          initial={false}
+          animate={{
+            top: showLoginForm ? 'calc(50% + 12px)' : 'calc(50% + 67px)',
+          }}
+          transition={{
+            duration: 0.5,
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+          }}
+          sx={{
+            position: 'fixed',
+            left: '50%',
+            transform: 'translate(-50%, calc(-50% - 90px))',
+            zIndex: 4,
+            width: { xs: '90%', sm: '75%', md: '50%', lg: '33%' },
+            pointerEvents: 'none',
+            opacity: 1,
+          }}
+        >
+          <GlowingText>gENTS</GlowingText>
+        </Box>
+      </AnimatePresence>
+      <Box
         component={motion.div}
         initial={{ opacity: 0.1 }}
         animate={{ opacity: 1 }}
@@ -352,51 +355,51 @@ const Login: React.FC = () => {
                     xs: "100%",
                     sm: "70%"
                   },
-                  mr:"auto",
-                  ml:"auto",
-                  borderRadius:"24px",
+                  mr: "auto",
+                  ml: "auto",
+                  borderRadius: "24px",
                 }}>
-                <motion.div
-                  key={rotatingText}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Typography
-                    textAlign="center"
-                    sx={{
-                      mt: "-156px",
-                      fontWeight: 'normal',
-                      color: theme.palette.secondary.light,
-                      textShadow: '0 0 5px rgba(0,0,0,0.3)',
-                      lineHeight: '96px',
-                      fontSize: {
-                        xs: '18px',
-                        sm: '20px',
-                        md: '24px'
-                      },
-                      width: {
-                        xs: '100%',
-                        md: '100%'
-                      },
-                      mx: 'auto',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      display: {
-                        xs: '-webkit-box',
-                        sm: 'block'
-                      },
-                      WebkitLineClamp: {
-                        xs: 1,
-                        sm: 'unset'
-                      },
-                      WebkitBoxOrient: 'vertical'
-                    }}
+                  <motion.div
+                    key={rotatingText}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
                   >
-                    {t.rotatingTexts[rotatingText]}
-                  </Typography>
-                </motion.div>
+                    <Typography
+                      textAlign="center"
+                      sx={{
+                        mt: "-156px",
+                        fontWeight: 'normal',
+                        color: theme.palette.secondary.light,
+                        textShadow: '0 0 5px rgba(0,0,0,0.3)',
+                        lineHeight: '96px',
+                        fontSize: {
+                          xs: '18px',
+                          sm: '20px',
+                          md: '24px'
+                        },
+                        width: {
+                          xs: '100%',
+                          md: '100%'
+                        },
+                        mx: 'auto',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: {
+                          xs: '-webkit-box',
+                          sm: 'block'
+                        },
+                        WebkitLineClamp: {
+                          xs: 1,
+                          sm: 'unset'
+                        },
+                        WebkitBoxOrient: 'vertical'
+                      }}
+                    >
+                      {t.rotatingTexts[rotatingText]}
+                    </Typography>
+                  </motion.div>
                 </Box>
                 <Grid item xs={12} sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
                   <motion.div
