@@ -13,7 +13,7 @@ const useWidget = (): UseWidgetApi => {
   const { apiGet, apiPatch } = useApi();
 
   const getWidget = useCallback(async (botId: string): Promise<ApiResponse<WidgetData>> => {
-    return apiGet(`widgets/${botId}`);
+    return apiGet(`widget/${botId}`);
   }, [apiGet]);
 
   const patchWidget = useCallback(async (
@@ -37,7 +37,7 @@ const useWidget = (): UseWidgetApi => {
         }
       });
 
-      return apiPatch(`api/widgets/${widgetId}`, formData);
+      return apiPatch(`widget/${widgetId}`, formData);
     }
 
     const jsonData = Object.entries(data).reduce((acc, [key, value]) => {
@@ -47,11 +47,11 @@ const useWidget = (): UseWidgetApi => {
       return acc;
     }, {} as Record<string, unknown>);
 
-    return apiPatch(`api/widgets/${widgetId}`, jsonData);
+    return apiPatch(`widget/${widgetId}`, jsonData);
   }, [apiPatch]);
 
   const getCustomMessages = useCallback(async (botId: string): Promise<ApiResponse<{ data: CustomGreetingData[] }>> => {
-    return apiGet(`api/widgets/${botId}/messages`);
+    return apiGet(`widget/${botId}/messages`);
   }, [apiGet]);
 
   return useMemo(() => ({
