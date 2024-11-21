@@ -189,7 +189,7 @@ const br: TranslationType = {
     successUnrelate: "Ferramenta desvinculada com sucesso",
     errorRelate: "Erro ao relacionar ferramenta",
     errorUnrelate: "Erro ao desvincular ferramenta",
-    errorToken: "Erro de autenticaç��o",
+    errorToken: "Erro de autenticaço",
     errorLoading: "Erro ao carregar ferramentas",
     createToolButton: "Criar Ferramenta",
     title: "Ferramentas",
@@ -406,7 +406,9 @@ const br: TranslationType = {
       edit: "Edite a configuração básica do seu assistente",
       test: "Teste e observe o comportamento do seu assistente em tempo real e participe das conversas",
       delete: "Exclua seu assistente da plataforma, cuidado você perderá as configurações realizadas"
-    }
+    },
+    configLLM: "Configurar LLM",
+    emptyApiKeys: "Nenhuma chave API configurada"
   }
 };
 

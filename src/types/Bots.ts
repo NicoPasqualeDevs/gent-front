@@ -68,6 +68,7 @@ export interface AgentData {
   };
   widget_url?: string;
   status?: 'online' | 'offline' | 'busy' | 'error' | 'updating';
+  selected_api_key?: string | null;
 }
 
 export interface AgentMetaData {

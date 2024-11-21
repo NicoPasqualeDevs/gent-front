@@ -122,7 +122,7 @@ const useBotsApi = (): UseBotsApi => {
   };
 
   const deleteBot = (botId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`bot/${botId}/`);
+    return apiDelete(`bot/modify/${botId}/`);
   };
 
   const uploadDocument = async (

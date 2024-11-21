@@ -406,7 +406,9 @@ const es: TranslationType = {
       edit: "Edita la configuración básica de tu asistente",
       test: "Prueba y observa el comportamiento de tu asistente en tiempo real y participa en las conversaciones",
       delete: "Elimina tu asistente de la plataforma, cuidado perderás las configuraciones realizadas"
-    }
+    },
+    configLLM: "Configurar LLM",
+    emptyApiKeys: "No hay API keys configuradas"
   }
 };
 

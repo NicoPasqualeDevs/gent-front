@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './styles.css';
-import { IconButton, Tooltip, Typography } from '@mui/material';
+import { IconButton, Tooltip, Typography, Menu, MenuItem, CircularProgress } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import WidgetsIcon from '@mui/icons-material/Widgets';
 import ApiIcon from '@mui/icons-material/Api';
@@ -10,12 +10,15 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BuildIcon from '@mui/icons-material/Build';
 import { TranslationType } from '@/utils/Traslations/types';
 import { useAppContext } from '@/context';
+import useProfile from '@/hooks/useProfile';
+import { ApiKey } from '@/types/UserProfile';
+import { toast } from 'react-toastify';
 
 interface RobotCardProps {
   name: string;
-  description: string;
   lastUpdate: string;
   botId: string;
+  description?: string;
   onTest?: () => void;
   onWidget: () => void;
   onApi: () => void;
@@ -27,11 +30,14 @@ interface RobotCardProps {
   t: TranslationType['robotCard'];
   language?: string;
   status?: 'online' | 'offline' | 'busy' | 'error' | 'updating';
+  selectedApiKey?: string | null;
+  modelAi?: string;
+  onConfigureLLM?: (apiKeyId: number) => void;
 }
 
 const RobotCard: React.FC<RobotCardProps> = ({
   name,
-  description,
+  botId,
   onWidget,
   onApi,
   onEdit,
@@ -40,7 +46,10 @@ const RobotCard: React.FC<RobotCardProps> = ({
   onTools,
   onChat,
   t,
-  status
+  status,
+  selectedApiKey,
+  modelAi,
+  onConfigureLLM
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const eyesRef = useRef<HTMLDivElement>(null);
@@ -50,6 +59,13 @@ const RobotCard: React.FC<RobotCardProps> = ({
   const streamTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const { showRobotCardHelp } = useAppContext();
   const [isTalking, setIsTalking] = useState(false);
+  const [isGlowing, setIsGlowing] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
+  const { getApiKeys, setBotApiKey, updateBotApiKey } = useProfile();
+  const [isLoadingKeys, setIsLoadingKeys] = useState(false);
+  const [hasLoadedKeys, setHasLoadedKeys] = useState(false);
+  const [isUpdatingApiKey, setIsUpdatingApiKey] = useState(false);
 
   // Función para obtener el estado traducido
   const getStatusText = () => {
@@ -207,19 +223,121 @@ const RobotCard: React.FC<RobotCardProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (!selectedApiKey) {
+      const interval = setInterval(() => {
+        setIsGlowing(prev => !prev);
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [selectedApiKey]);
+
+  // Función para cargar las API keys
+  const loadApiKeys = async () => {
+    if (hasLoadedKeys) return;
+    
+    setIsLoadingKeys(true);
+    try {
+      const response = await getApiKeys();
+      console.log('API Response:', response);
+      
+      if (response.success && response.data) {
+        setApiKeys(response.data);
+      }
+    } catch (error) {
+      console.error('Error loading API keys:', error);
+    } finally {
+      setIsLoadingKeys(false);
+      setHasLoadedKeys(true);
+    }
+  };
+
+  const handleClick = async (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    // Primero abrimos el menú
+    setAnchorEl(event.currentTarget);
+    
+    // Luego cargamos las API keys si no se han cargado
+    if (!hasLoadedKeys) {
+      await loadApiKeys();
+    }
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleSelectApiKey = async (apiKey: ApiKey | null) => {
+    setIsUpdatingApiKey(true);
+    try {
+      if (!botId) {
+        throw new Error('ID de bot inválido');
+      }
+
+      let response;
+      if (apiKey === null) {
+        response = await updateBotApiKey(botId);
+      } else {
+        if (selectedApiKey) {
+          response = await updateBotApiKey(botId, apiKey.id);
+        } else {
+          response = await setBotApiKey(botId, apiKey.id);
+        }
+      }
+      
+      if (response.success) {
+        toast.success('API key actualizada correctamente', {
+          position: "bottom-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        
+        if (onConfigureLLM && apiKey !== null) {
+          onConfigureLLM(apiKey.id);
+        }
+      } else {
+        toast.error(response.message || 'Error al actualizar la API key', {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error al actualizar API key:', error);
+      toast.error('Error al actualizar la API key del bot', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    } finally {
+      setIsUpdatingApiKey(false);
+      handleClose();
+    }
+  };
+
 /*   const handleTestClick = () => {
     navigate(`/builder/agents/chat/${botId}`);
   }; */
 
   return (
     <div className="robot-card" ref={cardRef} style={{
-      width: '100%',         // Ocupar todo el ancho disponible del contenedor
-      minWidth: '300px',     // Ancho mínimo aumentado
-      maxWidth: '460px',     // Ancho máximo aumentado
-      margin: '0 auto'       // Centrar la tarjeta en su contenedor
+      width: '100%',
+      minWidth: '300px',
+      maxWidth: '460px',
+      margin: '0 auto'
     }}>
       <div className="robot-actions">
-        {/* Sección de actualizaciones */}
+        {/* Sección de actualizaciones - volvemos al estado original */}
         <div className="action-row top">
           <div className="update-info">
             <Typography 
@@ -329,7 +447,142 @@ const RobotCard: React.FC<RobotCardProps> = ({
       </div>
 
       {name && <h3 className="robot-name">{name}</h3>}
-      {description && <p className="robot-description">{description}</p>}
+      
+      {/* Footer modificado para mostrar el modelo seleccionado o el botón de configuración */}
+      <div style={{ 
+        marginTop: '8px',
+        textAlign: 'center',
+        padding: '4px'
+      }}>
+        <div
+          onClick={!isUpdatingApiKey ? handleClick : undefined}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            backgroundColor: isGlowing ? 'rgba(25, 118, 210, 0.12)' : 'rgba(25, 118, 210, 0.08)',
+            color: 'white',
+            padding: '4px 12px',
+            borderRadius: '16px',
+            fontSize: '0.75rem',
+            cursor: isUpdatingApiKey ? 'default' : 'pointer',
+            transition: 'all 0.8s ease',
+            userSelect: 'none',
+            border: `1px solid ${isGlowing ? 'rgba(25, 118, 210, 0.5)' : 'rgba(25, 118, 210, 0.2)'}`,
+            boxShadow: isGlowing ? '0 0 8px rgba(25, 118, 210, 0.3)' : 'none',
+            background: isGlowing ? 'linear-gradient(90deg, #1976d2 0%, #2196f3 100%)' : 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)',
+            opacity: isUpdatingApiKey ? 0.7 : 1,
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)';
+            e.currentTarget.style.border = '1px solid rgba(255, 255, 255, 0.3)';
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = isGlowing 
+              ? 'linear-gradient(90deg, #1976d2 0%, #2196f3 100%)'
+              : 'linear-gradient(90deg, #1565c0 0%, #1976d2 100%)';
+            e.currentTarget.style.border = `1px solid ${isGlowing ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.2)'}`;
+          }}
+        >
+          {isUpdatingApiKey ? (
+            <CircularProgress size={16} sx={{ color: 'white', mr: 1 }} />
+          ) : null}
+          {selectedApiKey 
+            ? (modelAi && modelAi.length > 15 
+                ? `${modelAi.substring(0, 15)}...` 
+                : modelAi || 'LLM Configurado')
+            : (t?.configLLM || "Configurar LLM")
+          }
+        </div>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              minWidth: '200px',
+              '& .MuiMenuItem-root': {
+                px: 2,
+                py: 1,
+              },
+              '&:before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+          {isLoadingKeys ? (
+            <MenuItem sx={{ justifyContent: 'center', py: 2 }}>
+              <CircularProgress 
+                size={20}
+                sx={{ color: 'primary.main' }}
+              />
+            </MenuItem>
+          ) : apiKeys && apiKeys.length > 0 ? (
+            apiKeys.map((apiKey) => (
+              <MenuItem 
+                key={apiKey.id} 
+                onClick={() => handleSelectApiKey(apiKey)}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                  }
+                }}
+              >
+                <Typography variant="body2" sx={{ flex: 1 }}>
+                  {apiKey.api_name}
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: 'text.secondary',
+                    backgroundColor: 'action.selected',
+                    px: 1,
+                    py: 0.5,
+                    borderRadius: 1,
+                    textTransform: 'uppercase',
+                    fontSize: '0.65rem'
+                  }}
+                >
+                  {apiKey.api_type}
+                </Typography>
+              </MenuItem>
+            ))
+          ) : (
+            <MenuItem 
+              onClick={handleClose}
+              sx={{ 
+                justifyContent: 'center',
+                color: 'text.secondary',
+                py: 2
+              }}
+            >
+              <Typography variant="body2">
+                {t?.emptyApiKeys || "No hay API keys configuradas"}
+              </Typography>
+            </MenuItem>
+          )}
+        </Menu>
+      </div>
     </div>
   );
 };

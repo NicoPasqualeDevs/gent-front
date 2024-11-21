@@ -1,0 +1,57 @@
+import { ApiResponse } from "@/types/Api";
+
+export interface ApiKey {
+  id: number;
+  api_name: string;
+  api_type: 'openai' | 'anthropic';
+  api_key: string;
+}
+
+export interface ApiKeyFormData extends Record<string, unknown> {
+  api_name: string;
+  api_type: 'openai' | 'anthropic';
+  api_key: string;
+}
+
+export interface ProfileUpdateData extends Record<string, unknown> {
+  first_name: string;
+  last_name: string;
+  email: string;
+}
+
+export interface ProfileResponse {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  is_superuser: boolean;
+}
+
+export interface ApiKeyResponse {
+  success: boolean;
+  message: string;
+  data: ApiKey[];
+}
+
+export interface SetBotApiKeyResponse {
+  bot_id: string;
+  api_key_name: string;
+  api_type: 'openai' | 'anthropic';
+}
+
+export interface UseProfileHook {
+  // Profile methods
+  getProfileDetails: () => Promise<ApiResponse<ProfileResponse>>;
+  updateProfileDetails: (data: ProfileUpdateData) => Promise<ApiResponse<ProfileResponse>>;
+  
+  // API Key methods
+  getApiKeys: () => Promise<ApiResponse<ApiKey[]>>;
+  createApiKey: (data: ApiKeyFormData) => Promise<ApiResponse<ApiKey>>;
+  getApiKey: (id: number) => Promise<ApiResponse<ApiKey>>;
+  updateApiKey: (id: number, data: Partial<ApiKeyFormData>) => Promise<ApiResponse<ApiKey>>;
+  deleteApiKey: (id: number) => Promise<ApiResponse<void>>;
+  
+  // Bot API Key methods
+  setBotApiKey: (botId: string, apiKeyId: number) => Promise<ApiResponse<SetBotApiKeyResponse>>;
+  updateBotApiKey: (botId: string, apiKeyId?: number) => Promise<ApiResponse<SetBotApiKeyResponse>>;
+}

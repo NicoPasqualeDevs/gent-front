@@ -20,6 +20,8 @@ const BuilderModule = lazy(() => import("./modules/builder"));
 const NotFoundModule = lazy(() => import("./modules/notFound"));
 const AuthModule = lazy(() => import("./modules/auth"));
 const ChatViewModule = lazy(() => import("./modules/chatView"));
+const ProfileView = lazy(() => import("./pages/Home/Main/User/Profile/View"));
+const ProfileEdit = lazy(() => import("./pages/Home/Main/User/Profile/Edit"));
 
 // Layout components
 const UserL = (
@@ -118,6 +120,17 @@ const AppRoutes = () => {
             }
           >
             <Route index element={<HomeModule />} />
+          </Route>
+          <Route 
+            path="profile" 
+            element={
+              <ProtectedRoute>
+                {UserL}
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<ProfileView />} />
+            <Route path="edit" element={<ProfileEdit />} />
           </Route>
           <Route index element={<Navigate to="/builder" replace />} />
           <Route path="*" element={<NotFoundModule />} />

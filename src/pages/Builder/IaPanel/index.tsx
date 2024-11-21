@@ -239,6 +239,11 @@ const IaPanel: React.FC<PageProps> = () => {
       t={t.robotCard}
       language={language}
       status={bot.status}
+      selectedApiKey={bot.selected_api_key}
+      modelAi={bot.model_ai}
+      onConfigureLLM={(apiKeyId) => {
+        console.log(`API Key ${apiKeyId} configurada para el bot ${bot.id}`);
+      }}
     />
   );
 

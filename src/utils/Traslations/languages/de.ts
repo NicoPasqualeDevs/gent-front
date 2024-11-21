@@ -406,7 +406,9 @@ const de: TranslationType = {
       edit: "Bearbeiten Sie die Grundkonfiguration Ihres Assistenten",
       test: "Testen und beobachten Sie das Verhalten Ihres Assistenten in Echtzeit und nehmen Sie an Gesprächen teil",
       delete: "Löschen Sie Ihren Assistenten von der Plattform, Vorsicht Sie werden die vorgenommenen Einstellungen verlieren"
-    }
+    },
+    configLLM: "LLM konfigurieren",
+    emptyApiKeys: "Keine API-Schlüssel konfiguriert"
   }
 };
 

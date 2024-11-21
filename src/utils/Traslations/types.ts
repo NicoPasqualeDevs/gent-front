@@ -395,6 +395,8 @@ export interface TranslationType {
       test: string;
       delete: string;
     };
+    configLLM: string;
+    emptyApiKeys: string;
   };
 }
 
