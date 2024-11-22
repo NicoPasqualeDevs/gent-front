@@ -19,10 +19,10 @@ interface ToolsState {
 }
 
 const Tools: React.FC = () => {
-  const { agentName, agentId, aiTeamId } = useParams<{
+  const { agentName, agentId, teamId } = useParams<{
     agentName: string;
     agentId: string;
-    aiTeamId: string;
+    teamId: string;
   }>();
   const { getClientTools, getBotTools: getAgentTools, addToolToBot: addToolToAgent, removeToolFromBot: removeToolFromAgent } = useToolsApi();
   const { auth, language, replacePath, appNavigation } = useAppContext();
@@ -107,24 +107,24 @@ const Tools: React.FC = () => {
 
   // Efecto para actualizar el pathbar
   useEffect(() => {
-    if (!aiTeamId || !agentName) return;
+    if (!teamId || !agentName) return;
 
     replacePath([
       ...appNavigation.slice(0, 1),
       {
         label: agentName,
-        current_path: `/builder/agents/${agentName}/${aiTeamId}`,
+        current_path: `/builder/agents/${agentName}/${teamId}`,
         preview_path: "",
         translationKey: ""
       },
       {
         label: t.tools.type,
-        current_path: `/builder/agents/tools/${aiTeamId}/${agentName}`,
+        current_path: `/builder/agents/tools/${teamId}/${agentName}`,
         preview_path: "",
         translationKey: ""
       },
     ]);
-  }, [aiTeamId, agentName]); // Removidas dependencias innecesarias
+  }, [teamId, agentName]); // Removidas dependencias innecesarias
 
   if (state.isLoading) {
     return <PageCircularProgress />;

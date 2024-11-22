@@ -80,7 +80,7 @@ const hi: TranslationType = {
     tools: "उपकरण",
     deleteSuccess: "चैटबॉट सफलतापूर्वक हटाया गया",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
-    errorLoadingClient: "इस दृश्य में aiTeamId लोड करने में त्रुटि",
+    errorLoadingClient: "इस दृश्य में teamId लोड करने में त्रुटि",
     errorDeletingBot: "हटाने के लिए agentId लोड करने में त्रुटि",
     errorNoData: "एजेंट डेटा लोड नहीं किया जा सका",
     edit: "संपादित करें",

@@ -80,7 +80,7 @@ const es: TranslationType = {
     tools: "Herramientas",
     deleteSuccess: "Chatbot eliminado satisfactoriamente",
     errorConnection: "Error: no se pudo establecer conexión con el servidor",
-    errorLoadingClient: "Error al cargar aiTeamId en esta vista",
+    errorLoadingClient: "Error al cargar teamId en esta vista",
     errorDeletingBot: "Error al cargar agentId al borrar",
     errorNoData: "No se pudieron cargar los datos de los agentes",
     edit: "Editar",

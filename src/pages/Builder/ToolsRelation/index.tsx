@@ -36,7 +36,7 @@ const intersection = (a: ToolData[], b: ToolData[]): Tool[] => {
 };
 
 const ToolsRelation: React.FC = () => {
-  const { botName, agentId, aiTeamId } = useParams();
+  const { botName, agentId, teamId } = useParams();
 
   const {
     getAllTools,
@@ -232,7 +232,7 @@ const ToolsRelation: React.FC = () => {
         ...appNavigation.slice(0, 3),
         {
           label: "Asignar Tools",
-          current_path: `/builder/agents/tools/${aiTeamId}/${botName}/${agentId}`,
+          current_path: `/builder/agents/tools/${teamId}/${botName}/${agentId}`,
           preview_path: "",
           translationKey: "tools.assign"
         },
@@ -241,7 +241,7 @@ const ToolsRelation: React.FC = () => {
     } else {
       ErrorToast("Error al cargar agentId en la vista");
     }
-  }, [agentId, botName, aiTeamId, replacePath, appNavigation, getToolsData]);
+  }, [agentId, botName, teamId, replacePath, appNavigation, getToolsData]);
 
   return (
     <>

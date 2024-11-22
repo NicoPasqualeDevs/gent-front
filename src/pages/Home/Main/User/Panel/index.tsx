@@ -192,12 +192,12 @@ const UserPanel: React.FC = () => {
     }
   }, [getAiTeamsData]);
 
-  const deleteAction = useCallback(async (aiTeamId: string): Promise<void> => {
-    console.log('aiTeamId', aiTeamId);
-    setClientToDelete(aiTeamId);
+  const deleteAction = useCallback(async (teamId: string): Promise<void> => {
+    console.log('teamId', teamId);
+    setClientToDelete(teamId);
 /*     try {
-      await deleteAiTeam(aiTeamId);
-      setPageContent(prev => prev.filter(item => item.id !== aiTeamId));
+      await deleteAiTeam(teamId);
+      setPageContent(prev => prev.filter(item => item.id !== teamId));
       setAllowerState(false);
       setClientToDelete("");
       SuccessToast("Cliente eliminado satisfactoriamente");

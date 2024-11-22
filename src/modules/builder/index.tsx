@@ -55,7 +55,7 @@ const BuilderModule: React.FC<ModuleProps> = () => {
   return (
     <Routes>
       <Route path="/" element={<AiTeamsList />} />
-      <Route path="/form/:aiTeamName?/:aiTeamId?" element={<AiTeamsForm />} />
+      <Route path="/form/:teamName?/:teamId?" element={<AiTeamsForm />} />
       <Route path="/profile/*" element={<ProfileModule />} />
       <Route path="/agents/*" element={<AgentsDetailsModule />} />
       <Route path="/admin-tools-form" element={<ToolsForm />} />

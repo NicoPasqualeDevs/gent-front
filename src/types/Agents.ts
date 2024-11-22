@@ -95,10 +95,10 @@ export interface AgentData {
   updated_at: string;
   capabilities: AgentCapability[];
   memories: AgentMemory[];
-  selected_api_key: number | null;
-  model_ai: string | null;
+  selected_api_key: string | null;
+  model_ai: string;
   team: string;
-  status: string;
+  status: "online" | "offline" | "busy" | "error" | "updating";
   widget_url: string;
   context?: string;
 }

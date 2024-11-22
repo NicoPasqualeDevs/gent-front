@@ -80,7 +80,7 @@ const en: TranslationType = {
     tools: "Tools",
     deleteSuccess: "Chatbot deleted successfully",
     errorConnection: "Error: Could not establish connection with the server",
-    errorLoadingClient: "Error loading aiTeamId in this view",
+    errorLoadingClient: "Error loading teamId in this view",
     errorDeletingBot: "Error loading agentId for deletion",
     errorNoData: "Could not load agents data",
     edit: "Edit",

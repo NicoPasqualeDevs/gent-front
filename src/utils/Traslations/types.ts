@@ -75,13 +75,20 @@ export interface TranslationType {
     noOwner: string;
   };
   agentsList: {
-    createAgent: string;
-    searchPlaceholder: string;
     agentsOf: string;
+    tooltipsEnabled: string;
+    tooltipsDisabled: string;
+    searchPlaceholder: string;
     perPage: string;
     noAgentsFound: string;
     noAgentsToShow: string;
+    createAgent: string;
+    reloadData: string;
     agentsCount: string;
+    errorConnection: string;
+    errorMissingParams: string;
+    deleteSuccess: string;
+    noModelSpecified: string;
     testAgent: string;
     useAPI: string;
     widget: string;
@@ -89,15 +96,12 @@ export interface TranslationType {
     data: string;
     customization: string;
     tools: string;
-    deleteSuccess: string;
-    errorConnection: string;
     errorLoadingClient: string;
     errorDeletingBot: string;
     errorNoData: string;
     edit: string;
     created: string;
     implementation: string;
-    reloadData: string;
     deleteConfirmation: string;
     deletingAgent: string;
     deleteButton: string;
@@ -107,10 +111,6 @@ export interface TranslationType {
     copyWidget: string;
     widgetCopied: string;
     modelAI: string;
-    errorMissingParams: string;
-    noModelSpecified: string;
-    tooltipsEnabled: string;
-    tooltipsDisabled: string;
     errorNoResponse: string;
     errorInvalidData: string;
     errorInvalidDataFormat: string;
@@ -445,7 +445,7 @@ export const greetings: GreetingsType = {
   ],
   hi: [
     "नमस्ते! आप कैसे हैं?",
-    "स्वागत है! मैं आपकी कैसे मदद कर सकता हूं?",
+    "स्वागत है! मैं आपकी कैसे मदद कर सक���ा हूं?",
     "अभिवादन! आपका दि कैसा जा रहा है?",
     "आपको देखकर अच्छा लगा! आप कैसे हैं?"
   ]

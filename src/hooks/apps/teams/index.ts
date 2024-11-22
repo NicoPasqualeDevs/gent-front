@@ -7,10 +7,10 @@ import { useAppContext } from '@/context';
 interface UseAiTeamsApiHook {
   getMyAiTeams: (filterParams: string) => Promise<ApiResponse<AiTeamsDetails[]>>;
   getAiTeamsByOwner: (ownerId: string, filterParams: string) => Promise<ApiResponse<AiTeamsDetails[]>>;
-  getAiTeamDetails: (aiTeamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
-  deleteAiTeamDetails: (aiTeamId: string) => Promise<ApiResponse<void>>;
+  getAiTeamDetails: (teamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
+  deleteAiTeamDetails: (teamId: string) => Promise<ApiResponse<void>>;
   createAiTeam: (data: AiTeamsDetails) => Promise<ApiResponse<AiTeamsDetails>>;
-  updateAiTeam: (data: AiTeamsDetails, aiTeamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
+  updateAiTeam: (data: AiTeamsDetails, teamId: string) => Promise<ApiResponse<AiTeamsDetails>>;
 }
 
 const useAiTeamsApi = (): UseAiTeamsApiHook => {
@@ -28,12 +28,12 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
     return apiGet(`teams/list-by-owner/?${baseParams}${separator}owner=${ownerId}`);
   }, [apiGet]);
 
-  const getAiTeamDetails = useCallback(async (aiTeamId: string): Promise<ApiResponse<AiTeamsDetails>> => {
-    return apiGet(`teams/${aiTeamId}/`);
+  const getAiTeamDetails = useCallback(async (teamId: string): Promise<ApiResponse<AiTeamsDetails>> => {
+    return apiGet(`teams/${teamId}/`);
   }, [apiGet]);
 
-  const deleteAiTeamDetails = useCallback(async (aiTeamId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`teams/${aiTeamId}/`);
+  const deleteAiTeamDetails = useCallback(async (teamId: string): Promise<ApiResponse<void>> => {
+    return apiDelete(`teams/${teamId}/`);
   }, [apiDelete]);
 
   const createAiTeam = useCallback(async (data: AiTeamsDetails): Promise<ApiResponse<AiTeamsDetails>> => {
@@ -50,7 +50,7 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
     return apiPost('teams/', formattedData);
   }, [apiPost, auth?.token]);
 
-  const updateAiTeam = useCallback(async (data: AiTeamsDetails, aiTeamId: string): Promise<ApiResponse<AiTeamsDetails>> => {
+  const updateAiTeam = useCallback(async (data: AiTeamsDetails, teamId: string): Promise<ApiResponse<AiTeamsDetails>> => {
     if (!auth?.token) {
       throw new Error('No authentication token available');
     }
@@ -61,7 +61,7 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
       description: data.description
     };
     
-    return apiPut(`teams/${aiTeamId}/`, formattedData);
+    return apiPut(`teams/${teamId}/`, formattedData);
   }, [apiPut, auth?.token]);
 
   return {

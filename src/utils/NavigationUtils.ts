@@ -112,23 +112,22 @@ export const builderNavigationUtils = {
   toAiTeamForm: (
     navigate: NavigateFunction,
     context: NavigationContext, 
-    params: { aiTeamId: string; label?: string }, 
+    params: { teamId: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'agents', params, context, options),
     
   toAgentsList: (
     navigate: NavigateFunction,
     context: NavigationContext, 
-    params: { aiTeamId: string; clientName: string; label?: string }, 
+    params: { teamId: string; clientName: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'agents', params, context, options),
     
   toAgentContext: (
     navigate: NavigateFunction,
-    context: NavigationContext, 
-    params: { aiTeamId: string; agentId?: string; label?: string }, 
-    options?: NavigationOptions
-  ) => navigateWithBreadcrumbs(navigate, 'context', params, context, options),
+    contextUtils: { replacePath: (path: PathData[]) => void },
+    params: { teamId: string; agentId?: string; label?: string }
+  ) => navigateWithBreadcrumbs(navigate, 'context', params, contextUtils, {}),
   
   toChat: (
     navigate: NavigateFunction, 
@@ -147,14 +146,14 @@ export const builderNavigationUtils = {
   toToolsForm: (
     navigate: NavigateFunction, 
     context: NavigationContext, 
-    params: { aiTeamId: string; agentId: string; label?: string }, 
+    params: { teamId: string; agentId: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'tools', params, context, options),
   
   toToolsRelation: (
     navigate: NavigateFunction, 
     context: NavigationContext, 
-    params: { aiTeamId: string; agentId: string; label?: string }, 
+    params: { teamId: string; agentId: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'tools', params, context, options)
 }; 

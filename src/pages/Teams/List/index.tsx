@@ -35,7 +35,7 @@ import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchB
 import { PaginationFooter } from "@/utils/DashboardsUtils";
 
 // Componente AiTeamCard
-const AiTeamCard = lazy(() => import("@/components/AiTeamCard"));
+const AiTeamCard = lazy(() => import("@/components/TeamCard"));
 
 interface AiTeamsListState extends PaginatedPageState {
   pageContent: AiTeamsDetails[];
@@ -164,16 +164,16 @@ const AiTeamsList: React.FC<PageProps> = () => {
     getAiTeamsData(`?page_size=${state.contentPerPage}&page=${value}`);
   };
 
-  const handleDelete = async (aiTeamId: string) => {
-    if (!aiTeamId) return;
+  const handleDelete = async (teamId: string) => {
+    if (!teamId) return;
 
     try {
       setState(prev => ({ ...prev, isLoading: true }));
-      await deleteAiTeamDetails(aiTeamId);
+      await deleteAiTeamDetails(teamId);
       
       setState(prev => ({
         ...prev,
-        pageContent: prev.pageContent.filter(item => item.id !== aiTeamId),
+        pageContent: prev.pageContent.filter(item => item.id !== teamId),
         allowerState: false,
         clientToDelete: "",
         isLoading: false
@@ -263,7 +263,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
                   spacing={3}
                   justifyContent={{ xs: 'center', lg: 'flex-start' }}
                 >
-                  {state.pageContent.map((aiTeam, index) => (
+                  {state.pageContent.map((team, index) => (
                     <Grid 
                       item 
                       xs={12} 
@@ -288,10 +288,10 @@ const AiTeamsList: React.FC<PageProps> = () => {
                           py: 1,
                         }}>
                           <AiTeamCard 
-                            aiTeam={aiTeam}
-                            onDelete={() => handleDelete(aiTeam.id)}
-                            onEdit={() => navigate(`/builder/form/${aiTeam.name}/${aiTeam.id}`)}
-                            onManage={() => navigate(`/builder/agents/${aiTeam.name}/${aiTeam.id}`)}
+                            aiTeam={team}
+                            onDelete={() => handleDelete(team.id)}
+                            onEdit={() => navigate(`/builder/form/${team.name}/${team.id}`)}
+                            onManage={() => navigate(`/builder/agents/${team.name}/${team.id}`)}
                           />
                         </CardContent>
                       </Card>

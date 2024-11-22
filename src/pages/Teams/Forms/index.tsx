@@ -43,7 +43,7 @@ interface FormState {
 
 const AiTeamsForm: React.FC = () => {
   const navigate = useNavigate();
-  const { aiTeamId, aiTeamName } = useParams();
+  const { teamId, aiTeamName } = useParams();
   const { language, auth, replacePath } = useAppContext();
   const { getAiTeamDetails, createAiTeam, updateAiTeam } = useAiTeams();
   const { getNonSuperUsers } = useAdminServices();
@@ -90,10 +90,10 @@ const AiTeamsForm: React.FC = () => {
   // 3. Estabilizamos la configuración inicial
   const config = useMemo(() => ({
     auth,
-    aiTeamId,
+    teamId,
     aiTeamName,
     language
-  }), [auth?.uuid, aiTeamId]); // Solo dependemos de los valores que realmente necesitamos
+  }), [auth?.uuid, teamId]); // Solo dependemos de los valores que realmente necesitamos
 
   // 4. Configuración de Formik con valores iniciales estables
   const formik = useFormik<FormValues>({
@@ -131,12 +131,12 @@ const AiTeamsForm: React.FC = () => {
           }
         };
 
-        const response = aiTeamId
-          ? await apiMethods.updateAiTeam(formattedData, aiTeamId)
+        const response = teamId
+          ? await apiMethods.updateAiTeam(formattedData, teamId)
           : await apiMethods.createAiTeam(formattedData);
 
         if (response?.data) {
-          SuccessToast(aiTeamId ? t.aiTeamsForm.successUpdate : t.aiTeamsForm.successCreate);
+          SuccessToast(teamId ? t.aiTeamsForm.successUpdate : t.aiTeamsForm.successCreate);
           navigate('/builder');
         }
       } catch (error: unknown) {
@@ -181,8 +181,8 @@ const AiTeamsForm: React.FC = () => {
           config.auth.is_superuser 
             ? getNonSuperUsers()
             : Promise.resolve({ data: [currentUser] }),
-          config.aiTeamId 
-            ? apiMethods.getAiTeamDetails(config.aiTeamId)
+          config.teamId 
+            ? apiMethods.getAiTeamDetails(config.teamId)
             : Promise.resolve(null)
         ]);
 
@@ -228,7 +228,7 @@ const AiTeamsForm: React.FC = () => {
     return () => {
       mounted = false;
     };
-  }, [config.auth?.uuid, config.aiTeamId]); // Solo las dependencias esenciales
+  }, [config.auth?.uuid, config.teamId]); // Solo las dependencias esenciales
 
   // 6. Efecto separado para el pathbar
   useEffect(() => {
@@ -240,13 +240,13 @@ const AiTeamsForm: React.FC = () => {
         translationKey: "teams"
       },
       {
-        label: config.aiTeamId ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
-        current_path: config.aiTeamId ? `/builder/form/${config.aiTeamName}/${config.aiTeamId}` : "/builder/form",
+        label: config.teamId ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
+        current_path: config.teamId ? `/builder/form/${config.aiTeamName}/${config.teamId}` : "/builder/form",
         preview_path: "",
-        translationKey: config.aiTeamId ? "editTeam" : "createTeam"
+        translationKey: config.teamId ? "editTeam" : "createTeam"
       }
     ]);
-  }, [config.aiTeamId, config.aiTeamName, t.leftMenu.teams, t.aiTeamsForm.editTitle, t.aiTeamsForm.createTitle]);
+  }, [config.teamId, config.aiTeamName, t.leftMenu.teams, t.aiTeamsForm.editTitle, t.aiTeamsForm.createTitle]);
 
   // Componente de error memoizado
   const ErrorMessage = useMemo(() => {
@@ -271,10 +271,10 @@ const AiTeamsForm: React.FC = () => {
 
   // Memoizamos el título del formulario
   const formTitle = useMemo(() => 
-    aiTeamId 
+    teamId 
       ? t.aiTeamsForm.editTitle.replace('{teamName}', formik.values.name || aiTeamName || '')
       : t.aiTeamsForm.createTitle,
-    [aiTeamId, formik.values.name, aiTeamName, t]
+    [teamId, formik.values.name, aiTeamName, t]
   );
 
   // Memoizamos los botones de acción
@@ -292,10 +292,10 @@ const AiTeamsForm: React.FC = () => {
         variant="contained"
         disabled={!formState.loaded || formState.isSubmitting}
       >
-        {aiTeamId ? t.aiTeamsForm.update : t.aiTeamsForm.create}
+        {teamId ? t.aiTeamsForm.update : t.aiTeamsForm.create}
       </FormButton>
     </FormActions>
-  ), [formState.loaded, formState.isSubmitting, aiTeamId, navigate, t]);
+  ), [formState.loaded, formState.isSubmitting, teamId, navigate, t]);
 
   // Verificación de estado de carga
   if (!auth?.uuid) return null;

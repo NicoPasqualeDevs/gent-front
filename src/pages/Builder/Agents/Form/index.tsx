@@ -36,7 +36,7 @@ interface FormState {
 
 const AgentForm: React.FC = () => {
   const navigate = useNavigate();
-  const { aiTeamId, agentId } = useParams();
+  const { teamId, agentId } = useParams();
   const { auth, language, replacePath } = useAppContext();
   const { getAgentDetails, createAgent, updateAgent } = useAgentsApi();
   const t = languages[language as keyof typeof languages];
@@ -70,7 +70,7 @@ const AgentForm: React.FC = () => {
         return;
       }
 
-      if (!aiTeamId) {
+      if (!teamId) {
         ErrorToast(t.contextEntry.errorMissingTeamId);
         return;
       }
@@ -85,16 +85,16 @@ const AgentForm: React.FC = () => {
           description: values.description,
           selected_api_key: values.selected_api_key,
           model_ai: selectedApiKey?.api_name || '',
-          team: aiTeamId
+          team: teamId
         };
 
         const response = agentId
           ? await updateAgent(formData, agentId)
-          : await createAgent(formData, aiTeamId);
+          : await createAgent(formData, teamId);
 
         if (response?.data) {
           SuccessToast(agentId ? t.contextEntry.successUpdate : t.contextEntry.successCreate);
-          navigate(`/builder/agents/${response.data.name}/${aiTeamId}`);
+          navigate(`/builder/agents/${response.data.name}/${teamId}`);
         }
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -163,12 +163,12 @@ const AgentForm: React.FC = () => {
       },
       {
         label: agentId ? t.contextEntry.editTitle : t.contextEntry.createTitle,
-        current_path: `/builder/agents/contextEntry/${aiTeamId}`,
+        current_path: `/builder/agents/contextEntry/${teamId}`,
         preview_path: "",
         translationKey: agentId ? 'editTitle' : 'createTitle'
       },
     ]);
-  }, [agentId, aiTeamId, replacePath, t]);
+  }, [agentId, teamId, replacePath, t]);
 
   useEffect(() => {
     const loadApiKeys = async () => {
