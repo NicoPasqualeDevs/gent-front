@@ -38,7 +38,7 @@ const AgentsList: React.FC<PageProps> = () => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'));
-  const { teamId, aiTeamName } = useParams();
+  const { teamId, teamName } = useParams();
   const { auth, language, replacePath, showRobotCardHelp, setShowRobotCardHelp } = useAppContext();
   const { getAgentsList, deleteAgent } = useAgentsApi();
   const { apiBase } = useApi();
@@ -53,13 +53,14 @@ const AgentsList: React.FC<PageProps> = () => {
     currentPage: 1,
     isSearching: false,
     pageContent: [],
-    aiTeamName: aiTeamName,
+    teamName: teamName,
     allowerState: false,
     botToDelete: "",
     isDeleting: false
   });
 
   useEffect(() => {
+    console.log(teamName);
     setState(prev => ({
       ...prev,
       contentPerPage: isLargeScreen ? prev.contentPerPage : "20"
@@ -74,8 +75,8 @@ const AgentsList: React.FC<PageProps> = () => {
         return;
       }
 
-      if (!teamId || !aiTeamName) {
-        console.log('Missing required params:', { teamId, aiTeamName });
+      if (!teamId || !teamName) {
+        console.log('Missing required params:', { teamId, teamName });
         return;
       }
     };
@@ -84,19 +85,19 @@ const AgentsList: React.FC<PageProps> = () => {
   }, []);
 
   useEffect(() => {
-    if (teamId && aiTeamName) {
+    if (teamId && teamName) {
       const breadcrumbs = buildBreadcrumbs('agents', {
-        clientName: aiTeamName,
+        clientName: teamName,
         teamId: teamId,
-        label: aiTeamName
+        label: teamName
       }, {
         teamId,
-        aiTeamName
+        teamName
       });
       
       replacePath(breadcrumbs);
     }
-  }, [teamId, aiTeamName, replacePath]);
+  }, [teamId, teamName, replacePath]);
 
   const getAgentsData = useCallback(async (filterParams: string) => {
     if (!teamId || !auth?.uuid) {
@@ -297,7 +298,7 @@ const AgentsList: React.FC<PageProps> = () => {
   return (
     <DashboardContainer>
       <DashboardHeader
-        title={t.agentsList.agentsOf.replace("{clientName}", aiTeamName || "")}
+        title={t.agentsList.agentsOf.replace("{clientName}", teamName || "")}
         actions={
           <Box sx={{
             display: 'flex',

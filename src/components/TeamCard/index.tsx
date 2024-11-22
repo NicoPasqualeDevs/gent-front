@@ -80,7 +80,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         variant="body2" 
                         sx={{pt:"2px"}}
                     >
-                        {aiTeam.address || t.aiTeamsList.noAddress}
+                        {aiTeam.address || t.teamsList.noAddress}
                     </Typography>
                 </Box>
 
@@ -97,7 +97,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         }}
                     >
                         <Typography sx={{pt:"2px"}} color={theme.palette.primary.contrastText}>
-                            {t.aiTeamsList.llmKeyBadge}
+                            {t.teamsList.llmKeyBadge}
                         </Typography>
                     </Box>
                 </Box>
@@ -114,7 +114,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                             minHeight: dimensions.card.descriptionMinHeight
                         }}
                     >
-                        {aiTeam.description || t.aiTeamsList.noDescription}
+                        {aiTeam.description || t.teamsList.noDescription}
                     </Typography>
                 </Box>
             </Box>
@@ -135,7 +135,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         fontSize: dimensions.card.iconSize.person,
                         color: theme.palette.text.secondary 
                     }} />
-                    <Tooltip title={aiTeam.owner_data?.email || t.aiTeamsList.noOwner}>
+                    <Tooltip title={aiTeam.owner_data?.email || t.teamsList.noOwner}>
                         <Typography 
                             variant="body2" 
                             sx={{
@@ -148,7 +148,7 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                         >
                             {aiTeam.owner_data?.email 
                                 ? truncateEmail(aiTeam.owner_data.email)
-                                : t.aiTeamsList.noOwner}
+                                : t.teamsList.noOwner}
                         </Typography>
                     </Tooltip>
                 </Box>
@@ -159,9 +159,9 @@ const AiTeamCard: React.FC<AiTeamCardProps> = ({
                     alignItems: 'center',
                 }}>
                     {[
-                        { title: t.aiTeamsList.manage, icon: <ManageAccountsIcon sx={{ fontSize: dimensions.card.iconSize.action }} />, onClick: onManage },
-                        { title: t.aiTeamsList.edit, icon: <EditIcon sx={{ fontSize: dimensions.card.iconSize.action }} />, onClick: onEdit },
-                        { title: t.aiTeamsList.delete, icon: <DeleteIcon color="error" sx={{ fontSize: dimensions.card.iconSize.action }} />, onClick: onDelete }
+                        { title: t.teamsList.manage, icon: <ManageAccountsIcon sx={{ fontSize: dimensions.card.iconSize.action }} />, onClick: onManage },
+                        { title: t.teamsList.edit, icon: <EditIcon sx={{ fontSize: dimensions.card.iconSize.action }} />, onClick: onEdit },
+                        { title: t.teamsList.delete, icon: <DeleteIcon color="error" sx={{ fontSize: dimensions.card.iconSize.action }} />, onClick: onDelete }
                     ].map((action, index) => (
                         <Tooltip key={index} title={action.title}>
                             <IconButton 

@@ -41,7 +41,7 @@ const br: TranslationType = {
     cancel: "Cancelar",
     owner: "Proprietário"
   },
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: "Nova Equipe IA",
     searchPlaceholder: "Buscar Equipe IA",
     yourAiTeams: "Suas equipes de IA",

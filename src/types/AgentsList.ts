@@ -18,7 +18,7 @@ export interface AgentsListState extends PageState {
   currentPage: number;
   isSearching: boolean;
   pageContent: AgentData[];
-  aiTeamName?: string;
+  teamName?: string;
   allowerState: boolean;
   botToDelete: string;
   isDeleting: boolean;

@@ -41,7 +41,7 @@ const hi: TranslationType = {
     cancel: "रद्द करें",
     owner: "मालिक"
   },
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: "नई एआई टीम",
     searchPlaceholder: "एआई टीम खोजें",
     yourAiTeams: "आपकी एआई टीम्स",

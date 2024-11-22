@@ -13,7 +13,7 @@ const AgentsDetailsModule: React.FC = () => {
     <AuthChecker>
       <Routes>
         {/* Rutas principales */}
-        <Route path=":clientName/:teamId" element={<AgentsList />} />
+        <Route path=":teamName/:teamId" element={<AgentsList />} />
         <Route path="contextEntry/:teamId/:agentId?" element={<AgentForm />} />
         <Route path="widgetCustomizer/:agentId" element={<WidgetCustomizer />} />
 

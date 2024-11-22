@@ -179,7 +179,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
         isLoading: false
       }));
       
-      SuccessToast(t.aiTeamsList.successDelete);
+      SuccessToast(t.teamsList.successDelete);
       await getAiTeamsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
     } catch (error) {
       setState(prev => ({ 
@@ -195,7 +195,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
   return (
     <DashboardContainer>
       <DashboardHeader
-        title={t.aiTeamsList.yourAiTeams}
+        title={t.teamsList.yourAiTeams}
         actions={
           <Box sx={{
             display: 'flex',
@@ -212,7 +212,7 @@ const AiTeamsList: React.FC<PageProps> = () => {
                 <SearchIcon />
               </SearchIconWrapper>
               <StyledInputBase
-                placeholder={t.aiTeamsList.searchPlaceholder}
+                placeholder={t.teamsList.searchPlaceholder}
                 value={state.searchQuery}
                 onChange={handleSearch}
               />
@@ -224,9 +224,9 @@ const AiTeamsList: React.FC<PageProps> = () => {
                 size="small"
                 sx={{ width: { xs: '83.33%', sm: 'auto' } }}
               >
-                <MenuItem value="5">5 {t.aiTeamsList.perPage}</MenuItem>
-                <MenuItem value="10">10 {t.aiTeamsList.perPage}</MenuItem>
-                <MenuItem value="20">20 {t.aiTeamsList.perPage}</MenuItem>
+                <MenuItem value="5">5 {t.teamsList.perPage}</MenuItem>
+                <MenuItem value="10">10 {t.teamsList.perPage}</MenuItem>
+                <MenuItem value="20">20 {t.teamsList.perPage}</MenuItem>
               </Select>
             )}
           </Box>
@@ -303,8 +303,8 @@ const AiTeamsList: React.FC<PageProps> = () => {
               <Paper elevation={3} sx={{ p: 3, textAlign: 'center' }}>
                 <Typography color={theme.palette.secondary.light}>
                   {state.searchQuery
-                    ? t.aiTeamsList.noTeamsFound
-                    : t.aiTeamsList.noTeamsToShow}
+                    ? t.teamsList.noTeamsFound
+                    : t.teamsList.noTeamsToShow}
                 </Typography>
               </Paper>
             )}
@@ -321,8 +321,8 @@ const AiTeamsList: React.FC<PageProps> = () => {
           onPageChange={handlePagination}
           onItemsPerPageChange={handleContentPerPageChange}
           translations={{
-            itemsCount: t.aiTeamsList.teamsCount,
-            perPage: t.aiTeamsList.perPage
+            itemsCount: t.teamsList.teamsCount,
+            perPage: t.teamsList.perPage
           }}
         />
       )}

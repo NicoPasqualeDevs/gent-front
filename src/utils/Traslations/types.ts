@@ -52,7 +52,7 @@ export interface TranslationType {
     cancel: string;
     owner: string;
   };
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: string;
     searchPlaceholder: string;
     yourAiTeams: string;
