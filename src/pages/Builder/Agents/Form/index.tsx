@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAppContext } from "@/context";
-import { BotFormData } from "@/types/Bots";
+import { AgentFormData } from "@/types/Agents";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { languages } from "@/utils/Traslations";
-import useBotsApi from "@/hooks/useBots";
+import useAgentsApi from "@/hooks/apps/agents";
 import { MenuItem } from "@mui/material";
-import { modelAIOptions } from "@/utils/LargeModelsUtils";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
@@ -20,11 +19,13 @@ import {
   FormCancelButton,
   FormButton,
 } from "@/utils/FormsViewUtils";
+import useProfile from "@/hooks/apps/accounts/useProfile";
+import { ApiKey } from "@/types/UserProfile";
 
 interface FormValues extends Record<string, string> {
   name: string;
   description: string;
-  model_ai: string;
+  selected_api_key: string;
 }
 
 interface FormState {
@@ -33,12 +34,14 @@ interface FormState {
   error: string | null;
 }
 
-const ContextEntry: React.FC = () => {
+const AgentForm: React.FC = () => {
   const navigate = useNavigate();
-  const { aiTeamId, botId } = useParams();
+  const { aiTeamId, agentId } = useParams();
   const { auth, language, replacePath } = useAppContext();
-  const { getBotDetails, createBot, updateBot } = useBotsApi();
+  const { getAgentDetails, createAgent, updateAgent } = useAgentsApi();
   const t = languages[language as keyof typeof languages];
+  const { getApiKeys } = useProfile();
+  const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
 
   const [formState, setFormState] = useState<FormState>({
     loaded: false,
@@ -50,14 +53,14 @@ const ContextEntry: React.FC = () => {
     Yup.object({
       name: Yup.string().required(t.contextEntry.fieldRequired),
       description: Yup.string(),
-      model_ai: Yup.string().required(t.contextEntry.fieldRequired)
+      selected_api_key: Yup.string().required(t.contextEntry.fieldRequired)
     }), [t]);
 
   const formik = useFormik<FormValues>({
     initialValues: {
       name: '',
       description: '',
-      model_ai: modelAIOptions[0].value
+      selected_api_key: ''
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -75,21 +78,23 @@ const ContextEntry: React.FC = () => {
       setFormState(prev => ({ ...prev, isSubmitting: true }));
 
       try {
-        const formData: BotFormData = {
+        const selectedApiKey = apiKeys.find(key => key.id.toString() === values.selected_api_key);
+        
+        const formData: AgentFormData = {
           name: values.name,
           description: values.description,
-          model_ai: values.model_ai
+          selected_api_key: values.selected_api_key,
+          model_ai: selectedApiKey?.api_name || '',
+          team: aiTeamId
         };
 
-        const response = botId
-          ? await updateBot(formData, botId)
-          : await createBot(formData, aiTeamId);
+        const response = agentId
+          ? await updateAgent(formData, agentId)
+          : await createAgent(formData, aiTeamId);
 
         if (response?.data) {
-          SuccessToast(botId ? t.contextEntry.successUpdate : t.contextEntry.successCreate);
-          navigate(`/builder/agents/${response.data.name}/${aiTeamId}`, {
-            state: { refreshData: true }
-          });
+          SuccessToast(agentId ? t.contextEntry.successUpdate : t.contextEntry.successCreate);
+          navigate(`/builder/agents/${response.data.name}/${aiTeamId}`);
         }
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -113,8 +118,8 @@ const ContextEntry: React.FC = () => {
       try {
         setFormState(prev => ({ ...prev, loaded: false }));
 
-        if (botId) {
-          const response = await getBotDetails(botId);
+        if (agentId) {
+          const response = await getAgentDetails(agentId);
           
           if (!mounted) return;
 
@@ -122,7 +127,7 @@ const ContextEntry: React.FC = () => {
             formik.setValues({
               name: response.data.name,
               description: response.data.description || '',
-              model_ai: response.data.model_ai
+              selected_api_key: (response.data.selected_api_key || '').toString()
             });
           }
         }
@@ -136,7 +141,7 @@ const ContextEntry: React.FC = () => {
             loaded: true,
             error: t.common.errorLoadingData
           }));
-          ErrorToast(t.contextEntry.errorConnection);
+          ErrorToast(t.common.errorLoadingData);
         }
       }
     };
@@ -146,29 +151,45 @@ const ContextEntry: React.FC = () => {
     return () => {
       mounted = false;
     };
-  }, [auth?.uuid, botId]);
+  }, [auth?.uuid, agentId]);
 
   useEffect(() => {
     replacePath([
       {
-        label: t.leftMenu.aiTeams,
+        label: t.leftMenu.teams,
         current_path: "/builder",
         preview_path: "/builder",
-        translationKey: 'aiTeams'
+        translationKey: 'teams'
       },
       {
-        label: botId ? t.contextEntry.editTitle : t.contextEntry.createTitle,
+        label: agentId ? t.contextEntry.editTitle : t.contextEntry.createTitle,
         current_path: `/builder/agents/contextEntry/${aiTeamId}`,
         preview_path: "",
-        translationKey: botId ? 'editTitle' : 'createTitle'
+        translationKey: agentId ? 'editTitle' : 'createTitle'
       },
     ]);
-  }, [botId, aiTeamId, replacePath, t]);
+  }, [agentId, aiTeamId, replacePath, t]);
+
+  useEffect(() => {
+    const loadApiKeys = async () => {
+      try {
+        const response = await getApiKeys();
+        if (response?.data) {
+          setApiKeys(response.data);
+        }
+      } catch (error) {
+        console.error('Error loading API keys:', error);
+        ErrorToast(t.common.errorLoadingData);
+      }
+    };
+
+    loadApiKeys();
+  }, []);
 
   return (
     <FormLayout>
       <FormHeader 
-        title={botId ? t.contextEntry.editTitle : t.contextEntry.createTitle} 
+        title={agentId ? t.contextEntry.editTitle : t.contextEntry.createTitle} 
       />
 
       <FormContent
@@ -205,17 +226,20 @@ const ContextEntry: React.FC = () => {
 
         <FormInputGroup>
           <FormSelect
-            name="model_ai"
-            label={t.contextEntry.modelAI}
-            value={formik.values.model_ai}
+            name="selected_api_key"
+            label={t.common.apiKey}
+            value={formik.values.selected_api_key}
             onChange={formik.handleChange}
-            error={formik.touched.model_ai && Boolean(formik.errors.model_ai)}
-            helperText={formik.touched.model_ai ? formik.errors.model_ai : undefined}
+            error={formik.touched.selected_api_key && Boolean(formik.errors.selected_api_key)}
+            helperText={formik.touched.selected_api_key ? formik.errors.selected_api_key : undefined}
             disabled={formState.isSubmitting}
           >
-            {modelAIOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label}
+            <MenuItem value="">
+              <em>{t.common.select}</em>
+            </MenuItem>
+            {apiKeys.map((apiKey) => (
+              <MenuItem key={apiKey.id} value={apiKey.id}>
+                {apiKey.api_name} - {apiKey.api_type}
               </MenuItem>
             ))}
           </FormSelect>
@@ -235,7 +259,7 @@ const ContextEntry: React.FC = () => {
             disabled={formState.isSubmitting}
             loading={formState.isSubmitting}
           >
-            {botId ? t.contextEntry.update : t.contextEntry.create}
+            {agentId ? t.contextEntry.update : t.contextEntry.create}
           </FormButton>
         </FormActions>
       </FormContent>
@@ -243,4 +267,4 @@ const ContextEntry: React.FC = () => {
   );
 };
 
-export default React.memo(ContextEntry);
+export default React.memo(AgentForm);

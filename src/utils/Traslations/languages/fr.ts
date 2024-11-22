@@ -12,7 +12,7 @@ const fr: TranslationType = {
     cancel: "Annuler"
   },
   leftMenu: {
-    aiTeams: "Équipes IA",
+    teams: "Équipes IA",
     registerTeam: "Enregistrer Équipe",
     registerUser: "Enregistrer Utilisateur",
     tools: "Outils",
@@ -63,7 +63,7 @@ const fr: TranslationType = {
     llmKeyBadge: "Équipe avec LLM Key",
     noOwner: "Sans propriétaire"
   },
-  iaPanel: {
+  agentsList: {
     createAgent: "Créer un Agent",
     searchPlaceholder: "Rechercher un Agent IA",
     agentsOf: "Agents de {clientName}",
@@ -81,7 +81,8 @@ const fr: TranslationType = {
     deleteSuccess: "Chatbot supprimé avec succès",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     errorLoadingClient: "Erreur lors du chargement du aiTeamId dans cette vue",
-    errorDeletingBot: "Erreur lors du chargement du botId pour la suppression",
+    errorDeletingBot: "Erreur lors du chargement du agentId pour la suppression",
+    errorNoData: "Impossible de charger les données des agents",
     edit: "Modifier",
     created: "Créé le : {date}",
     implementation: "Implémentation",
@@ -98,7 +99,11 @@ const fr: TranslationType = {
     errorMissingParams: "Paramètres requis manquants pour cette action",
     noModelSpecified: "Modèle non spécifié",
     tooltipsEnabled: "Désactiver les textes d'aide",
-    tooltipsDisabled: "Activer les textes d'aide"
+    tooltipsDisabled: "Activer les textes d'aide",
+    errorNoResponse: "Pas de réponse du serveur",
+    errorInvalidData: "Données invalides",
+    errorInvalidDataFormat: "Format de données invalide",
+    errorUnknown: "Erreur inconnue"
   },
   chatView: {
     agentPanel: "Panneau de {agentName}",
@@ -228,7 +233,7 @@ const fr: TranslationType = {
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     fieldRequired: "Ce champ est obligatoire",
     errorMissingTeamId: "ID d'équipe non trouvé",
-    errorMissingBotId: "ID de bot non trouvé"
+    errorMissingagentId: "ID de bot non trouvé"
   },
   dataEntry: {
     title: "Données de l'Agent",
@@ -375,7 +380,10 @@ const fr: TranslationType = {
     success: "Opération réussie",
     error: "Une erreur s'est produite",
     sessionExpired: "La session a expiré, veuillez vous reconnecter",
-    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur"
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    apiKey: "Clé API",
+    model: "Modèle",
+    select: "Sélectionner"
   },
   robotCard: {
     agentStatus: "État de l'agent",

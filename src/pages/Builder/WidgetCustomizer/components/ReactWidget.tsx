@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { Cover } from './Cover';
 import { Chat } from './Chat';
 import { ChatAction } from './ChatAction';
-import { useWidgetPreview } from '../../../../hooks/useWidgetPreview';
+import { useWidgetPreview } from '@/hooks/apps/widget_customizer';
 
 interface WidgetPreviewProps {
   widgetData: {
@@ -17,7 +17,7 @@ interface WidgetPreviewProps {
     font_family: string;
     brand_alt: string;
     brand_logo: string;
-    icon_bot: string;
+    icon_agent: string;
     icon_chat: string;
     icon_hidden: string;
     icon_send: string;
@@ -66,7 +66,7 @@ export const ReactWidget: React.FC<WidgetPreviewProps> = ({ widgetData }) => {
               primaryTextContrast={widgetData.primary_textContrast}
               secondaryColor={widgetData.secondary_color}
               secondaryTextContrast={widgetData.secondary_textContrast}
-              iconBot={widgetData.icon_bot}
+              icon_agent={widgetData.icon_agent}
             />
             <ChatAction 
               iconSend={widgetData.icon_send}

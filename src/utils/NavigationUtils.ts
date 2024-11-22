@@ -107,7 +107,7 @@ export const authNavigationUtils = {
 // Funciones del builder
 export const builderNavigationUtils = {
   toAiTeamsList: (navigate: NavigateFunction, context: NavigationContext, options?: NavigationOptions) => 
-    navigateWithBreadcrumbs(navigate, 'aiTeams', {}, context, options),
+    navigateWithBreadcrumbs(navigate, 'teams', {}, context, options),
     
   toAiTeamForm: (
     navigate: NavigateFunction,
@@ -126,35 +126,35 @@ export const builderNavigationUtils = {
   toAgentContext: (
     navigate: NavigateFunction,
     context: NavigationContext, 
-    params: { aiTeamId: string; botId?: string; label?: string }, 
+    params: { aiTeamId: string; agentId?: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'context', params, context, options),
   
   toChat: (
     navigate: NavigateFunction, 
     context: NavigationContext, 
-    params: { botId: string; label?: string }, 
+    params: { agentId: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'chat', params, context, options),
   
   toWidget: (
     navigate: NavigateFunction, 
     context: NavigationContext, 
-    params: { botId: string; label?: string }, 
+    params: { agentId: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'widget', params, context, options),
   
   toToolsForm: (
     navigate: NavigateFunction, 
     context: NavigationContext, 
-    params: { aiTeamId: string; botId: string; label?: string }, 
+    params: { aiTeamId: string; agentId: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'tools', params, context, options),
   
-  toToolsRelationship: (
+  toToolsRelation: (
     navigate: NavigateFunction, 
     context: NavigationContext, 
-    params: { aiTeamId: string; botId: string; label?: string }, 
+    params: { aiTeamId: string; agentId: string; label?: string }, 
     options?: NavigationOptions
   ) => navigateWithBreadcrumbs(navigate, 'tools', params, context, options)
 }; 

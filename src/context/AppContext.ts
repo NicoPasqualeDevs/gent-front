@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { AuthUser } from "@/types/Auth";
-import { AiTeamsDetails } from "@/types/AiTeams";
+import { AiTeamsDetails } from "@/types/Teams";
 import { PathData } from "@/types/Pathbar";
 import { Breakpoint } from "@mui/material";
 import { menuStorage } from "@/services/menu";
@@ -14,7 +14,7 @@ export interface AppContextState {
     device: string | undefined;
   };
   loaded: boolean;
-  aiTeams: AiTeamsDetails[];
+  teams: AiTeamsDetails[];
   auth: AuthUser | null;
   navElevation: string;
   appNavigation: PathData[];
@@ -43,7 +43,7 @@ export const INITIAL_STATE: AppContextState = {
     device: undefined
   },
   loaded: false,
-  aiTeams: [],
+  teams: [],
   auth: null,
   navElevation: "0",
   appNavigation: [],

@@ -1,7 +1,8 @@
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useAppContext } from "@/context";
-import useBotsApi from "@/hooks/useBots";
+import useTools from '@/hooks/apps/tools';
+import type { ToolRelation } from '@/hooks/apps/tools';
 import theme from "@/styles/theme";
 import { ToolData } from "@/types/Tools";
 import {
@@ -26,11 +27,6 @@ interface Tool extends ToolData {
   tool_name: string;
 }
 
-interface ToolRelationshipData {
-  agent_tool_ids: number[];
-  [key: string]: number[] | undefined;
-}
-
 const not = (a: Tool[], b: Tool[]): Tool[] => {
   return a.filter((value) => b.indexOf(value) === -1);
 };
@@ -39,15 +35,15 @@ const intersection = (a: ToolData[], b: ToolData[]): Tool[] => {
   return a.filter((value) => b.indexOf(value) !== -1) as Tool[];
 };
 
-const ToolsRelationship: React.FC = () => {
-  const { botName, botId, aiTeamId } = useParams();
+const ToolsRelation: React.FC = () => {
+  const { botName, agentId, aiTeamId } = useParams();
 
   const {
     getAllTools,
-    getBotTools,
-    setToolRelationship,
-    removeToolRelationship,
-  } = useBotsApi();
+    getAgentTools,
+    setToolRelation,
+    removeToolRelation,
+  } = useTools();
   const { replacePath, appNavigation, language } = useAppContext();
   const t = languages[language as LanguageKey];
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -93,10 +89,10 @@ const ToolsRelationship: React.FC = () => {
     setRelatedTools([]);
   };
 
-  const getToolsData = useCallback((botId: string) => {
+  const getToolsData = useCallback((agentId: string) => {
     getAllTools()
       .then((allTools: unknown) => {
-        getBotTools(botId)
+        getAgentTools(agentId)
           .then((response: unknown) => {
             const botTools = response as Tool[];
             const temp = (allTools as Tool[]).filter((item: Tool) => {
@@ -130,43 +126,48 @@ const ToolsRelationship: React.FC = () => {
           );
         }
       });
-  }, [getAllTools, getBotTools, t]);
+  }, [getAllTools, getAgentTools, t]);
 
-  const setRelationship = async () => {
+  const setRelation = async () => {
     const newCurrentTools: Tool[] = [];
     const toolsToAdd: number[] = [];
     const toolsToRemove: number[] = [];
 
     const relatedToolsSet = new Set(relatedTools.map((tool) => tool.id));
     const currentToolsSet = new Set(currentTools.map((tool) => tool.id));
-    // Comparamos las relaciones que hay (currentTools) con las nuevas (relatedTools)
-    // agregamos las nuevas a una lista para vincularlas y armamos el nuevo currentTools (nuevas + existentes) para futuras modificaciones
+
     relatedTools.forEach((tool) => {
       if (currentToolsSet.has(tool.id)) {
         newCurrentTools.push(tool);
       } else {
         newCurrentTools.push(tool);
         if (tool.id) {
-          toolsToAdd.push(parseInt(tool.id));
+          toolsToAdd.push(Number(tool.id));
         }
       }
     });
-    // Definimos las tools a remover
+
     currentTools.forEach((tool) => {
       if (!relatedToolsSet.has(tool.id) && tool.id) {
-        toolsToRemove.push(parseInt(tool.id));
+        toolsToRemove.push(Number(tool.id));
       }
     });
 
     try {
       if (toolsToRemove.length > 0) {
-        const removeData: ToolRelationshipData = { agent_tool_ids: toolsToRemove };
-        await removeToolRelationship(removeData);
+        const removeData: ToolRelation = { 
+          agent_tool_ids: toolsToRemove,
+          agent_id: agentId
+        };
+        await removeToolRelation(removeData);
       }
 
       if (toolsToAdd.length > 0) {
-        const addData: ToolRelationshipData = { agent_tool_ids: toolsToAdd };
-        await setToolRelationship(addData);
+        const addData: ToolRelation = { 
+          agent_tool_ids: toolsToAdd,
+          agent_id: agentId
+        };
+        await setToolRelation(addData);
       }
 
       SuccessToast("Tools relacionadas satisfactoriamente");
@@ -226,21 +227,21 @@ const ToolsRelationship: React.FC = () => {
 
   useEffect(() => {
     setLoaded(false);
-    if (botId) {
+    if (agentId) {
       replacePath([
         ...appNavigation.slice(0, 3),
         {
           label: "Asignar Tools",
-          current_path: `/builder/agents/tools/${aiTeamId}/${botName}/${botId}`,
+          current_path: `/builder/agents/tools/${aiTeamId}/${botName}/${agentId}`,
           preview_path: "",
           translationKey: "tools.assign"
         },
       ]);
-      getToolsData(botId);
+      getToolsData(agentId);
     } else {
-      ErrorToast("Error al cargar botId en la vista");
+      ErrorToast("Error al cargar agentId en la vista");
     }
-  }, [botId, botName, aiTeamId, replacePath, appNavigation, getToolsData]);
+  }, [agentId, botName, aiTeamId, replacePath, appNavigation, getToolsData]);
 
   return (
     <>
@@ -323,8 +324,8 @@ const ToolsRelationship: React.FC = () => {
               marginBottom: "20px",
             }}
             onClick={() => {
-              if (botId) {
-                setRelationship();
+              if (agentId) {
+                setRelation();
               }
             }}
           >
@@ -336,4 +337,4 @@ const ToolsRelationship: React.FC = () => {
   );
 };
 
-export default ToolsRelationship;
+export default ToolsRelation;

@@ -2,13 +2,13 @@ import React, { useState, useEffect, useMemo } from "react";
 import { MenuItem } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import useAdmin from "@/hooks/useAdmin";
+import useAdminServices from "@/hooks/apps/admin_services";
 import * as Yup from "yup";  
 import { useFormik } from "formik";
 import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
-import useAiTeams from "@/hooks/useAiTeams";
-import { AiTeamsDetails } from "@/types/AiTeams";
+import useAiTeams from "@/hooks/apps/teams";
+import { AiTeamsDetails } from "@/types/Teams";
 import {
   FormLayout,
   FormHeader,
@@ -20,7 +20,7 @@ import {
   FormCancelButton,
   FormButton,
 } from "@/utils/FormsViewUtils";
-import { User } from "@/types/AiTeams";
+import { User } from "@/types/Teams";
 
 // Definimos la interfaz para los valores del formulario
 interface FormValues {
@@ -46,7 +46,7 @@ const AiTeamsForm: React.FC = () => {
   const { aiTeamId, aiTeamName } = useParams();
   const { language, auth, replacePath } = useAppContext();
   const { getAiTeamDetails, createAiTeam, updateAiTeam } = useAiTeams();
-  const { listNonSuperUsers } = useAdmin();
+  const { getNonSuperUsers } = useAdminServices();
   const t = languages[language];
 
   // Verificar autenticación al inicio
@@ -84,7 +84,7 @@ const AiTeamsForm: React.FC = () => {
     getAiTeamDetails,
     createAiTeam,
     updateAiTeam,
-    listNonSuperUsers
+    getNonSuperUsers
   }), []); // Dependencia vacía porque estas funciones no deberían cambiar
 
   // 3. Estabilizamos la configuración inicial
@@ -179,7 +179,7 @@ const AiTeamsForm: React.FC = () => {
         // Cargamos datos en paralelo
         const [usersResponse, teamResponse] = await Promise.all([
           config.auth.is_superuser 
-            ? apiMethods.listNonSuperUsers()
+            ? getNonSuperUsers()
             : Promise.resolve({ data: [currentUser] }),
           config.aiTeamId 
             ? apiMethods.getAiTeamDetails(config.aiTeamId)
@@ -234,10 +234,10 @@ const AiTeamsForm: React.FC = () => {
   useEffect(() => {
     replacePath([
       {
-        label: t.leftMenu.aiTeams,
+        label: t.leftMenu.teams,
         current_path: "/builder",
         preview_path: "/builder",
-        translationKey: "aiTeams"
+        translationKey: "teams"
       },
       {
         label: config.aiTeamId ? t.aiTeamsForm.editTitle : t.aiTeamsForm.createTitle,
@@ -246,7 +246,7 @@ const AiTeamsForm: React.FC = () => {
         translationKey: config.aiTeamId ? "editTeam" : "createTeam"
       }
     ]);
-  }, [config.aiTeamId, config.aiTeamName, t.leftMenu.aiTeams, t.aiTeamsForm.editTitle, t.aiTeamsForm.createTitle]);
+  }, [config.aiTeamId, config.aiTeamName, t.leftMenu.teams, t.aiTeamsForm.editTitle, t.aiTeamsForm.createTitle]);
 
   // Componente de error memoizado
   const ErrorMessage = useMemo(() => {

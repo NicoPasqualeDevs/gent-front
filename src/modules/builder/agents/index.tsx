@@ -1,27 +1,27 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import AuthChecker from "@/components/AuthChecker";
-import IaPanel from "@/pages/Builder/IaPanel";
+import AgentsList from "@/pages/Builder/Agents/List";
 import { WidgetCustomizer } from "@/pages/Builder/WidgetCustomizer";
-import ContextEntry from "@/pages/Builder/ContextEntry";
+import AgentForm from "@/pages/Builder/Agents/Form";
 import Tools from "@/pages/Builder/Tools";
 import ToolsForm from "@/pages/Builder/ToolsForm/Admin";
-import ToolsRelationship from "@/pages/Builder/ToolsRelationship";
+import ToolsRelation from "@/pages/Builder/ToolsRelation";
 
 const AgentsDetailsModule: React.FC = () => {
   return (
     <AuthChecker>
       <Routes>
         {/* Rutas principales */}
-        <Route path=":clientName/:aiTeamId" element={<IaPanel />} />
-        <Route path="contextEntry/:aiTeamId/:botId?" element={<ContextEntry />} />
-        <Route path="widgetCustomizer/:botId" element={<WidgetCustomizer />} />
+        <Route path=":clientName/:teamId" element={<AgentsList />} />
+        <Route path="contextEntry/:teamId/:agentId?" element={<AgentForm />} />
+        <Route path="widgetCustomizer/:agentId" element={<WidgetCustomizer />} />
 
         {/* Rutas de herramientas */}
         <Route path="tools">
-          <Route path=":aiTeamId/:clientName/:botId" element={<Tools />} />
-          <Route path="form/:aiTeamId/:botId/:toolId?" element={<ToolsForm />} />
-          <Route path="relationship/:aiTeamId/:botId" element={<ToolsRelationship />} />
+          <Route path=":teamId/:clientName/:agentId" element={<Tools />} />
+          <Route path="form/:teamId/:agentId/:toolId?" element={<ToolsForm />} />
+          <Route path="Relation/:teamId/:agentId" element={<ToolsRelation />} />
         </Route>
       </Routes>
     </AuthChecker>

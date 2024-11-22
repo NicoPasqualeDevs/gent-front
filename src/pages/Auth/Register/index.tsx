@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { AuthRegisterData } from "@/types/Auth";
-import useAuth from "@/hooks/useAuth";
+import { AuthRegisterData, RegisterCredentials } from "@/types/Auth";
+import useAuth from "@/hooks/apps/accounts/useAuth";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -21,7 +21,7 @@ import { authNavigationUtils } from '@/utils/NavigationUtils';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { registerUser } = useAuth();
+  const { register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const { replacePath } = useAppContext();
@@ -58,7 +58,7 @@ const Register: React.FC = () => {
   const onSubmit = async (values: AuthRegisterData) => {
     setIsLoading(true);
     try {
-      const response = await registerUser(values);
+      const response = await register(values as RegisterCredentials);
       SuccessToast(response.message);
       authNavigationUtils.postRegisterRedirect(navigate);
     } catch (err) {

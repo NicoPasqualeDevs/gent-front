@@ -12,7 +12,7 @@ const en: TranslationType = {
     cancel: "Cancel"
   },
   leftMenu: {
-    aiTeams: "AI Teams",
+    teams: "AI Teams",
     registerTeam: "Register Team",
     registerUser: "Register User",
     tools: "Tools",
@@ -63,7 +63,7 @@ const en: TranslationType = {
     llmKeyBadge: "Team with LLM Key",
     noOwner: "No owner"
   },
-  iaPanel: {
+  agentsList: {
     createAgent: "Create Agent",
     searchPlaceholder: "Search AI Agent",
     agentsOf: "Agents of {clientName}",
@@ -81,7 +81,8 @@ const en: TranslationType = {
     deleteSuccess: "Chatbot deleted successfully",
     errorConnection: "Error: Could not establish connection with the server",
     errorLoadingClient: "Error loading aiTeamId in this view",
-    errorDeletingBot: "Error loading botId for deletion",
+    errorDeletingBot: "Error loading agentId for deletion",
+    errorNoData: "Could not load agents data",
     edit: "Edit",
     created: "Created: {date}",
     implementation: "Implementation",
@@ -98,7 +99,11 @@ const en: TranslationType = {
     errorMissingParams: "Missing required parameters for this action",
     noModelSpecified: "Model not specified",
     tooltipsEnabled: "Disable help texts",
-    tooltipsDisabled: "Enable help texts"
+    tooltipsDisabled: "Enable help texts",
+    errorNoResponse: "No response from server",
+    errorInvalidData: "Invalid data",
+    errorInvalidDataFormat: "Invalid data format",
+    errorUnknown: "Unknown error"
   },
   chatView: {
     agentPanel: "Panel of {agentName}",
@@ -228,7 +233,7 @@ const en: TranslationType = {
     errorConnection: "Error: Could not establish connection with server",
     fieldRequired: "This field is required",
     errorMissingTeamId: "Team ID not found",
-    errorMissingBotId: "Bot ID not found"
+    errorMissingagentId: "Bot ID not found"
   },
   dataEntry: {
     title: "Agent Data",
@@ -375,7 +380,10 @@ const en: TranslationType = {
     success: "Operation successful",
     error: "An error has occurred",
     sessionExpired: "Session expired, please login again",
-    errorConnection: "Error: Could not establish connection with server"
+    errorConnection: "Error: Could not establish connection with server",
+    apiKey: "API Key",
+    model: "Model",
+    select: "Select"
   },
   robotCard: {
     agentStatus: "Agent status",

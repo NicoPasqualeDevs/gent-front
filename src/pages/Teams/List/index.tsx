@@ -4,9 +4,9 @@ import { useAppContext } from "@/context";
 import { PageProps, PaginatedPageState } from "@/types/Page";
 import { ErrorToast } from "@/components/Toast";
 import { languages } from "@/utils/Traslations";
-import useAiTeamsApi from "@/hooks/useAiTeams";
-import { AiTeamsDetails } from "@/types/AiTeams";
-import { Metadata } from "@/types/Api";
+import useAiTeamsApi from "@/hooks/apps/teams";
+import { AiTeamsDetails } from "@/types/Teams";
+
 import { 
   Box, 
   Paper, 
@@ -39,7 +39,12 @@ const AiTeamCard = lazy(() => import("@/components/AiTeamCard"));
 
 interface AiTeamsListState extends PaginatedPageState {
   pageContent: AiTeamsDetails[];
-  paginationData?: Metadata;
+  paginationData?: {
+    current_page: number;
+    total_pages: number;
+    total_items: number;
+    page_size: number;
+  };
   allowerState: boolean;
   clientToDelete: string;
 }
@@ -110,13 +115,20 @@ const AiTeamsList: React.FC<PageProps> = () => {
         response = await getAiTeamsByOwner(auth.uuid, filterParams);
       }
       if (response?.data) {
+        const paginationData = response.metadata ? {
+          current_page: response.metadata.current_page || 1,
+          total_pages: response.metadata.total_pages || 1,
+          total_items: response.metadata.total_items || 0,
+          page_size: response.metadata.page_size || 5
+        } : undefined;
+
         setState(prev => ({
           ...prev,
           isLoading: false,
           isSearching: false,
           currentPage: response.metadata?.current_page || 1,
           pageContent: Array.isArray(response.data) ? response.data : [],
-          paginationData: response.metadata
+          paginationData
         }));
         setClientPage(response.metadata?.current_page || 1);
       }

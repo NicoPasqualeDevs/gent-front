@@ -86,6 +86,7 @@ export interface WidgetData {
   icon_chat: string | File;
   icon_hidden: string | File;
   icon_send: string | File;
+  icon_agent: string | File;
   sql_injection_tester: boolean;
   php_injection_tester: boolean;
   strange_chars_tester: boolean;

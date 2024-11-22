@@ -1,12 +1,6 @@
-declare global {
-  interface ImportMeta {
-    env: {
-      VITE_API_URL: string;
-    };
-  }
-}
 import { useAppContext } from "@/context";
 import { ApiResponse } from "@/types/Api";
+import { getCsrfToken } from "../apps/access";
 
 // Primero definimos un tipo para los datos que se pueden enviar a la API
 type ApiData = Record<string, unknown> | FormData;
@@ -16,21 +10,20 @@ interface ApiConfig extends Record<string, unknown> {
   skipCsrf?: boolean;
 }
 
-interface UseApiHook {
+export interface UseApiHook {
   apiGet: <T>(path: string, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiPost: <T>(path: string, data: ApiData, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiPut: <T>(path: string, data: ApiData, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiPatch: <T>(path: string, data: ApiData, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiDelete: <T>(path: string, config?: ApiConfig) => Promise<ApiResponse<T>>;
   apiBase: string;
-  getCsrfToken: () => Promise<string>;
 }
 
 const useApi = (): UseApiHook => {
   const { auth } = useAppContext();
   const token = auth?.token;
-  //const apiBase = '127.0.0.1:8000/';
-  const apiBase = "https://www.gentsbuilder.com/api/";
+  const apiBase = 'http://127.0.0.1:8000/api/';
+  //const apiBase = "https://www.gentsbuilder.com/api/";
   const handleResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
     if (!response.ok) {
       const error = await response.json();
@@ -46,14 +39,7 @@ const useApi = (): UseApiHook => {
     };
   };
 
-  // Función para obtener el CSRF token
-  const getCsrfToken = async (): Promise<string> => {
-    const response = await fetch(`${apiBase}access/csrf/`, {
-      method: 'GET',
-    });
-    const data = await response.json();
-    return data.csrfToken;
-  };
+
 
   // Modificamos getHeaders para manejar el Content-Type basado en el tipo de datos
   const getHeaders = async (data?: ApiData, config?: ApiConfig): Promise<Record<string, string>> => {
@@ -67,7 +53,7 @@ const useApi = (): UseApiHook => {
     }
 
     if (!config?.skipCsrf) {
-      const csrfToken = await getCsrfToken();
+      const csrfToken = await getCsrfToken(apiBase);
       headers['X-CSRFToken'] = csrfToken;
     }
 
@@ -151,8 +137,7 @@ const useApi = (): UseApiHook => {
     apiPut,
     apiPatch,
     apiDelete,
-    apiBase,
-    getCsrfToken
+    apiBase
   };
 };
 

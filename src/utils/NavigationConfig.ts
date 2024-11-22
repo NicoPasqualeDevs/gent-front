@@ -22,7 +22,7 @@ export type NavigationExtraData = Record<string, string | number | boolean>;
 
 // Definimos los tipos de navegación
 export type NavigationType = 
-  | 'aiTeams'
+  | 'teams'
   | 'agents'
   | 'tools'
   | 'widget'
@@ -39,39 +39,39 @@ export interface NavigationConfig {
 
 // Configuración de navegación
 export const NAVIGATION_CONFIG: Record<NavigationType, NavigationConfig> = {
-  aiTeams: {
+  teams: {
     path: ROOT_PATHS.BUILDER,
-    translationKey: 'leftMenu.aiTeams'
+    translationKey: 'leftMenu.teams'
   },
   agents: {
     path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/:clientName/:aiTeamId`,
-    translationKey: 'iaPanel.agentsOf',
+    translationKey: 'agentsList.agentsOf',
     requiresParams: true,
     paramKeys: ['clientName', 'aiTeamId']
   },
   tools: {
-    path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/${BUILDER_PATHS.TOOLS}/:aiTeamId/:clientName/:botId`,
+    path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/${BUILDER_PATHS.TOOLS}/:aiTeamId/:clientName/:agentId`,
     translationKey: 'tools.type',
     requiresParams: true,
-    paramKeys: ['aiTeamId', 'clientName', 'botId']
+    paramKeys: ['aiTeamId', 'clientName', 'agentId']
   },
   widget: {
-    path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/${BUILDER_PATHS.WIDGET}/:botId`,
+    path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/${BUILDER_PATHS.WIDGET}/:agentId`,
     translationKey: 'widgetCustomizer.title',
     requiresParams: true,
-    paramKeys: ['botId']
+    paramKeys: ['agentId']
   },
   context: {
-    path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/${BUILDER_PATHS.CONTEXT}/:aiTeamId/:botId?`,
+    path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/${BUILDER_PATHS.CONTEXT}/:aiTeamId/:agentId?`,
     translationKey: 'contextEntry.title',
     requiresParams: true,
-    paramKeys: ['aiTeamId', 'botId']
+    paramKeys: ['aiTeamId', 'agentId']
   },
   chat: {
-    path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/${BUILDER_PATHS.CHAT}/:botId`,
+    path: `${ROOT_PATHS.BUILDER}/${BUILDER_PATHS.AGENTS}/${BUILDER_PATHS.CHAT}/:agentId`,
     translationKey: 'chatView.agentPanel',
     requiresParams: true,
-    paramKeys: ['botId']
+    paramKeys: ['agentId']
   }
 };
 
@@ -93,7 +93,7 @@ export const buildPathData = (
   return {
     label: params?.label || '',
     current_path: currentPath,
-    preview_path: type === 'aiTeams' ? currentPath : '',
+    preview_path: type === 'teams' ? currentPath : '',
     translationKey: config.translationKey,
     extraData
   };
@@ -107,8 +107,8 @@ export const buildBreadcrumbs = (
 ): PathData[] => {
   const breadcrumbs: PathData[] = [];
   
-  // Siempre agregamos la ruta raíz (aiTeams)
-  breadcrumbs.push(buildPathData('aiTeams'));
+  // Siempre agregamos la ruta raíz (teams)
+  breadcrumbs.push(buildPathData('teams'));
 
   switch (type) {
     case 'agents':
@@ -123,14 +123,14 @@ export const buildBreadcrumbs = (
           clientName: params.clientName,
           aiTeamId: params.aiTeamId
         }));
-        if (params?.botId) {
+        if (params?.agentId) {
           breadcrumbs.push(buildPathData('tools', params, extraData));
         }
       }
       break;
       
     case 'widget':
-      if (params?.botId) {
+      if (params?.agentId) {
         breadcrumbs.push(buildPathData('widget', params, extraData));
       }
       break;
@@ -142,7 +142,7 @@ export const buildBreadcrumbs = (
       break;
 
     case 'chat':
-      if (params?.botId) {
+      if (params?.agentId) {
         breadcrumbs.push(buildPathData('chat', params, extraData));
       }
       break;

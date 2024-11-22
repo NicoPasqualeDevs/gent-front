@@ -2,9 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Box, Grid, Typography, Button, CircularProgress, Avatar, Tooltip, Paper } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
-import useBotsApi from "@/hooks/useBots";
+import useAgentsApi from "@/hooks/apps/agents";
 import { useParams, useNavigate } from "react-router-dom";
-import { AgentData } from "@/types/Bots";
 import { useTheme } from "@mui/material/styles";
 import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
@@ -23,33 +22,13 @@ import {
   TimeStamp,
   HistoryBubble
 } from './styles';
-import { ChatHistoryType, formatTimestamp, ConversationHistoryType, ServerMessageResponse } from '@/types/ChatView';
-
-interface ChatViewState {
-  isLoading: boolean;
-  isError: boolean;
-  errorMessage?: string;
-  chatHistory: ChatHistoryType | null;
-  message: string;
-  isSending: boolean;
-  agentData: AgentData | null;
-  conversations: ConversationHistoryType[];
-  isHistoricalView: boolean;
-  agentDataError: boolean;
-  showFullName: boolean;
-  isTransitioning: boolean;
-  isInitialized: boolean;
-}
-
-interface ChatResponse {
-  conversation: string;
-  messages: Array<{
-    content: string;
-    role: "bot" | "client";
-    timestamp: string;
-  }>;
-  customer_bot: string;
-}
+import {
+  ChatHistoryType,
+  formatTimestamp,
+  ConversationHistoryType,
+  ChatViewState,
+  ChatResponse,
+} from '@/types/ChatView';
 
 const ChatView: React.FC = () => {
   const [state, setState] = useState<ChatViewState>({
@@ -72,10 +51,10 @@ const ChatView: React.FC = () => {
     sendMessage,
     closeChat,
     getAgentData,
-    getClientBotConversations
-  } = useBotsApi();
+    getAgentConversations
+  } = useAgentsApi();
   
-  const { botId } = useParams<{ botId: string }>();
+  const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -84,39 +63,29 @@ const ChatView: React.FC = () => {
   const t = languages[language as keyof typeof languages].chatView;
 
   const loadData = useCallback(async () => {
-    if (!botId || state.isInitialized) return;
+    if (!agentId || state.isInitialized) return;
 
     try {
       setState(prev => ({ ...prev, isLoading: true }));
 
-      const historyResponse = await getChatHistory(botId);
+      const historyResponse = await getChatHistory(agentId);
       const chatData = historyResponse.data as ChatResponse;
 
       const [conversationsResponse, agentDataResponse] = await Promise.all([
-        getClientBotConversations(botId),
-        getAgentData(botId).catch(() => ({
-          data: {
-            id: 'simulated-id',
-            name: t.defaultAgentName,
-            description: '',
-            model_ai: '',
-            context: '',
-            status: 'offline' as const,
-            widget_url: ''
-          } as AgentData
-        }))
+        getAgentConversations(agentId),
+        getAgentData(agentId)
       ]);
 
-      const mappedConversations: ConversationHistoryType[] = conversationsResponse.map(conv => ({
-        ...conv,
-        conversation_id: conv.id,
-        customer_bot: conv.id,
+      const mappedConversations: ConversationHistoryType[] = (conversationsResponse.data).map(conv => ({
+        id: conv.conversation_id,
+        conversation_id: conv.conversation_id,
+        customer_agent: conv.customer_agent || '',
         client_user: '',
-        timestamp: conv.created_at,
+        timestamp: conv.timestamp,
         archived: false,
         messages: conv.messages.map(msg => ({
           content: msg.content,
-          role: msg.role as 'bot' | 'client',
+          role: (msg.role === 'agent' || msg.role === 'client') ? msg.role : 'client',
           timestamp: msg.timestamp
         }))
       }));
@@ -134,7 +103,7 @@ const ChatView: React.FC = () => {
             timestamp: msg.timestamp
           })),
           customer: '',
-          customer_bot: chatData.customer_bot
+          customer_agent: chatData.customer_agent
         } as ChatHistoryType,
         conversations: mappedConversations,
         agentData: agentDataResponse.data
@@ -151,13 +120,13 @@ const ChatView: React.FC = () => {
       }));
       ErrorToast(t.errorLoadingData);
     }
-  }, [botId, getChatHistory, getClientBotConversations, getAgentData, t]);
+  }, [agentId, getChatHistory, getAgentConversations, getAgentData, t]);
 
   useEffect(() => {
-    if (!state.isInitialized && botId) {
+    if (!state.isInitialized && agentId) {
       loadData();
     }
-  }, [botId, state.isInitialized]);
+  }, [agentId, state.isInitialized]);
 
   useEffect(() => {
     const messages = state.chatHistory?.messages;
@@ -180,38 +149,29 @@ const ChatView: React.FC = () => {
   }, [state.chatHistory?.messages?.length]);
 
   const handleSendMessage = useCallback(async () => {
-    if (!botId || !state.message.trim() || state.isSending) return;
+    if (!agentId || !state.message.trim() || state.isSending) return;
     
     setState(prev => ({ ...prev, isSending: true }));
     
     try {
-      const response = await sendMessage(botId, { message: state.message });
-      console.log('Server response:', response);
+      const response = await sendMessage(agentId, { message: state.message });
+      const chatResponse = response.data;
       
-      const messageData = response.data as ServerMessageResponse;
-      
-      if (!messageData || !messageData.user_message || !messageData.response) {
-        throw new Error('Respuesta inválida del servidor');
-      }
+      const newMessages = [
+        {
+          content: state.message,
+          role: 'client' as const,
+          timestamp: new Date().toISOString()
+        },
+        {
+          content: chatResponse.messages[chatResponse.messages.length - 1].content,
+          role: 'agent' as const,
+          timestamp: chatResponse.messages[chatResponse.messages.length - 1].timestamp
+        }
+      ];
 
       setState(prev => {
         if (!prev.chatHistory) return prev;
-        
-        const newMessages = [
-          ...prev.chatHistory.messages,
-          // Mensaje del usuario
-          {
-            content: messageData.user_message.content,
-            role: messageData.user_message.role,
-            timestamp: messageData.user_message.timestamp
-          },
-          // Respuesta del bot
-          {
-            content: messageData.response.content,
-            role: messageData.response.role,
-            timestamp: messageData.response.timestamp
-          }
-        ];
         
         return {
           ...prev,
@@ -219,8 +179,8 @@ const ChatView: React.FC = () => {
           message: "",
           chatHistory: {
             ...prev.chatHistory,
-            conversation: messageData.conversation,
-            messages: newMessages
+            conversation_id: chatResponse.conversation_id,
+            messages: [...prev.chatHistory.messages, ...newMessages]
           }
         };
       });
@@ -229,7 +189,7 @@ const ChatView: React.FC = () => {
       setState(prev => ({ ...prev, isSending: false }));
       ErrorToast(t.errorSendingMessage);
     }
-  }, [botId, sendMessage, state.message, t.errorSendingMessage]);
+  }, [agentId, sendMessage, state.message, t.errorSendingMessage]);
 
   const handleFinishSession = async () => {
     const currentChatHistory = state.chatHistory;
@@ -315,7 +275,7 @@ const ChatView: React.FC = () => {
       conversation: conversation.conversation_id,
       messages: conversation.messages,
       customer: state.chatHistory?.customer || '',
-      customer_bot: conversation.customer_bot
+      customer_agent: conversation.customer_agent
     } }));
   };
 
@@ -405,19 +365,22 @@ const ChatView: React.FC = () => {
         </Header>
         <MessagesContainer ref={chatContainerRef}>
           {state.chatHistory?.messages.map((msg, index) => (
-            <MessageBubble key={index} role={msg.role}>
+            <MessageBubble 
+              key={index} 
+              role={msg.role as 'agent' | 'client'}
+            >
               <Avatar sx={{
-                bgcolor: msg.role === "bot" ? '#50c878' : '#4a90e2',
+                bgcolor: msg.role === "agent" ? '#50c878' : '#4a90e2',
                 width: 40,
                 height: 40,
-                marginRight: msg.role === "bot" ? '12px' : '6px',
-                marginLeft: msg.role === "bot" ? '6px' : '12px',
+                marginRight: msg.role === "agent" ? '12px' : '6px',
+                marginLeft: msg.role === "agent" ? '6px' : '12px',
               }}>
-                {msg.role === "bot" ? "AI" : "U"}
+                {msg.role === "agent" ? "AI" : "U"}
               </Avatar>
               <MessageContent>
                 <Typography variant="subtitle2" fontWeight="bold" mb={1}>
-                  {msg.role === "bot" ? (state.agentData?.name || t.assistant) : t.user}
+                  {msg.role === "agent" ? (state.agentData?.name || t.assistant) : t.user}
                 </Typography>
                 <Typography variant="body1">
                   {renderMessageContent(msg.content)}

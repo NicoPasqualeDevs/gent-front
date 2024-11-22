@@ -7,6 +7,7 @@ import UserLayout from "./components/Layouts/User/UserLayout";
 import { useAppContext } from '@/context';
 import { useLocation } from 'react-router-dom';
 import LoadingFallback from "@/components/LoadingFallback";
+import AgentsList from "./pages/Builder/Agents/List";
 
 // Interfaces
 interface ProtectedRouteProps {
@@ -134,6 +135,14 @@ const AppRoutes = () => {
           </Route>
           <Route index element={<Navigate to="/builder" replace />} />
           <Route path="*" element={<NotFoundModule />} />
+          <Route 
+            path="/builder/teams/:teamId/agents" 
+            element={
+              <ProtectedRoute>
+                <AgentsList />
+              </ProtectedRoute>
+            } 
+          />
         </Route>
       </Routes>
     </>

@@ -50,17 +50,17 @@ export const MessagesContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const MessageBubble = styled(Box)<{ role: 'bot' | 'client' }>(({ theme, role }) => ({
+export const MessageBubble = styled(Box)<{ role: 'agent' | 'client' }>(({ theme, role }) => ({
   maxWidth: '70%',
   padding: theme.spacing(2),
-  paddingLeft: role === 'bot' ? theme.spacing(1) : 0,
-  paddingRight: role === 'bot' ? 0 : theme.spacing(1),
+  paddingLeft: role === 'agent' ? theme.spacing(1) : 0,
+  paddingRight: role === 'agent' ? 0 : theme.spacing(1),
   borderRadius: '8px',
   marginBottom: theme.spacing(2),
-  backgroundColor: role === 'bot' ? '#383838' : '#2b5278',
-  alignSelf: role === 'bot' ? 'flex-start' : 'flex-end',
+  backgroundColor: role === 'agent' ? '#383838' : '#2b5278',
+  alignSelf: role === 'agent' ? 'flex-start' : 'flex-end',
   display: 'flex',
-  flexDirection: role === 'bot' ? 'row' : 'row-reverse',
+  flexDirection: role === 'agent' ? 'row' : 'row-reverse',
   alignItems: 'flex-start',
 }));
 

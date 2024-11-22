@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Typography, Container, Box, Paper } from "@mui/material";
 import { PageCircularProgress } from "@/components/CircularProgress";
 import { ErrorToast, SuccessToast } from "@/components/Toast";
-import useToolsApi from "@/hooks/useTools";
+import useToolsApi from "@/hooks/apps/tools";
 import { ToolData } from "@/types/Tools";
 import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
@@ -19,13 +19,12 @@ interface ToolsState {
 }
 
 const Tools: React.FC = () => {
-  const { aiTeamId, clientName, botName, botId } = useParams<{
+  const { agentName, agentId, aiTeamId } = useParams<{
+    agentName: string;
+    agentId: string;
     aiTeamId: string;
-    clientName: string;
-    botName: string;
-    botId: string;
   }>();
-  const { getClientTools, getBotTools, addToolToBot, removeToolFromBot } = useToolsApi();
+  const { getClientTools, getBotTools: getAgentTools, addToolToBot: addToolToAgent, removeToolFromBot: removeToolFromAgent } = useToolsApi();
   const { auth, language, replacePath, appNavigation } = useAppContext();
   const t = languages[language as keyof typeof languages];
 
@@ -37,24 +36,23 @@ const Tools: React.FC = () => {
     errorMessage: undefined
   });
 
-  // Función memoizada para cargar los datos
   const loadToolsData = useCallback(async () => {
-    if (!auth?.token || !auth?.uuid || !botId) return;
+    if (!auth?.token || !auth?.uuid || !agentId) return;
 
     try {
-      const [clientToolsResponse, botToolsResponse] = await Promise.all([
+      const [clientToolsResponse, agentToolsResponse] = await Promise.all([
         getClientTools(auth.uuid),
-        getBotTools(botId)
+        getAgentTools(agentId)
       ]);
 
       const availableTools = clientToolsResponse.data.filter(
-        tool => !botToolsResponse.data.some(botTool => botTool.id === tool.id)
+        (tool: ToolData) => !agentToolsResponse.data.some((agentTool: ToolData) => agentTool.id === tool.id)
       );
 
       setState(prev => ({
         ...prev,
         tools: availableTools,
-        agentTools: botToolsResponse.data,
+        agentTools: agentToolsResponse.data,
         isLoading: false
       }));
     } catch (error) {
@@ -67,50 +65,10 @@ const Tools: React.FC = () => {
       }));
       ErrorToast(t.tools.errorLoading);
     }
-  }, [auth?.uuid, botId, getClientTools, getBotTools, t.tools.errorLoading]);
-
-  // Efecto para cargar datos iniciales
-  useEffect(() => {
-    setState(prev => ({ ...prev, isLoading: true }));
-
-    if (!auth?.token || !auth?.uuid || !botId) {
-      setState(prev => ({ ...prev, isLoading: false }));
-      ErrorToast(t.tools.errorToken);
-      return;
-    }
-
-    loadToolsData();
-  }, [auth?.uuid, botId]); // Removido loadToolsData de las dependencias
-
-  // Efecto para actualizar el pathbar
-  useEffect(() => {
-    if (!aiTeamId || !clientName || !botName) return;
-
-    replacePath([
-      ...appNavigation.slice(0, 1),
-      {
-        label: clientName,
-        current_path: `/builder/agents/${clientName}/${aiTeamId}`,
-        preview_path: "",
-        translationKey: ""
-      },
-      {
-        label: botName,
-        current_path: `/builder/agents/tools/${aiTeamId}/${botName}`,
-        preview_path: "",
-        translationKey: ""
-      },
-      {
-        label: t.tools.type,
-        current_path: `/builder/agents/tools/${aiTeamId}/${botName}`,
-        preview_path: "",
-        translationKey: ""
-      },
-    ]);
-  }, [aiTeamId, clientName, botName]); // Removidas dependencias innecesarias
+  }, [auth?.uuid, agentId, getClientTools, getAgentTools, t.tools.errorLoading]);
 
   const handleToolAction = useCallback(async (toolId: number, action: 'relate' | 'unrelate') => {
-    if (!botId) {
+    if (!agentId) {
       ErrorToast(t.tools.errorMissingBot);
       return;
     }
@@ -119,10 +77,10 @@ const Tools: React.FC = () => {
       setState(prev => ({ ...prev, isLoading: true }));
 
       if (action === 'relate') {
-        await addToolToBot(botId, [toolId]);
+        await addToolToAgent(agentId, [toolId]);
         SuccessToast(t.tools.successRelate);
       } else {
-        await removeToolFromBot(botId, [toolId]);
+        await removeToolFromAgent(agentId, [toolId]);
         SuccessToast(t.tools.successUnrelate);
       }
 
@@ -132,24 +90,41 @@ const Tools: React.FC = () => {
       ErrorToast(action === 'relate' ? t.tools.errorRelate : t.tools.errorUnrelate);
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [botId, addToolToBot, removeToolFromBot, loadToolsData, t.tools]);
+  }, [agentId, addToolToAgent, removeToolFromAgent, loadToolsData, t.tools]);
 
-  // Reemplazar el useCallback mal formado con una función normal
-/*   const handleToolsForm = () => {
-    if (!aiTeamId || !botId) {
-      ErrorToast(t.iaPanel.errorMissingParams);
+  // Efecto para cargar datos iniciales
+  useEffect(() => {
+    setState(prev => ({ ...prev, isLoading: true }));
+
+    if (!auth?.token || !auth?.uuid || !agentId) {
+      setState(prev => ({ ...prev, isLoading: false }));
+      ErrorToast(t.tools.errorToken);
       return;
     }
 
-    builderNavigationUtils.toToolsForm(
-      navigate,
-      { replacePath }, // Añadimos el contexto de navegación
+    loadToolsData();
+  }, [auth?.uuid, agentId]); // Removido loadToolsData de las dependencias
+
+  // Efecto para actualizar el pathbar
+  useEffect(() => {
+    if (!aiTeamId || !agentName) return;
+
+    replacePath([
+      ...appNavigation.slice(0, 1),
       {
-        aiTeamId,
-        botId,
-      }
-    );
-  }; */
+        label: agentName,
+        current_path: `/builder/agents/${agentName}/${aiTeamId}`,
+        preview_path: "",
+        translationKey: ""
+      },
+      {
+        label: t.tools.type,
+        current_path: `/builder/agents/tools/${aiTeamId}/${agentName}`,
+        preview_path: "",
+        translationKey: ""
+      },
+    ]);
+  }, [aiTeamId, agentName]); // Removidas dependencias innecesarias
 
   if (state.isLoading) {
     return <PageCircularProgress />;

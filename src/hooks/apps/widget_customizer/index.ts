@@ -1,19 +1,19 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { WidgetData, CustomGreetingData } from "@/types/WidgetProps";
 import { ApiResponse } from "@/types/Api";
-import useApi from "./api/useApi";
+import useApi from "../../api/useApi";
 
 interface UseWidgetApi {
-  getWidget: (botId: string) => Promise<ApiResponse<WidgetData>>;
+  getWidget: (agentId: string) => Promise<ApiResponse<WidgetData>>;
   patchWidget: (widgetId: string, data: Partial<WidgetData>) => Promise<ApiResponse<WidgetData>>;
-  getCustomMessages: (botId: string) => Promise<ApiResponse<{ data: CustomGreetingData[] }>>;
+  getCustomMessages: (agentId: string) => Promise<ApiResponse<{ data: CustomGreetingData[] }>>;
 }
 
-const useWidget = (): UseWidgetApi => {
+export const useWidget = (): UseWidgetApi => {
   const { apiGet, apiPatch } = useApi();
 
-  const getWidget = useCallback(async (botId: string): Promise<ApiResponse<WidgetData>> => {
-    return apiGet(`widget/${botId}`);
+  const getWidget = useCallback(async (agentId: string): Promise<ApiResponse<WidgetData>> => {
+    return apiGet(`widget/${agentId}`);
   }, [apiGet]);
 
   const patchWidget = useCallback(async (
@@ -50,8 +50,8 @@ const useWidget = (): UseWidgetApi => {
     return apiPatch(`widget/${widgetId}`, jsonData);
   }, [apiPatch]);
 
-  const getCustomMessages = useCallback(async (botId: string): Promise<ApiResponse<{ data: CustomGreetingData[] }>> => {
-    return apiGet(`widget/${botId}/messages`);
+  const getCustomMessages = useCallback(async (agentId: string): Promise<ApiResponse<{ data: CustomGreetingData[] }>> => {
+    return apiGet(`widget/${agentId}/messages`);
   }, [apiGet]);
 
   return useMemo(() => ({
@@ -59,6 +59,21 @@ const useWidget = (): UseWidgetApi => {
     patchWidget,
     getCustomMessages
   }), [getWidget, patchWidget, getCustomMessages]);
+};
+
+export const useWidgetPreview = () => {
+  const [chatState, setChatState] = useState(false);
+  const [popUpState, setPopUpState] = useState(false);
+
+  const toggleChat = () => setChatState(prev => !prev);
+  const togglePopUp = () => setPopUpState(prev => !prev);
+
+  return {
+    chatState,
+    popUpState,
+    toggleChat,
+    togglePopUp
+  };
 };
 
 export default useWidget; 

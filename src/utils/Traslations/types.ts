@@ -10,6 +10,9 @@ export interface TranslationType {
     error: string;
     sessionExpired: string;
     errorConnection: string;
+    apiKey: string;
+    model: string;
+    select: string;
   };
   actionAllower: {
     fieldRequired: string;
@@ -20,7 +23,7 @@ export interface TranslationType {
     cancel: string;
   };
   leftMenu: {
-    aiTeams: string;
+    teams: string;
     registerTeam: string;
     registerUser: string;
     tools: string;
@@ -71,7 +74,7 @@ export interface TranslationType {
     llmKeyBadge: string;
     noOwner: string;
   };
-  iaPanel: {
+  agentsList: {
     createAgent: string;
     searchPlaceholder: string;
     agentsOf: string;
@@ -90,6 +93,7 @@ export interface TranslationType {
     errorConnection: string;
     errorLoadingClient: string;
     errorDeletingBot: string;
+    errorNoData: string;
     edit: string;
     created: string;
     implementation: string;
@@ -107,6 +111,10 @@ export interface TranslationType {
     noModelSpecified: string;
     tooltipsEnabled: string;
     tooltipsDisabled: string;
+    errorNoResponse: string;
+    errorInvalidData: string;
+    errorInvalidDataFormat: string;
+    errorUnknown: string;
   };
   chatView: {
     agentPanel: string;
@@ -231,7 +239,7 @@ export interface TranslationType {
     errorConnection: string;
     fieldRequired: string;
     errorMissingTeamId: string;
-    errorMissingBotId: string;
+    errorMissingagentId: string;
   };
   dataEntry: {
     title: string;
@@ -453,7 +461,7 @@ export interface PathbarTranslations {
 }
 
 export interface LeftMenuTranslations {
-  aiTeams: string;
+  teams: string;
   registerTeam: string;
   registerUser: string;
   tools: string;
