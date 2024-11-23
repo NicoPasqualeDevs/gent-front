@@ -97,6 +97,29 @@ if [ ! -f "$DIST_DIR/favicon.ico" ]; then
     handle_error $? "Error al copiar favicon"
 fi
 
+# Configurar fuentes personalizadas
+echo "🔤 Configurando fuentes personalizadas..."
+sudo mkdir -p /usr/share/fonts/custom
+handle_error $? "Error al crear directorio de fuentes personalizadas"
+
+# Copiar fuente ROBO
+if [ -f "$FRONTEND_DIR/src/assets/fonts/ROBO.ttf" ]; then
+    echo "📝 Copiando fuente ROBO..."
+    sudo cp "$FRONTEND_DIR/src/assets/fonts/ROBO.ttf" /usr/share/fonts/custom/
+    handle_error $? "Error al copiar fuente ROBO"
+    
+    # Configurar permisos de la fuente
+    sudo chmod 644 /usr/share/fonts/custom/ROBO.ttf
+    handle_error $? "Error al configurar permisos de la fuente"
+    
+    # Actualizar cache de fuentes
+    echo "🔄 Actualizando cache de fuentes..."
+    sudo fc-cache -f -v
+    handle_error $? "Error al actualizar cache de fuentes"
+else
+    echo "⚠️ Archivo de fuente ROBO.ttf no encontrado"
+fi
+
 # Configurar permisos
 echo "🔒 Configurando permisos..."
 
