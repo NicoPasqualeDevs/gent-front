@@ -11,8 +11,9 @@ handle_error() {
 }
 
 # Actualizar desde el repositorio
-echo "⬇️ Actualizando código desde el repositorio..."
-git reset --hard
+echo "⬇️ Actualizando código desde el repositorio... v1.0.1"
+
+git reset --hardd
 git clean -fd
 git fetch origin
 git reset --hard origin/main
@@ -73,6 +74,16 @@ fi
 if [ ! -d "$DIST_DIR/assets" ]; then
     mkdir -p "$DIST_DIR/assets"
     handle_error $? "Error al crear directorio de assets"
+fi
+
+# Verificar estructura de directorios
+echo "🔍 Verificando estructura de directorios..."
+if [ ! -f "$FRONTEND_DIR/public/favicon.ico" ]; then
+    echo "⚠️ Advertencia: favicon.ico no encontrado en directorio public"
+fi
+
+if [ ! -d "$FRONTEND_DIR/src/assets" ]; then
+    echo "⚠️ Advertencia: directorio src/assets no encontrado"
 fi
 
 # Reiniciar Nginx
