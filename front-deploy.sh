@@ -16,7 +16,7 @@ git reset --hard
 git clean -fd
 git fetch origin
 git reset --hard origin/main
-chmod +x deploy.sh
+chmod +x front-deploy.sh
 handle_error $? "Error al actualizar el código desde git"
 
 echo "🚀 Iniciando despliegue del frontend..."
