@@ -89,4 +89,12 @@ handle_error $? "Error al verificar estado de Nginx"
 echo "📋 Últimas líneas del log de error de Nginx:"
 sudo tail -n 20 /var/log/nginx/error.log
 
+# Verificar logs de Gunicorn
+echo "📋 Últimas líneas del log de Gunicorn:"
+sudo tail -n 20 /var/log/gunicorn/error.log
+
+# Verificar logs de Daphne
+echo "📋 Últimas líneas del log de Daphne:"
+sudo tail -n 20 /var/log/daphne/access.log
+
 echo "✅ ¡Despliegue del frontend completado exitosamente! 🎉"
