@@ -196,42 +196,38 @@ test_csrf_endpoint() {
     # Primera petición para obtener el token
     CSRF_RESPONSE=$(curl -s -v -X GET https://www.gentsbuilder.com/api/access/csrf/ \
         -H "Origin: https://www.gentsbuilder.com" \
+        -H "Accept: application/json" \
+        --cookie-jar /tmp/cookies.txt \
         2>&1)
     
-    # Extraer el token CSRF de las cookies
-    CSRF_TOKEN=$(echo "$CSRF_RESPONSE" | grep -i "set-cookie: csrftoken=" | sed 's/.*csrftoken=\([^;]*\);.*/\1/')
+    # Extraer el token CSRF de la respuesta JSON
+    CSRF_TOKEN=$(echo "$CSRF_RESPONSE" | grep -o '"csrfToken":"[^"]*"' | cut -d'"' -f4)
     
     if [ -z "$CSRF_TOKEN" ]; then
         echo "❌ No se pudo obtener el token CSRF"
         echo "📋 Respuesta completa del servidor:"
         echo "$CSRF_RESPONSE"
-        
-        # Verificar headers CORS
-        echo "🔍 Verificando headers CORS..."
-        curl -v -X OPTIONS https://www.gentsbuilder.com/api/access/csrf/ \
-            -H "Origin: https://www.gentsbuilder.com" \
-            -H "Access-Control-Request-Method: GET" \
-            2>&1
-        
         return 1
     else
         echo "✅ Token CSRF obtenido: ${CSRF_TOKEN:0:8}..."
         
         # Segunda petición usando el token
-        echo "🔄 Verificando token CSRF..."
         VERIFY_RESPONSE=$(curl -s -X GET https://www.gentsbuilder.com/api/access/csrf/ \
             -H "Origin: https://www.gentsbuilder.com" \
-            -H "Cookie: csrftoken=$CSRF_TOKEN" \
             -H "X-CSRFToken: $CSRF_TOKEN" \
+            -H "Accept: application/json" \
+            --cookie /tmp/cookies.txt \
             2>&1)
         
         if echo "$VERIFY_RESPONSE" | grep -q "csrfToken"; then
             echo "✅ Verificación de CSRF exitosa"
+            rm -f /tmp/cookies.txt
             return 0
         else
             echo "❌ Error en la verificación de CSRF"
             echo "📋 Respuesta del servidor:"
             echo "$VERIFY_RESPONSE"
+            rm -f /tmp/cookies.txt
             return 1
         fi
     fi
