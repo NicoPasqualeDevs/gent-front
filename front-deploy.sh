@@ -27,7 +27,7 @@ git reset --hard
 git clean -fd
 git fetch origin
 git reset --hard origin/main
-chmod +x deploy.sh
+chmod +x front-deploy.sh
 handle_error $? "Error al actualizar el código desde git"
 
 # Instalar dependencias
@@ -58,11 +58,15 @@ sudo chown -R $CURRENT_USER:www-data $BUILD_DIR
 sudo chmod -R 755 $BUILD_DIR
 handle_error $? "Error al configurar permisos"
 
-# Verificar favicon.ico
+# Verificar y configurar favicon.ico
+echo "🔍 Configurando favicon..."
 if [ -f "$BUILD_DIR/favicon.ico" ]; then
     sudo chmod 644 "$BUILD_DIR/favicon.ico"
+    sudo chown $CURRENT_USER:www-data "$BUILD_DIR/favicon.ico"
+    echo "✅ Favicon configurado correctamente"
 else
-    echo "⚠️ Advertencia: favicon.ico no encontrado"
+    echo "❌ ERROR: favicon.ico no encontrado en el directorio build"
+    exit 1
 fi
 
 # Verificar y crear directorio de assets si no existe
