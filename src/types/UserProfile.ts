@@ -3,14 +3,15 @@ import { ApiResponse } from "@/types/Api";
 export interface ApiKey {
   id: number;
   api_name: string;
-  api_type: 'openai' | 'anthropic';
+  api_type: string;
   api_key: string;
 }
 
 export interface ApiKeyFormData extends Record<string, unknown> {
   api_name: string;
-  api_type: 'openai' | 'anthropic';
+  api_type: 'openai' | 'anthropic' | 'google' | 'mistral' | 'meta' | 'custom';
   api_key: string;
+  model?: string;
 }
 
 export interface ProfileUpdateData extends Record<string, unknown> {
@@ -52,6 +53,25 @@ export interface UseProfileHook {
   deleteApiKey: (id: number) => Promise<ApiResponse<void>>;
   
   // Bot API Key methods
-  setBotApiKey: (botId: string, apiKeyId: number) => Promise<ApiResponse<SetBotApiKeyResponse>>;
-  updateBotApiKey: (botId: string, apiKeyId?: number) => Promise<ApiResponse<SetBotApiKeyResponse>>;
+  setBotApiKey: (agentId: string, apiKeyId: number) => Promise<ApiResponse<SetBotApiKeyResponse>>;
+  updateBotApiKey: (agentId: string, apiKeyId?: number) => Promise<ApiResponse<SetBotApiKeyResponse>>;
+}
+
+export interface LLMProvider {
+  value: string;
+  label: string;
+}
+
+export interface LLMModel {
+  value: string;
+  label: string;
+  provider: string;
+}
+
+export interface ProfileState {
+  isLoading: boolean;
+  isSubmitting: boolean;
+  apiKeys: ApiKey[];
+  showNewKeyForm: boolean;
+  error: string | null;
 }

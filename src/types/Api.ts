@@ -1,20 +1,22 @@
+export interface Metadata {
+  current_page: number;
+  total_pages: number;
+  total_items: number;
+  page_size: number;
+}
+
 export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
-  metadata?: Metadata;
-}
-
-export interface Metadata {
-  current_page: number;
-  total_pages: number;
-  page_size: number;
-  total_items: number;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  metadata: Metadata;
+  metadata?: {
+    current_page?: number;
+    total_pages?: number;
+    total_items?: number;
+    page_size?: number;
+    has_next?: boolean;
+    has_previous?: boolean;
+  };
 }
 
 export interface ApiError {
@@ -22,3 +24,6 @@ export interface ApiError {
   error: string;
   data?: string;
 }
+
+// Tipo base para los datos de la API
+export type ApiData = Record<string, unknown>;

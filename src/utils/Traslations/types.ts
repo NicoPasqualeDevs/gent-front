@@ -10,6 +10,9 @@ export interface TranslationType {
     error: string;
     sessionExpired: string;
     errorConnection: string;
+    apiKey: string;
+    model: string;
+    select: string;
   };
   actionAllower: {
     fieldRequired: string;
@@ -20,7 +23,7 @@ export interface TranslationType {
     cancel: string;
   };
   leftMenu: {
-    aiTeams: string;
+    teams: string;
     registerTeam: string;
     registerUser: string;
     tools: string;
@@ -49,7 +52,7 @@ export interface TranslationType {
     cancel: string;
     owner: string;
   };
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: string;
     searchPlaceholder: string;
     yourAiTeams: string;
@@ -71,14 +74,21 @@ export interface TranslationType {
     llmKeyBadge: string;
     noOwner: string;
   };
-  iaPanel: {
-    createAgent: string;
-    searchPlaceholder: string;
+  agentsList: {
     agentsOf: string;
+    tooltipsEnabled: string;
+    tooltipsDisabled: string;
+    searchPlaceholder: string;
     perPage: string;
     noAgentsFound: string;
     noAgentsToShow: string;
+    createAgent: string;
+    reloadData: string;
     agentsCount: string;
+    errorConnection: string;
+    errorMissingParams: string;
+    deleteSuccess: string;
+    noModelSpecified: string;
     testAgent: string;
     useAPI: string;
     widget: string;
@@ -86,14 +96,12 @@ export interface TranslationType {
     data: string;
     customization: string;
     tools: string;
-    deleteSuccess: string;
-    errorConnection: string;
     errorLoadingClient: string;
     errorDeletingBot: string;
+    errorNoData: string;
     edit: string;
     created: string;
     implementation: string;
-    reloadData: string;
     deleteConfirmation: string;
     deletingAgent: string;
     deleteButton: string;
@@ -103,10 +111,10 @@ export interface TranslationType {
     copyWidget: string;
     widgetCopied: string;
     modelAI: string;
-    errorMissingParams: string;
-    noModelSpecified: string;
-    tooltipsEnabled: string;
-    tooltipsDisabled: string;
+    errorNoResponse: string;
+    errorInvalidData: string;
+    errorInvalidDataFormat: string;
+    errorUnknown: string;
   };
   chatView: {
     agentPanel: string;
@@ -128,6 +136,8 @@ export interface TranslationType {
     errorLoadingData: string;
     historicalView: string;
     returnToCurrent: string;
+    errorCreatingSession: string;
+    errorNoConnection: string;
   };
   notFound: {
     title: string;
@@ -231,7 +241,7 @@ export interface TranslationType {
     errorConnection: string;
     fieldRequired: string;
     errorMissingTeamId: string;
-    errorMissingBotId: string;
+    errorMissingagentId: string;
   };
   dataEntry: {
     title: string;
@@ -437,7 +447,7 @@ export const greetings: GreetingsType = {
   ],
   hi: [
     "नमस्ते! आप कैसे हैं?",
-    "स्वागत है! मैं आपकी कैसे मदद कर सकता हूं?",
+    "स्वागत है! मैं आपकी कैसे मदद कर सका हूं?",
     "अभिवादन! आपका दि कैसा जा रहा है?",
     "आपको देखकर अच्छा लगा! आप कैसे हैं?"
   ]
@@ -453,7 +463,7 @@ export interface PathbarTranslations {
 }
 
 export interface LeftMenuTranslations {
-  aiTeams: string;
+  teams: string;
   registerTeam: string;
   registerUser: string;
   tools: string;

@@ -17,8 +17,8 @@ import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { ErrorToast } from "@/components/Toast";
 import ActionAllower from "@/components/ActionAllower";
-import useAiTeamsApi from "@/hooks/useAiTeams";
-import { AiTeamsDetails } from "@/types/AiTeams";
+import useAiTeamsApi from "@/hooks/apps/teams";
+import { AiTeamsDetails } from "@/types/Teams";
 import { Metadata, ApiError } from "@/types/Api";
 import agent from '@/assets/agents/1.png';
 import agronomia from '@/assets/categories/agronomia.png';
@@ -153,11 +153,11 @@ const UserPanel: React.FC = () => {
     getMyAiTeams(filterParams)
       .then((response: ApiResponse<AiTeamsDetails[]>) => {
         const data: AiTeamsDetails[] = response.data;
-        const metadata: Metadata = response.metadata || {
-          current_page: 1,
-          total_pages: 1,
-          page_size: 10,
-          total_items: 0
+        const metadata: Metadata = {
+          current_page: response.metadata?.current_page || 1,
+          total_pages: response.metadata?.total_pages || 1,
+          page_size: response.metadata?.page_size || 10,
+          total_items: response.metadata?.total_items || 0,
         };
         setClientPage(metadata.current_page);
         setPageContent(data);
@@ -192,12 +192,12 @@ const UserPanel: React.FC = () => {
     }
   }, [getAiTeamsData]);
 
-  const deleteAction = useCallback(async (aiTeamId: string): Promise<void> => {
-    console.log('aiTeamId', aiTeamId);
-    setClientToDelete(aiTeamId);
+  const deleteAction = useCallback(async (teamId: string): Promise<void> => {
+    console.log('teamId', teamId);
+    setClientToDelete(teamId);
 /*     try {
-      await deleteAiTeam(aiTeamId);
-      setPageContent(prev => prev.filter(item => item.id !== aiTeamId));
+      await deleteAiTeam(teamId);
+      setPageContent(prev => prev.filter(item => item.id !== teamId));
       setAllowerState(false);
       setClientToDelete("");
       SuccessToast("Cliente eliminado satisfactoriamente");

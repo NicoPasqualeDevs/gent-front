@@ -7,6 +7,9 @@ export interface ToolData {
   user_id?: string;
 }
 
-export interface ToolRelationshipData {
+export interface ToolRelationData {
   agent_tool_ids: number[];
+  agent_id?: string;
+  tool_id?: string;
+  is_active?: boolean;
 }

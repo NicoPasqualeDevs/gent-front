@@ -21,9 +21,9 @@ const LeftMenu: React.FC = () => {
 
   const menuOptions = [
     {
-      navElevation: t.leftMenu.aiTeams,
-      translationKey: "aiTeams",
-      label: t.leftMenu.aiTeams,
+      navElevation: t.leftMenu.teams,
+      translationKey: "teams",
+      label: t.leftMenu.teams,
       path: "/builder",
       requireSuperUser: false,
       disabled: false

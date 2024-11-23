@@ -3,8 +3,8 @@ import { Button, Grid, Typography, Box, CircularProgress } from "@mui/material";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import "@/assets/fonts/ROBO.css"
-import { AuthLoginData, AuthUser } from "@/types/Auth";
-import useAuth from "@/hooks/useAuth";
+import { AuthUser, UserCredentials } from "@/types/Auth";
+import useAuth from "@/hooks/apps/accounts/useAuth";
 import { ErrorToast } from "@/components/Toast";
 import { useAppContext } from "@/context";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ const Login: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
   const navigate = useNavigate();
   const { setAuth, setNavElevation, language } = useAppContext();
-  const { loginUser } = useAuth();
+  const { login } = useAuth();
   const [inputError, setInputError] = useState<LoginInputError>({
     email: " ",
     password: " ",
@@ -44,7 +44,7 @@ const Login: React.FC = () => {
     return () => clearInterval(interval);
   }, [t.rotatingTexts.length]);
 
-  const initialValues: AuthLoginData = {
+  const initialValues: UserCredentials = {
     password: "",
     email: "",
   };
@@ -56,20 +56,20 @@ const Login: React.FC = () => {
     password: Yup.string().required(t.fieldRequired),
   });
 
-  const onSubmit = async (values: AuthLoginData) => {
+  const onSubmit = async (values: UserCredentials) => {
     setIsLoading(true);
     try {
-      const response = await loginUser(values);
+      const response = await login(values);
       const userData = response.data;
 
-      if (!userData.token || !userData.email || !userData.uuid) {
+      if (!response.success || !userData.token || !userData.email) {
         throw new Error(t.invalidServerResponse);
       }
 
       const authData: AuthUser = {
         email: userData.email,
         token: userData.token,
-        uuid: userData.uuid,
+        uuid: userData.user_id.toString(),
         first_name: userData.first_name || "",
         last_name: userData.last_name || "",
         is_superuser: userData.is_superuser || false,
@@ -83,16 +83,19 @@ const Login: React.FC = () => {
       navigate("/builder", { replace: true });
 
     } catch (error: unknown) {
+      let errorMessage = t.connectionError;
+      
       if (error instanceof Error) {
-        ErrorToast(t.connectionError);
+        errorMessage = error.message;
       } else if (typeof error === 'object' && error !== null && 'message' in error) {
-        const errorMessage = (error as { message: string }).message;
-        ErrorToast(errorMessage);
-        setInputError({
-          email: errorMessage === t.invalidEmail ? t.invalidEmail : "",
-          password: errorMessage === t.invalidCredentials ? t.invalidCredentials : "",
-        });
+        errorMessage = (error as { message: string }).message;
       }
+      
+      ErrorToast(errorMessage);
+      setInputError({
+        email: errorMessage === t.invalidEmail ? t.invalidEmail : "",
+        password: errorMessage === t.invalidCredentials ? t.invalidCredentials : "",
+      });
     } finally {
       setIsLoading(false);
     }

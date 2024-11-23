@@ -7,13 +7,13 @@ import {
   ErrorToast,
   SuccessToast,
 } from "@/components/Toast";
-import useAdmin from "@/hooks/useAdmin";
+import useAdminServices from "@/hooks/apps/admin_services";
 import * as Yup from "yup";  
 import { useFormik } from "formik";
 import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
 import { ToolData } from "@/types/Tools";
-import useTools from "@/hooks/useTools"; 
+import useTools from "@/hooks/apps/tools"; 
 import { 
   FormLayout, 
   FormHeader, 
@@ -26,6 +26,15 @@ import {
   FormTextField,
   FormSelect
 } from "@/utils/FormsViewUtils";
+import { ApiResponse } from "@/types/Api";
+
+interface NonSuperUserResponse {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+}
 
 type NonSuperUser = {
   id: number;
@@ -40,7 +49,7 @@ const ToolsForm: React.FC = () => {
   const { toolId } = useParams();
   const { language, auth, replacePath } = useAppContext();
   const { postTool, patchTool, getTool } = useTools(); 
-  const { listNonSuperUsers } = useAdmin();
+  const { getNonSuperUsers } = useAdminServices();
   const t = languages[language as keyof typeof languages].toolsForm;
 
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -163,19 +172,19 @@ const ToolsForm: React.FC = () => {
       return;
     }
 
-    listNonSuperUsers()
-      .then((response) => {
-        const newUsers = response.data.map(user => ({
+    getNonSuperUsers()
+      .then((response: ApiResponse<NonSuperUserResponse[]>) => {
+        const newUsers = response.data.map((user: NonSuperUserResponse) => ({
           ...user,
           id: Number(user.id)
         }));
         setNonSuperUsers([currentUser, ...newUsers]);
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         console.error("Error al obtener usuarios no superusuarios:", error);
         setNonSuperUsers([currentUser]);
       });
-  }, [listNonSuperUsers, auth]);
+  }, [getNonSuperUsers, auth]);
 
   // Efecto principal para la carga inicial
   useEffect(() => {
@@ -236,6 +245,7 @@ const ToolsForm: React.FC = () => {
         onSubmit={formSubmit}
         encType="multipart/form-data"
         isLoading={!loaded}
+        isSubmitting={false}
       >
         <FormInputGroup>
           <FormTextField
@@ -263,6 +273,7 @@ const ToolsForm: React.FC = () => {
 
         <FormInputGroup>
           <FormFileInput
+            name="tool_code"
             label={t.fileInput}
             accept=".py,.js,.ts"
             onChange={(file) => {

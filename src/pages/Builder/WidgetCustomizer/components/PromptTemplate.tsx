@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Box, TextField, Typography, Button, CircularProgress } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
-import useBots from '@/hooks/useBots';
+import useAgents from '@/hooks/apps/agents';
 import { useParams } from 'react-router-dom';
 import { ErrorToast, SuccessToast } from "@/components/Toast";
 
 export const PromptTemplate: React.FC = () => {
   const [promptText, setPromptText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const { botId } = useParams();
-  const { getPromptTemplate, savePromptTemplate } = useBots();
+  const { agentId } = useParams();
+  const { getPromptTemplate, savePromptTemplate } = useAgents();
 
   const placeholderTemplate = `### Contexto
 Eres un asistente virtual especializado en atención al cliente para nuestra empresa. Tu objetivo es proporcionar información precisa y útil basada en el conocimiento proporcionado.
@@ -27,14 +27,14 @@ Asistente: "¡Hola! Con gusto te ayudo. Nuestro horario de atención es de lunes
 
   useEffect(() => {
     const loadPromptTemplate = async () => {
-      if (botId) {
+      if (agentId) {
         try {
-          const response = await getPromptTemplate(botId);
+          const response = await getPromptTemplate(agentId);
           if (response.data) {
-            if (response.data.trim() === "Prompt template file not initialized.") {
+            if (response.data.data.trim() === "Prompt template file not initialized.") {
               setPromptText(placeholderTemplate);
             } else {
-              setPromptText(response.data);
+              setPromptText(response.data.data);
             }
           }
         } catch (error) {
@@ -46,13 +46,13 @@ Asistente: "¡Hola! Con gusto te ayudo. Nuestro horario de atención es de lunes
     };
 
     loadPromptTemplate();
-  }, [botId]);
+  }, [agentId]);
 
   const handleSave = async () => {
-    if (botId && !isSaving) {
+    if (agentId && !isSaving) {
       setIsSaving(true);
       try {
-        await savePromptTemplate(botId, promptText);
+        await savePromptTemplate(agentId, promptText);
         SuccessToast("Prompt template guardado exitosamente");
       } catch (error) {
         console.error('Error al guardar el prompt template:', error);

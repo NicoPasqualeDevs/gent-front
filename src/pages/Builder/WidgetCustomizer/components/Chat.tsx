@@ -7,11 +7,11 @@ interface ChatProps {
   primaryTextContrast: string;
   secondaryColor: string;
   secondaryTextContrast: string;
-  iconBot: string;
+  icon_agent: string;
 }
 
 interface Message {
-  role: 'bot' | 'client';
+  role: 'agent' | 'client';
   content: string;
 }
 
@@ -20,12 +20,12 @@ export const Chat: React.FC<ChatProps> = ({
   primaryTextContrast,
   secondaryColor,
   secondaryTextContrast,
-  iconBot
+  icon_agent
 }) => {
   // Mensajes de ejemplo actualizados para la vista previa
   const sampleMessages: Message[] = [
     {
-      role: 'bot',
+      role: 'agent',
       content: 'Hola 👋 ¿En qué puedo ayudarte?'
     },
     {
@@ -33,7 +33,7 @@ export const Chat: React.FC<ChatProps> = ({
       content: '¿Cuáles son sus horarios de atención?'
     },
     {
-      role: 'bot',
+      role: 'agent',
       content: 'Nuestro horario de atención es de lunes a viernes de 9:00 AM a 6:00 PM'
     },
     {
@@ -41,7 +41,7 @@ export const Chat: React.FC<ChatProps> = ({
       content: '¿Tienen servicio los fines de semana?'
     },
     {
-      role: 'bot',
+      role: 'agent',
       content: 'Por el momento no ofrecemos atención en fines de semana, pero puedes dejar tu mensaje y te responderemos el siguiente día hábil.'
     },
     {
@@ -49,7 +49,7 @@ export const Chat: React.FC<ChatProps> = ({
       content: '¿Cuál es su correo de contacto?'
     },
     {
-      role: 'bot',
+      role: 'agent',
       content: 'Puedes escribirnos a **soporte@empresa.com** o visitar nuestra página web https://www.empresa.com/contacto'
     },
     {
@@ -57,7 +57,7 @@ export const Chat: React.FC<ChatProps> = ({
       content: '¿Tienen oficina física?'
     },
     {
-      role: 'bot',
+      role: 'agent',
       content: 'Sí, nuestra oficina principal está ubicada en Av. Principal 123, Edificio Central, Piso 4.'
     },
     {
@@ -65,7 +65,7 @@ export const Chat: React.FC<ChatProps> = ({
       content: 'Gracias por la información'
     },
     {
-      role: 'bot',
+      role: 'agent',
       content: '¡Con gusto! Si tienes más preguntas, no dudes en consultarme. 😊'
     }
   ];
@@ -106,11 +106,11 @@ export const Chat: React.FC<ChatProps> = ({
           key={index}
           sx={{
             display: 'flex',
-            justifyContent: message.role === 'bot' ? 'flex-start' : 'flex-end',
+            justifyContent: message.role === 'agent' ? 'flex-start' : 'flex-end',
             mb: 2
           }}
         >
-          {message.role === 'bot' && (
+          {message.role === 'agent' && (
             <Box
               sx={{
                 width: 40,
@@ -123,10 +123,10 @@ export const Chat: React.FC<ChatProps> = ({
                 mr: 1
               }}
             >
-              {iconBot ? (
+              {icon_agent ? (
                 <img 
-                  src={iconBot} 
-                  alt="Bot Icon" 
+                  src={icon_agent} 
+                  alt="Agent Icon" 
                   style={{ 
                     maxWidth: '80%', 
                     maxHeight: '80%' 
@@ -142,11 +142,11 @@ export const Chat: React.FC<ChatProps> = ({
             sx={{
               maxWidth: '70%',
               p: 1.5,
-              borderRadius: message.role === 'bot' 
+              borderRadius: message.role === 'agent' 
                 ? '10px 10px 10px 0'
                 : '10px 0 10px 10px',
-              backgroundColor: message.role === 'bot' ? primaryColor : secondaryColor,
-              color: message.role === 'bot' ? primaryTextContrast : secondaryTextContrast
+              backgroundColor: message.role === 'agent' ? primaryColor : secondaryColor,
+              color: message.role === 'agent' ? primaryTextContrast : secondaryTextContrast
             }}
             dangerouslySetInnerHTML={{
               __html: transformTextToStrong(transformTextToLink(message.content))

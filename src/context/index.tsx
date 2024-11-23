@@ -4,7 +4,7 @@ import { AppReducer, AppContextActions } from "./AppReducer";
 import { useWidth } from "@/hooks/useWidth";
 import { useMediaQuery } from '@mui/material';
 import theme from "@/styles/theme";
-import { AiTeamsDetails } from "@/types/AiTeams";
+import { AiTeamsDetails } from "@/types/Teams";
 import { PathData } from "@/types/Pathbar";
 import { authStorage } from "@/services/auth";
 import { AuthUser } from "@/types/Auth";
@@ -27,7 +27,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     menu,
     layout,
     loaded,
-    aiTeams,
+    teams,
     auth,
     navElevation,
     appNavigation,
@@ -101,11 +101,11 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
   const setAiTeams: Dispatch<SetStateAction<AiTeamsDetails[]>> = React.useCallback((value) => {
     if (typeof value === 'function') {
-      dispatch({ type: "setAiTeams", payload: value(aiTeams) });
+      dispatch({ type: "setAiTeams", payload: value(teams) });
     } else {
       dispatch({ type: "setAiTeams", payload: value });
     }
-  }, [aiTeams]);
+  }, [teams]);
 
   const setMenu: Dispatch<SetStateAction<boolean>> = React.useCallback((value) => {
     const { saveMenuState } = menuStorage();
@@ -195,7 +195,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         menu,
         layout,
         loaded,
-        aiTeams,
+        teams,
         auth,
         navElevation,
         appNavigation,

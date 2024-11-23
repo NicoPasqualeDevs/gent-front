@@ -15,11 +15,13 @@ import {
   FormCancelButton,
   FormButton,
 } from "@/utils/FormsViewUtils";
-import useProfile from "@/hooks/useProfile";
+import useProfile from "@/hooks/apps/accounts/useProfile";
 import { ApiKey, ApiKeyFormData } from "@/types/UserProfile";
 import { MenuItem, Box, IconButton, Typography, Button, Divider, Paper } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import useAccountsApi from '@/hooks/apps/accounts/useAiModels';
+import useApiKeys from '@/hooks/apps/accounts/useApiKeys';
 
 // Interfaces
 interface ProfileFormValues extends Record<string, unknown> {
@@ -34,12 +36,39 @@ interface ProfileState {
   apiKeys: ApiKey[];
   showNewKeyForm: boolean;
   error: string | null;
+  selectedProvider: string;
+  llmProviders: LLMProvider[];
+  llmModels: LLMModel[];
 }
+
+interface LLMProvider {
+  value: string;
+  label: string;
+}
+
+interface LLMModel {
+  value: string;
+  label: string;
+  provider: string;
+}
+
+// Interfaces para el formulario de API Key
+interface FormHelpers {
+  resetForm: () => void;
+  setSubmitting: (isSubmitting: boolean) => void;
+}
+
+// Función helper para capitalizar la primera letra
+const capitalizeFirstLetter = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
 
 const ProfileEdit: React.FC = () => {
   const navigate = useNavigate();
   const { auth, replacePath, setAuth } = useAppContext();
-  const { updateProfileDetails, getApiKeys, createApiKey, deleteApiKey } = useProfile();
+  const { updateProfileDetails } = useProfile();
+  const { getApiKeys, createApiKey, deleteApiKey } = useApiKeys();
+  const { getAIModels } = useAccountsApi();
 
   // Estado unificado
   const [state, setState] = useState<ProfileState>({
@@ -47,7 +76,10 @@ const ProfileEdit: React.FC = () => {
     isSubmitting: false,
     apiKeys: [],
     showNewKeyForm: false,
-    error: null
+    error: null,
+    selectedProvider: 'OpenAI',
+    llmProviders: [],
+    llmModels: []
   });
 
   // Validación Schema memoizada
@@ -64,94 +96,69 @@ const ProfileEdit: React.FC = () => {
         .required("El email es requerido"),
     }), []);
 
-  // Valores iniciales memoizados
-  const initialValues = useMemo(() => ({
-    first_name: auth?.first_name || "",
-    last_name: auth?.last_name || "",
-    email: auth?.email || "",
-  }), [auth?.first_name, auth?.last_name, auth?.email]);
+  // Cargar datos iniciales
+  useEffect(() => {
+    let isMounted = true;
 
-  // Formik para el perfil principal
-  const formik = useFormik<ProfileFormValues>({
-    initialValues,
-    validationSchema,
-    onSubmit: async (values) => {
-      setState(prev => ({ ...prev, isSubmitting: true }));
+    const loadInitialData = async () => {
+      if (!auth?.token) return;
+      
+      setState(prev => ({ ...prev, isLoading: true }));
+      
       try {
-        const response = await updateProfileDetails(values);
+        // Cargar API Keys
+        const apiKeysResponse = await getApiKeys();
+        const apiKeys = apiKeysResponse?.data || [];
         
-        if (response?.data && auth) {
-          setAuth({
-            ...auth,
-            first_name: response.data.first_name,
-            last_name: response.data.last_name,
-            email: response.data.email,
-          });
-          SuccessToast("Perfil actualizado correctamente");
-          navigate("/profile");
+        // Cargar modelos de IA
+        const aiModelsResponse = await getAIModels();
+        const providers = aiModelsResponse.data 
+          ? Array.from(new Set(aiModelsResponse.data.map(model => model.provider)))
+              .map(provider => ({
+                value: provider,
+                label: provider
+              }))
+          : [];
+        
+        if (isMounted) {
+          setState(prev => ({ 
+            ...prev, 
+            apiKeys,
+            showNewKeyForm: apiKeys.length === 0,
+            llmProviders: providers,
+            llmModels: aiModelsResponse.data || [],
+            isLoading: false,
+            error: null
+          }));
         }
       } catch (error) {
-        console.error("Error actualizando perfil:", error);
-        ErrorToast("Error al actualizar el perfil");
-      } finally {
-        setState(prev => ({ ...prev, isSubmitting: false }));
+        if (isMounted) {
+          setState(prev => ({ 
+            ...prev, 
+            error: "Error al cargar los datos",
+            isLoading: false 
+          }));
+          ErrorToast("Error al cargar los datos");
+        }
       }
-    },
-  });
+    };
 
-  // Cargar API Keys - función memoizada
-  const loadApiKeys = useCallback(async () => {
-    if (!auth?.token) return;
-    
-    try {
-      const response = await getApiKeys();
-      if (response?.data) {
-        const apiKeys = Array.isArray(response.data) ? response.data : [];
-        setState(prev => ({ 
-          ...prev, 
-          apiKeys,
-          // Mostrar el formulario automáticamente si no hay API keys
-          showNewKeyForm: apiKeys.length === 0,
-          isLoading: false 
-        }));
-      }
-    } catch (error) {
-      console.error("Error cargando API keys:", error);
-      ErrorToast("Error al cargar las API keys");
-      setState(prev => ({ 
-        ...prev, 
-        error: "Error al cargar las API keys",
-        isLoading: false 
-      }));
-    }
-  }, [auth?.token, getApiKeys]);
+    loadInitialData();
 
-  // Efecto para cargar datos iniciales - solo se ejecuta una vez al montar
-  useEffect(() => {
-    if (auth?.token) {
-      loadApiKeys();
-    }
-  }, [auth?.token]); // Solo depende del token
+    return () => {
+      isMounted = false;
+    };
+  }, [auth?.token]); // Solo depende del token de autenticación
 
-  // Efecto para breadcrumbs - separado del efecto de carga
+  // Configurar breadcrumbs
   useEffect(() => {
     replacePath([
-      {
-        label: "Perfil",
-        current_path: "/profile",
-        preview_path: "/profile",
-        translationKey: "profile"
-      },
-      {
-        label: "Editar",
-        current_path: "/profile/edit",
-        preview_path: "",
-        translationKey: "edit"
-      }
+      { label: "Perfil", current_path: "/profile", preview_path: "/profile", translationKey: "profile" },
+      { label: "Editar", current_path: "/profile/edit", preview_path: "", translationKey: "edit" }
     ]);
-  }, []); // Solo se ejecuta una vez al montar
+  }, [replacePath]);
 
-  // Manejadores de eventos memoizados
+  // Manejadores
   const handleDeleteApiKey = useCallback(async (id: number) => {
     try {
       await deleteApiKey(id);
@@ -169,47 +176,84 @@ const ProfileEdit: React.FC = () => {
     setState(prev => ({ ...prev, showNewKeyForm: !prev.showNewKeyForm }));
   }, []);
 
-  // API Key Formik
+  const handleApiKeyCreation = useCallback(async (
+    values: ApiKeyFormData, 
+    { resetForm, setSubmitting }: FormHelpers
+  ) => {
+    setSubmitting(true);
+    try {
+      const response = await createApiKey(values);
+      if (response?.data) {
+        setState(prev => ({
+          ...prev,
+          apiKeys: [...prev.apiKeys, response.data],
+          showNewKeyForm: false // Cerrar el formulario después de crear
+        }));
+        
+        SuccessToast("API Key creada correctamente");
+        resetForm();
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Error al crear la API key";
+      ErrorToast(errorMessage);
+    } finally {
+      setSubmitting(false);
+    }
+  }, [createApiKey]);
+
+  // Formik para el perfil principal
+  const formik = useFormik<ProfileFormValues>({
+    initialValues: {
+      first_name: auth?.first_name || "",
+      last_name: auth?.last_name || "",
+      email: auth?.email || "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      setState(prev => ({ ...prev, isSubmitting: true }));
+      try {
+        const response = await updateProfileDetails(values);
+        if (response?.data && auth) {
+          setAuth({
+            ...auth,
+            ...response.data
+          });
+          SuccessToast("Perfil actualizado correctamente");
+          navigate("/profile");
+        }
+      } catch (error) {
+        ErrorToast("Error al actualizar el perfil");
+      } finally {
+        setState(prev => ({ ...prev, isSubmitting: false }));
+      }
+    },
+  });
+
+  // Formik para API Key
   const apiKeyFormik = useFormik<ApiKeyFormData>({
     initialValues: {
       api_name: "",
       api_type: "openai",
-      api_key: ""
+      api_key: "",
+      model: ""
     },
     validationSchema: Yup.object({
       api_name: Yup.string().required("El nombre es requerido"),
       api_type: Yup.string().required("El tipo es requerido"),
-      api_key: Yup.string().required("La API key es requerida")
+      api_key: Yup.string().required("La API key es requerida"),
+      model: Yup.string().required("El modelo es requerido")
     }),
-    onSubmit: async (values, { resetForm, setSubmitting }) => {
-      setSubmitting(true);
-      try {
-        const response = await createApiKey(values);
-        if (response?.data) {
-          setState(prev => ({
-            ...prev,
-            apiKeys: [...prev.apiKeys, response.data],
-            showNewKeyForm: false
-          }));
-          
-          // Mostrar mensaje de éxito
-          SuccessToast("API Key creada correctamente");
-          
-          // Limpiar el formulario después de mostrar el mensaje
-          resetForm();
-        }
-      } catch (error) {
-        const errorMessage = error instanceof Error 
-          ? error.message 
-          : "Error al crear la API key";
-        ErrorToast(errorMessage);
-      } finally {
-        setSubmitting(false);
-      }
-    }
+    onSubmit: handleApiKeyCreation
   });
 
-  // Helper functions
+  // Filtrar modelos por proveedor
+  const modelsByProvider = useMemo(() => {
+    return state.llmModels.filter(model => 
+      model.provider.toLowerCase() === state.selectedProvider.toLowerCase()
+    );
+  }, [state.llmModels, state.selectedProvider]);
+
+  // Helper para mensajes de error
   const getFieldHelperText = useCallback((fieldName: keyof ProfileFormValues): string | undefined => {
     return formik.touched[fieldName] && formik.errors[fieldName] 
       ? String(formik.errors[fieldName]) 
@@ -308,7 +352,7 @@ const ProfileEdit: React.FC = () => {
         )}
 
         {/* Formulario para nueva API Key */}
-        {state.showNewKeyForm ? (
+        {state.showNewKeyForm && (
           <Paper sx={{ p: 2, mb: 3 }}>
             <Typography variant="subtitle1" sx={{ mb: 2 }}>
               {state.apiKeys.length === 0 ? 'Registra tu primera API Key' : 'Nueva API Key'}
@@ -328,12 +372,45 @@ const ProfileEdit: React.FC = () => {
               <FormInputGroup>
                 <FormSelect
                   name="api_type"
-                  label="Tipo de API"
+                  label="Proveedor"
                   value={apiKeyFormik.values.api_type}
-                  onChange={apiKeyFormik.handleChange}
+                  onChange={(e) => {
+                    apiKeyFormik.handleChange(e);
+                    setState(prev => ({
+                      ...prev,
+                      selectedProvider: e.target.value
+                    }));
+                    apiKeyFormik.setFieldValue('model', '');
+                  }}
                 >
-                  <MenuItem value="openai">OpenAI</MenuItem>
-                  <MenuItem value="anthropic">Anthropic</MenuItem>
+                  {state.llmProviders.map((provider) => (
+                    <MenuItem 
+                      key={provider.value} 
+                      value={provider.value}
+                    >
+                      {capitalizeFirstLetter(provider.label)}
+                    </MenuItem>
+                  ))}
+                </FormSelect>
+              </FormInputGroup>
+
+              <FormInputGroup>
+                <FormSelect
+                  name="model"
+                  label="Modelo"
+                  value={apiKeyFormik.values.model || ''}
+                  onChange={apiKeyFormik.handleChange}
+                  error={apiKeyFormik.touched.model && Boolean(apiKeyFormik.errors.model)}
+                  helperText={apiKeyFormik.touched.model ? String(apiKeyFormik.errors.model) : undefined}
+                >
+                  {modelsByProvider.map((model) => (
+                    <MenuItem 
+                      key={model.value} 
+                      value={model.value}
+                    >
+                      {capitalizeFirstLetter(model.label)}
+                    </MenuItem>
+                  ))}
                 </FormSelect>
               </FormInputGroup>
 
@@ -368,15 +445,17 @@ const ProfileEdit: React.FC = () => {
               </Box>
             </Box>
           </Paper>
-        ) : (
+        )}
+
+        {!state.showNewKeyForm && state.apiKeys.length > 0 && (
           <Button
             startIcon={<AddIcon />}
             onClick={handleToggleNewKeyForm}
-            variant="outlined"
+            variant="contained"
             color="primary"
-            sx={{ mb: 3 }}
+            sx={{ mb: 2 }}
           >
-            Agregar API Key
+            Agregar Nueva API Key
           </Button>
         )}
 
