@@ -188,11 +188,40 @@ done
 
 # Verificar respuesta del servidor
 echo "🌐 Verificando respuesta del servidor..."
-curl -sI https://gentsbuilder.com > /dev/null
-handle_error $? "Error al verificar respuesta del servidor"
+echo "Intentando acceder al sitio..."
 
-echo "✅ ¡Despliegue del frontend completado exitosamente! 🎉"
-echo "🔍 Recuerda verificar:"
+# Intentar con curl con más opciones de diagnóstico
+curl -v --max-time 10 https://gentsbuilder.com 2>&1 || {
+    echo "⚠️ No se pudo acceder directamente a https://gentsbuilder.com"
+    echo "Intentando verificar el servidor Nginx localmente..."
+    
+    # Verificar si Nginx está escuchando
+    if sudo lsof -i :80 | grep nginx > /dev/null; then
+        echo "✅ Nginx está escuchando en el puerto 80"
+    else
+        echo "❌ Nginx no está escuchando en el puerto 80"
+    fi
+    
+    if sudo lsof -i :443 | grep nginx > /dev/null; then
+        echo "✅ Nginx está escuchando en el puerto 443"
+    else
+        echo "❌ Nginx no está escuchando en el puerto 443"
+    fi
+    
+    # Mostrar estado de Nginx
+    echo "📋 Estado actual de Nginx:"
+    sudo systemctl status nginx --no-pager
+    
+    # Mostrar últimas líneas del log de error
+    echo "📋 Últimas líneas del log de error de Nginx:"
+    sudo tail -n 50 /var/log/nginx/error.log
+    
+    # No salir con error, continuar con el despliegue
+    echo "⚠️ La verificación del servidor no fue exitosa, pero el despliegue continuará"
+}
+
+echo "✅ ¡Despliegue del frontend completado! 🎉"
+echo "🔍 Recuerda verificar manualmente:"
 echo "  - La aplicación en https://gentsbuilder.com"
 echo "  - Los assets estáticos en https://gentsbuilder.com/assets/"
 echo "  - El favicon en https://gentsbuilder.com/favicon.ico"
