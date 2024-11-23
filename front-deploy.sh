@@ -13,7 +13,7 @@ handle_error() {
 echo "🚀 Iniciando despliegue del frontend..."
 
 # Directorios
-FRONTEND_DIR="/home/nicolas_german_pasquale/gents-frontend"
+FRONTEND_DIR="/home/nicolas_german_pasquale/gents-front"
 BUILD_DIR="$FRONTEND_DIR/build"
 CURRENT_USER=$(whoami)
 
