@@ -10,14 +10,14 @@ import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BuildIcon from '@mui/icons-material/Build';
 import { TranslationType } from '@/utils/Traslations/types';
 import { useAppContext } from '@/context';
-import useProfile from '@/hooks/useProfile';
+import useProfile from '@/hooks/apps/accounts/useProfile';
 import { ApiKey } from '@/types/UserProfile';
 import { toast } from 'react-toastify';
 
 interface RobotCardProps {
   name: string;
   lastUpdate: string;
-  botId: string;
+  agentId: string;
   description?: string;
   onTest?: () => void;
   onWidget: () => void;
@@ -37,7 +37,7 @@ interface RobotCardProps {
 
 const RobotCard: React.FC<RobotCardProps> = ({
   name,
-  botId,
+  agentId,
   onWidget,
   onApi,
   onEdit,
@@ -271,18 +271,18 @@ const RobotCard: React.FC<RobotCardProps> = ({
   const handleSelectApiKey = async (apiKey: ApiKey | null) => {
     setIsUpdatingApiKey(true);
     try {
-      if (!botId) {
+      if (!agentId) {
         throw new Error('ID de bot inválido');
       }
 
       let response;
       if (apiKey === null) {
-        response = await updateBotApiKey(botId);
+        response = await updateBotApiKey(agentId);
       } else {
         if (selectedApiKey) {
-          response = await updateBotApiKey(botId, apiKey.id);
+          response = await updateBotApiKey(agentId, apiKey.id);
         } else {
-          response = await setBotApiKey(botId, apiKey.id);
+          response = await setBotApiKey(agentId, apiKey.id);
         }
       }
       

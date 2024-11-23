@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '@/context';
 import { ErrorToast, SuccessToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
-import useBotsApi from "@/hooks/useBots";
+import useAgents from "@/hooks/apps/agents";
 import { Box, TextField, Button, Typography, LinearProgress, CircularProgress } from '@mui/material';
 import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchBar";
 import SearchIcon from "@mui/icons-material/Search";
@@ -38,11 +38,27 @@ interface FormState {
   loadingKnowledge: boolean;
 }
 
+// Agregar interfaz para el tipo de tag
+interface KnowledgeTag {
+  id: string;
+  name: string;
+  value: string;
+}
+
+// Modificar la interfaz KnowledgeTag para asegurar que id es requerido
+interface KnowledgeTag {
+  id: string;
+  name: string;
+  value: string;
+}
+
+// Modificar la interfaz Ktag para que coincida con KnowledgeTag
+
 export const DataEntry: React.FC = () => {
   const navigate = useNavigate();
-  const { botId } = useParams();
+  const { agentId } = useParams();
   const { auth, language, replacePath } = useAppContext();
-  const { getBotDetails, updateBotData, uploadDocument, getKnowledgeTags, createKnowledgeTag, updateKnowledgeTag, deleteKnowledgeTag } = useBotsApi();
+  const { getAgentDetails, updateAgentData, uploadDocument, getKnowledgeTags, createKnowledgeTag, updateKnowledgeTag, deleteKnowledgeTag } = useAgents();
   const t = languages[language];
 
   // Estados principales
@@ -68,16 +84,16 @@ export const DataEntry: React.FC = () => {
   // Memoizamos la configuración inicial
   const config = useMemo(() => ({
     auth,
-    botId,
+    agentId,
     language
-  }), [auth?.uuid, botId, language]);
+  }), [auth?.uuid, agentId, language]);
 
   // Memoizamos los métodos de la API
   const apiMethods = useMemo(() => ({
-    getBotDetails,
-    updateBotData,
+    getAgentDetails,
+    updateAgentData,
     uploadDocument
-  }), [getBotDetails, updateBotData, uploadDocument]);
+  }), [getAgentDetails, updateAgentData, uploadDocument]);
 
   // Agregamos estado para la búsqueda
   const [searchQuery, setSearchQuery] = useState('');
@@ -97,15 +113,15 @@ export const DataEntry: React.FC = () => {
     let mounted = true;
     
     const loadData = async () => {
-      if (!config.auth?.uuid || !config.botId) {
-        console.log('Missing required data:', { auth: config.auth?.uuid, botId: config.botId });
+      if (!config.auth?.uuid || !config.agentId) {
+        console.log('Missing required data:', { auth: config.auth?.uuid, agentId: config.agentId });
         navigate('/builder');
         return;
       }
 
       try {
         console.log('Loading bot details...');
-        const response = await apiMethods.getBotDetails(config.botId);
+        const response = await apiMethods.getAgentDetails(config.agentId);
         
         if (!mounted) return;
 
@@ -113,21 +129,21 @@ export const DataEntry: React.FC = () => {
           console.log('Bot details loaded:', response.data);
           setFormValues(prev => ({
             ...prev,
-            context: response.data.context || '',
+            context: response.data.context ?? '',
             knowledgeSets: prev.knowledgeSets,
             documents: prev.documents
           }));
 
           replacePath([
             {
-              label: t.leftMenu.aiTeams,
+              label: t.leftMenu.teams,
               current_path: "/builder",
               preview_path: "/builder",
-              translationKey: 'aiTeams'
+              translationKey: 'teams'
             },
             {
               label: response.data.name,
-              current_path: `/builder/agents/dataEntry/${config.botId}`,
+              current_path: `/builder/agents/dataEntry/${config.agentId}`,
               preview_path: "",
               translationKey: 'botDetails'
             },
@@ -150,12 +166,12 @@ export const DataEntry: React.FC = () => {
 
     loadData();
     return () => { mounted = false; };
-  }, [config.auth?.uuid, config.botId]);
+  }, [config.auth?.uuid, config.agentId]);
 
   // Manejador de subida de archivos
   const handleFileUpload = useCallback(async (files: File[]) => {
-    if (!config.botId || formState.isSubmitting) {
-      console.log('Upload cancelled:', { botId: config.botId, isSubmitting: formState.isSubmitting });
+    if (!config.agentId || formState.isSubmitting) {
+      console.log('Upload cancelled:', { agentId: config.agentId, isSubmitting: formState.isSubmitting });
       return;
     }
 
@@ -166,7 +182,7 @@ export const DataEntry: React.FC = () => {
       for (const file of files) {
         if (validateFile(file)) {
           console.log('Uploading file:', file.name);
-          await apiMethods.uploadDocument(file, config.botId);
+          await apiMethods.uploadDocument(file, config.agentId);
         }
       }
 
@@ -180,7 +196,7 @@ export const DataEntry: React.FC = () => {
     } finally {
       setFormState(prev => ({ ...prev, isSubmitting: false }));
     }
-  }, [config.botId, formState.isSubmitting, apiMethods.uploadDocument]);
+  }, [config.agentId, formState.isSubmitting, apiMethods.uploadDocument]);
 
   // Validación de archivos
   const validateFile = useCallback((file: File): boolean => {
@@ -208,8 +224,8 @@ export const DataEntry: React.FC = () => {
   // Manejador de envío del formulario
    useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!config.botId || formState.isSubmitting) {
-      console.log('Submit cancelled:', { botId: config.botId, isSubmitting: formState.isSubmitting });
+    if (!config.agentId || formState.isSubmitting) {
+      console.log('Submit cancelled:', { agentId: config.agentId, isSubmitting: formState.isSubmitting });
       return;
     }
 
@@ -217,10 +233,10 @@ export const DataEntry: React.FC = () => {
       console.log('Submitting form data:', formValues);
       setFormState(prev => ({ ...prev, isSubmitting: true }));
 
-        const response = await apiMethods.updateBotData({
+        const response = await apiMethods.updateAgentData({
           context: formValues.context,
           documents: formValues.documents
-        }, config.botId);
+        }, config.agentId);
 
       if (response?.data) {
         console.log('Submit successful:', response.data);
@@ -233,7 +249,7 @@ export const DataEntry: React.FC = () => {
     } finally {
       setFormState(prev => ({ ...prev, isSubmitting: false }));
     }
-  }, [config.botId, formState.isSubmitting, formValues, navigate]);
+  }, [config.agentId, formState.isSubmitting, formValues, navigate]);
 
   // Manejador de selección de archivo
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,7 +269,7 @@ export const DataEntry: React.FC = () => {
     console.log('Drop event detected');
     setFormState(prev => ({ ...prev, dragActive: false }));
 
-    if (e.dataTransfer.files && config.botId) {
+    if (e.dataTransfer.files && config.agentId) {
       console.log('Files dropped:', e.dataTransfer.files);
       const validFiles = Array.from(e.dataTransfer.files).filter(validateFile);
       if (validFiles.length > 0) {
@@ -261,7 +277,7 @@ export const DataEntry: React.FC = () => {
         await handleFileUpload(validFiles);
       }
     }
-  }, [config.botId, handleFileUpload, validateFile]);
+  }, [config.agentId, handleFileUpload, validateFile]);
 
   // Agregamos una referencia para el contenedor de scroll
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -299,21 +315,22 @@ export const DataEntry: React.FC = () => {
   // Efecto para cargar los ktags iniciales
   useEffect(() => {
     const loadKnowledgeTags = async () => {
-      if (!config.botId) return;
+      if (!config.agentId) return;
 
       try {
         setFormState(prev => ({ ...prev, loadingKnowledge: true }));
-        const response = await getKnowledgeTags(config.botId);
+        const response = await getKnowledgeTags(config.agentId);
         if (response?.data) {
+          // Aseguramos que los tipos coincidan
+          const tags = response.data as KnowledgeTag[];
           setFormValues(prev => ({
             ...prev,
-            knowledgeSets: response.data.map(tag => ({
+            knowledgeSets: tags.map(tag => ({
               id: tag.id,
               knowledge_key: tag.name,
               context: tag.value
             }))
           }));
-          // Agregamos scroll después de cargar las etiquetas
           setTimeout(scrollToLastTag, 100);
         }
       } catch (error) {
@@ -325,7 +342,7 @@ export const DataEntry: React.FC = () => {
     };
 
     loadKnowledgeTags();
-  }, [config.botId, scrollToLastTag]);
+  }, [config.agentId, scrollToLastTag]);
 
   // Agregamos un estado para controlar qué etiqueta se está guardando
   const [savingTagIndex, setSavingTagIndex] = useState<number | null>(null);
@@ -333,22 +350,23 @@ export const DataEntry: React.FC = () => {
   // Modificamos la función handleSaveSet
   const handleSaveSet = async (index: number) => {
     const set = formValues.knowledgeSets[index];
-    if (!config.botId) return;
+    if (!config.agentId) return;
 
     const tagData = {
       name: set.knowledge_key,
       value: set.context,
       description: set.knowledge_key,
-      customer_bot: config.botId
+      customer_bot: config.agentId,
+      customer_agent: config.agentId
     };
 
     try {
-      setSavingTagIndex(index); // Indicamos qué etiqueta se está guardando
+      setSavingTagIndex(index);
       
       if (set.id) {
         await updateKnowledgeTag(set.id, tagData);
       } else {
-        const response = await createKnowledgeTag(config.botId, tagData);
+        const response = await createKnowledgeTag(config.agentId, tagData);
         setFormValues(prev => ({
           ...prev,
           knowledgeSets: prev.knowledgeSets.map((s, i) => 
@@ -361,7 +379,7 @@ export const DataEntry: React.FC = () => {
       console.error('Error saving knowledge tag:', error);
       ErrorToast('Error al guardar el conjunto de conocimiento');
     } finally {
-      setSavingTagIndex(null); // Limpiamos el índice al terminar
+      setSavingTagIndex(null);
     }
   };
 
@@ -400,7 +418,7 @@ export const DataEntry: React.FC = () => {
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button
             variant="outlined"
-            onClick={() => navigate(`/chat/${botId}`)}
+            onClick={() => navigate(`/chat/${agentId}`)}
             startIcon={<ChatIcon />}
             sx={{
               minWidth: '140px',

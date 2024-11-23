@@ -12,7 +12,7 @@ const de: TranslationType = {
     cancel: "Abbrechen"
   },
   leftMenu: {
-    aiTeams: "KI-Teams",
+    teams: "KI-Teams",
     registerTeam: "Team Registrieren",
     registerUser: "Benutzer Registrieren",
     tools: "Werkzeuge",
@@ -41,7 +41,7 @@ const de: TranslationType = {
     cancel: "Abbrechen",
     owner: "Eigentümer"
   },
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: "Neues KI-Team",
     searchPlaceholder: "KI-Team suchen",
     yourAiTeams: "Ihre KI-Teams",
@@ -63,7 +63,7 @@ const de: TranslationType = {
     llmKeyBadge: "Team mit LLM Key",
     noOwner: "Kein Besitzer"
   },
-  iaPanel: {
+  agentsList: {
     createAgent: "Agent erstellen",
     searchPlaceholder: "KI-Agent suchen",
     agentsOf: "Agenten von {clientName}",
@@ -80,8 +80,9 @@ const de: TranslationType = {
     tools: "Werkzeuge",
     deleteSuccess: "Chatbot erfolgreich gelöscht",
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
-    errorLoadingClient: "Fehler beim Laden der aiTeamId in dieser Ansicht",
-    errorDeletingBot: "Fehler beim Laden der botId zum Löschen",
+    errorLoadingClient: "Fehler beim Laden der teamId in dieser Ansicht",
+    errorDeletingBot: "Fehler beim Laden der agentId zum Löschen",
+    errorNoData: "Agentendaten konnten nicht geladen werden",
     edit: "Bearbeiten",
     created: "Erstellt am: {date}",
     implementation: "Implementierung",
@@ -98,7 +99,11 @@ const de: TranslationType = {
     errorMissingParams: "Erforderliche Parameter für diese Aktion fehlen",
     noModelSpecified: "Modell nicht angegeben",
     tooltipsEnabled: "Hilfetexte deaktivieren",
-    tooltipsDisabled: "Hilfetexte aktivieren"
+    tooltipsDisabled: "Hilfetexte aktivieren",
+    errorNoResponse: "Keine Antwort vom Server",
+    errorInvalidData: "Ungültige Daten",
+    errorInvalidDataFormat: "Ungültiges Datenformat",
+    errorUnknown: "Unbekannter Fehler"
   },
   chatView: {
     agentPanel: "Panel von {agentName}",
@@ -119,7 +124,9 @@ const de: TranslationType = {
     unexpectedError: "Beim Schließen des Chats ist ein unerwarteter Fehler aufgetreten",
     errorLoadingData: "Chatdaten konnten nicht geladen werden",
     historicalView: "Sie sehen einen Konversationsverlauf",
-    returnToCurrent: "Zurück zur aktuellen Konversation"
+    returnToCurrent: "Zurück zur aktuellen Konversation",
+    errorCreatingSession: "Fehler beim Erstellen der Sitzung",
+    errorNoConnection: "Fehler: Keine Verbindung zum Server"
   },
   notFound: {
     title: "404 - Seite nicht gefunden",
@@ -228,7 +235,7 @@ const de: TranslationType = {
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     fieldRequired: "Dieses Feld ist erforderlich",
     errorMissingTeamId: "Team-ID nicht gefunden",
-    errorMissingBotId: "Bot-ID nicht gefunden"
+    errorMissingagentId: "Bot-ID nicht gefunden"
   },
   dataEntry: {
     title: "Agentendaten",
@@ -375,7 +382,10 @@ const de: TranslationType = {
     success: "Operation erfolgreich",
     error: "Ein Fehler ist aufgetreten",
     sessionExpired: "Sitzung abgelaufen, bitte melden Sie sich erneut an",
-    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden"
+    errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
+    apiKey: "API-Schlüssel",
+    model: "Modell",
+    select: "Auswählen"
   },
   robotCard: {
     agentStatus: "Agentenstatus",

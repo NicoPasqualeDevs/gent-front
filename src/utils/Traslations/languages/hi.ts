@@ -12,7 +12,7 @@ const hi: TranslationType = {
     cancel: "रद्द करें"
   },
   leftMenu: {
-    aiTeams: "एआई टीम्स",
+    teams: "एआई टीम्स",
     registerTeam: "टीम पंजीकृत करें",
     registerUser: "उपयोगकर्ता पंजीकृत करें",
     tools: "उपकरण",
@@ -41,7 +41,7 @@ const hi: TranslationType = {
     cancel: "रद्द करें",
     owner: "मालिक"
   },
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: "नई एआई टीम",
     searchPlaceholder: "एआई टीम खोजें",
     yourAiTeams: "आपकी एआई टीम्स",
@@ -63,7 +63,7 @@ const hi: TranslationType = {
     llmKeyBadge: "एलएलएम कुंजी वाली टीम",
     noOwner: "कोई मालिक नहीं"
   },
-  iaPanel: {
+  agentsList: {
     createAgent: "एजेंट बनाएं",
     searchPlaceholder: "एआई एजेंट खोजें",
     agentsOf: "{clientName} के एजेंट",
@@ -80,8 +80,9 @@ const hi: TranslationType = {
     tools: "उपकरण",
     deleteSuccess: "चैटबॉट सफलतापूर्वक हटाया गया",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
-    errorLoadingClient: "इस दृश्य में aiTeamId लोड करने में त्रुटि",
-    errorDeletingBot: "हटाने के लिए botId लोड करने में त्रुटि",
+    errorLoadingClient: "इस दृश्य में teamId लोड करने में त्रुटि",
+    errorDeletingBot: "हटाने के लिए agentId लोड करने में त्रुटि",
+    errorNoData: "एजेंट डेटा लोड नहीं किया जा सका",
     edit: "संपादित करें",
     created: "बनाया गया: {date}",
     implementation: "कार्यान्वयन",
@@ -98,7 +99,11 @@ const hi: TranslationType = {
     errorMissingParams: "इस कार्य के लिए आवश्यक पैरामीटर गायब हैं",
     noModelSpecified: "मॉडल निर्दिष्ट नहीं",
     tooltipsEnabled: "सहायता टेक्स्ट बंद करें",
-    tooltipsDisabled: "सहायता टेक्स्ट चालू करें"
+    tooltipsDisabled: "सहायता टेक्स्ट चालू करें",
+    errorNoResponse: "सर्वर से कोई प्रतिक्रिया नहीं",
+    errorInvalidData: "अमान्य डेटा",
+    errorInvalidDataFormat: "अमान्य डेटा प्रारूप",
+    errorUnknown: "अज्ञात त्रुटि"
   },
   chatView: {
     agentPanel: "{agentName} का पैनल",
@@ -116,10 +121,12 @@ const hi: TranslationType = {
     errorSendingMessage: "संदेश नहीं भेजा जा सका",
     errorClosingChat: "चैट बंद नहीं की जा सकी: वार्तालाप आईडी गायब है",
     errorCleaningChat: "चैट को पूरी तरह से साफ नहीं किया जा सका",
-    unexpectedError: "चैट बंद करते समय एक अनपेक्षित त्रुटि हुई",
+    unexpectedError: "���ैट बंद करते समय एक अनपेक्षित त्रुटि हुई",
     errorLoadingData: "चैट डेटा लोड नहीं किया जा सका",
     historicalView: "आप एक वार्तालाप इतिहास देख रहे हैं",
-    returnToCurrent: "वर्तमान वार्तालाप पर वापस जाएं"
+    returnToCurrent: "वर्तमान वार्तालाप पर वापस जाएं",
+    errorCreatingSession: "सत्र बनाने में त्रुटि",
+    errorNoConnection: "त्रुटि: सर्वर से कोई कनेक्शन नहीं"
   },
   notFound: {
     title: "404 - पृष्ठ नहीं मिला",
@@ -201,7 +208,7 @@ const hi: TranslationType = {
     perPage: "प्रति पृष्ठ",
     reloadData: "डेटा पुनः लोड करें",
     manage: "प्रबंधित करें",
-    edit: "संपा��ित करें",
+    edit: "संपादित करें",
     delete: "हटाएं",
     deleteConfirmation: "क्या आप वाकई इस उपकरण को हटाना चाहते हैं?",
     deleteSuccess: "उपकरण सफलतापूर्वक हटाया गया",
@@ -228,7 +235,7 @@ const hi: TranslationType = {
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
     fieldRequired: "यह फ़ील्ड आवश्यक है",
     errorMissingTeamId: "टीम आईडी नहीं मिली",
-    errorMissingBotId: "बॉट आईडी नहीं मिली"
+    errorMissingagentId: "बॉट आईडी नहीं मिली"
   },
   dataEntry: {
     title: "एजेंट डेटा",
@@ -237,7 +244,7 @@ const hi: TranslationType = {
     documents: "दस्तावेज़",
     upload: "अपलोड करें",
     saving: "सहेज रहा है...",
-    update: "अपडेट करें",
+    update: "���पडेट करें",
     cancel: "रद्द करें",
     successUpdate: "डेटा सफलतापूर्वक अपडेट किया गया",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
@@ -375,7 +382,10 @@ const hi: TranslationType = {
     success: "कार्य सफल रहा",
     error: "एक त्रुटि हुई है",
     sessionExpired: "सत्र समाप्त हो गया है, कृपया फिर से लॉग इन करें",
-    errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका"
+    errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
+    apiKey: "एपीआई कुंजी",
+    model: "मॉडल",
+    select: "चुनें"
   },
   robotCard: {
     agentStatus: "एजेंट की स्थिति",
