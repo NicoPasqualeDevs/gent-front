@@ -99,25 +99,35 @@ fi
 
 # Configurar fuentes personalizadas
 echo "🔤 Configurando fuentes personalizadas..."
-sudo mkdir -p /usr/share/fonts/custom
-handle_error $? "Error al crear directorio de fuentes personalizadas"
 
-# Copiar fuente ROBO
-if [ -f "$FRONTEND_DIR/src/assets/fonts/ROBO.ttf" ]; then
-    echo "📝 Copiando fuente ROBO..."
-    sudo cp "$FRONTEND_DIR/src/assets/fonts/ROBO.ttf" /usr/share/fonts/custom/
-    handle_error $? "Error al copiar fuente ROBO"
+# Crear directorio de fuentes en dist si no existe
+mkdir -p "$DIST_DIR/assets/fonts"
+handle_error $? "Error al crear directorio de fuentes en dist"
+
+# Copiar fuente ROBO al directorio de distribución
+if [ -f "$FRONTEND_DIR/src/assets/fonts/ROBO.woff2" ]; then
+    echo "📝 Copiando fuente ROBO a dist..."
+    cp "$FRONTEND_DIR/src/assets/fonts/ROBO.woff2" "$DIST_DIR/assets/fonts/"
+    handle_error $? "Error al copiar fuente ROBO a dist"
     
-    # Configurar permisos de la fuente
-    sudo chmod 644 /usr/share/fonts/custom/ROBO.ttf
-    handle_error $? "Error al configurar permisos de la fuente"
-    
-    # Actualizar cache de fuentes
-    echo "🔄 Actualizando cache de fuentes..."
-    sudo fc-cache -f -v
-    handle_error $? "Error al actualizar cache de fuentes"
+    # Configurar permisos de la fuente en dist
+    chmod 644 "$DIST_DIR/assets/fonts/ROBO.woff2"
+    handle_error $? "Error al configurar permisos de la fuente en dist"
 else
-    echo "⚠️ Archivo de fuente ROBO.ttf no encontrado"
+    echo "⚠️ Archivo de fuente ROBO.woff2 no encontrado"
+fi
+
+# Copiar CSS de la fuente
+if [ -f "$FRONTEND_DIR/src/assets/fonts/ROBO.css" ]; then
+    echo "📝 Copiando CSS de la fuente..."
+    cp "$FRONTEND_DIR/src/assets/fonts/ROBO.css" "$DIST_DIR/assets/fonts/"
+    handle_error $? "Error al copiar CSS de la fuente"
+    
+    # Configurar permisos del CSS
+    chmod 644 "$DIST_DIR/assets/fonts/ROBO.css"
+    handle_error $? "Error al configurar permisos del CSS de la fuente"
+else
+    echo "⚠️ Archivo ROBO.css no encontrado"
 fi
 
 # Configurar permisos
