@@ -44,28 +44,23 @@ const useApi = (): UseApiHook => {
   // Modificamos getHeaders para manejar el Content-Type basado en el tipo de datos
   const getHeaders = async (data?: ApiData, config?: ApiConfig): Promise<Record<string, string>> => {
     let headers: Record<string, string> = {
-      'Content-Type': 'application/json'  // Establecer Content-Type por defecto
+      'Content-Type': 'application/json'
     };
-
-    // Si hay datos y es FormData, eliminar Content-Type para que el navegador lo establezca
-    if (data instanceof FormData) {
-      delete headers['Content-Type'];
-    }
 
     if (!config?.skipCsrf) {
       const csrfToken = await getCsrfToken(apiBase);
       headers['X-CSRFToken'] = csrfToken;
     }
 
+    if (data instanceof FormData) {
+      delete headers['Content-Type'];
+    }
+
     if (token) {
       headers['Authorization'] = `Token ${token}`;
     }
 
-    if (config?.headers) {
-      headers = { ...headers, ...config.headers };
-    }
-
-    return headers;
+    return { ...headers, ...config?.headers };
   };
 
   const apiGet = async <T>(path: string, config?: ApiConfig): Promise<ApiResponse<T>> => {
