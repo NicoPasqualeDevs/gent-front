@@ -100,18 +100,19 @@ fi
 # Configurar fuentes personalizadas
 echo "🔤 Configurando fuentes personalizadas..."
 
-# Crear directorio de fuentes en dist si no existe
-mkdir -p "$DIST_DIR/assets/fonts"
+# Crear directorio de fuentes en dist
+mkdir -p "$DIST_DIR/fonts"
 handle_error $? "Error al crear directorio de fuentes en dist"
 
 # Copiar fuente ROBO al directorio de distribución
 if [ -f "$FRONTEND_DIR/src/assets/fonts/ROBO.woff2" ]; then
     echo "📝 Copiando fuente ROBO a dist..."
-    cp "$FRONTEND_DIR/src/assets/fonts/ROBO.woff2" "$DIST_DIR/assets/fonts/"
+    cp "$FRONTEND_DIR/src/assets/fonts/ROBO.woff2" "$DIST_DIR/fonts/"
     handle_error $? "Error al copiar fuente ROBO a dist"
     
     # Configurar permisos de la fuente en dist
-    chmod 644 "$DIST_DIR/assets/fonts/ROBO.woff2"
+    chmod 644 "$DIST_DIR/fonts/ROBO.woff2"
+    sudo chown $CURRENT_USER:www-data "$DIST_DIR/fonts/ROBO.woff2"
     handle_error $? "Error al configurar permisos de la fuente en dist"
 else
     echo "⚠️ Archivo de fuente ROBO.woff2 no encontrado"

@@ -25,10 +25,8 @@ export default defineConfig({
           mui: ['@mui/material', '@mui/icons-material'],
         },
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name.split('.')
-          const extType = info[info.length - 1]
           if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
-            return `assets/fonts/[name][extname]`
+            return `fonts/[name][extname]`
           }
           if (assetInfo.name === 'favicon.ico' || 
               assetInfo.name.startsWith('logo') || 
