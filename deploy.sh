@@ -5,9 +5,9 @@ echo "Iniciando despliegue del frontend..."
 # Directorio del frontend
 FRONTEND_DIR="/home/nicolas_german_pasquale/gents-front"
 # Directorio de Django static
-DJANGO_STATIC_DIR="/home/nicolas_german_pasquale/gents-ia/static"
-DJANGO_FRONTEND_DIR="/home/nicolas_german_pasquale/gents-ia/static/frontend"
-LOGS_DIR="/home/nicolas_german_pasquale/gents-ia/static/logs"
+DJANGO_STATIC_DIR="/home/nicolas_german_pasquale/gents-back/static"
+DJANGO_FRONTEND_DIR="/home/nicolas_german_pasquale/gents-back/static/frontend"
+LOGS_DIR="/home/nicolas_german_pasquale/gents-back/static/logs"
 CURRENT_USER=$(whoami)
 
 # Ir al directorio del frontend
