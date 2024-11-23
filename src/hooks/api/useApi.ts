@@ -22,8 +22,8 @@ export interface UseApiHook {
 const useApi = (): UseApiHook => {
   const { auth } = useAppContext();
   const token = auth?.token;
-  const apiBase = 'http://127.0.0.1:8000/api/';
-  //const apiBase = "https://www.gentsbuilder.com/api/";
+  //const apiBase = 'http://127.0.0.1:8000/api/';
+  const apiBase = "https://www.gentsbuilder.com/api/";
   const handleResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
     if (!response.ok) {
       const error = await response.json();
