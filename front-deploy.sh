@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# Actualizar desde el repositorio
-echo "⬇️ Actualizando código desde el repositorio..."
-git reset --hard
-git clean -fd
-git fetch origin
-git reset --hard origin/main
-chmod +x deploy.sh
-handle_error $? "Error al actualizar el código desde git"
-
-
 # Función para manejar errores
 handle_error() {
     local exit_code=$1
@@ -20,11 +10,20 @@ handle_error() {
     fi
 }
 
+# Actualizar desde el repositorio
+echo "⬇️ Actualizando código desde el repositorio..."
+git reset --hard
+git clean -fd
+git fetch origin
+git reset --hard origin/main
+chmod +x deploy.sh
+handle_error $? "Error al actualizar el código desde git"
+
 echo "🚀 Iniciando despliegue del frontend..."
 
 # Directorios
 FRONTEND_DIR="/home/nicolas_german_pasquale/gents-front"
-BUILD_DIR="$FRONTEND_DIR/build"
+DIST_DIR="$FRONTEND_DIR/dist"
 CURRENT_USER=$(whoami)
 
 # Ir al directorio del frontend
@@ -41,38 +40,38 @@ echo "🏗️ Construyendo la aplicación..."
 npm run build
 handle_error $? "Error al construir la aplicación"
 
-# Verificar que el directorio build existe
-if [ ! -d "$BUILD_DIR" ]; then
-    echo "❌ ERROR: El directorio build no se creó correctamente"
+# Verificar que el directorio dist existe
+if [ ! -d "$DIST_DIR" ]; then
+    echo "❌ ERROR: El directorio dist no se creó correctamente"
     exit 1
 fi
 
 # Verificar que los assets existen
-if [ ! -d "$BUILD_DIR/assets" ]; then
+if [ ! -d "$DIST_DIR/assets" ]; then
     echo "❌ ERROR: No se encontró el directorio de assets"
     exit 1
 fi
 
-# Ajustar permisos del build
+# Ajustar permisos del dist
 echo "🔒 Configurando permisos..."
-sudo chown -R $CURRENT_USER:www-data $BUILD_DIR
-sudo chmod -R 755 $BUILD_DIR
+sudo chown -R $CURRENT_USER:www-data $DIST_DIR
+sudo chmod -R 755 $DIST_DIR
 handle_error $? "Error al configurar permisos"
 
 # Verificar y configurar favicon.ico
 echo "🔍 Configurando favicon..."
-if [ -f "$BUILD_DIR/favicon.ico" ]; then
-    sudo chmod 644 "$BUILD_DIR/favicon.ico"
-    sudo chown $CURRENT_USER:www-data "$BUILD_DIR/favicon.ico"
+if [ -f "$DIST_DIR/favicon.ico" ]; then
+    sudo chmod 644 "$DIST_DIR/favicon.ico"
+    sudo chown $CURRENT_USER:www-data "$DIST_DIR/favicon.ico"
     echo "✅ Favicon configurado correctamente"
 else
-    echo "❌ ERROR: favicon.ico no encontrado en el directorio build"
+    echo "❌ ERROR: favicon.ico no encontrado en el directorio dist"
     exit 1
 fi
 
 # Verificar y crear directorio de assets si no existe
-if [ ! -d "$BUILD_DIR/assets" ]; then
-    mkdir -p "$BUILD_DIR/assets"
+if [ ! -d "$DIST_DIR/assets" ]; then
+    mkdir -p "$DIST_DIR/assets"
     handle_error $? "Error al crear directorio de assets"
 fi
 
