@@ -1,69 +1,88 @@
 #!/bin/bash
 
-echo "Iniciando despliegue del frontend..."
+# Función para manejar errores
+handle_error() {
+    local exit_code=$1
+    local error_message=$2
+    if [ $exit_code -ne 0 ]; then
+        echo "❌ ERROR: $error_message"
+        exit $exit_code
+    fi
+}
 
-# Directorio del frontend
-FRONTEND_DIR="/home/nicolas_german_pasquale/gents-front"
-# Directorio de Django static
-DJANGO_STATIC_DIR="/home/nicolas_german_pasquale/gents-back/static"
-DJANGO_FRONTEND_DIR="/home/nicolas_german_pasquale/gents-back/static/frontend"
-LOGS_DIR="/home/nicolas_german_pasquale/gents-back/static/logs"
+echo "🚀 Iniciando despliegue del frontend..."
+
+# Directorios
+FRONTEND_DIR="/home/nicolas_german_pasquale/gents-frontend"
+BUILD_DIR="$FRONTEND_DIR/build"
 CURRENT_USER=$(whoami)
 
 # Ir al directorio del frontend
 cd $FRONTEND_DIR
+handle_error $? "No se pudo acceder al directorio del frontend"
 
 # Actualizar desde el repositorio
-echo "Actualizando código desde el repositorio..."
+echo "⬇️ Actualizando código desde el repositorio..."
 git reset --hard
 git clean -fd
 git fetch origin
 git reset --hard origin/main
 chmod +x deploy.sh
+handle_error $? "Error al actualizar el código desde git"
 
 # Instalar dependencias
-echo "Instalando dependencias..."
+echo "📦 Instalando dependencias..."
 npm install
+handle_error $? "Error al instalar dependencias"
 
 # Construir la aplicación
-echo "Construyendo la aplicación..."
+echo "🏗️ Construyendo la aplicación..."
 npm run build
+handle_error $? "Error al construir la aplicación"
 
-# Ajustar permisos
-echo "Ajustando permisos..."
-sudo chown -R www-data:www-data $DJANGO_STATIC_DIR
-sudo chown -R $CURRENT_USER:$CURRENT_USER $DJANGO_STATIC_DIR
-sudo chmod -R 755 $DJANGO_STATIC_DIR
+# Verificar que el directorio build existe
+if [ ! -d "$BUILD_DIR" ]; then
+    echo "❌ ERROR: El directorio build no se creó correctamente"
+    exit 1
+fi
 
-# Crear el directorio frontend si no existe
-echo "Preparando directorio static..."
-sudo mkdir -p $DJANGO_FRONTEND_DIR
+# Verificar que los assets existen
+if [ ! -d "$BUILD_DIR/assets" ]; then
+    echo "❌ ERROR: No se encontró el directorio de assets"
+    exit 1
+fi
 
-# Crear archivo de log si no existe
-sudo mkdir -p $LOGS_DIR
-sudo touch $LOGS_DIR/django.log
-sudo chown www-data:www-data $LOGS_DIR/django.log
-sudo chown $CURRENT_USER:$CURRENT_USER $LOGS_DIR/django.log
-sudo chmod 644 $LOGS_DIR/django.log
+# Ajustar permisos del build
+echo "🔒 Configurando permisos..."
+sudo chown -R $CURRENT_USER:www-data $BUILD_DIR
+sudo chmod -R 755 $BUILD_DIR
+handle_error $? "Error al configurar permisos"
 
+# Verificar favicon.ico
+if [ -f "$BUILD_DIR/favicon.ico" ]; then
+    sudo chmod 644 "$BUILD_DIR/favicon.ico"
+else
+    echo "⚠️ Advertencia: favicon.ico no encontrado"
+fi
 
-# Limpiar el directorio frontend anterior
-echo "Limpiando archivos anteriores..."
-sudo rm -rf $DJANGO_FRONTEND_DIR/*
+# Verificar y crear directorio de assets si no existe
+if [ ! -d "$BUILD_DIR/assets" ]; then
+    mkdir -p "$BUILD_DIR/assets"
+    handle_error $? "Error al crear directorio de assets"
+fi
 
-# Copiar los nuevos archivos
-echo "Copiando nuevos archivos..."
-sudo cp -r dist/* $DJANGO_FRONTEND_DIR/
-
-# Recolectar archivos estáticos de Django
-echo "Recolectando archivos estáticos de Django..."
-cd /home/nicolas_german_pasquale/gents-ia/gents
-source ../../gentsvenv/bin/activate
-python manage.py collectstatic --noinput
-
-# Reiniciar servicios
-echo "Reiniciando servicios..."
+# Reiniciar Nginx
+echo "🔄 Reiniciando Nginx..."
 sudo systemctl restart nginx
-sudo systemctl restart gunicorn
+handle_error $? "Error al reiniciar Nginx"
 
-echo "Despliegue completado!"
+# Verificar estado de Nginx
+echo "🔍 Verificando estado de Nginx..."
+sudo systemctl status nginx --no-pager
+handle_error $? "Error al verificar estado de Nginx"
+
+# Verificar logs de Nginx
+echo "📋 Últimas líneas del log de error de Nginx:"
+sudo tail -n 20 /var/log/nginx/error.log
+
+echo "✅ ¡Despliegue del frontend completado exitosamente! 🎉"
