@@ -33,7 +33,17 @@ const useAiTeamsApi = (): UseAiTeamsApiHook => {
   }, [apiGet]);
 
   const deleteAiTeamDetails = useCallback(async (teamId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`teams/${teamId}/`);
+    try {
+      const response = await apiDelete(`teams/${teamId}/`);
+      return {
+        success: true,
+        message: response.message || "Información eliminada correctamente",
+        data: response.data as void
+      };
+    } catch (error) {
+      console.error('Error deleting team:', error);
+      throw error;
+    }
   }, [apiDelete]);
 
   const createAiTeam = useCallback(async (data: AiTeamsDetails): Promise<ApiResponse<AiTeamsDetails>> => {

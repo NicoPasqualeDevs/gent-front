@@ -124,7 +124,9 @@ const de: TranslationType = {
     unexpectedError: "Beim Schließen des Chats ist ein unerwarteter Fehler aufgetreten",
     errorLoadingData: "Chatdaten konnten nicht geladen werden",
     historicalView: "Sie sehen einen Konversationsverlauf",
-    returnToCurrent: "Zurück zur aktuellen Konversation"
+    returnToCurrent: "Zurück zur aktuellen Konversation",
+    errorCreatingSession: "Fehler beim Erstellen der Sitzung",
+    errorNoConnection: "Fehler: Keine Verbindung zum Server"
   },
   notFound: {
     title: "404 - Seite nicht gefunden",

@@ -136,6 +136,8 @@ export interface TranslationType {
     errorLoadingData: string;
     historicalView: string;
     returnToCurrent: string;
+    errorCreatingSession: string;
+    errorNoConnection: string;
   };
   notFound: {
     title: string;
@@ -445,7 +447,7 @@ export const greetings: GreetingsType = {
   ],
   hi: [
     "नमस्ते! आप कैसे हैं?",
-    "स्वागत है! मैं आपकी कैसे मदद कर सक���ा हूं?",
+    "स्वागत है! मैं आपकी कैसे मदद कर सका हूं?",
     "अभिवादन! आपका दि कैसा जा रहा है?",
     "आपको देखकर अच्छा लगा! आप कैसे हैं?"
   ]

@@ -37,7 +37,6 @@ interface UseAgentsApi {
   getChatHistory: (agentId: string) => Promise<ApiResponse<ChatHistory>>;
   sendMessage: (agentId: string, data: MessageRequest) => Promise<ApiResponse<ChatResponse>>;
   closeChat: (conversationId: string) => Promise<ApiResponse<void>>;
-  getAgentData: (agentId: string) => Promise<ApiResponse<AgentData>>;
   getAgentConversations: (agentId: string) => Promise<ApiResponse<ConversationData[]>>;
   getKnowledgeTags: (agentId: string) => Promise<ApiResponse<Ktag[]>>;
   createKnowledgeTag: (agentId: string, data: Ktag) => Promise<ApiResponse<Ktag>>;
@@ -92,10 +91,6 @@ const useAgentsApi = (): UseAgentsApi => {
     return apiDelete(`agents/close-chat/${conversationId}/`);
   };
 
-  const getAgentData = async (agentId: string): Promise<ApiResponse<AgentData>> => {
-    return apiGet(`agents/${agentId}/data/`);
-  };
-
   const getAgentConversations = async (agentId: string): Promise<ApiResponse<ConversationData[]>> => {
     return apiGet(`agents/${agentId}/conversations/`);
   };
@@ -135,7 +130,6 @@ const useAgentsApi = (): UseAgentsApi => {
     getChatHistory,
     sendMessage,
     closeChat,
-    getAgentData,
     getAgentConversations,
     getKnowledgeTags,
     createKnowledgeTag,

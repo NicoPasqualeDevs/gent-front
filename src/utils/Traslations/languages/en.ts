@@ -124,7 +124,9 @@ const en: TranslationType = {
     unexpectedError: "An unexpected error occurred while closing the chat",
     errorLoadingData: "Could not load chat data",
     historicalView: "You are viewing a conversation history",
-    returnToCurrent: "Return to current conversation"
+    returnToCurrent: "Return to current conversation",
+    errorCreatingSession: "Error creating session",
+    errorNoConnection: "Error: No connection to server"
   },
   notFound: {
     title: "404 - Page Not Found",

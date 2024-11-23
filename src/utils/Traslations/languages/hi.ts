@@ -121,10 +121,12 @@ const hi: TranslationType = {
     errorSendingMessage: "संदेश नहीं भेजा जा सका",
     errorClosingChat: "चैट बंद नहीं की जा सकी: वार्तालाप आईडी गायब है",
     errorCleaningChat: "चैट को पूरी तरह से साफ नहीं किया जा सका",
-    unexpectedError: "चैट बंद करते समय एक अनपेक्षित त्रुटि हुई",
+    unexpectedError: "���ैट बंद करते समय एक अनपेक्षित त्रुटि हुई",
     errorLoadingData: "चैट डेटा लोड नहीं किया जा सका",
     historicalView: "आप एक वार्तालाप इतिहास देख रहे हैं",
-    returnToCurrent: "वर्तमान वार्तालाप पर वापस जाएं"
+    returnToCurrent: "वर्तमान वार्तालाप पर वापस जाएं",
+    errorCreatingSession: "सत्र बनाने में त्रुटि",
+    errorNoConnection: "त्रुटि: सर्वर से कोई कनेक्शन नहीं"
   },
   notFound: {
     title: "404 - पृष्ठ नहीं मिला",
@@ -242,7 +244,7 @@ const hi: TranslationType = {
     documents: "दस्तावेज़",
     upload: "अपलोड करें",
     saving: "सहेज रहा है...",
-    update: "अपडेट करें",
+    update: "���पडेट करें",
     cancel: "रद्द करें",
     successUpdate: "डेटा सफलतापूर्वक अपडेट किया गया",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",

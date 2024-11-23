@@ -124,7 +124,9 @@ const es: TranslationType = {
     unexpectedError: "Ocurrió un error inesperado al cerrar el chat",
     errorLoadingData: "No se pudieron cargar los datos del chat",
     historicalView: "Estás viendo un historial de conversación",
-    returnToCurrent: "Volver a la conversación actual"
+    returnToCurrent: "Volver a la conversación actual",
+    errorCreatingSession: "Error al crear la sesión",
+    errorNoConnection: "Error: Sin conexión al servidor"
   },
   notFound: {
     title: "404 - Página no encontrada",

@@ -2,8 +2,9 @@
 
 export interface ChatMessage {
   content: string;
-  role: "client" | "agent";
+  role: 'agent' | 'client' | 'system';
   timestamp: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ChatHistory {
@@ -216,4 +217,75 @@ export interface AgentsListResponse {
     total_items: number;
     page_size: number;
   };
+}
+
+// Añadir interfaz para el estado del WebSocket
+export interface WebSocketState {
+  isConnected: boolean;
+  error: string | null;
+  messages: ChatMessage[];
+}
+
+export interface ChatResponse {
+  success: boolean;
+  message: string;
+  data: {
+    conversation: string;
+    customer_agent: string;
+    messages: ChatMessage[];
+  };
+}
+
+export interface ChatSessionResponse {
+  success: boolean;
+  message: string;
+  data: {
+    id: string;
+    title: string;
+    agent: string;
+    is_active: boolean;
+    created_at: string;
+    updated_at: string;
+    metadata?: Record<string, unknown>;
+  };
+}
+
+export interface ConversationResponse {
+  success: boolean;
+  message: string;
+  data: Array<{
+    conversation_id: string;
+    customer_agent: string;
+    timestamp: string;
+    messages: ChatMessage[];
+  }>;
+}
+
+export interface WebSocketMessage {
+  type: 'user' | 'system';
+  content: string;
+  metadata?: {
+    timestamp: string;
+    session_id?: string;
+    [key: string]: unknown;
+  };
+}
+
+export interface WebSocketResponse {
+  type: 'chat.message';
+  message: {
+    content: string;
+    type: 'bot' | 'client';
+    timestamp: string;
+    metadata?: Record<string, unknown>;
+  };
+}
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  messages: ChatMessage[];
 }

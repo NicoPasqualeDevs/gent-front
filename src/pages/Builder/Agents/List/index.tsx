@@ -84,6 +84,10 @@ const AgentsList: React.FC<PageProps> = () => {
     initializeAuth();
   }, []);
 
+  const updateBreadcrumbs = useCallback((breadcrumbs: PathData[]) => {
+    replacePath(breadcrumbs);
+  }, []);
+
   useEffect(() => {
     if (teamId && teamName) {
       const breadcrumbs = buildBreadcrumbs('agents', {
@@ -94,10 +98,9 @@ const AgentsList: React.FC<PageProps> = () => {
         teamId,
         teamName
       });
-      
-      replacePath(breadcrumbs);
+      updateBreadcrumbs(breadcrumbs);
     }
-  }, [teamId, teamName, replacePath]);
+  }, [teamId, teamName, updateBreadcrumbs]);
 
   const getAgentsData = useCallback(async (filterParams: string) => {
     if (!teamId || !auth?.uuid) {
