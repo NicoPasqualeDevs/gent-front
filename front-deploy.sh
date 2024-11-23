@@ -1,5 +1,15 @@
 #!/bin/bash
 
+# Actualizar desde el repositorio
+echo "⬇️ Actualizando código desde el repositorio..."
+git reset --hard
+git clean -fd
+git fetch origin
+git reset --hard origin/main
+chmod +x deploy.sh
+handle_error $? "Error al actualizar el código desde git"
+
+
 # Función para manejar errores
 handle_error() {
     local exit_code=$1
@@ -20,15 +30,6 @@ CURRENT_USER=$(whoami)
 # Ir al directorio del frontend
 cd $FRONTEND_DIR
 handle_error $? "No se pudo acceder al directorio del frontend"
-
-# Actualizar desde el repositorio
-echo "⬇️ Actualizando código desde el repositorio..."
-git reset --hard
-git clean -fd
-git fetch origin
-git reset --hard origin/main
-chmod +x front-deploy.sh
-handle_error $? "Error al actualizar el código desde git"
 
 # Instalar dependencias
 echo "📦 Instalando dependencias..."
