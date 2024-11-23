@@ -13,7 +13,7 @@ handle_error() {
 # Actualizar desde el repositorio
 echo "⬇️ Actualizando código desde el repositorio... v1.0.1"
 
-git reset --hardd
+git reset --hard
 git clean -fd
 git fetch origin
 git reset --hard origin/main
