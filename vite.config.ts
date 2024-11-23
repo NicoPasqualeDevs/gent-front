@@ -19,19 +19,16 @@ export default defineConfig({
     assetsDir: 'assets',
     emptyOutDir: true,
     rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, 'index.html'),
-        fonts: path.resolve(__dirname, 'src/assets/fonts/ROBO.css'),
-      },
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
           mui: ['@mui/material', '@mui/icons-material'],
         },
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name.split('.')
-          const extType = info[info.length - 1]
           if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
+            return `assets/fonts/[name][extname]`
+          }
+          if (/\.css$/i.test(assetInfo.name)) {
             return `assets/fonts/[name][extname]`
           }
           if (assetInfo.name === 'favicon.ico' || 
@@ -39,7 +36,7 @@ export default defineConfig({
               assetInfo.name === 'manifest.json') {
             return `[name].[ext]`
           }
-          return `assets/${extType}/[name]-[hash][extname]`
+          return `assets/[ext]/[name]-[hash][extname]`
         },
       },
     },
