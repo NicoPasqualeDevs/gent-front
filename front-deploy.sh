@@ -10,8 +10,24 @@ handle_error() {
     fi
 }
 
+# Función para validar permisos de directorios
+validate_directory_permissions() {
+    local dir=$1
+    local description=$2
+    if [ ! -d "$dir" ]; then
+        echo "❌ ERROR: $description ($dir) no existe"
+        exit 1
+    fi
+    
+    if [ ! -w "$dir" ]; then
+        echo "❌ ERROR: No hay permisos de escritura en $description ($dir)"
+        exit 1
+    fi
+    echo "✅ Permisos correctos para $description"
+}
+
 # Actualizar desde el repositorio
-echo "⬇️ Actualizando código desde el repositorio... v1.0.1"
+echo "⬇️ Actualizando código desde el repositorio... v1.0.2"
 
 git reset --hard
 git clean -fd
@@ -25,7 +41,18 @@ echo "🚀 Iniciando despliegue del frontend..."
 # Directorios
 FRONTEND_DIR="/home/nicolas_german_pasquale/gents-front"
 DIST_DIR="$FRONTEND_DIR/dist"
+ASSETS_DIR="$DIST_DIR/assets"
 CURRENT_USER=$(whoami)
+
+# Validar directorio frontend
+validate_directory_permissions "$FRONTEND_DIR" "directorio frontend"
+
+# Limpiar dist si existe
+if [ -d "$DIST_DIR" ]; then
+    echo "🧹 Limpiando directorio dist anterior..."
+    rm -rf "$DIST_DIR"
+    handle_error $? "Error al limpiar directorio dist"
+fi
 
 # Ir al directorio del frontend
 cd $FRONTEND_DIR
@@ -41,71 +68,97 @@ echo "🏗️ Construyendo la aplicación..."
 npm run build
 handle_error $? "Error al construir la aplicación"
 
-# Verificar que el directorio dist existe
+# Verificar estructura del build
+echo "🔍 Verificando estructura del build..."
+
+# Verificar dist
 if [ ! -d "$DIST_DIR" ]; then
-    echo "❌ ERROR: El directorio dist no se creó correctamente"
+    echo "❌ ERROR: El build no generó el directorio dist"
     exit 1
 fi
 
-# Verificar que los assets existen
-if [ ! -d "$DIST_DIR/assets" ]; then
-    echo "❌ ERROR: No se encontró el directorio de assets"
+# Verificar assets
+if [ ! -d "$ASSETS_DIR" ]; then
+    echo "❌ ERROR: El build no generó el directorio assets"
     exit 1
 fi
 
-# Ajustar permisos del dist
-echo "🔒 Configurando permisos..."
-sudo chown -R $CURRENT_USER:www-data $DIST_DIR
-sudo chmod -R 755 $DIST_DIR
-handle_error $? "Error al configurar permisos"
+# Verificar index.html
+if [ ! -f "$DIST_DIR/index.html" ]; then
+    echo "❌ ERROR: No se encontró index.html en el build"
+    exit 1
+fi
 
 # Verificar y configurar favicon.ico
 echo "🔍 Configurando favicon..."
-if [ -f "$DIST_DIR/favicon.ico" ]; then
-    sudo chmod 644 "$DIST_DIR/favicon.ico"
-    sudo chown $CURRENT_USER:www-data "$DIST_DIR/favicon.ico"
-    echo "✅ Favicon configurado correctamente"
-else
-    echo "❌ ERROR: favicon.ico no encontrado en el directorio dist"
-    exit 1
+if [ ! -f "$DIST_DIR/favicon.ico" ]; then
+    echo "⚠️ Copiando favicon desde public..."
+    cp "$FRONTEND_DIR/public/favicon.ico" "$DIST_DIR/favicon.ico"
+    handle_error $? "Error al copiar favicon"
 fi
 
-# Verificar y crear directorio de assets si no existe
-if [ ! -d "$DIST_DIR/assets" ]; then
-    mkdir -p "$DIST_DIR/assets"
-    handle_error $? "Error al crear directorio de assets"
-fi
+# Configurar permisos
+echo "🔒 Configurando permisos..."
 
-# Verificar estructura de directorios
-echo "🔍 Verificando estructura de directorios..."
-if [ ! -f "$FRONTEND_DIR/public/favicon.ico" ]; then
-    echo "⚠️ Advertencia: favicon.ico no encontrado en directorio public"
-fi
+# Permisos para dist
+sudo chown -R $CURRENT_USER:www-data $DIST_DIR
+sudo chmod -R 755 $DIST_DIR
+handle_error $? "Error al configurar permisos del directorio dist"
 
-if [ ! -d "$FRONTEND_DIR/src/assets" ]; then
-    echo "⚠️ Advertencia: directorio src/assets no encontrado"
-fi
+# Permisos específicos para archivos
+find $DIST_DIR -type f -exec sudo chmod 644 {} \;
+handle_error $? "Error al configurar permisos de archivos"
+
+# Permisos específicos para directorios
+find $DIST_DIR -type d -exec sudo chmod 755 {} \;
+handle_error $? "Error al configurar permisos de directorios"
+
+# Verificar Nginx
+echo "🔍 Verificando configuración de Nginx..."
+sudo nginx -t
+handle_error $? "Error en la configuración de Nginx"
 
 # Reiniciar Nginx
 echo "🔄 Reiniciando Nginx..."
 sudo systemctl restart nginx
 handle_error $? "Error al reiniciar Nginx"
 
-# Verificar estado de Nginx
-echo "🔍 Verificando estado de Nginx..."
+# Verificar estado de servicios
+echo "🔍 Verificando estado de servicios..."
+
+echo "📋 Estado de Nginx:"
 sudo systemctl status nginx --no-pager
 handle_error $? "Error al verificar estado de Nginx"
 
-# Verificar logs de Nginx
 echo "📋 Últimas líneas del log de error de Nginx:"
 sudo tail -n 20 /var/log/nginx/error.log
 
-# Verificar logs de Gunicorn
-echo "📋 Últimas líneas del log de Gunicorn:"
-sudo tail -n 20 /var/log/gunicorn/error.log
+# Verificar acceso a archivos críticos
+echo "🔍 Verificando acceso a archivos críticos..."
 
-# Verificar logs de Daphne
-echo "📋 Últimas líneas del log de Daphne:"
-sudo tail -n 20 /var/log/daphne/access.log
+files_to_check=(
+    "$DIST_DIR/index.html"
+    "$DIST_DIR/favicon.ico"
+    "$ASSETS_DIR"
+)
+
+for file in "${files_to_check[@]}"; do
+    if [ -e "$file" ]; then
+        echo "✅ $file existe y es accesible"
+        ls -l "$file"
+    else
+        echo "❌ ERROR: $file no existe o no es accesible"
+        exit 1
+    fi
+done
+
+# Verificar respuesta del servidor
+echo "🌐 Verificando respuesta del servidor..."
+curl -sI https://gentsbuilder.com > /dev/null
+handle_error $? "Error al verificar respuesta del servidor"
 
 echo "✅ ¡Despliegue del frontend completado exitosamente! 🎉"
+echo "🔍 Recuerda verificar:"
+echo "  - La aplicación en https://gentsbuilder.com"
+echo "  - Los assets estáticos en https://gentsbuilder.com/assets/"
+echo "  - El favicon en https://gentsbuilder.com/favicon.ico"
