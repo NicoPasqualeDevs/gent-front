@@ -188,6 +188,74 @@ done
 
 # Verificar respuesta del servidor
 echo "🌐 Verificando respuesta del servidor..."
+
+# Función para probar el endpoint CSRF
+test_csrf_endpoint() {
+    echo "🔒 Probando endpoint CSRF..."
+    
+    # Primera petición para obtener el token
+    CSRF_RESPONSE=$(curl -s -v -X GET https://www.gentsbuilder.com/api/access/csrf/ \
+        -H "Origin: https://www.gentsbuilder.com" \
+        2>&1)
+    
+    # Extraer el token CSRF de las cookies
+    CSRF_TOKEN=$(echo "$CSRF_RESPONSE" | grep -i "set-cookie: csrftoken=" | sed 's/.*csrftoken=\([^;]*\);.*/\1/')
+    
+    if [ -z "$CSRF_TOKEN" ]; then
+        echo "❌ No se pudo obtener el token CSRF"
+        echo "📋 Respuesta completa del servidor:"
+        echo "$CSRF_RESPONSE"
+        
+        # Verificar headers CORS
+        echo "🔍 Verificando headers CORS..."
+        curl -v -X OPTIONS https://www.gentsbuilder.com/api/access/csrf/ \
+            -H "Origin: https://www.gentsbuilder.com" \
+            -H "Access-Control-Request-Method: GET" \
+            2>&1
+        
+        return 1
+    else
+        echo "✅ Token CSRF obtenido: ${CSRF_TOKEN:0:8}..."
+        
+        # Segunda petición usando el token
+        echo "🔄 Verificando token CSRF..."
+        VERIFY_RESPONSE=$(curl -s -X GET https://www.gentsbuilder.com/api/access/csrf/ \
+            -H "Origin: https://www.gentsbuilder.com" \
+            -H "Cookie: csrftoken=$CSRF_TOKEN" \
+            -H "X-CSRFToken: $CSRF_TOKEN" \
+            2>&1)
+        
+        if echo "$VERIFY_RESPONSE" | grep -q "csrfToken"; then
+            echo "✅ Verificación de CSRF exitosa"
+            return 0
+        else
+            echo "❌ Error en la verificación de CSRF"
+            echo "📋 Respuesta del servidor:"
+            echo "$VERIFY_RESPONSE"
+            return 1
+        fi
+    fi
+}
+
+# Ejecutar pruebas de CSRF
+if test_csrf_endpoint; then
+    echo "✅ Pruebas de CSRF completadas exitosamente"
+else
+    echo "⚠️ Las pruebas de CSRF fallaron, verificando configuración..."
+    
+    # Verificar configuración de Nginx para CSRF
+    echo "📋 Verificando configuración de Nginx para CSRF..."
+    sudo grep -r "csrf" /etc/nginx/sites-enabled/
+    
+    # Verificar logs de Django
+    echo "📋 Verificando logs de Django para errores de CSRF..."
+    sudo tail -n 50 /var/log/gunicorn/error.log | grep -i "csrf"
+    
+    # No detenemos el despliegue, pero advertimos
+    echo "⚠️ Advertencia: Los endpoints de CSRF pueden requerir atención"
+fi
+
+echo "🌐 Intentando acceder al sitio principal..."
 echo "Intentando acceder al sitio..."
 
 # Intentar con curl con más opciones de diagnóstico
