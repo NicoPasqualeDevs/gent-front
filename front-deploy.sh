@@ -132,9 +132,7 @@ echo "🔍 Verificando contenido del build..."
 required_files=(
     "index.html"
     "assets"
-    "assets/index.js"
-    "assets/vendor.js"  # Chunk de React/React-DOM
-    "assets/mui.js"     # Chunk de Material-UI
+    "assets/js"
     "manifest.json"
 )
 
@@ -291,23 +289,32 @@ for dir in "${asset_directories[@]}"; do
     fi
 done
 
-# Verificar chunks de React
-echo "🔍 Verificando chunks de React..."
-if ls "$BUILD_DIR/assets/"*vendor*.js 1> /dev/null 2>&1; then
-    echo "✅ Chunk de vendor (React) encontrado"
+# Verificar chunks de JavaScript
+echo "🔍 Verificando archivos JavaScript..."
+if ls "$BUILD_DIR/assets/js/"*index*.js 1> /dev/null 2>&1; then
+    echo "✅ Archivo index.js encontrado"
 else
-    echo "❌ ERROR: No se encontró el chunk de vendor (React)"
-    echo "Contenido actual de assets:"
-    ls -la "$BUILD_DIR/assets"
+    echo "❌ ERROR: No se encontró el archivo index.js"
+    echo "Contenido de assets/js:"
+    ls -la "$BUILD_DIR/assets/js"
     exit 1
 fi
 
-if ls "$BUILD_DIR/assets/"*mui*.js 1> /dev/null 2>&1; then
+if ls "$BUILD_DIR/assets/js/"*vendor*.js 1> /dev/null 2>&1; then
+    echo "✅ Chunk de vendor (React) encontrado"
+else
+    echo "❌ ERROR: No se encontró el chunk de vendor (React)"
+    echo "Contenido de assets/js:"
+    ls -la "$BUILD_DIR/assets/js"
+    exit 1
+fi
+
+if ls "$BUILD_DIR/assets/js/"*mui*.js 1> /dev/null 2>&1; then
     echo "✅ Chunk de MUI encontrado"
 else
     echo "❌ ERROR: No se encontró el chunk de MUI"
-    echo "Contenido actual de assets:"
-    ls -la "$BUILD_DIR/assets"
+    echo "Contenido de assets/js:"
+    ls -la "$BUILD_DIR/assets/js"
     exit 1
 fi
 
