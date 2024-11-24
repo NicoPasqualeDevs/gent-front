@@ -15,8 +15,7 @@ export default defineConfig({
     }
   },
   build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
+    outDir: '../gents-back/static/frontend',
     emptyOutDir: true,
     rollupOptions: {
       output: {
@@ -38,6 +37,7 @@ export default defineConfig({
           }
           return `assets/[ext]/[name]-[hash][extname]`
         },
+        preserveModules: false,
       },
     },
     chunkSizeWarningLimit: 1000,

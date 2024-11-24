@@ -41,16 +41,53 @@ echo "🚀 Iniciando despliegue del frontend..."
 # Directorios actualizados
 FRONTEND_DIR="/home/nicolas_german_pasquale/gents-front"
 BACKEND_DIR="/home/nicolas_german_pasquale/gents-back"
-STATIC_FRONTEND_DIR="$BACKEND_DIR/static/frontend"
+BUILD_DIR="$BACKEND_DIR/static/frontend"
 
 # Validar directorio frontend
 validate_directory_permissions "$FRONTEND_DIR" "directorio frontend"
+validate_directory_permissions "$BACKEND_DIR" "directorio backend"
 
-# Limpiar directorio destino si existe
-if [ -d "$STATIC_FRONTEND_DIR" ]; then
+# Configurar variables de usuario y grupo
+CURRENT_USER=$(whoami)
+WEB_GROUP="www-data"
+
+# Asegurar que existe el directorio base static en el backend
+echo "🔧 Configurando directorio static en backend..."
+if [ ! -d "$BACKEND_DIR/static" ]; then
+    echo "📁 Creando directorio static..."
+    sudo mkdir -p "$BACKEND_DIR/static"
+    handle_error $? "Error al crear directorio static"
+    
+    # Configurar permisos del directorio static
+    sudo chown $CURRENT_USER:$WEB_GROUP "$BACKEND_DIR/static"
+    sudo chmod 775 "$BACKEND_DIR/static"
+    handle_error $? "Error al configurar permisos del directorio static"
+fi
+
+# Preparar directorio frontend
+echo "🔧 Preparando directorio frontend..."
+if [ -d "$BUILD_DIR" ]; then
     echo "🧹 Limpiando directorio frontend anterior..."
-    rm -rf "$STATIC_FRONTEND_DIR"
+    sudo rm -rf "$BUILD_DIR"
     handle_error $? "Error al limpiar directorio frontend"
+fi
+
+echo "📁 Creando directorio frontend..."
+sudo mkdir -p "$BUILD_DIR"
+handle_error $? "Error al crear directorio frontend"
+
+# Configurar permisos específicos para el directorio frontend
+echo "🔒 Configurando permisos del directorio frontend..."
+sudo chown $CURRENT_USER:$WEB_GROUP "$BUILD_DIR"
+sudo chmod 775 "$BUILD_DIR"
+handle_error $? "Error al configurar permisos del directorio frontend"
+
+# Verificar permisos
+echo "🔍 Verificando permisos..."
+if [ ! -w "$BUILD_DIR" ]; then
+    echo "❌ ERROR: No hay permisos de escritura en el directorio frontend"
+    ls -la "$BUILD_DIR"
+    exit 1
 fi
 
 # Ir al directorio del frontend
@@ -67,32 +104,48 @@ echo "🏗️ Construyendo la aplicación..."
 npm run build
 handle_error $? "Error al construir la aplicación"
 
+# Después de la build, asegurar permisos recursivos
+echo "🔒 Configurando permisos finales..."
+sudo find "$BUILD_DIR" -type d -exec chmod 755 {} \;
+sudo find "$BUILD_DIR" -type f -exec chmod 644 {} \;
+sudo chown -R $CURRENT_USER:$WEB_GROUP "$BUILD_DIR"
+handle_error $? "Error al configurar permisos finales"
+
+# Verificar permisos finales
+echo "🔍 Verificando permisos finales..."
+ls -la "$BUILD_DIR"
+ls -la "$BUILD_DIR/assets"
+
 # Verificar estructura del build
 echo "🔍 Verificando estructura del build..."
 
-# Verificar dist
-if [ ! -d "$DIST_DIR" ]; then
-    echo "❌ ERROR: El build no generó el directorio dist"
+# Verificar que el directorio de build existe y tiene contenido
+if [ ! -d "$BUILD_DIR" ]; then
+    echo "❌ ERROR: El build no generó el directorio static/frontend"
     exit 1
 fi
 
-# Verificar assets
-if [ ! -d "$ASSETS_DIR" ]; then
-    echo "❌ ERROR: El build no generó el directorio assets"
+if [ ! "$(ls -A $BUILD_DIR)" ]; then
+    echo "❌ ERROR: El directorio de build está vacío"
     exit 1
 fi
 
-# Verificar index.html
-if [ ! -f "$DIST_DIR/index.html" ]; then
+# Verificar archivos esenciales
+if [ ! -f "$BUILD_DIR/index.html" ]; then
     echo "❌ ERROR: No se encontró index.html en el build"
+    exit 1
+fi
+
+if [ ! -d "$BUILD_DIR/assets" ]; then
+    echo "❌ ERROR: No se encontró el directorio assets en el build"
     exit 1
 fi
 
 # Verificar y configurar favicon.ico
 echo "🔍 Configurando favicon..."
-if [ ! -f "$DIST_DIR/favicon.ico" ]; then
+if [ ! -f "$BUILD_DIR/favicon.ico" ]; then
     echo "⚠️ Copiando favicon desde public..."
-    cp "$FRONTEND_DIR/public/favicon.ico" "$DIST_DIR/favicon.ico"
+    cp "$FRONTEND_DIR/public/favicon.ico" "$BUILD_DIR/favicon.ico"
     handle_error $? "Error al copiar favicon"
 fi
 
@@ -100,18 +153,18 @@ fi
 echo "🔤 Configurando fuentes personalizadas..."
 
 # Crear directorio de fuentes en dist/assets
-mkdir -p "$DIST_DIR/assets/fonts"
+mkdir -p "$BUILD_DIR/assets/fonts"
 handle_error $? "Error al crear directorio de fuentes en dist"
 
 # Copiar fuente ROBO al directorio de distribución
 if [ -f "$FRONTEND_DIR/src/assets/fonts/ROBO.woff2" ]; then
     echo "📝 Copiando fuente ROBO a dist..."
-    cp "$FRONTEND_DIR/src/assets/fonts/ROBO.woff2" "$DIST_DIR/assets/fonts/"
+    cp "$FRONTEND_DIR/src/assets/fonts/ROBO.woff2" "$BUILD_DIR/assets/fonts/"
     handle_error $? "Error al copiar fuente ROBO a dist"
     
     # Configurar permisos de la fuente en dist
-    chmod 644 "$DIST_DIR/assets/fonts/ROBO.woff2"
-    sudo chown $CURRENT_USER:www-data "$DIST_DIR/assets/fonts/ROBO.woff2"
+    chmod 644 "$BUILD_DIR/assets/fonts/ROBO.woff2"
+    sudo chown $CURRENT_USER:www-data "$BUILD_DIR/assets/fonts/ROBO.woff2"
     handle_error $? "Error al configurar permisos de la fuente en dist"
 else
     echo "⚠️ Archivo de fuente ROBO.woff2 no encontrado"
@@ -120,29 +173,15 @@ fi
 # Copiar CSS de la fuente
 if [ -f "$FRONTEND_DIR/src/assets/fonts/ROBO.css" ]; then
     echo "📝 Copiando CSS de la fuente..."
-    cp "$FRONTEND_DIR/src/assets/fonts/ROBO.css" "$DIST_DIR/assets/fonts/"
+    cp "$FRONTEND_DIR/src/assets/fonts/ROBO.css" "$BUILD_DIR/assets/fonts/"
     handle_error $? "Error al copiar CSS de la fuente"
     
     # Configurar permisos del CSS
-    chmod 644 "$DIST_DIR/assets/fonts/ROBO.css"
+    chmod 644 "$BUILD_DIR/assets/fonts/ROBO.css"
     handle_error $? "Error al configurar permisos del CSS de la fuente"
 else
     echo "⚠️ Archivo ROBO.css no encontrado"
 fi
-
-# Después del build exitoso, mover los archivos
-echo "📦 Moviendo archivos al directorio static/frontend..."
-mkdir -p "$STATIC_FRONTEND_DIR"
-mv "$DIST_DIR"/* "$STATIC_FRONTEND_DIR/"
-handle_error $? "Error al mover archivos al directorio static/frontend"
-
-# Configurar permisos para el nuevo directorio
-echo "🔒 Configurando permisos..."
-sudo chown -R $CURRENT_USER:www-data "$STATIC_FRONTEND_DIR"
-sudo chmod -R 755 "$STATIC_FRONTEND_DIR"
-find "$STATIC_FRONTEND_DIR" -type f -exec sudo chmod 644 {} \;
-find "$STATIC_FRONTEND_DIR" -type d -exec sudo chmod 755 {} \;
-handle_error $? "Error al configurar permisos del directorio frontend"
 
 # Verificar Nginx
 echo "🔍 Verificando configuración de Nginx..."
@@ -168,9 +207,9 @@ sudo tail -n 20 /var/log/nginx/error.log
 echo "🔍 Verificando acceso a archivos críticos..."
 
 files_to_check=(
-    "$DIST_DIR/index.html"
-    "$DIST_DIR/favicon.ico"
-    "$ASSETS_DIR"
+    "$BUILD_DIR/index.html"
+    "$BUILD_DIR/favicon.ico"
+    "$BUILD_DIR/assets"
 )
 
 for file in "${files_to_check[@]}"; do
