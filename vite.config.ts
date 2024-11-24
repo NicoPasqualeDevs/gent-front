@@ -40,6 +40,8 @@ export default defineConfig({
         preserveModules: false,
       },
     },
+    manifest: true,
+    assetsDir: 'assets',
     chunkSizeWarningLimit: 1000,
   },
   server: {

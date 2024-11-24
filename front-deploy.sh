@@ -119,27 +119,75 @@ ls -la "$BUILD_DIR/assets"
 # Verificar estructura del build
 echo "🔍 Verificando estructura del build..."
 
-# Verificar que el directorio de build existe y tiene contenido
+# Verificar que el directorio de build existe
 if [ ! -d "$BUILD_DIR" ]; then
-    echo "❌ ERROR: El build no generó el directorio static/frontend"
+    echo "❌ ERROR: No se encontró el directorio de build en $BUILD_DIR"
     exit 1
 fi
 
+# Verificar contenido mínimo requerido
+echo "🔍 Verificando contenido del build..."
+
+# Lista de archivos y directorios requeridos
+required_files=(
+    "index.html"
+    "assets"
+    "assets/index.js"
+)
+
+for file in "${required_files[@]}"; do
+    if [ ! -e "$BUILD_DIR/$file" ]; then
+        echo "❌ ERROR: No se encontró $file en el build"
+        echo "Contenido actual de $BUILD_DIR:"
+        ls -la "$BUILD_DIR"
+        if [ -d "$BUILD_DIR/assets" ]; then
+            echo "Contenido de assets:"
+            ls -la "$BUILD_DIR/assets"
+        fi
+        exit 1
+    else
+        echo "✅ $file encontrado"
+    fi
+done
+
+# Verificar que el directorio no está vacío
 if [ ! "$(ls -A $BUILD_DIR)" ]; then
     echo "❌ ERROR: El directorio de build está vacío"
     exit 1
 fi
 
-# Verificar archivos esenciales
-if [ ! -f "$BUILD_DIR/index.html" ]; then
-    echo "❌ ERROR: No se encontró index.html en el build"
-    exit 1
-fi
+# Verificar permisos de archivos críticos
+echo "🔍 Verificando permisos de archivos críticos..."
 
-if [ ! -d "$BUILD_DIR/assets" ]; then
-    echo "❌ ERROR: No se encontró el directorio assets en el build"
-    exit 1
-fi
+critical_paths=(
+    "$BUILD_DIR"
+    "$BUILD_DIR/assets"
+    "$BUILD_DIR/index.html"
+)
+
+for path in "${critical_paths[@]}"; do
+    if [ -e "$path" ]; then
+        echo "✅ $path existe"
+        ls -l "$path"
+        
+        # Verificar permisos
+        if [[ -d "$path" && ! -x "$path" ]]; then
+            echo "❌ ERROR: El directorio $path no tiene permisos de ejecución"
+            exit 1
+        fi
+        if [[ -f "$path" && ! -r "$path" ]]; then
+            echo "❌ ERROR: El archivo $path no tiene permisos de lectura"
+            exit 1
+        fi
+    else
+        echo "❌ ERROR: $path no existe"
+        exit 1
+    fi
+done
+
+# Mostrar estructura final del build
+echo "📁 Estructura final del build:"
+tree "$BUILD_DIR" -L 2
 
 # Verificar y configurar favicon.ico
 echo "🔍 Configurando favicon..."
