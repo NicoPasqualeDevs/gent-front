@@ -186,11 +186,4 @@ for file in "${files_to_check[@]}"; do
     fi
 done
 
-# Verificar respuesta del servidor
-echo "🌐 Verificando respuesta del servidor..."
-
 echo "✅ ¡Despliegue del frontend completado! 🎉"
-echo "🔍 Recuerda verificar manualmente:"
-echo "  - La aplicación en https://gentsbuilder.com"
-echo "  - Los assets estáticos en https://gentsbuilder.com/assets/"
-echo "  - El favicon en https://gentsbuilder.com/favicon.ico"
