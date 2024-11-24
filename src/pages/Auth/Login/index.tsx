@@ -59,7 +59,12 @@ const Login: React.FC = () => {
   const onSubmit = async (values: UserCredentials) => {
     setIsLoading(true);
     try {
-      const response = await login(values);
+      const loginData = {
+        email: values.email,
+        password: decodeURIComponent(values.password)
+      };
+
+      const response = await login(loginData);
       const userData = response.data;
 
       if (!response.success || !userData.token || !userData.email) {
