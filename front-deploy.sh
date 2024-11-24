@@ -133,6 +133,7 @@ required_files=(
     "index.html"
     "assets"
     "assets/js"
+    "assets/css"
     "manifest.json"
 )
 
