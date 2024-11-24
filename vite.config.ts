@@ -20,15 +20,15 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          mui: ['@mui/material', '@mui/icons-material'],
+          vendor: ['react', 'react-dom', 'react-router-dom'],
+          mui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
         },
         assetFileNames: (assetInfo) => {
           if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
             return `assets/fonts/[name][extname]`
           }
           if (/\.css$/i.test(assetInfo.name)) {
-            return `assets/fonts/[name][extname]`
+            return `assets/css/[name]-[hash][extname]`
           }
           if (assetInfo.name === 'favicon.ico' || 
               assetInfo.name.startsWith('logo') || 
@@ -37,7 +37,8 @@ export default defineConfig({
           }
           return `assets/[ext]/[name]-[hash][extname]`
         },
-        preserveModules: false,
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
       },
     },
     manifest: true,

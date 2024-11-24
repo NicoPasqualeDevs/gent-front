@@ -133,6 +133,9 @@ required_files=(
     "index.html"
     "assets"
     "assets/index.js"
+    "assets/vendor.js"  # Chunk de React/React-DOM
+    "assets/mui.js"     # Chunk de Material-UI
+    "manifest.json"
 )
 
 for file in "${required_files[@]}"; do
@@ -269,5 +272,43 @@ for file in "${files_to_check[@]}"; do
         exit 1
     fi
 done
+
+# Verificación más detallada de assets
+echo "🔍 Verificando estructura de assets..."
+asset_directories=(
+    "assets/js"
+    "assets/css"
+    "assets/fonts"
+)
+
+for dir in "${asset_directories[@]}"; do
+    if [ -d "$BUILD_DIR/$dir" ]; then
+        echo "✅ $dir encontrado"
+        echo "Contenido de $dir:"
+        ls -la "$BUILD_DIR/$dir"
+    else
+        echo "ℹ️ $dir no presente (puede ser normal dependiendo de la build)"
+    fi
+done
+
+# Verificar chunks de React
+echo "🔍 Verificando chunks de React..."
+if ls "$BUILD_DIR/assets/"*vendor*.js 1> /dev/null 2>&1; then
+    echo "✅ Chunk de vendor (React) encontrado"
+else
+    echo "❌ ERROR: No se encontró el chunk de vendor (React)"
+    echo "Contenido actual de assets:"
+    ls -la "$BUILD_DIR/assets"
+    exit 1
+fi
+
+if ls "$BUILD_DIR/assets/"*mui*.js 1> /dev/null 2>&1; then
+    echo "✅ Chunk de MUI encontrado"
+else
+    echo "❌ ERROR: No se encontró el chunk de MUI"
+    echo "Contenido actual de assets:"
+    ls -la "$BUILD_DIR/assets"
+    exit 1
+fi
 
 echo "✅ ¡Despliegue del frontend completado! 🎉"
