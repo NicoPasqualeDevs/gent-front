@@ -38,20 +38,19 @@ handle_error $? "Error al actualizar el código desde git"
 
 echo "🚀 Iniciando despliegue del frontend..."
 
-# Directorios
+# Directorios actualizados
 FRONTEND_DIR="/home/nicolas_german_pasquale/gents-front"
-DIST_DIR="$FRONTEND_DIR/dist"
-ASSETS_DIR="$DIST_DIR/assets"
-CURRENT_USER=$(whoami)
+BACKEND_DIR="/home/nicolas_german_pasquale/gents-back"
+STATIC_FRONTEND_DIR="$BACKEND_DIR/static/frontend"
 
 # Validar directorio frontend
 validate_directory_permissions "$FRONTEND_DIR" "directorio frontend"
 
-# Limpiar dist si existe
-if [ -d "$DIST_DIR" ]; then
-    echo "🧹 Limpiando directorio dist anterior..."
-    rm -rf "$DIST_DIR"
-    handle_error $? "Error al limpiar directorio dist"
+# Limpiar directorio destino si existe
+if [ -d "$STATIC_FRONTEND_DIR" ]; then
+    echo "🧹 Limpiando directorio frontend anterior..."
+    rm -rf "$STATIC_FRONTEND_DIR"
+    handle_error $? "Error al limpiar directorio frontend"
 fi
 
 # Ir al directorio del frontend
@@ -131,21 +130,19 @@ else
     echo "⚠️ Archivo ROBO.css no encontrado"
 fi
 
-# Configurar permisos
+# Después del build exitoso, mover los archivos
+echo "📦 Moviendo archivos al directorio static/frontend..."
+mkdir -p "$STATIC_FRONTEND_DIR"
+mv "$DIST_DIR"/* "$STATIC_FRONTEND_DIR/"
+handle_error $? "Error al mover archivos al directorio static/frontend"
+
+# Configurar permisos para el nuevo directorio
 echo "🔒 Configurando permisos..."
-
-# Permisos para dist
-sudo chown -R $CURRENT_USER:www-data $DIST_DIR
-sudo chmod -R 755 $DIST_DIR
-handle_error $? "Error al configurar permisos del directorio dist"
-
-# Permisos específicos para archivos
-find $DIST_DIR -type f -exec sudo chmod 644 {} \;
-handle_error $? "Error al configurar permisos de archivos"
-
-# Permisos específicos para directorios
-find $DIST_DIR -type d -exec sudo chmod 755 {} \;
-handle_error $? "Error al configurar permisos de directorios"
+sudo chown -R $CURRENT_USER:www-data "$STATIC_FRONTEND_DIR"
+sudo chmod -R 755 "$STATIC_FRONTEND_DIR"
+find "$STATIC_FRONTEND_DIR" -type f -exec sudo chmod 644 {} \;
+find "$STATIC_FRONTEND_DIR" -type d -exec sudo chmod 755 {} \;
+handle_error $? "Error al configurar permisos del directorio frontend"
 
 # Verificar Nginx
 echo "🔍 Verificando configuración de Nginx..."
