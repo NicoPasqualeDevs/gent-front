@@ -319,4 +319,27 @@ else
     exit 1
 fi
 
+# Configurar MIME types para JavaScript
+echo "🔧 Configurando MIME types..."
+NGINX_MIME_TYPES="/etc/nginx/mime.types"
+
+# Verificar si ya existe la configuración de MIME type para JavaScript
+if ! grep -q "application/javascript" "$NGINX_MIME_TYPES"; then
+    sudo sed -i '/types {/a \    application/javascript  js;' "$NGINX_MIME_TYPES"
+    echo "✅ MIME type JavaScript agregado"
+fi
+
+# Asegurar permisos correctos para archivos JavaScript
+echo "🔒 Configurando permisos para archivos JavaScript..."
+find "$BUILD_DIR/assets/js" -type f -name "*.js" -exec sudo chmod 644 {} \;
+find "$BUILD_DIR/assets/js" -type f -name "*.js" -exec sudo chown $CURRENT_USER:$WEB_GROUP {} \;
+
+# Verificar configuración de MIME types en Nginx
+echo "🔍 Verificando configuración de MIME types en Nginx..."
+if ! sudo nginx -T | grep -q "application/javascript"; then
+    echo "⚠️ ADVERTENCIA: MIME type JavaScript no encontrado en la configuración de Nginx"
+else
+    echo "✅ MIME type JavaScript configurado correctamente"
+fi
+
 echo "✅ ¡Despliegue del frontend completado! 🎉"

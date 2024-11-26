@@ -14,44 +14,50 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, './src/assets'),
     }
   },
-  optimizeDeps: {
-    include: [
-      '@mui/material',
-      '@mui/icons-material',
-      '@emotion/react',
-      '@emotion/styled'
-    ]
-  },
   build: {
     outDir: '../gents-back/static/frontend',
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          mui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('@mui')) {
+              return 'mui'
+            }
+            if (id.includes('react')) {
+              return 'vendor'
+            }
+            return 'deps'
+          }
         },
         assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.')
+          const ext = info[info.length - 1]
           if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
             return `assets/fonts/[name][extname]`
           }
           if (/\.css$/i.test(assetInfo.name)) {
             return `assets/css/[name]-[hash][extname]`
           }
-          if (assetInfo.name === 'favicon.ico' || 
-              assetInfo.name.startsWith('logo') || 
-              assetInfo.name === 'manifest.json') {
+          if (['ico', 'json'].includes(ext)) {
             return `[name].[ext]`
           }
           return `assets/[ext]/[name]-[hash][extname]`
         },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
+        chunkFileNames: 'assets/js/[name].[hash].js',
+        entryFileNames: 'assets/js/[name].[hash].js',
       },
     },
     manifest: true,
     assetsDir: 'assets',
-    chunkSizeWarningLimit: 1000,
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
   },
   server: {
     proxy: {
