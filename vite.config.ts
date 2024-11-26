@@ -7,6 +7,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@components': path.resolve(__dirname, './src/components'),
+      '@styles': path.resolve(__dirname, './src/styles'),
+      '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@assets': path.resolve(__dirname, './src/assets'),
     }
   },
   build: {
@@ -14,18 +19,50 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          mui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled']
-        }
-      }
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('@mui')) {
+              return 'mui'
+            }
+            if (id.includes('react')) {
+              return 'vendor'
+            }
+            return 'deps'
+          }
+        },
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.')
+          const ext = info[info.length - 1]
+          if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
+            return `assets/fonts/[name][extname]`
+          }
+          if (/\.css$/i.test(assetInfo.name)) {
+            return `assets/css/[name]-[hash][extname]`
+          }
+          if (['ico', 'json'].includes(ext)) {
+            return `[name].[ext]`
+          }
+          return `assets/[ext]/[name]-[hash][extname]`
+        },
+        chunkFileNames: 'assets/js/[name].[hash].js',
+        entryFileNames: 'assets/js/[name].[hash].js',
+      },
     },
-    chunkSizeWarningLimit: 1500,
+    manifest: true,
+    assetsDir: 'assets',
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    }
   },
   server: {
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL || 'https://www.gentsbuilder.com',
+        target: 'https://www.gentsbuilder.com',
         changeOrigin: true,
         secure: false,
       }
