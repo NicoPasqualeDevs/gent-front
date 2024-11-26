@@ -97,7 +97,6 @@ handle_error $? "No se pudo acceder al directorio del frontend"
 # Instalar dependencias
 echo "📦 Instalando dependencias..."
 npm install
-npm install terser --save-dev
 handle_error $? "Error al instalar dependencias"
 
 # Construir la aplicación
@@ -342,50 +341,5 @@ if ! sudo nginx -T | grep -q "application/javascript"; then
 else
     echo "✅ MIME type JavaScript configurado correctamente"
 fi
-
-# Crear archivo de configuración personalizado para Nginx
-echo "🔧 Configurando Nginx para JavaScript modules..."
-NGINX_CONF="/etc/nginx/conf.d/javascript-mime.conf"
-
-sudo tee "$NGINX_CONF" > /dev/null << EOF
-types {
-    application/javascript js;
-    application/javascript mjs;
-    text/javascript js;
-    text/javascript mjs;
-}
-
-map \$sent_http_content_type \$x_content_type {
-    "~*javascript" "nosniff";
-    default "";
-}
-
-map \$uri \$javascript_content_type {
-    "~\.js$" "application/javascript";
-    default "";
-}
-EOF
-
-# Verificar y ajustar la configuración del servidor Nginx
-NGINX_SERVER_CONF="/etc/nginx/sites-available/default"
-
-# Agregar las directivas necesarias si no existen
-if ! grep -q "add_header X-Content-Type-Options nosniff;" "$NGINX_SERVER_CONF"; then
-    sudo sed -i '/server {/a \    add_header X-Content-Type-Options nosniff;' "$NGINX_SERVER_CONF"
-fi
-
-if ! grep -q "add_header Content-Type" "$NGINX_SERVER_CONF"; then
-    sudo sed -i '/location \/ {/a \        if ($javascript_content_type) {\n            add_header Content-Type $javascript_content_type;\n        }' "$NGINX_SERVER_CONF"
-fi
-
-# Verificar la configuración de Nginx
-echo "🔍 Verificando configuración de Nginx..."
-sudo nginx -t
-handle_error $? "Error en la configuración de Nginx"
-
-# Reiniciar Nginx para aplicar cambios
-echo "🔄 Reiniciando Nginx..."
-sudo systemctl restart nginx
-handle_error $? "Error al reiniciar Nginx"
 
 echo "✅ ¡Despliegue del frontend completado! 🎉"
