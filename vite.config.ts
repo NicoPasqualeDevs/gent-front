@@ -1,22 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
-import { UserConfig } from 'vite'
 
-const config: UserConfig = {
+export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     }
-  },
-  optimizeDeps: {
-    include: [
-      '@mui/material',
-      '@mui/icons-material',
-      '@emotion/react',
-      '@emotion/styled'
-    ]
   },
   build: {
     outDir: '../gents-back/static/frontend',
@@ -25,26 +16,10 @@ const config: UserConfig = {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          mui: ['@mui/material', '@mui/icons-material'],
-          styles: ['@emotion/react', '@emotion/styled']
-        },
-        assetFileNames: (assetInfo) => {
-          const type = assetInfo.name.split('.').pop()
-          const mapping = {
-            woff: 'fonts',
-            woff2: 'fonts',
-            ttf: 'fonts',
-            css: 'css',
-          }
-          const dir = mapping[type] || type
-          return `assets/${dir}/[name]-[hash][extname]`
-        },
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
+          mui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled']
+        }
       }
     },
-    manifest: true,
-    assetsDir: 'assets',
     chunkSizeWarningLimit: 1500,
   },
   server: {
@@ -53,14 +28,10 @@ const config: UserConfig = {
         target: process.env.VITE_API_URL || 'https://www.gentsbuilder.com',
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api/, '')
       }
     },
     host: true,
-    port: Number(process.env.PORT) || 3000,
-    cors: true
+    port: 3000,
   },
   base: '/',
-}
-
-export default defineConfig(config)
+})
