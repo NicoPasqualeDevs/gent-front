@@ -97,6 +97,7 @@ handle_error $? "No se pudo acceder al directorio del frontend"
 # Instalar dependencias
 echo "📦 Instalando dependencias..."
 npm install
+npm install terser --save-dev
 handle_error $? "Error al instalar dependencias"
 
 # Construir la aplicación

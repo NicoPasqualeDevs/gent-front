@@ -51,13 +51,8 @@ export default defineConfig({
     manifest: true,
     assetsDir: 'assets',
     sourcemap: false,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: true,
-        drop_debugger: true
-      }
-    }
+    minify: 'esbuild',
+    target: 'es2015'
   },
   server: {
     proxy: {
