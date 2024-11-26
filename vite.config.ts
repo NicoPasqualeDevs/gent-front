@@ -22,12 +22,18 @@ export default defineConfig({
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
             if (id.includes('@mui')) {
-              return 'mui'
+              return 'vendor-mui'
             }
-            if (id.includes('react')) {
-              return 'vendor'
+            if (id.includes('react/')) {
+              return 'vendor-react'
             }
-            return 'deps'
+            if (id.includes('react-dom')) {
+              return 'vendor-react-dom'
+            }
+            const match = id.match(/node_modules\/([^/]+)/)
+            if (match && match[1]) {
+              return `vendor-${match[1]}`
+            }
           }
         },
         assetFileNames: (assetInfo) => {
