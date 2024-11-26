@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from 'yup';
 
 // Hooks
-import useWidget from "@/hooks/apps/widget_customizer";
+import useWidget from "@/hooks/apps/widget";
 import { useAppContext } from "@/context";
 
 // Components

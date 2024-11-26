@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { Cover } from './Cover';
 import { Chat } from './Chat';
 import { ChatAction } from './ChatAction';
-import { useWidgetPreview } from '@/hooks/apps/widget_customizer';
+import { useWidgetPreview } from '@/hooks/apps/widget';
 
 interface WidgetPreviewProps {
   widgetData: {
