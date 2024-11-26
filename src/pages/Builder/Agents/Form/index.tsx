@@ -20,6 +20,7 @@ import {
   FormButton,
 } from "@/utils/FormsViewUtils";
 import useProfile from "@/hooks/apps/accounts/useProfile";
+import useApiKeys from "@/hooks/apps/accounts/useApiKeys";
 import { ApiKey } from "@/types/UserProfile";
 
 interface FormValues extends Record<string, string> {
@@ -40,7 +41,7 @@ const AgentForm: React.FC = () => {
   const { auth, language, replacePath } = useAppContext();
   const { getAgentDetails, createAgent, updateAgent } = useAgentsApi();
   const t = languages[language as keyof typeof languages];
-  const { getApiKeys } = useProfile();
+  const { getApiKeys } = useApiKeys();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
 
   const [formState, setFormState] = useState<FormState>({
