@@ -54,11 +54,11 @@ const useAgentsApi = (): UseAgentsApi => {
   };
 
   const getAgentsList = async (teamId: string, filterParams: string): Promise<ApiResponse<AgentData[]>> => {
-    return apiGet(`agents/teams/${teamId}/?${filterParams}`);
+    return apiGet(`agents/team/${teamId}/?${filterParams}`);
   };
 
   const createAgent = async (data: AgentFormData, teamId: string): Promise<ApiResponse<AgentData>> => {
-    return apiPost(`agents/teams/${teamId}/`, data);
+    return apiPost(`agents/team/${teamId}/`, data);
   };
 
   const updateAgent = async (data: AgentFormData, agentId: string): Promise<ApiResponse<AgentData>> => {
