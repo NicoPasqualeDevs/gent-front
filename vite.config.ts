@@ -46,13 +46,17 @@ export default defineConfig({
         },
         chunkFileNames: 'assets/js/[name].[hash].js',
         entryFileNames: 'assets/js/[name].[hash].js',
+        format: 'es',
       },
     },
     manifest: true,
     assetsDir: 'assets',
     sourcemap: false,
     minify: 'esbuild',
-    target: 'es2015'
+    target: 'es2015',
+    modulePreload: {
+      polyfill: true
+    }
   },
   server: {
     proxy: {
