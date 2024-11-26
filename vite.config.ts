@@ -14,6 +14,14 @@ export default defineConfig({
       '@assets': path.resolve(__dirname, './src/assets'),
     }
   },
+  optimizeDeps: {
+    include: [
+      '@mui/material',
+      '@mui/icons-material',
+      '@emotion/react',
+      '@emotion/styled'
+    ]
+  },
   build: {
     outDir: '../gents-back/static/frontend',
     emptyOutDir: true,
