@@ -1,17 +1,19 @@
 import { ApiResponse } from "@/types/Api";
+import { ApiProviderType } from "@/types/Auth";
 
 export interface ApiKey {
   id: number;
   api_name: string;
-  api_type: string;
+  api_type: ApiProviderType;
   api_key: string;
 }
 
 export interface ApiKeyFormData extends Record<string, unknown> {
   api_name: string;
-  api_type: 'openai' | 'anthropic' | 'google' | 'mistral' | 'meta' | 'custom';
+  api_type: ApiProviderType;
   api_key: string;
   model?: string;
+  provider?: string;
 }
 
 export interface ProfileUpdateData extends Record<string, unknown> {
@@ -74,4 +76,13 @@ export interface ProfileState {
   apiKeys: ApiKey[];
   showNewKeyForm: boolean;
   error: string | null;
+  selectedProvider: ApiProviderType;
+  llmProviders: LLMProvider[];
+  llmModels: LLMModel[];
+}
+
+export interface ProfileFormValues extends Record<string, unknown> {
+  first_name: string;
+  last_name: string;
+  email: string;
 }

@@ -1,8 +1,6 @@
-import { useCallback } from 'react';
 import useApi from '@/hooks/api/useApi';
 import { ApiResponse } from '@/types/Api';
 import { UpdateProfileData, ChangePasswordData } from '@/types/Auth';
-import useApiKeys from './useApiKeys';
 
 interface UserProfile {
   id: number;
@@ -24,43 +22,38 @@ interface BotApiKeyRequest extends Record<string, unknown> {
   api_key_id: number;
 }
 
-const useProfile = () => {
+interface UseProfileApi {
+  getProfile: () => Promise<ApiResponse<UserProfile>>;
+  updateProfileDetails: (data: UpdateProfileData) => Promise<ApiResponse<UserProfile>>;
+  changePassword: (data: ChangePasswordData) => Promise<ApiResponse<void>>;
+  setBotApiKey: (agentId: string, apiKeyId: number) => Promise<ApiResponse<BotApiKeyResponse>>;
+  updateBotApiKey: (agentId: string, apiKeyId?: number) => Promise<ApiResponse<BotApiKeyResponse>>;
+}
+
+const useProfileApi = (): UseProfileApi => {
   const { apiGet, apiPatch, apiPost } = useApi();
-  const apiKeysHook = useApiKeys();
 
-  const getProfile = useCallback(async (): Promise<ApiResponse<UserProfile>> => {
-    return await apiGet<UserProfile>('accounts/profile/');
-  }, [apiGet]);
+  const getProfile = async (): Promise<ApiResponse<UserProfile>> => {
+    return apiGet<UserProfile>('accounts/profile/');
+  };
 
-  const updateProfileDetails = useCallback(
-    async (data: UpdateProfileData): Promise<ApiResponse<UserProfile>> => {
-      return await apiPatch<UserProfile>('accounts/profile/', data);
-    },
-    [apiPatch]
-  );
+  const updateProfileDetails = async (data: UpdateProfileData): Promise<ApiResponse<UserProfile>> => {
+    return apiPatch<UserProfile>('accounts/profile/', data);
+  };
 
-  const changePassword = useCallback(
-    async (data: ChangePasswordData): Promise<ApiResponse<void>> => {
-      return await apiPost<void>('accounts/change-password/', data);
-    },
-    [apiPost]
-  );
+  const changePassword = async (data: ChangePasswordData): Promise<ApiResponse<void>> => {
+    return apiPost<void>('accounts/change-password/', data);
+  };
 
-  const setBotApiKey = useCallback(
-    async (agentId: string, apiKeyId: number): Promise<ApiResponse<BotApiKeyResponse>> => {
-      const data: BotApiKeyRequest = { api_key_id: apiKeyId };
-      return await apiPost<BotApiKeyResponse>(`agents/${agentId}/api-key/`, data);
-    },
-    [apiPost]
-  );
+  const setBotApiKey = async (agentId: string, apiKeyId: number): Promise<ApiResponse<BotApiKeyResponse>> => {
+    const data: BotApiKeyRequest = { api_key_id: apiKeyId };
+    return apiPost<BotApiKeyResponse>(`agents/${agentId}/api-key/`, data);
+  };
 
-  const updateBotApiKey = useCallback(
-    async (agentId: string, apiKeyId?: number): Promise<ApiResponse<BotApiKeyResponse>> => {
-      const data: Partial<BotApiKeyRequest> = apiKeyId ? { api_key_id: apiKeyId } : {};
-      return await apiPatch<BotApiKeyResponse>(`agents/${agentId}/api-key/`, data);
-    },
-    [apiPatch]
-  );
+  const updateBotApiKey = async (agentId: string, apiKeyId?: number): Promise<ApiResponse<BotApiKeyResponse>> => {
+    const data: Partial<BotApiKeyRequest> = apiKeyId ? { api_key_id: apiKeyId } : {};
+    return apiPatch<BotApiKeyResponse>(`agents/${agentId}/api-key/`, data);
+  };
 
   return {
     getProfile,
@@ -68,8 +61,7 @@ const useProfile = () => {
     changePassword,
     setBotApiKey,
     updateBotApiKey,
-    ...apiKeysHook
   };
 };
 
-export default useProfile; 
+export default useProfileApi; 

@@ -94,10 +94,33 @@ export interface ChangePasswordData extends ApiData {
   [key: string]: unknown;
 }
 
+export type ApiProviderType = 'OpenAI' | 'Anthropic' | 'Google' | 'Mistral AI' | 'Meta' | 'Custom';
+
+export interface LLMProvider {
+  value: ApiProviderType;
+  label: string;
+}
+
+export interface LLMModel {
+  value: string;
+  label: string;
+  provider: ApiProviderType;
+}
+
 export interface CreateApiKeyData extends ApiData {
   api_name: string;
-  api_type: string;
+  api_type: ApiProviderType;
   api_key: string;
+  model?: string;
   [key: string]: unknown;
+}
+
+export interface AIModelsResponse {
+  success: boolean;
+  message?: string;
+  data: {
+    providers: LLMProvider[];
+    models: LLMModel[];
+  };
 }
 

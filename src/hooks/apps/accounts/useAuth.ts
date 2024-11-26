@@ -1,32 +1,32 @@
-import { useCallback } from 'react';
 import useApi from '@/hooks/api/useApi';
 import { LoginResponse, RegisterResponse, UserCredentials, RegisterCredentials } from '@/types/Auth';
 import { ApiResponse, ApiData } from '@/types/Api';
 
-const useAuth = () => {
+interface UseAuthApi {
+  login: (credentials: UserCredentials) => Promise<ApiResponse<LoginResponse>>;
+  register: (userData: RegisterCredentials) => Promise<ApiResponse<RegisterResponse>>;
+  logout: () => Promise<ApiResponse<void>>;
+  validateToken: () => Promise<ApiResponse<LoginResponse>>;
+}
+
+const useAuthApi = (): UseAuthApi => {
   const { apiPost } = useApi();
 
-  const login = useCallback(
-    async (credentials: UserCredentials): Promise<ApiResponse<LoginResponse>> => {
-      return await apiPost<LoginResponse>('accounts/login/', credentials);
-    },
-    [apiPost]
-  );
+  const login = async (credentials: UserCredentials): Promise<ApiResponse<LoginResponse>> => {
+    return apiPost<LoginResponse>('accounts/login/', credentials);
+  };
 
-  const register = useCallback(
-    async (userData: RegisterCredentials): Promise<ApiResponse<RegisterResponse>> => {
-      return await apiPost<RegisterResponse>('accounts/register/', userData);
-    },
-    [apiPost]
-  );
+  const register = async (userData: RegisterCredentials): Promise<ApiResponse<RegisterResponse>> => {
+    return apiPost<RegisterResponse>('accounts/register/', userData);
+  };
 
-  const logout = useCallback(async (): Promise<ApiResponse<void>> => {
-    return await apiPost<void>('accounts/logout/', {} as ApiData);
-  }, [apiPost]);
+  const logout = async (): Promise<ApiResponse<void>> => {
+    return apiPost<void>('accounts/logout/', {} as ApiData);
+  };
 
-  const validateToken = useCallback(async (): Promise<ApiResponse<LoginResponse>> => {
-    return await apiPost<LoginResponse>('accounts/validate-token/', {} as ApiData);
-  }, [apiPost]);
+  const validateToken = async (): Promise<ApiResponse<LoginResponse>> => {
+    return apiPost<LoginResponse>('accounts/validate-token/', {} as ApiData);
+  };
 
   return {
     login,
@@ -36,4 +36,4 @@ const useAuth = () => {
   };
 };
 
-export default useAuth; 
+export default useAuthApi; 

@@ -1,30 +1,21 @@
-import { useCallback } from 'react';
 import useApi from '@/hooks/api/useApi';
 import { ApiResponse } from '@/types/Api';
+import { LLMProvider, LLMModel } from '@/types/Auth';
 
-interface LLMModel {
-  value: string;
-  label: string;
-  provider: string;
+interface UseAiModelsApi {
+  getAIModels: () => Promise<ApiResponse<{providers: LLMProvider[]; models: LLMModel[]}>>;
 }
 
-const useAccountsApi = () => {
+const useAiModelsApi = (): UseAiModelsApi => {
   const { apiGet } = useApi();
 
-  const getAIModels = useCallback(async (): Promise<ApiResponse<LLMModel[]>> => {
-    const response = await apiGet<LLMModel[]>('accounts/ai-models/');
-    if (response.data) {
-      response.data = response.data.map(model => ({
-        ...model,
-        provider: model.provider.toLowerCase()
-      }));
-    }
-    return response;
-  }, [apiGet]);
+  const getAIModels = async (): Promise<ApiResponse<{providers: LLMProvider[]; models: LLMModel[]}>> => {
+    return await apiGet<{providers: LLMProvider[]; models: LLMModel[]}>('accounts/ai-models/');
+  };
 
   return {
     getAIModels,
   };
 };
 
-export default useAccountsApi;
+export default useAiModelsApi;
