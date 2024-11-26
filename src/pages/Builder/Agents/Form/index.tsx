@@ -19,7 +19,6 @@ import {
   FormCancelButton,
   FormButton,
 } from "@/utils/FormsViewUtils";
-import useProfile from "@/hooks/apps/accounts/useProfile";
 import useApiKeys from "@/hooks/apps/accounts/useApiKeys";
 import { ApiKey } from "@/types/UserProfile";
 

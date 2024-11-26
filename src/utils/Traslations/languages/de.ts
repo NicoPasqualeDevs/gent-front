@@ -223,7 +223,7 @@ const de: TranslationType = {
     title: "Agent erstellen",
     editTitle: "Agent bearbeiten",
     createTitle: "Agent erstellen",
-    name: "Agentname",
+    name: "Agentenname",
     description: "Beschreibung",
     modelAI: "KI-Modell",
     saving: "Speichern...",
@@ -235,7 +235,7 @@ const de: TranslationType = {
     errorConnection: "Fehler: Verbindung zum Server konnte nicht hergestellt werden",
     fieldRequired: "Dieses Feld ist erforderlich",
     errorMissingTeamId: "Team-ID nicht gefunden",
-    errorMissingagentId: "Bot-ID nicht gefunden"
+    errorMissingagentId: "Agenten-ID nicht gefunden"
   },
   dataEntry: {
     title: "Agentendaten",

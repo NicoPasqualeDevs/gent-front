@@ -121,7 +121,7 @@ const hi: TranslationType = {
     errorSendingMessage: "संदेश नहीं भेजा जा सका",
     errorClosingChat: "चैट बंद नहीं की जा सकी: वार्तालाप आईडी गायब है",
     errorCleaningChat: "चैट को पूरी तरह से साफ नहीं किया जा सका",
-    unexpectedError: "���ैट बंद करते समय एक अनपेक्षित त्रुटि हुई",
+    unexpectedError: "ैट बंद करते समय एक अनपेक्षित त्रुटि हुई",
     errorLoadingData: "चैट डेटा लोड नहीं किया जा सका",
     historicalView: "आप एक वार्तालाप इतिहास देख रहे हैं",
     returnToCurrent: "वर्तमान वार्तालाप पर वापस जाएं",
@@ -235,7 +235,7 @@ const hi: TranslationType = {
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
     fieldRequired: "यह फ़ील्ड आवश्यक है",
     errorMissingTeamId: "टीम आईडी नहीं मिली",
-    errorMissingagentId: "बॉट आईडी नहीं मिली"
+    errorMissingagentId: "बजेंट आईडी नहीं मिली"
   },
   dataEntry: {
     title: "एजेंट डेटा",
@@ -244,7 +244,7 @@ const hi: TranslationType = {
     documents: "दस्तावेज़",
     upload: "अपलोड करें",
     saving: "सहेज रहा है...",
-    update: "���पडेट करें",
+    update: "अपडेट करें",
     cancel: "रद्द करें",
     successUpdate: "डेटा सफलतापूर्वक अपडेट किया गया",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",

@@ -235,7 +235,7 @@ const br: TranslationType = {
     errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
     fieldRequired: "Este campo é obrigatório",
     errorMissingTeamId: "ID da equipe não encontrado",
-    errorMissingagentId: "ID do bot não encontrado"
+    errorMissingagentId: "ID do agente não encontrado"
   },
   dataEntry: {
     title: "Dados do Agente",

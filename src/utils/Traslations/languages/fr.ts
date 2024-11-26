@@ -235,7 +235,7 @@ const fr: TranslationType = {
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     fieldRequired: "Ce champ est obligatoire",
     errorMissingTeamId: "ID d'équipe non trouvé",
-    errorMissingagentId: "ID de bot non trouvé"
+    errorMissingagentId: "ID d'agent non trouvé"
   },
   dataEntry: {
     title: "Données de l'Agent",
@@ -381,7 +381,7 @@ const fr: TranslationType = {
     saving: "Enregistrement...",
     success: "Opération réussie",
     error: "Une erreur s'est produite",
-    sessionExpired: "La session a expiré, veuillez vous reconnecter",
+    sessionExpired: "Session expirée, veuillez vous reconnecter",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     apiKey: "Clé API",
     model: "Modèle",

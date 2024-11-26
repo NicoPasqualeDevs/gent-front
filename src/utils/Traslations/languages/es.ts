@@ -230,12 +230,12 @@ const es: TranslationType = {
     update: "Actualizar",
     create: "Crear",
     cancel: "Cancelar",
-    successUpdate: "Agente actualizado correctamente",
-    successCreate: "Agente creado correctamente",
-    errorConnection: "Error: no se pudo establecer conexión con el servidor",
+    successUpdate: "Agente actualizado exitosamente",
+    successCreate: "Agente creado exitosamente",
+    errorConnection: "Error: No se pudo establecer conexión con el servidor",
     fieldRequired: "Este campo es requerido",
     errorMissingTeamId: "ID del equipo no encontrado",
-    errorMissingagentId: "ID del bot no encontrado"
+    errorMissingagentId: "ID del agente no encontrado"
   },
   dataEntry: {
     title: "Datos del Agente",
@@ -381,7 +381,7 @@ const es: TranslationType = {
     saving: "Guardando...",
     success: "Operación exitosa",
     error: "Ha ocurrido un error",
-    sessionExpired: "La sesión ha expirado, por favor inicie sesión nuevamente",
+    sessionExpired: "Sesión expirada, por favor inicie sesión nuevamente",
     errorConnection: "Error: no se pudo establecer conexión con el servidor",
     apiKey: "Clave API",
     model: "Modelo",
