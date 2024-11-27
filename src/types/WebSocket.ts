@@ -1,7 +1,11 @@
+export type WebSocketConnectionState = 'connecting' | 'connected' | 'disconnected' | 'error';
+
 export interface WebSocketState {
   isConnected: boolean;
+  connectionState: WebSocketConnectionState;
   error: string | null;
   messages: (WebSocketMessage | ChatMessage)[];
+  lastPing: string | null;
 }
 
 export interface WebSocketHook {

@@ -30,7 +30,7 @@ import {
   ChatHistoryType
 } from '@/types/ChatView';
 import { useChatSession } from "@/hooks/apps/chat/useChatSession";
-import { useWebSocket } from "@/hooks/apps/chat/useWebSockets";
+import { useWebSocket } from "@/hooks/apps/chat/useWebSocket";
 import { useChatCache } from "@/hooks/apps/chat/useChatCache";
 
 const ChatView: React.FC = () => {
@@ -250,7 +250,16 @@ const ChatView: React.FC = () => {
     setState(prev => ({ ...prev, isSending: true }));
 
     try {
-      sendMessage(state.message);
+      const messageData = {
+        type: 'chat.message',
+        content: state.message,
+        metadata: {
+          timestamp: new Date().toISOString(),
+          sessionId: state.sessionId
+        }
+      };
+
+      sendMessage(JSON.stringify(messageData));
 
       const newMessage = {
         content: state.message,
@@ -272,7 +281,7 @@ const ChatView: React.FC = () => {
       setState(prev => ({ ...prev, isSending: false }));
       ErrorToast(t.errorSendingMessage);
     }
-  }, [state.message, state.isSending, sendMessage, isConnected]);
+  }, [state.message, state.isSending, sendMessage, isConnected, state.sessionId]);
 
   useEffect(() => {
     if (messages.length > 0) {

@@ -1,24 +1,29 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useAppContext } from '@/context';
-import { useWebSocketState } from './useWebSocketState';
-import { ChatMessage } from '@/types/Agents';
-import { WebSocketMessage } from '@/types/WebSocket';
+
+interface WebSocketMessage {
+  content: string;
+  role: 'client' | 'agent' | 'system';
+  timestamp: string;
+}
 
 export const useWebSocket = (conversationId: string) => {
+  const [messages, setMessages] = useState<WebSocketMessage[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const { auth } = useAppContext();
-  const { state, updateConnection, addMessage, setError } = useWebSocketState();
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
 
-  const connect = useCallback(() => {
+  const connectWebSocket = useCallback(() => {
     if (!conversationId) return;
 
     const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
     const ws = new WebSocket(`${wsUrl}/ws/chat/${conversationId}/`);
-    wsRef.current = ws;
-
+    
     ws.onopen = () => {
-      updateConnection(true);
+      console.log('WebSocket conectado');
+      setIsConnected(true);
+      
+      // Enviar autenticación si hay token
       if (auth?.token) {
         ws.send(JSON.stringify({
           type: 'authentication',
@@ -28,64 +33,57 @@ export const useWebSocket = (conversationId: string) => {
     };
 
     ws.onclose = () => {
-      updateConnection(false);
+      console.log('WebSocket desconectado');
+      setIsConnected(false);
       // Intentar reconectar después de 3 segundos
-      reconnectTimeoutRef.current = setTimeout(connect, 3000);
+      setTimeout(connectWebSocket, 3000);
     };
 
-    ws.onerror = () => {
-      setError('Error de conexión WebSocket');
+    ws.onerror = (error) => {
+      console.error('Error de WebSocket:', error);
     };
 
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'chat.message') {
-          addMessage(data.message);
+          setMessages(prev => [...prev, data.message]);
         }
       } catch (error) {
-        console.error('Error parsing message:', error);
+        console.error('Error al procesar mensaje:', error);
       }
     };
-  }, [conversationId, auth?.token]);
 
-  const sendMessage = useCallback((content: string) => {
-    if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-      setError('No hay conexión disponible');
-      return;
-    }
-
-    wsRef.current.send(JSON.stringify({
-      type: 'chat.message',
-      content,
-      timestamp: new Date().toISOString()
-    }));
-  }, []);
+    wsRef.current = ws;
+  }, [conversationId, auth]);
 
   useEffect(() => {
-    connect();
-
+    connectWebSocket();
     return () => {
-      if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current);
-      }
       if (wsRef.current) {
         wsRef.current.close();
       }
     };
-  }, [connect]);
+  }, [connectWebSocket]);
 
-  const formatMessage = (message: WebSocketMessage): ChatMessage => ({
-    content: message.content,
-    role: message.type === 'system' || message.type === 'agent' ? 'agent' : 'client',
-    timestamp: message.metadata?.timestamp || new Date().toISOString(),
-    metadata: message.metadata || {}
-  });
+  const sendMessage = useCallback((content: string) => {
+    if (wsRef.current?.readyState === WebSocket.OPEN) {
+      wsRef.current.send(JSON.stringify({
+        type: 'chat.message',
+        message: {
+          content,
+          role: 'client',
+          timestamp: new Date().toISOString()
+        }
+      }));
+    } else {
+      console.error('WebSocket no está conectado');
+    }
+  }, []);
 
   return {
-    messages: state.messages.map(msg => formatMessage(msg as WebSocketMessage)),
+    messages,
     sendMessage,
-    isConnected: state.isConnected,
-    error: state.error
+    isConnected
   };
-}; 
+};
