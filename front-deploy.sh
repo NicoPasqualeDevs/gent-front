@@ -101,7 +101,7 @@ handle_error $? "Error al instalar dependencias"
 
 # Construir la aplicación
 echo "🏗️ Construyendo la aplicación..."
-npm run build:prod
+npm run build
 handle_error $? "Error al construir la aplicación"
 
 # Después de la build, asegurar permisos recursivos
