@@ -62,7 +62,7 @@ const useAgentsApi = (): UseAgentsApi => {
   };
 
   const updateAgent = async (data: AgentFormData, agentId: string): Promise<ApiResponse<AgentData>> => {
-    return apiPut(`agents/modify/${agentId}/`, data);
+    return apiPut(`agents/${agentId}/`, data);
   };
 
   const updateAgentData = async (data: AgentDataFormData, agentId: string): Promise<ApiResponse<AgentData>> => {
@@ -70,7 +70,7 @@ const useAgentsApi = (): UseAgentsApi => {
   };
 
   const deleteAgent = async (agentId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`agents/modify/${agentId}/`);
+    return apiDelete(`agents/${agentId}/`);
   };
 
   const uploadDocument = async (file: File, agentId: string): Promise<ApiResponse<void>> => {

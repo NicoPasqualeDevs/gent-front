@@ -31,6 +31,14 @@ const useApi = (): UseApiHook => {
       throw error;
     }
 
+    if (response.status === 204) {
+      return {
+        success: true,
+        message: "Success",
+        data: {} as T
+      };
+    }
+
     const data = await response.json();
     return {
       success: true,

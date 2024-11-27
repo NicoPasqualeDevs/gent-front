@@ -198,7 +198,7 @@ const AgentsList: React.FC<PageProps> = () => {
     try {
       setState(prev => ({ ...prev, isDeleting: true }));
       await deleteAgent(botId);
-
+      
       setState(prev => ({
         ...prev,
         pageContent: prev.pageContent.filter(item => item.id !== botId),
@@ -206,18 +206,21 @@ const AgentsList: React.FC<PageProps> = () => {
         botToDelete: "",
         isDeleting: false
       }));
+      
       SuccessToast(t.agentsList.deleteSuccess);
-
+      
       await getAgentsData(`?page_size=${state.contentPerPage}&page=${state.currentPage}`);
+      
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        ErrorToast(t.agentsList.errorConnection);
-      } else {
-        const apiError = error as { status: string; error: string; data?: string };
-        ErrorToast(`${apiError.status} - ${apiError.error}${apiError.data ? ": " + apiError.data : ""}`);
-      }
+      console.error('Error deleting agent:', error);
+      ErrorToast(t.agentsList.errorConnection);
     } finally {
-      setState(prev => ({ ...prev, isDeleting: false }));
+      setState(prev => ({ 
+        ...prev, 
+        isDeleting: false,
+        allowerState: false,
+        botToDelete: ""
+      }));
     }
   }, [deleteAgent, state.contentPerPage, state.currentPage, getAgentsData, t]);
 
