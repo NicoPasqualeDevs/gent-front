@@ -407,6 +407,7 @@ export interface TranslationType {
     };
     configLLM: string;
     emptyApiKeys: string;
+    errorLoadingApiKeys: string;
   };
 }
 

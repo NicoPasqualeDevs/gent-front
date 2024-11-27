@@ -13,6 +13,7 @@ import { useAppContext } from '@/context';
 import useProfile from '@/hooks/apps/accounts/useProfile';
 import { ApiKey } from '@/types/UserProfile';
 import { toast } from 'react-toastify';
+import useApiKeys from "@/hooks/apps/accounts/useApiKeys";
 
 interface RobotCardProps {
   name: string;
@@ -53,6 +54,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const eyesRef = useRef<HTMLDivElement>(null);
+  const { getApiKeys } = useApiKeys();
   const [showBubble, setShowBubble] = useState(false);
   const [displayText, setDisplayText] = useState('');
   const bubbleTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
@@ -62,7 +64,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
   const [isGlowing, setIsGlowing] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
-  const { getApiKeys, setBotApiKey, updateBotApiKey } = useProfile();
+  const { setBotApiKey, updateBotApiKey } = useProfile();
   const [isLoadingKeys, setIsLoadingKeys] = useState(false);
   const [hasLoadedKeys, setHasLoadedKeys] = useState(false);
   const [isUpdatingApiKey, setIsUpdatingApiKey] = useState(false);
@@ -240,13 +242,22 @@ const RobotCard: React.FC<RobotCardProps> = ({
     setIsLoadingKeys(true);
     try {
       const response = await getApiKeys();
-      console.log('API Response:', response);
       
-      if (response.success && response.data) {
+      if (response?.data) {
         setApiKeys(response.data);
+      } else {
+        console.error('No se pudieron cargar las API keys:', response);
       }
     } catch (error) {
-      console.error('Error loading API keys:', error);
+      console.error('Error al cargar las API keys:', error);
+      toast.error(t?.errorLoadingApiKeys || 'Error al cargar las API keys', {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } finally {
       setIsLoadingKeys(false);
       setHasLoadedKeys(true);

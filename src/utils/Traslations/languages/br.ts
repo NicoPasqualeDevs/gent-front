@@ -418,7 +418,8 @@ const br: TranslationType = {
       delete: "Exclua seu assistente da plataforma, cuidado você perderá as configurações realizadas"
     },
     configLLM: "Configurar LLM",
-    emptyApiKeys: "Nenhuma chave API configurada"
+    emptyApiKeys: "Nenhuma chave API configurada",
+    errorLoadingApiKeys: "Erro ao carregar as chaves API"
   }
 };
 

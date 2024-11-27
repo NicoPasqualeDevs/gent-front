@@ -289,7 +289,7 @@ const de: TranslationType = {
       primaryColor: "Primärfarbe",
       primaryTextContrast: "Primärer Textkontrast",
       secondaryColor: "Sekundärfarbe",
-      secondaryTextContrast: "Sekundärer Textkontrast",
+      secondaryTextContrast: "Sekund��rer Textkontrast",
       badgeColor: "Badge-Farbe",
       badgeContrast: "Badge-Textfarbe"
     },
@@ -418,7 +418,8 @@ const de: TranslationType = {
       delete: "Löschen Sie Ihren Assistenten von der Plattform, Vorsicht Sie werden die vorgenommenen Einstellungen verlieren"
     },
     configLLM: "LLM konfigurieren",
-    emptyApiKeys: "Keine API-Schlüssel konfiguriert"
+    emptyApiKeys: "Keine API-Schlüssel konfiguriert",
+    errorLoadingApiKeys: "Fehler beim Laden der API-Schlüssel"
   }
 };
 

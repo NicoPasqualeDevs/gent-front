@@ -418,7 +418,8 @@ const es: TranslationType = {
       delete: "Elimina tu asistente de la plataforma, cuidado perderás las configuraciones realizadas"
     },
     configLLM: "Configurar LLM",
-    emptyApiKeys: "No hay API keys configuradas"
+    emptyApiKeys: "No hay API keys configuradas",
+    errorLoadingApiKeys: "Error al cargar las API keys"
   }
 };
 
