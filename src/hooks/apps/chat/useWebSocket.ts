@@ -16,10 +16,10 @@ export const useWebSocket = (conversationId: string) => {
   const connectWebSocket = useCallback(() => {
     if (!conversationId) return;
 
-    const isProduction = import.meta.env.PROD;
+    const isProduction = import.meta.env.MODE === 'production';
     const wsUrl = isProduction 
         ? import.meta.env.VITE_PROD_WS_URL 
-        : import.meta.env.VITE_WS_URL;
+        : import.meta.env.VITE_DEV_WS_URL;
 
     const ws = new WebSocket(`${wsUrl}/ws/chat/${conversationId}/`);
     

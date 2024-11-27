@@ -23,7 +23,9 @@ const useApi = (): UseApiHook => {
   const { auth } = useAppContext();
   const token = auth?.token;
 
-  const apiBase = (import.meta.env.VITE_DEV_API_BASE as string || "https://gentsbuilder.com/api/" );
+  const apiBase = (import.meta.env.MODE === 'development' 
+    ? import.meta.env.VITE_DEV_API_BASE 
+    : import.meta.env.VITE_PROD_API_BASE) as string;
 
   const handleResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
     if (!response.ok) {
