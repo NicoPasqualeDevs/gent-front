@@ -54,7 +54,7 @@ const useApi = (): UseApiHook => {
 
   // Modificamos getHeaders para manejar el Content-Type basado en el tipo de datos
   const getHeaders = async (data?: ApiData, config?: ApiConfig): Promise<Record<string, string>> => {
-    let headers: Record<string, string> = {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json'
     };
 
