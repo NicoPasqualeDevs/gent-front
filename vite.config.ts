@@ -19,16 +19,15 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('@mui')) {
-              return 'mui'
-            }
-            if (id.includes('react')) {
-              return 'vendor'
-            }
-            return 'deps'
-          }
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'mui-vendor': ['@mui/material', '@mui/icons-material'],
+          'common-deps': [
+            'formik',
+            'yup',
+            'react-toastify',
+            'framer-motion'
+          ]
         },
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.')
@@ -56,6 +55,12 @@ export default defineConfig({
     cssMinify: true,
     cssCodeSplit: true,
     chunkSizeWarningLimit: 1000,
+    modulePreload: {
+      polyfill: true
+    },
+    dynamicImportVarsOptions: {
+      warnOnError: true
+    }
   },
   server: {
     proxy: {
@@ -69,4 +74,17 @@ export default defineConfig({
     port: 3000,
   },
   base: '/',
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      'react-router-dom',
+      '@mui/material',
+      '@mui/icons-material',
+      'formik',
+      'yup',
+      'react-toastify',
+      'framer-motion'
+    ]
+  }
 })
