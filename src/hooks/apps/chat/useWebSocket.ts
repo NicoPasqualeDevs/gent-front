@@ -15,18 +15,14 @@ export const useWebSocket = (sessionId: string) => {
 
   const connectWebSocket = useCallback(() => {
     if (!sessionId) return;
-    console.log(import.meta.env.MODE);
+
     const isProduction = import.meta.env.MODE === 'production';
     const wsUrl = isProduction 
         ? import.meta.env.VITE_PROD_WS_URL 
         : import.meta.env.VITE_DEV_WS_URL;
 
     const wsEndpoint = `${wsUrl}/ws/chat/${sessionId}/`;
-    console.log(wsEndpoint);
     const finalWsUrl = wsEndpoint.replace(/^http/, 'ws');
-    console.log(finalWsUrl);
-    console.log('Conectando a WebSocket:', finalWsUrl);
-
     const ws = new WebSocket(finalWsUrl);
     
     ws.onopen = () => {

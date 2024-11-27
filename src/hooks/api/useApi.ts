@@ -22,20 +22,14 @@ export interface UseApiHook {
 const useApi = (): UseApiHook => {
   const { auth } = useAppContext();
   const token = auth?.token;
-
-  console.log(import.meta.env.MODE, "<-- MODE");
-  console.log(import.meta.env.VITE_DEV_API_BASE, "<-- DEV_API_BASE");
-  console.log(import.meta.env.VITE_PROD_API_BASE, "<-- PROD_API_BASE");
-
-  let apiBase : string;
   
+  let apiBase : string;
+
   if(import.meta.env.MODE === 'development') {
     apiBase = import.meta.env.VITE_DEV_API_BASE;
   } else {
     apiBase = import.meta.env.VITE_PROD_API_BASE;
   }
-
-    console.log(apiBase , "<-- apiBase");
 
   const handleResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
     if (!response.ok) {
