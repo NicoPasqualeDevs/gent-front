@@ -16,14 +16,17 @@ export const useWebSocket = (conversationId: string) => {
   const connectWebSocket = useCallback(() => {
     if (!conversationId) return;
 
-    const wsUrl = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
+    const isProduction = import.meta.env.PROD;
+    const wsUrl = isProduction 
+        ? import.meta.env.VITE_PROD_WS_URL 
+        : import.meta.env.VITE_WS_URL;
+
     const ws = new WebSocket(`${wsUrl}/ws/chat/${conversationId}/`);
     
     ws.onopen = () => {
       console.log('WebSocket conectado');
       setIsConnected(true);
       
-      // Enviar autenticación si hay token
       if (auth?.token) {
         ws.send(JSON.stringify({
           type: 'authentication',
@@ -35,7 +38,6 @@ export const useWebSocket = (conversationId: string) => {
     ws.onclose = () => {
       console.log('WebSocket desconectado');
       setIsConnected(false);
-      // Intentar reconectar después de 3 segundos
       setTimeout(connectWebSocket, 3000);
     };
 
