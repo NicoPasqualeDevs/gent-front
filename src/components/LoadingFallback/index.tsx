@@ -19,7 +19,8 @@ const LoadingFallback: React.FC = () => {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
+            overflow: "hidden"
         }}>
             <Box>
                 {!fontLoaded && (

@@ -54,7 +54,7 @@ const ChatView: React.FC = () => {
   const [state, setState] = useState<ChatViewState>(initialState);
   const { getCachedHistory, setCachedHistory } = useChatCache();
   const { createSession, endSession } = useChatSession();
-  const { messages, sendMessage, isConnected } = useWebSocket(state.chatHistory?.conversation || '');
+  const { messages, sendMessage, isConnected } = useWebSocket(state.sessionId ? state.sessionId : '');
 
   const {
     getChatHistory,

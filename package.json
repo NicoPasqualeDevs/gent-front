@@ -3,10 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start:dev": "vite --mode develop ",
-    "start:prd": "vite --mode production",
-    "build": "vite build",
-    "build:dev": "vite build --mode develop",
+    "start:dev": "vite --mode development ",
     "build:prod": "vite build --mode production",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "type-check": "tsc --noEmit"

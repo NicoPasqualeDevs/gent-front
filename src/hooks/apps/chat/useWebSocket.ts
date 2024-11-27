@@ -7,24 +7,30 @@ interface WebSocketMessage {
   timestamp: string;
 }
 
-export const useWebSocket = (conversationId: string) => {
+export const useWebSocket = (sessionId: string) => {
   const [messages, setMessages] = useState<WebSocketMessage[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
   const { auth } = useAppContext();
 
   const connectWebSocket = useCallback(() => {
-    if (!conversationId) return;
-
+    if (!sessionId) return;
+    console.log(import.meta.env.MODE);
     const isProduction = import.meta.env.MODE === 'production';
     const wsUrl = isProduction 
         ? import.meta.env.VITE_PROD_WS_URL 
         : import.meta.env.VITE_DEV_WS_URL;
 
-    const ws = new WebSocket(`${wsUrl}/ws/chat/${conversationId}/`);
+    const wsEndpoint = `${wsUrl}/ws/chat/${sessionId}/`;
+    console.log(wsEndpoint);
+    const finalWsUrl = wsEndpoint.replace(/^http/, 'ws');
+    console.log(finalWsUrl);
+    console.log('Conectando a WebSocket:', finalWsUrl);
+
+    const ws = new WebSocket(finalWsUrl);
     
     ws.onopen = () => {
-      console.log('WebSocket conectado');
+      console.log('WebSocket conectado exitosamente');
       setIsConnected(true);
       
       if (auth?.token) {
@@ -35,14 +41,20 @@ export const useWebSocket = (conversationId: string) => {
       }
     };
 
-    ws.onclose = () => {
-      console.log('WebSocket desconectado');
+    ws.onclose = (event) => {
+      console.log('WebSocket desconectado:', event.code, event.reason);
       setIsConnected(false);
-      setTimeout(connectWebSocket, 3000);
+      
+      if (event.code !== 1000) {
+        setTimeout(connectWebSocket, 3000);
+      }
     };
 
     ws.onerror = (error) => {
       console.error('Error de WebSocket:', error);
+      if (wsRef.current?.readyState !== WebSocket.CLOSED) {
+        ws.close();
+      }
     };
 
     ws.onmessage = (event) => {
@@ -57,7 +69,13 @@ export const useWebSocket = (conversationId: string) => {
     };
 
     wsRef.current = ws;
-  }, [conversationId, auth]);
+
+    return () => {
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        wsRef.current.close(1000, 'Componente desmontado');
+      }
+    };
+  }, [sessionId, auth]);
 
   useEffect(() => {
     connectWebSocket();
