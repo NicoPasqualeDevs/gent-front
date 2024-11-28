@@ -20,42 +20,42 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['react', 'react-dom', 'react-router-dom', '@mui/material', '@mui/icons-material'],
-          'app': [
-            'formik',
-            'yup',
-            'react-toastify',
-            'framer-motion'
-          ]
+          'vendor': ['react', 'react-dom', 'react-router-dom'],
+          'mui': ['@mui/material', '@mui/icons-material'],
+          'form': ['formik', 'yup'],
+          'utils': ['react-toastify', 'framer-motion']
         },
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
           if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
-            return `assets/fonts/[name].[ext]`
+            return `assets/fonts/[name]-[hash].[ext]`
           }
           if (/\.css$/i.test(assetInfo.name)) {
-            return `assets/css/[name].[ext]`
+            return `assets/css/[name]-[hash].[ext]`
           }
-          return `assets/[ext]/[name].[ext]`
+          return `assets/[ext]/[name]-[hash].[ext]`
         },
-        chunkFileNames: 'assets/js/[name].js',
-        entryFileNames: 'assets/js/[name].js',
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
       },
     },
     manifest: true,
     assetsDir: 'assets',
-    sourcemap: true,
-    minify: 'esbuild',
-    target: 'es2015',
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
+    target: ['es2015', 'chrome87', 'safari13'],
     cssMinify: true,
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 1000,
+    chunkSizeWarningLimit: 1500,
     modulePreload: {
       polyfill: true
-    },
-    dynamicImportVarsOptions: {
-      warnOnError: true
     }
   },
   server: {
