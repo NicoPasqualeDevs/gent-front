@@ -1,18 +1,28 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import path from 'path'
+import tsconfigPaths from 'vite-tsconfig-paths';
 
+
+// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      jsxImportSource: '@emotion/react',
+      babel: {
+        plugins: ['@emotion/babel-plugin'],
+      },
+    }),
+    tsconfigPaths()
+  ],
+
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@styles': path.resolve(__dirname, './src/styles'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@assets': path.resolve(__dirname, './src/assets'),
-    }
+    alias: [
+      { find: './runtimeConfig', replacement: './runtimeConfig.browser' },
+      // Removemos la línea de @mui/material
+    ],
+  },
+  define: {
+    global: 'globalThis',
   },
   build: {
     outDir: '../gents-back/static/frontend',
@@ -59,35 +69,9 @@ export default defineConfig({
     }
   },
   server: {
-    proxy: {
-      '/api': {
-        target: 'https://www.gentsbuilder.com',
-        changeOrigin: true,
-        secure: false,
-        headers: {
-          'Accept': 'application/javascript'
-        }
-      }
-    },
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Content-Type': 'application/javascript',
-    },
-    host: true,
     port: 3000,
   },
-  base: '/',
   optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      '@mui/material',
-      '@mui/icons-material',
-      'formik',
-      'yup',
-      'react-toastify',
-      'framer-motion'
-    ]
-  }
+    include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
+  },
 })
