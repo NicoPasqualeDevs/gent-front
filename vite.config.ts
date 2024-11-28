@@ -20,9 +20,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'mui-vendor': ['@mui/material', '@mui/icons-material'],
-          'common-deps': [
+          'vendor': ['react', 'react-dom', 'react-router-dom', '@mui/material', '@mui/icons-material'],
+          'app': [
             'formik',
             'yup',
             'react-toastify',
@@ -33,24 +32,21 @@ export default defineConfig({
           const info = assetInfo.name.split('.')
           const ext = info[info.length - 1]
           if (/\.(woff|woff2|eot|ttf|otf)$/i.test(assetInfo.name)) {
-            return `assets/fonts/[name][extname]`
+            return `assets/fonts/[name].[ext]`
           }
           if (/\.css$/i.test(assetInfo.name)) {
-            return `assets/css/[name]-[hash][extname]`
+            return `assets/css/[name].[ext]`
           }
-          if (['ico', 'json'].includes(ext)) {
-            return `[name].[ext]`
-          }
-          return `assets/[ext]/[name]-[hash][extname]`
+          return `assets/[ext]/[name].[ext]`
         },
-        chunkFileNames: 'assets/js/[name].[hash].js',
-        entryFileNames: 'assets/js/[name].[hash].js',
+        chunkFileNames: 'assets/js/[name].js',
+        entryFileNames: 'assets/js/[name].js',
       },
     },
     manifest: true,
     assetsDir: 'assets',
-    sourcemap: false,
-    minify: 'esbuild',
+    sourcemap: true,
+    minify: 'terser',
     target: 'es2015',
     cssMinify: true,
     cssCodeSplit: true,
@@ -68,7 +64,14 @@ export default defineConfig({
         target: 'https://www.gentsbuilder.com',
         changeOrigin: true,
         secure: false,
+        headers: {
+          'Accept': 'application/javascript'
+        }
       }
+    },
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/javascript',
     },
     host: true,
     port: 3000,
