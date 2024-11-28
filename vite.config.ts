@@ -46,7 +46,7 @@ export default defineConfig({
     manifest: true,
     assetsDir: 'assets',
     sourcemap: true,
-    minify: 'terser',
+    minify: 'esbuild',
     target: 'es2015',
     cssMinify: true,
     cssCodeSplit: true,
