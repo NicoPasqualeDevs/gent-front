@@ -415,11 +415,13 @@ const en: TranslationType = {
       tools: "Access tools that allow you to expand or automate your assistant's capabilities specifically for your business",
       edit: "Edit your assistant's basic configuration",
       test: "Test and observe your assistant's behavior in real time and participate in conversations",
-      delete: "Delete your assistant from the platform, be careful you will lose the configurations made"
+      delete: "Delete your assistant from the platform, be careful you will lose the configurations made",
+      knowledge: "Manage the knowledge and information your assistant will use to respond"
     },
     configLLM: "Configure LLM",
     emptyApiKeys: "No API keys configured",
-    errorLoadingApiKeys: "Error loading API keys"
+    errorLoadingApiKeys: "Error loading API keys",
+    knowledge: "Knowledge"
   }
 };
 

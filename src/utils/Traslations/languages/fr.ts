@@ -409,17 +409,19 @@ const fr: TranslationType = {
       "Ravi de vous voir ! Comment ça va ?"
     ],
     helpTexts: {
+      knowledge: "Gérez les connaissances et les informations que votre assistant utilisera pour répondre",
       widget: "Vous pouvez télécharger le widget JS pur de votre assistant pour l'ajouter facilement à votre site web",
       customization: "Personnalisez votre assistant avec les informations de votre marque, style, sécurité, salutations et plus",
       api: "Intégrez votre assistant via API à d'autres systèmes et canaux comme WhatsApp, SMS, Email, etc",
       tools: "Accédez aux outils qui vous permettent d'étendre ou d'automatiser les capacités de votre assistant spécifiquement pour votre entreprise",
       edit: "Modifiez la configuration de base de votre assistant",
       test: "Testez et observez le comportement de votre assistant en temps réel et participez aux conversations",
-      delete: "Supprimez votre assistant de la plateforme, attention vous perdrez les configurations effectuées"
+      delete: "Supprimez votre assistant de la plateforme, attention vous perdrez les configurations effectuées",
     },
-    configLLM: "Configurer LLM",
-    emptyApiKeys: "Aucune clé API configurée",
-    errorLoadingApiKeys: "Erreur lors du chargement des clés API"
+    configLLM: "Configurer LLM",    
+    emptyApiKeys: "Aucune clé API configurée",      
+    errorLoadingApiKeys: "Erreur lors du chargement des clés API",
+    knowledge: "Connaissance"
   }
 };
 

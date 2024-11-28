@@ -234,6 +234,10 @@ const AgentsList: React.FC<PageProps> = () => {
     getAgentsData(`?page_size=${newValue}&page=1`);
   }, [getAgentsData]);
 
+  const handleKnowledge = (agentId: string) => {
+    navigate(`/builder/agents/knowledge/${agentId}`);
+  };
+
   const renderBotCard = (agent: AgentData) => {
     const validStatus = (agent.status as "online" | "offline" | "busy" | "error" | "updating") || "offline";
     
@@ -254,6 +258,7 @@ const AgentsList: React.FC<PageProps> = () => {
         onChat={() => navigate(`/chat/${agent.id}`)}
         onCustomize={() => navigate(`/builder/agents/widgetCustomizer/${agent.id}`)}
         onTools={() => navigate(`/builder/agents/tools/${teamId}/${agent.name}/${agent.id}`)}
+        onKnowledge={() => handleKnowledge(agent.id)}
         t={t.robotCard}
         language={language}
         status={validStatus}

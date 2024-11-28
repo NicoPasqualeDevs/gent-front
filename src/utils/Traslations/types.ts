@@ -397,6 +397,7 @@ export interface TranslationType {
     statusUpdating: string;
     greetings: string[];
     helpTexts: {
+      knowledge: string;
       widget: string;
       customization: string;
       api: string;
@@ -408,6 +409,7 @@ export interface TranslationType {
     configLLM: string;
     emptyApiKeys: string;
     errorLoadingApiKeys: string;
+    knowledge: string;
   };
 }
 

@@ -8,12 +8,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BuildIcon from '@mui/icons-material/Build';
+import PaletteIcon from '@mui/icons-material/Palette';
 import { TranslationType } from '@/utils/Traslations/types';
 import { useAppContext } from '@/context';
 import useProfile from '@/hooks/apps/accounts/useProfile';
 import { ApiKey } from '@/types/UserProfile';
 import { toast } from 'react-toastify';
 import useApiKeys from "@/hooks/apps/accounts/useApiKeys";
+import { useNavigate } from 'react-router-dom';
 
 interface RobotCardProps {
   name: string;
@@ -28,6 +30,7 @@ interface RobotCardProps {
   onCustomize: () => void;
   onTools: () => void;
   onChat: () => void;
+  onKnowledge: () => void;
   t: TranslationType['robotCard'];
   language?: string;
   status?: 'online' | 'offline' | 'busy' | 'error' | 'updating';
@@ -46,6 +49,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
   onCustomize,
   onTools,
   onChat,
+  onKnowledge,
   t,
   status,
   selectedApiKey,
@@ -170,7 +174,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
     stream();
   };
 
-  const handleButtonHover = (buttonType: 'widget' | 'customization' | 'api' | 'tools' | 'edit' | 'test' | 'delete') => {
+  const handleButtonHover = (buttonType: 'widget' | 'customization' | 'api' | 'tools' | 'edit' | 'test' | 'delete' | 'knowledge') => {
     if (!showRobotCardHelp) return;
     
     if (bubbleTimeoutRef.current) {
@@ -363,14 +367,14 @@ const RobotCard: React.FC<RobotCardProps> = ({
 
         {/* Resto del código sin cambios... */}
         <div className="action-column left">
-          <Tooltip title={t?.widget || "Widget"} placement="left">
+          <Tooltip title={t?.knowledge || "Conocimiento"} placement="left">
             <IconButton 
               className="action-button" 
-              onClick={onWidget}
-              onMouseEnter={() => handleButtonHover('widget')}
+              onClick={onKnowledge}
+              onMouseEnter={() => handleButtonHover('knowledge')}
               onMouseLeave={handleButtonLeave}
             >
-              <WidgetsIcon />
+              <MenuBookIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title={t?.customization || "Customization"} placement="left">
@@ -380,7 +384,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
               onMouseEnter={() => handleButtonHover('customization')}
               onMouseLeave={handleButtonLeave}
             >
-              <MenuBookIcon />
+              <PaletteIcon />
             </IconButton>
           </Tooltip>
         </div>

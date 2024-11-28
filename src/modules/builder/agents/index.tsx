@@ -7,6 +7,7 @@ import AgentForm from "@/pages/Builder/Agents/Form";
 import Tools from "@/pages/Builder/Tools";
 import ToolsForm from "@/pages/Builder/ToolsForm/Admin";
 import ToolsRelation from "@/pages/Builder/ToolsRelation";
+import { Knowledge } from "@/pages/Builder/Knowledge";
 
 const AgentsDetailsModule: React.FC = () => {
   return (
@@ -16,6 +17,9 @@ const AgentsDetailsModule: React.FC = () => {
         <Route path=":teamName/:teamId" element={<AgentsList />} />
         <Route path="contextEntry/:teamId/:agentId?" element={<AgentForm />} />
         <Route path="widgetCustomizer/:agentId" element={<WidgetCustomizer />} />
+        
+        {/* Nueva ruta para Knowledge */}
+        <Route path="knowledge/:agentId" element={<Knowledge />} />
 
         {/* Rutas de herramientas */}
         <Route path="tools">

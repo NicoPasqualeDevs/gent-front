@@ -289,7 +289,7 @@ const de: TranslationType = {
       primaryColor: "Primärfarbe",
       primaryTextContrast: "Primärer Textkontrast",
       secondaryColor: "Sekundärfarbe",
-      secondaryTextContrast: "Sekund��rer Textkontrast",
+      secondaryTextContrast: "Sekundrer Textkontrast",
       badgeColor: "Badge-Farbe",
       badgeContrast: "Badge-Textfarbe"
     },
@@ -408,7 +408,12 @@ const de: TranslationType = {
       "Grüß Gott! Wie läuft Ihr Tag?",
       "Schön Sie zu sehen! Wie geht es Ihnen?"
     ],
+    configLLM: "LLM konfigurieren",
+    emptyApiKeys: "Keine API-Schlüssel konfiguriert",
+    errorLoadingApiKeys: "Fehler beim Laden der API-Schlüssel",
+    knowledge: "Wissen",
     helpTexts: {
+      knowledge: "Verwalten Sie das Wissen und die Informationen, die Ihr Assistent zum Antworten verwendet",
       widget: "Sie können das reine JS-Widget Ihres Assistenten herunterladen, um es einfach in Ihre Website einzubinden",
       customization: "Passen Sie Ihren Assistenten mit Ihren Markeninformationen, Stil, Sicherheit, Begrüßungen und mehr an",
       api: "Integrieren Sie Ihren Assistenten über API in andere Systeme und Kanäle wie WhatsApp, SMS, E-Mail, etc",
@@ -416,10 +421,7 @@ const de: TranslationType = {
       edit: "Bearbeiten Sie die Grundkonfiguration Ihres Assistenten",
       test: "Testen und beobachten Sie das Verhalten Ihres Assistenten in Echtzeit und nehmen Sie an Gesprächen teil",
       delete: "Löschen Sie Ihren Assistenten von der Plattform, Vorsicht Sie werden die vorgenommenen Einstellungen verlieren"
-    },
-    configLLM: "LLM konfigurieren",
-    emptyApiKeys: "Keine API-Schlüssel konfiguriert",
-    errorLoadingApiKeys: "Fehler beim Laden der API-Schlüssel"
+    }
   }
 };
 

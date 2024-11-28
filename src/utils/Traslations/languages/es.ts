@@ -409,17 +409,19 @@ const es: TranslationType = {
       "¡Qué gusto verte! ¿Cómo te va?"
     ],
     helpTexts: {
+      knowledge: "Gestiona el conocimiento y la información que tu asistente utilizará para responder",
       widget: "Puedes descargar el widget en JS puro de tu asistente para agregarlo a tu sitio web de forma sencilla",
       customization: "Personaliza tu asistente con información de tu marca, estilo, seguridad, saludos y más",
       api: "Integra tu asistente vía API a otros sistemas y canales como WhatsApp, SMS, Email, etc",
       tools: "Accede a herramientas que te permiten ampliar o automatizar las capacidades de tu asistente de forma específica para tu negocio",
       edit: "Edita la configuración básica de tu asistente",
       test: "Prueba y observa el comportamiento de tu asistente en tiempo real y participa en las conversaciones",
-      delete: "Elimina tu asistente de la plataforma, cuidado perderás las configuraciones realizadas"
+      delete: "Elimina tu asistente de la plataforma, cuidado perderás las configuraciones realizadas",
     },
     configLLM: "Configurar LLM",
     emptyApiKeys: "No hay API keys configuradas",
-    errorLoadingApiKeys: "Error al cargar las API keys"
+    errorLoadingApiKeys: "Error al cargar las API keys",
+    knowledge: "Conocimiento"
   }
 };
 
