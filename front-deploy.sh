@@ -99,10 +99,13 @@ echo "📦 Instalando dependencias..."
 npm install
 handle_error $? "Error al instalar dependencias"
 
-# Instalar terser específicamente
-echo "📦 Instalando terser..."
-npm install terser --save-dev
-handle_error $? "Error al instalar terser"
+# Asegurar que terser está instalado correctamente
+echo "📦 Verificando e instalando terser..."
+if ! npm list terser >/dev/null 2>&1; then
+    echo "📦 Instalando terser como dependencia de desarrollo..."
+    npm install --save-dev terser@^5.29.2
+    handle_error $? "Error al instalar terser"
+fi
 
 # Construir la aplicación
 echo "🏗️ Construyendo la aplicación..."
