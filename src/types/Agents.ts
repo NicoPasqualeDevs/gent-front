@@ -49,11 +49,10 @@ export interface PromptTemplatePost {
 
 export interface Ktag {
   [propKey: string]: string | undefined;
-  id?: string | undefined;
+  id: string;
+  agent: string;
   name: string;
-  description: string;
   value: string;
-  customer_agent: string;
 }
 
 // Definimos tipos específicos para configuration y capabilities

@@ -355,16 +355,16 @@ export const DataEntry: React.FC = () => {
     const tagData = {
       name: set.knowledge_key,
       value: set.context,
-      description: set.knowledge_key,
-      customer_bot: config.agentId,
-      customer_agent: config.agentId
+      customer_agent: config.agentId,
+      agent: config.agentId,
+      id: set.id || ''
     };
 
     try {
       setSavingTagIndex(index);
       
       if (set.id) {
-        await updateKnowledgeTag(set.id, tagData);
+        await updateKnowledgeTag(config.agentId, set.id, tagData);
       } else {
         const response = await createKnowledgeTag(config.agentId, tagData);
         setFormValues(prev => ({
@@ -532,7 +532,7 @@ export const DataEntry: React.FC = () => {
                       <Button
                         onClick={() => {
                           if (set.id) {
-                            deleteKnowledgeTag(set.id)
+                            deleteKnowledgeTag(config.agentId, set.id)
                               .then(() => {
                                 setFormValues(prev => ({
                                   ...prev,

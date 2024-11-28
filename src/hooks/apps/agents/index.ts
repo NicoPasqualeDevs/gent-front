@@ -40,8 +40,8 @@ interface UseAgentsApi {
   getAgentConversations: (agentId: string) => Promise<ApiResponse<ConversationData[]>>;
   getKnowledgeTags: (agentId: string) => Promise<ApiResponse<Ktag[]>>;
   createKnowledgeTag: (agentId: string, data: Ktag) => Promise<ApiResponse<Ktag>>;
-  updateKnowledgeTag: (tagId: string, data: Ktag) => Promise<ApiResponse<Ktag>>;
-  deleteKnowledgeTag: (tagId: string) => Promise<ApiResponse<void>>;
+  updateKnowledgeTag: (agentId: string, tagId: string, data: Ktag) => Promise<ApiResponse<Ktag>>;
+  deleteKnowledgeTag: (agentId: string, tagId: string) => Promise<ApiResponse<void>>;
   getPromptTemplate: (agentId: string) => Promise<ApiResponse<PromptTemplateData>>;
   savePromptTemplate: (agentId: string, template: string) => Promise<ApiResponse<PromptTemplateData>>;
 }
@@ -103,12 +103,12 @@ const useAgentsApi = (): UseAgentsApi => {
     return apiPost(`agents/${agentId}/knowledge-tags/`, data);
   };
 
-  const updateKnowledgeTag = async (tagId: string, data: Ktag): Promise<ApiResponse<Ktag>> => {
-    return apiPut(`agents/knowledge-tags/${tagId}/`, data);
+  const updateKnowledgeTag = async (agentId: string, tagId: string, data: Ktag): Promise<ApiResponse<Ktag>> => {
+    return apiPut(`agents/${agentId}/knowledge-tags/${tagId}/`, data);
   };
 
-  const deleteKnowledgeTag = async (tagId: string): Promise<ApiResponse<void>> => {
-    return apiDelete(`agents/knowledge-tags/${tagId}/`);
+  const deleteKnowledgeTag = async (agentId: string, tagId: string): Promise<ApiResponse<void>> => {
+    return apiDelete(`agents/${agentId}/knowledge-tags/${tagId}/`);
   };
 
   const getPromptTemplate = async (agentId: string): Promise<ApiResponse<PromptTemplateData>> => {
