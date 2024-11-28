@@ -1,7 +1,7 @@
 import { AppContextState, INITIAL_STATE } from "./AppContext";
 import { Breakpoint } from "@mui/material";
 import { AuthUser } from "@/types/Auth";
-import { AiTeamsDetails } from "@/types/AiTeams";
+import { AiTeamsDetails } from "@/types/Teams";
 import { PathData } from "@/types/Pathbar";
 
 export type AppContextActions =
@@ -17,7 +17,8 @@ export type AppContextActions =
   | { type: "setLanguage"; payload: string }
   | { type: "setClientPage"; payload: number }
   | { type: "cleanState" }
-  | { type: "setShowRobotCardHelp"; payload: boolean };
+  | { type: "setShowRobotCardHelp"; payload: boolean }
+  | { type: "setFontLoaded"; payload: boolean };
 
 type Layout = {
   breakpoint: Breakpoint | undefined;
@@ -42,7 +43,7 @@ export const AppReducer = (
     case "setAiTeams":
       return {
         ...state,
-        aiTeams: action.payload,
+        teams: action.payload,
       };
     case "setMenu":
       return {
@@ -97,16 +98,22 @@ export const AppReducer = (
         menu: INITIAL_STATE.menu,
         layout: INITIAL_STATE.layout,
         loaded: INITIAL_STATE.loaded,
-        aiTeams: INITIAL_STATE.aiTeams,
+        teams: INITIAL_STATE.teams,
         auth: INITIAL_STATE.auth,
         navElevation: INITIAL_STATE.navElevation,
         appNavigation: INITIAL_STATE.appNavigation,
         language: INITIAL_STATE.language,
+        fontLoaded: state.fontLoaded,
       };
     case "setShowRobotCardHelp":
       return {
         ...state,
         showRobotCardHelp: action.payload,
+      };
+    case "setFontLoaded":
+      return {
+        ...state,
+        fontLoaded: action.payload,
       };
     default:
       return state;

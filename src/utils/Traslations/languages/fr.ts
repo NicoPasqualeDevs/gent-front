@@ -12,7 +12,7 @@ const fr: TranslationType = {
     cancel: "Annuler"
   },
   leftMenu: {
-    aiTeams: "Équipes IA",
+    teams: "Équipes IA",
     registerTeam: "Enregistrer Équipe",
     registerUser: "Enregistrer Utilisateur",
     tools: "Outils",
@@ -41,7 +41,7 @@ const fr: TranslationType = {
     cancel: "Annuler",
     owner: "Propriétaire"
   },
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: "Nouvelle Équipe IA",
     searchPlaceholder: "Rechercher une Équipe IA",
     yourAiTeams: "Vos équipes IA",
@@ -63,7 +63,7 @@ const fr: TranslationType = {
     llmKeyBadge: "Équipe avec LLM Key",
     noOwner: "Sans propriétaire"
   },
-  iaPanel: {
+  agentsList: {
     createAgent: "Créer un Agent",
     searchPlaceholder: "Rechercher un Agent IA",
     agentsOf: "Agents de {clientName}",
@@ -80,8 +80,9 @@ const fr: TranslationType = {
     tools: "Outils",
     deleteSuccess: "Chatbot supprimé avec succès",
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
-    errorLoadingClient: "Erreur lors du chargement du aiTeamId dans cette vue",
-    errorDeletingBot: "Erreur lors du chargement du botId pour la suppression",
+    errorLoadingClient: "Erreur lors du chargement du teamId dans cette vue",
+    errorDeletingBot: "Erreur lors du chargement du agentId pour la suppression",
+    errorNoData: "Impossible de charger les données des agents",
     edit: "Modifier",
     created: "Créé le : {date}",
     implementation: "Implémentation",
@@ -98,7 +99,11 @@ const fr: TranslationType = {
     errorMissingParams: "Paramètres requis manquants pour cette action",
     noModelSpecified: "Modèle non spécifié",
     tooltipsEnabled: "Désactiver les textes d'aide",
-    tooltipsDisabled: "Activer les textes d'aide"
+    tooltipsDisabled: "Activer les textes d'aide",
+    errorNoResponse: "Pas de réponse du serveur",
+    errorInvalidData: "Données invalides",
+    errorInvalidDataFormat: "Format de données invalide",
+    errorUnknown: "Erreur inconnue"
   },
   chatView: {
     agentPanel: "Panneau de {agentName}",
@@ -119,7 +124,9 @@ const fr: TranslationType = {
     unexpectedError: "Une erreur inattendue s'est produite lors de la fermeture du chat",
     errorLoadingData: "Impossible de charger les données du chat",
     historicalView: "Vous consultez un historique de conversation",
-    returnToCurrent: "Retourner à la conversation actuelle"
+    returnToCurrent: "Retourner à la conversation actuelle",
+    errorCreatingSession: "Erreur lors de la création de la session",
+    errorNoConnection: "Erreur : Pas de connexion au serveur"
   },
   notFound: {
     title: "404 - Page Non Trouvée",
@@ -228,7 +235,7 @@ const fr: TranslationType = {
     errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
     fieldRequired: "Ce champ est obligatoire",
     errorMissingTeamId: "ID d'équipe non trouvé",
-    errorMissingBotId: "ID de bot non trouvé"
+    errorMissingagentId: "ID d'agent non trouvé"
   },
   dataEntry: {
     title: "Données de l'Agent",
@@ -374,8 +381,11 @@ const fr: TranslationType = {
     saving: "Enregistrement...",
     success: "Opération réussie",
     error: "Une erreur s'est produite",
-    sessionExpired: "La session a expiré, veuillez vous reconnecter",
-    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur"
+    sessionExpired: "Session expirée, veuillez vous reconnecter",
+    errorConnection: "Erreur : Impossible d'établir une connexion avec le serveur",
+    apiKey: "Clé API",
+    model: "Modèle",
+    select: "Sélectionner"
   },
   robotCard: {
     agentStatus: "État de l'agent",
@@ -406,7 +416,10 @@ const fr: TranslationType = {
       edit: "Modifiez la configuration de base de votre assistant",
       test: "Testez et observez le comportement de votre assistant en temps réel et participez aux conversations",
       delete: "Supprimez votre assistant de la plateforme, attention vous perdrez les configurations effectuées"
-    }
+    },
+    configLLM: "Configurer LLM",
+    emptyApiKeys: "Aucune clé API configurée",
+    errorLoadingApiKeys: "Erreur lors du chargement des clés API"
   }
 };
 

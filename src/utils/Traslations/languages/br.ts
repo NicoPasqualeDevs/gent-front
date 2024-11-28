@@ -12,7 +12,7 @@ const br: TranslationType = {
     cancel: "Cancelar"
   },
   leftMenu: {
-    aiTeams: "Times IA",
+    teams: "Times IA",
     registerTeam: "Registrar Time",
     registerUser: "Registrar Usuário",
     tools: "Ferramentas",
@@ -41,7 +41,7 @@ const br: TranslationType = {
     cancel: "Cancelar",
     owner: "Proprietário"
   },
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: "Nova Equipe IA",
     searchPlaceholder: "Buscar Equipe IA",
     yourAiTeams: "Suas equipes de IA",
@@ -63,7 +63,7 @@ const br: TranslationType = {
     llmKeyBadge: "Equipe com LLM Key",
     noOwner: "Sem proprietário"
   },
-  iaPanel: {
+  agentsList: {
     createAgent: "Criar Agente",
     searchPlaceholder: "Buscar Agente IA",
     agentsOf: "Agentes de {clientName}",
@@ -80,8 +80,9 @@ const br: TranslationType = {
     tools: "Ferramentas",
     deleteSuccess: "Chatbot excluído com sucesso",
     errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
-    errorLoadingClient: "Erro ao carregar aiTeamId nesta visualização",
-    errorDeletingBot: "Erro ao carregar botId para exclusão",
+    errorLoadingClient: "Erro ao carregar teamId nesta visualização",
+    errorDeletingBot: "Erro ao carregar agentId para exclusão",
+    errorNoData: "Não foi possível carregar os dados dos agentes",
     edit: "Editar",
     created: "Criado em: {date}",
     implementation: "Implementação",
@@ -98,7 +99,11 @@ const br: TranslationType = {
     errorMissingParams: "Parâmetros necessários ausentes para esta ação",
     noModelSpecified: "Modelo não especificado",
     tooltipsEnabled: "Desativar textos de ajuda",
-    tooltipsDisabled: "Ativar textos de ajuda"
+    tooltipsDisabled: "Ativar textos de ajuda",
+    errorNoResponse: "Sem resposta do servidor",
+    errorInvalidData: "Dados inválidos",
+    errorInvalidDataFormat: "Formato de dados inválido",
+    errorUnknown: "Erro desconhecido"
   },
   chatView: {
     agentPanel: "Painel de {agentName}",
@@ -119,7 +124,9 @@ const br: TranslationType = {
     unexpectedError: "Ocorreu um erro inesperado ao fechar o chat",
     errorLoadingData: "Não foi possível carregar os dados do chat",
     historicalView: "Você está visualizando um histórico de conversa",
-    returnToCurrent: "Retornar à conversa atual"
+    returnToCurrent: "Retornar à conversa atual",
+    errorCreatingSession: "Erro ao criar sessão",
+    errorNoConnection: "Erro: Sem conexão com o servidor"
   },
   notFound: {
     title: "404 - Página Não Encontrada",
@@ -189,7 +196,7 @@ const br: TranslationType = {
     successUnrelate: "Ferramenta desvinculada com sucesso",
     errorRelate: "Erro ao relacionar ferramenta",
     errorUnrelate: "Erro ao desvincular ferramenta",
-    errorToken: "Erro de autenticaç��o",
+    errorToken: "Erro de autenticaço",
     errorLoading: "Erro ao carregar ferramentas",
     createToolButton: "Criar Ferramenta",
     title: "Ferramentas",
@@ -228,7 +235,7 @@ const br: TranslationType = {
     errorConnection: "Erro: Não foi possível estabelecer conexão com o servidor",
     fieldRequired: "Este campo é obrigatório",
     errorMissingTeamId: "ID da equipe não encontrado",
-    errorMissingBotId: "ID do bot não encontrado"
+    errorMissingagentId: "ID do agente não encontrado"
   },
   dataEntry: {
     title: "Dados do Agente",
@@ -375,7 +382,10 @@ const br: TranslationType = {
     success: "Operação bem-sucedida",
     error: "Ocorreu um erro",
     sessionExpired: "Sessão expirada, por favor faça login novamente",
-    errorConnection: "Erro: não foi possível estabelecer conexão com o servidor"
+    errorConnection: "Erro: não foi possível estabelecer conexão com o servidor",
+    apiKey: "Chave API",
+    model: "Modelo",
+    select: "Selecionar"
   },
   robotCard: {
     agentStatus: "Status do agente",
@@ -406,7 +416,10 @@ const br: TranslationType = {
       edit: "Edite a configuração básica do seu assistente",
       test: "Teste e observe o comportamento do seu assistente em tempo real e participe das conversas",
       delete: "Exclua seu assistente da plataforma, cuidado você perderá as configurações realizadas"
-    }
+    },
+    configLLM: "Configurar LLM",
+    emptyApiKeys: "Nenhuma chave API configurada",
+    errorLoadingApiKeys: "Erro ao carregar as chaves API"
   }
 };
 

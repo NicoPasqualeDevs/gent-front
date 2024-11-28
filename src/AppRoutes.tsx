@@ -1,4 +1,4 @@
-import React, { lazy, ReactNode } from "react";
+import React, { lazy, ReactNode, useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import { Outlet, Routes, Route, Navigate } from "react-router-dom";
 import BackgroundLines from "./styles/components/BackgroundLines";
@@ -6,6 +6,8 @@ import BuilderLayout from "./components/Layouts/Builder/BuilderLayout";
 import UserLayout from "./components/Layouts/User/UserLayout";
 import { useAppContext } from '@/context';
 import { useLocation } from 'react-router-dom';
+import LoadingFallback from "@/components/LoadingFallback";
+import AgentsList from "./pages/Builder/Agents/List";
 
 // Interfaces
 interface ProtectedRouteProps {
@@ -19,6 +21,8 @@ const BuilderModule = lazy(() => import("./modules/builder"));
 const NotFoundModule = lazy(() => import("./modules/notFound"));
 const AuthModule = lazy(() => import("./modules/auth"));
 const ChatViewModule = lazy(() => import("./modules/chatView"));
+const ProfileView = lazy(() => import("./pages/Home/Main/User/Profile/View"));
+const ProfileEdit = lazy(() => import("./pages/Home/Main/User/Profile/Edit"));
 
 // Layout components
 const UserL = (
@@ -31,15 +35,26 @@ const UserL = (
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAuth = true }) => {
   const { auth, replacePath } = useAppContext();
   const location = useLocation();
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Si requireAuth es true y no hay auth, redirigir a login
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
   if (requireAuth && !auth?.token) {
     return <Navigate to="/auth/login" state={{ from: location.pathname }} replace />;
   }
 
-  // Si requireAuth es false y hay auth, redirigir a builder sin establecer navegación
   if (!requireAuth && auth?.token) {
-    replacePath([]); // Limpiamos la navegación
+    replacePath([]);
     return <Navigate to="/builder" replace />;
   }
 
@@ -107,8 +122,27 @@ const AppRoutes = () => {
           >
             <Route index element={<HomeModule />} />
           </Route>
+          <Route 
+            path="profile" 
+            element={
+              <ProtectedRoute>
+                {UserL}
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<ProfileView />} />
+            <Route path="edit" element={<ProfileEdit />} />
+          </Route>
           <Route index element={<Navigate to="/builder" replace />} />
           <Route path="*" element={<NotFoundModule />} />
+          <Route 
+            path="/builder/teams/:teamId/agents" 
+            element={
+              <ProtectedRoute>
+                <AgentsList />
+              </ProtectedRoute>
+            } 
+          />
         </Route>
       </Routes>
     </>

@@ -12,7 +12,7 @@ const en: TranslationType = {
     cancel: "Cancel"
   },
   leftMenu: {
-    aiTeams: "AI Teams",
+    teams: "AI Teams",
     registerTeam: "Register Team",
     registerUser: "Register User",
     tools: "Tools",
@@ -41,7 +41,7 @@ const en: TranslationType = {
     cancel: "Cancel",
     owner: "Owner"
   },
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: "New AI Team",
     searchPlaceholder: "Search AI Team",
     yourAiTeams: "Your AI teams",
@@ -63,7 +63,7 @@ const en: TranslationType = {
     llmKeyBadge: "Team with LLM Key",
     noOwner: "No owner"
   },
-  iaPanel: {
+  agentsList: {
     createAgent: "Create Agent",
     searchPlaceholder: "Search AI Agent",
     agentsOf: "Agents of {clientName}",
@@ -80,8 +80,9 @@ const en: TranslationType = {
     tools: "Tools",
     deleteSuccess: "Chatbot deleted successfully",
     errorConnection: "Error: Could not establish connection with the server",
-    errorLoadingClient: "Error loading aiTeamId in this view",
-    errorDeletingBot: "Error loading botId for deletion",
+    errorLoadingClient: "Error loading teamId in this view",
+    errorDeletingBot: "Error loading agentId for deletion",
+    errorNoData: "Could not load agents data",
     edit: "Edit",
     created: "Created: {date}",
     implementation: "Implementation",
@@ -98,7 +99,11 @@ const en: TranslationType = {
     errorMissingParams: "Missing required parameters for this action",
     noModelSpecified: "Model not specified",
     tooltipsEnabled: "Disable help texts",
-    tooltipsDisabled: "Enable help texts"
+    tooltipsDisabled: "Enable help texts",
+    errorNoResponse: "No response from server",
+    errorInvalidData: "Invalid data",
+    errorInvalidDataFormat: "Invalid data format",
+    errorUnknown: "Unknown error"
   },
   chatView: {
     agentPanel: "Panel of {agentName}",
@@ -119,7 +124,9 @@ const en: TranslationType = {
     unexpectedError: "An unexpected error occurred while closing the chat",
     errorLoadingData: "Could not load chat data",
     historicalView: "You are viewing a conversation history",
-    returnToCurrent: "Return to current conversation"
+    returnToCurrent: "Return to current conversation",
+    errorCreatingSession: "Error creating session",
+    errorNoConnection: "Error: No connection to server"
   },
   notFound: {
     title: "404 - Page Not Found",
@@ -228,7 +235,7 @@ const en: TranslationType = {
     errorConnection: "Error: Could not establish connection with server",
     fieldRequired: "This field is required",
     errorMissingTeamId: "Team ID not found",
-    errorMissingBotId: "Bot ID not found"
+    errorMissingagentId: "Agent ID not found"
   },
   dataEntry: {
     title: "Agent Data",
@@ -375,7 +382,10 @@ const en: TranslationType = {
     success: "Operation successful",
     error: "An error has occurred",
     sessionExpired: "Session expired, please login again",
-    errorConnection: "Error: Could not establish connection with server"
+    errorConnection: "Error: Could not establish connection with server",
+    apiKey: "API Key",
+    model: "Model",
+    select: "Select"
   },
   robotCard: {
     agentStatus: "Agent status",
@@ -406,7 +416,10 @@ const en: TranslationType = {
       edit: "Edit your assistant's basic configuration",
       test: "Test and observe your assistant's behavior in real time and participate in conversations",
       delete: "Delete your assistant from the platform, be careful you will lose the configurations made"
-    }
+    },
+    configLLM: "Configure LLM",
+    emptyApiKeys: "No API keys configured",
+    errorLoadingApiKeys: "Error loading API keys"
   }
 };
 

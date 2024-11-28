@@ -5,7 +5,7 @@ import ChatView from "@/pages/Builder/ChatView";
 const ChatViewModule: React.FC = () => {
   return (
     <Routes>
-      <Route path="/:botId" element={<ChatView />} />
+      <Route path="/:agentId" element={<ChatView />} />
     </Routes>
   );
 };

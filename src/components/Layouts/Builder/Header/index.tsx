@@ -12,7 +12,6 @@ import { useNavigate } from "react-router-dom";
 import Pathbar from "../Pathbar";
 import { useTheme } from "@mui/material/styles";
 import LanguageSelector from "@/components/LanguageSelector"; // Importamos el LanguageSelector
-import { languages } from "@/utils/Traslations";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
@@ -22,18 +21,17 @@ const Header: React.FC = () => {
     menu,
     replacePath,
     setMenu,
-    language
   } = useAppContext();
-  const t = languages[language as keyof typeof languages];
+
 
   const handleProfileClick = () => {
     replacePath([
       {
-        label: t.header.profile,
+        label: "Perfil",
         current_path: "/profile",
-        preview_path: "/",
+        preview_path: "",
         translationKey: "profile"
-      },
+      }
     ]);
     navigate('/profile');
   };
@@ -183,26 +181,36 @@ const Header: React.FC = () => {
                 alignItems: 'center',
                 padding: '0px 10px',
                 height: '100%',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                '&:hover': {
+                  opacity: 0.8
+                }
               }}
             >
-              {auth?.email ? auth.email : ""}
+              {auth?.first_name 
+                ? `${auth.first_name} ${auth.last_name}`
+                : auth.email}
             </Typography>
           </UserBubble>
         ) : (
-          <Avatar
-            sx={{ 
-              cursor: "pointer",
-              backgroundColor: theme.palette.secondary.main,
-              fontWeight: '700',
-              color: theme.palette.secondary.contrastText
-            }}
-            onClick={handleProfileClick}
-          >
-            {auth && auth.email.trim() !== ""
-              ? auth.email[0].toUpperCase()
-              : null}
-          </Avatar>
+          <Tooltip title="Ver perfil" arrow>
+            <Avatar
+              sx={{ 
+                cursor: "pointer",
+                backgroundColor: theme.palette.secondary.main,
+                fontWeight: '700',
+                color: theme.palette.secondary.contrastText,
+                '&:hover': {
+                  backgroundColor: theme.palette.secondary.dark
+                }
+              }}
+              onClick={handleProfileClick}
+            >
+              {auth?.first_name 
+                ? auth.first_name[0].toUpperCase()
+                : auth?.email[0].toUpperCase()}
+            </Avatar>
+          </Tooltip>
         )}
       </UserBubbleContainer>
     </HeaderContainer>

@@ -12,7 +12,7 @@ const hi: TranslationType = {
     cancel: "रद्द करें"
   },
   leftMenu: {
-    aiTeams: "एआई टीम्स",
+    teams: "एआई टीम्स",
     registerTeam: "टीम पंजीकृत करें",
     registerUser: "उपयोगकर्ता पंजीकृत करें",
     tools: "उपकरण",
@@ -41,7 +41,7 @@ const hi: TranslationType = {
     cancel: "रद्द करें",
     owner: "मालिक"
   },
-  aiTeamsList: {
+  teamsList: {
     newAiTeam: "नई एआई टीम",
     searchPlaceholder: "एआई टीम खोजें",
     yourAiTeams: "आपकी एआई टीम्स",
@@ -63,7 +63,7 @@ const hi: TranslationType = {
     llmKeyBadge: "एलएलएम कुंजी वाली टीम",
     noOwner: "कोई मालिक नहीं"
   },
-  iaPanel: {
+  agentsList: {
     createAgent: "एजेंट बनाएं",
     searchPlaceholder: "एआई एजेंट खोजें",
     agentsOf: "{clientName} के एजेंट",
@@ -80,8 +80,9 @@ const hi: TranslationType = {
     tools: "उपकरण",
     deleteSuccess: "चैटबॉट सफलतापूर्वक हटाया गया",
     errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
-    errorLoadingClient: "इस दृश्य में aiTeamId लोड करने में त्रुटि",
-    errorDeletingBot: "हटाने के लिए botId लोड करने में त्रुटि",
+    errorLoadingClient: "इस दृश्य में teamId लोड करने में त्रुटि",
+    errorDeletingBot: "हटाने के लिए agentId लोड करने में त्रुटि",
+    errorNoData: "एजेंट डेटा लोड नहीं किया जा सका",
     edit: "संपादित करें",
     created: "बनाया गया: {date}",
     implementation: "कार्यान्वयन",
@@ -98,7 +99,11 @@ const hi: TranslationType = {
     errorMissingParams: "इस कार्य के लिए आवश्यक पैरामीटर गायब हैं",
     noModelSpecified: "मॉडल निर्दिष्ट नहीं",
     tooltipsEnabled: "सहायता टेक्स्ट बंद करें",
-    tooltipsDisabled: "सहायता टेक्स्ट चालू करें"
+    tooltipsDisabled: "सहायता टेक्स्ट चालू करें",
+    errorNoResponse: "सर्वर से कोई प्रतिक्रिया नहीं",
+    errorInvalidData: "अमान्य डेटा",
+    errorInvalidDataFormat: "अमान्य डेटा प्रारूप",
+    errorUnknown: "अज्ञात त्रुटि"
   },
   chatView: {
     agentPanel: "{agentName} का पैनल",
@@ -116,10 +121,12 @@ const hi: TranslationType = {
     errorSendingMessage: "संदेश नहीं भेजा जा सका",
     errorClosingChat: "चैट बंद नहीं की जा सकी: वार्तालाप आईडी गायब है",
     errorCleaningChat: "चैट को पूरी तरह से साफ नहीं किया जा सका",
-    unexpectedError: "चैट बंद करते समय एक अनपेक्षित त्रुटि हुई",
+    unexpectedError: "���ट बंद करते समय एक अनपेक्षित त्रुटि हुई",
     errorLoadingData: "चैट डेटा लोड नहीं किया जा सका",
     historicalView: "आप एक वार्तालाप इतिहास देख रहे हैं",
-    returnToCurrent: "वर्तमान वार्तालाप पर वापस जाएं"
+    returnToCurrent: "वर्तमान वार्तालाप पर वापस जाएं",
+    errorCreatingSession: "सत्र बनाने में त्रुटि",
+    errorNoConnection: "त्रुटि: सर्वर से कोई कनेक्शन नहीं"
   },
   notFound: {
     title: "404 - पृष्ठ नहीं मिला",
@@ -196,7 +203,7 @@ const hi: TranslationType = {
     description: "अपने उपकरणों का प्रबंधन करें",
     searchPlaceholder: "उपकरण खोजें...",
     noToolsFound: "इस नाम से कोई उपकरण नहीं मिला",
-    noToolsToShow: "दिखाने के लिए कोई उपकरण नहीं है",
+    noToolsToShow: "��िखाने के लिए कोई उपकरण नहीं है",
     toolsCount: "{total} उपकरणों में से",
     perPage: "प्रति पृष्ठ",
     reloadData: "डेटा पुनः लोड करें",
@@ -225,10 +232,10 @@ const hi: TranslationType = {
     cancel: "रद्द करें",
     successUpdate: "एजेंट सफलतापूर्वक अपडेट किया गया",
     successCreate: "एजेंट सफलतापूर्वक बनाया गया",
-    errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
+    errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थाप��त नहीं किया जा सका",
     fieldRequired: "यह फ़ील्ड आवश्यक है",
     errorMissingTeamId: "टीम आईडी नहीं मिली",
-    errorMissingBotId: "बॉट आईडी नहीं मिली"
+    errorMissingagentId: "बजेंट आईडी नहीं मिली"
   },
   dataEntry: {
     title: "एजेंट डेटा",
@@ -290,7 +297,7 @@ const hi: TranslationType = {
       fontFamily: "फ़ॉन्ट परिवार",
       fontFamilyPlaceholder: "वांछित font-family मान दर्ज करें",
       faqQuestions: "अक्सर पूछे जाने वाले प्रश्न",
-      faqQuestionsPlaceholder: "प्रश्न दर्ज करें (| से अलग करें)",
+      faqQuestionsPlaceholder: "प्रश्न दर्ज करें (| ���े अलग करें)",
       bannedWords: "प्रतिबंधित शब्द",
       bannedWordsPlaceholder: "शब्द दर्ज करें (| से अलग करें)"
     },
@@ -375,7 +382,10 @@ const hi: TranslationType = {
     success: "कार्य सफल रहा",
     error: "एक त्रुटि हुई है",
     sessionExpired: "सत्र समाप्त हो गया है, कृपया फिर से लॉग इन करें",
-    errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका"
+    errorConnection: "त्रुटि: सर्वर से कनेक्शन स्थापित नहीं किया जा सका",
+    apiKey: "एपीआई कुंजी",
+    model: "मॉडल",
+    select: "चुनें"
   },
   robotCard: {
     agentStatus: "एजेंट की स्थिति",
@@ -396,7 +406,7 @@ const hi: TranslationType = {
       "नमस्ते! आप कैसे हैं?",
       "स्वागत है! मैं आपकी कैसे मदद कर सकता हूं?",
       "अभिवादन! आपका दिन कैसा जा रहा है?",
-      "आपको देखकर अच्छा लगा! आप कैसे हैं?"
+      "आपको देखकर अच्छा लगा! आप कैस��� हैं?"
     ],
     helpTexts: {
       widget: "आप अपने सहायक का शुद्ध JS विजेट डाउनलोड कर सकते हैं और इसे आसानी से अपनी वेबसाइट में जोड़ सकते हैं",
@@ -404,9 +414,12 @@ const hi: TranslationType = {
       api: "अपने सहायक को API के माध्यम से WhatsApp, SMS, ईमेल आदि जैसे अन्य सिस्टम और चैनलों में एकीकृत करें",
       tools: "उन उपकरणों तक पहुंचें जो आपके व्यवसाय के लिए विशेष रूप से आपके सहायक की क्षमताओं का विस्तार या स्वचालित करने की अनुमति देते हैं",
       edit: "अपने सहायक की मूल कॉन्फ़िगरेशन संपादित करें",
-      test: "वास्तविक समय में अपने सहायक के व्यवहार का परीक्षण करें और वार्तालाप में भाग लें",
+      test: "व��स्तविक समय में अपने सहायक के व्यवहार का परीक्षण करें और वार्तालाप में भाग लें",
       delete: "अपने सहायक को प्लेटफ़ॉर्म से हटाएं, सावधान आप किए गए कॉन्फ़िगरेशन खो देंगे"
-    }
+    },
+    configLLM: "एलएलएम कॉन्फ़िगर करें",
+    emptyApiKeys: "कोई एपीआई कुंजी कॉन्फ़िगर नहीं की गई",
+    errorLoadingApiKeys: "एपीआई कुंजियां लोड करने में त्रुटि"
   }
 };
 

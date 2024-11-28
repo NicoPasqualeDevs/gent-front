@@ -6,7 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from 'yup';
 
 // Hooks
-import useWidget from "@/hooks/useWidget";
+import useWidget from "@/hooks/apps/widget";
 import { useAppContext } from "@/context";
 
 // Components
@@ -39,6 +39,8 @@ import {
   ImageInputEvent,
   GreetingsTabProps
 } from '@/types/WidgetProps';
+
+import { ApiResponse } from "@/types/Api";
 
 // Tipos locales
 type FormChangeEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>;
@@ -194,7 +196,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({
           handleChange({
             target: {
               name: 'brand_logo',
-              value: file
+              value: file || new File([], 'empty')
             }
           });
         }}
@@ -210,7 +212,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({
           handleChange({
             target: {
               name: 'icon_bot',
-              value: file
+              value: file || new File([], 'empty')
             }
           });
         }}
@@ -226,7 +228,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({
           handleChange({
             target: {
               name: 'icon_chat',
-              value: file
+              value: file || new File([], 'empty')
             }
           });
         }}
@@ -242,7 +244,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({
           handleChange({
             target: {
               name: 'icon_hidden',
-              value: file
+              value: file || new File([], 'empty')
             }
           });
         }}
@@ -258,7 +260,7 @@ const ImagesTab: React.FC<ImagesTabProps> = ({
           handleChange({
             target: {
               name: 'icon_send',
-              value: file
+              value: file || new File([], 'empty')
             }
           });
         }}
@@ -384,6 +386,7 @@ const getInitialValues = (theme: Theme): WidgetData => ({
   icon_chat: "",
   icon_hidden: "",
   icon_send: "",
+  icon_agent: "",
   sql_injection_tester: true,
   php_injection_tester: true,
   strange_chars_tester: true,
@@ -432,6 +435,12 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+// Y agregar tipos para los parámetros response
+interface WidgetResponse {
+  data: WidgetData;
+}
+
+
 export const WidgetCustomizer: React.FC = () => {
   const theme = useTheme();
   const [tabValue, setTabValue] = useState(0);
@@ -442,7 +451,7 @@ export const WidgetCustomizer: React.FC = () => {
     id: ""
   }));
   const { getWidget, patchWidget, getCustomMessages } = useWidget();
-  const { botId } = useParams();
+  const { agentId } = useParams();
   const [messages, setMessages] = useState<CustomGreetingData[]>([]);
   const [newMessage, setNewMessage] = useState<NewGreetingData>({
     bot: "",
@@ -468,9 +477,9 @@ export const WidgetCustomizer: React.FC = () => {
   });
 
   // Actualizar getWidgetData
-  const getWidgetData = useCallback((botId: string): void => {
-    getWidget(botId)
-      .then((response) => {
+  const getWidgetData = useCallback((agentId: string): void => {
+    getWidget(agentId)
+      .then((response: WidgetResponse) => {
         const defaultedResponse: WidgetData = {
           ...getInitialValues(theme),
           ...response.data,
@@ -498,12 +507,12 @@ export const WidgetCustomizer: React.FC = () => {
       });
   }, [theme.palette, getWidget, formik.setValues]);
 
-  const getCustomMessagesData = useCallback((botId: string): Promise<void> => {
-    return getCustomMessages(botId)
-      .then((response) => {
-        const messagesData = Array.isArray(response.data) 
-          ? response.data 
-          : response.data.data || [];
+  const getCustomMessagesData = useCallback((agentId: string): Promise<void> => {
+    return getCustomMessages(agentId)
+      .then((response: ApiResponse<{ data: CustomGreetingData[] }>) => {
+        const messagesData = Array.isArray(response.data.data) 
+          ? response.data.data 
+          : [];
         
         setEmptyMessagesTemplate([...messagesData]);
         setMessages([...messagesData]);
@@ -535,10 +544,10 @@ export const WidgetCustomizer: React.FC = () => {
 
   // Efectos y carga inicial
   useEffect(() => {
-    if (botId) {
+    if (agentId) {
       const newPath = {
         label: "Widget",
-        current_path: `bots/widgetCustomizer/${botId}`,
+        current_path: `bots/widgetCustomizer/${agentId}`,
         preview_path: "",
         translationKey: "widget"
       };
@@ -548,12 +557,12 @@ export const WidgetCustomizer: React.FC = () => {
         newPath,
       ]);
 
-      getWidgetData(botId);
-      getCustomMessagesData(botId).then(() => {
-        setNewMessage(prev => ({ ...prev, bot: botId }));
+      getWidgetData(agentId);
+      getCustomMessagesData(agentId).then(() => {
+        setNewMessage(prev => ({ ...prev, bot: agentId }));
       });
     }
-  }, [botId]);
+  }, [agentId]);
 
   // Agregar esta referencia al inicio del componente, junto con los otros estados
   const colorUpdateTimeout = useRef<ReturnType<typeof setTimeout>>();
@@ -601,7 +610,8 @@ export const WidgetCustomizer: React.FC = () => {
       icon_chat: typeof widgetData.icon_chat === 'string' ? widgetData.icon_chat : '',
       icon_hidden: typeof widgetData.icon_hidden === 'string' ? widgetData.icon_hidden : '',
       icon_send: typeof widgetData.icon_send === 'string' ? widgetData.icon_send : '',
-      faq_questions: widgetData.faq_questions
+      faq_questions: widgetData.faq_questions,
+      icon_agent: typeof widgetData.icon_agent === 'string' ? widgetData.icon_agent : '',
     };
     return previewData;
   };

@@ -2,9 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Box, Grid, Typography, Button, CircularProgress, Avatar, Tooltip, Paper } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send';
 import { ErrorToast } from "@/components/Toast";
-import useBotsApi from "@/hooks/useBots";
+import useAgentsApi from "@/hooks/apps/agents";
 import { useParams, useNavigate } from "react-router-dom";
-import { AgentData } from "@/types/Bots";
 import { useTheme } from "@mui/material/styles";
 import { useAppContext } from "@/context";
 import { languages } from "@/utils/Traslations";
@@ -23,36 +22,19 @@ import {
   TimeStamp,
   HistoryBubble
 } from './styles';
-import { ChatHistoryType, formatTimestamp, ConversationHistoryType, ServerMessageResponse } from '@/types/ChatView';
-
-interface ChatViewState {
-  isLoading: boolean;
-  isError: boolean;
-  errorMessage?: string;
-  chatHistory: ChatHistoryType | null;
-  message: string;
-  isSending: boolean;
-  agentData: AgentData | null;
-  conversations: ConversationHistoryType[];
-  isHistoricalView: boolean;
-  agentDataError: boolean;
-  showFullName: boolean;
-  isTransitioning: boolean;
-  isInitialized: boolean;
-}
-
-interface ChatResponse {
-  conversation: string;
-  messages: Array<{
-    content: string;
-    role: "bot" | "client";
-    timestamp: string;
-  }>;
-  customer_bot: string;
-}
+import {
+  formatTimestamp,
+  ConversationHistoryType,
+  ChatViewState,
+  ChatMessage,
+  ChatHistoryType
+} from '@/types/ChatView';
+import { useChatSession } from "@/hooks/apps/chat/useChatSession";
+import { useWebSocket } from "@/hooks/apps/chat/useWebSocket";
+import { useChatCache } from "@/hooks/apps/chat/useChatCache";
 
 const ChatView: React.FC = () => {
-  const [state, setState] = useState<ChatViewState>({
+  const initialState: ChatViewState = {
     isLoading: true,
     isError: false,
     chatHistory: null,
@@ -64,18 +46,23 @@ const ChatView: React.FC = () => {
     agentDataError: false,
     showFullName: false,
     isTransitioning: false,
-    isInitialized: false
-  });
+    isInitialized: false,
+    sessionId: null,
+    welcomeMessageSent: false
+  };
+
+  const [state, setState] = useState<ChatViewState>(initialState);
+  const { getCachedHistory, setCachedHistory } = useChatCache();
+  const { createSession, endSession } = useChatSession();
+  const { messages, sendMessage, isConnected } = useWebSocket(state.sessionId ? state.sessionId : '');
 
   const {
     getChatHistory,
-    sendMessage,
-    closeChat,
-    getAgentData,
-    getClientBotConversations
-  } = useBotsApi();
+    getAgentDetails,
+    getAgentConversations
+  } = useAgentsApi();
   
-  const { botId } = useParams<{ botId: string }>();
+  const { agentId } = useParams<{ agentId: string }>();
   const navigate = useNavigate();
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -84,42 +71,62 @@ const ChatView: React.FC = () => {
   const t = languages[language as keyof typeof languages].chatView;
 
   const loadData = useCallback(async () => {
-    if (!botId || state.isInitialized) return;
+    if (!agentId || state.isInitialized) return;
 
     try {
       setState(prev => ({ ...prev, isLoading: true }));
 
-      const historyResponse = await getChatHistory(botId);
-      const chatData = historyResponse.data as ChatResponse;
+      const cachedHistory = getCachedHistory(agentId);
+      if (cachedHistory) {
+        setState(prev => ({
+          ...prev,
+          isLoading: false,
+          isError: false,
+          isInitialized: true,
+          chatHistory: cachedHistory
+        }));
+        return;
+      }
 
-      const [conversationsResponse, agentDataResponse] = await Promise.all([
-        getClientBotConversations(botId),
-        getAgentData(botId).catch(() => ({
-          data: {
-            id: 'simulated-id',
-            name: t.defaultAgentName,
-            description: '',
-            model_ai: '',
-            context: '',
-            status: 'offline' as const,
-            widget_url: ''
-          } as AgentData
-        }))
+      const historyResponse = await getChatHistory(agentId);
+      const chatData = historyResponse.data;
+
+      const [agentDataResponse, conversationsResponse] = await Promise.all([
+        getAgentDetails(agentId),
+        getAgentConversations(agentId)
       ]);
 
-      const mappedConversations: ConversationHistoryType[] = conversationsResponse.map(conv => ({
-        ...conv,
-        conversation_id: conv.id,
-        customer_bot: conv.id,
+      const mappedConversations: ConversationHistoryType[] = conversationsResponse.data.map(conv => ({
+        id: conv.conversation_id,
+        conversation_id: conv.conversation_id,
+        customer_agent: conv.customer_agent || '',
         client_user: '',
-        timestamp: conv.created_at,
+        timestamp: conv.timestamp,
         archived: false,
         messages: conv.messages.map(msg => ({
           content: msg.content,
-          role: msg.role as 'bot' | 'client',
+          role: msg.role === 'agent' ? 'agent' : 'client' as 'agent' | 'client',
           timestamp: msg.timestamp
         }))
       }));
+
+      if (chatData) {
+        const formattedMessages: ChatMessage[] = chatData.messages.map(msg => ({
+          content: msg.content,
+          role: msg.role === 'system' || msg.role === 'agent' ? 'agent' : 'client',
+          timestamp: msg.timestamp,
+          metadata: msg.metadata || {}
+        }));
+
+        const formattedHistory: ChatHistoryType = {
+          conversation: chatData.conversation,
+          messages: formattedMessages,
+          customer: '',
+          customer_agent: chatData.customer_agent
+        };
+
+        setCachedHistory(agentId, formattedHistory);
+      }
 
       setState(prev => ({
         ...prev,
@@ -127,15 +134,14 @@ const ChatView: React.FC = () => {
         isError: false,
         isInitialized: true,
         chatHistory: {
-          conversation: chatData.conversation,
+          ...chatData,
           messages: chatData.messages.map(msg => ({
             content: msg.content,
-            role: msg.role,
-            timestamp: msg.timestamp
-          })),
-          customer: '',
-          customer_bot: chatData.customer_bot
-        } as ChatHistoryType,
+            role: msg.role === 'system' || msg.role === 'agent' ? 'agent' : 'client',
+            timestamp: msg.timestamp,
+            metadata: msg.metadata || {}
+          }))
+        },
         conversations: mappedConversations,
         agentData: agentDataResponse.data
       }));
@@ -151,13 +157,13 @@ const ChatView: React.FC = () => {
       }));
       ErrorToast(t.errorLoadingData);
     }
-  }, [botId, getChatHistory, getClientBotConversations, getAgentData, t]);
+  }, [agentId, getChatHistory, getCachedHistory, setCachedHistory, getAgentConversations, getAgentDetails, t]);
 
   useEffect(() => {
-    if (!state.isInitialized && botId) {
+    if (!state.isInitialized && agentId) {
       loadData();
     }
-  }, [botId, state.isInitialized]);
+  }, [agentId, state.isInitialized]);
 
   useEffect(() => {
     const messages = state.chatHistory?.messages;
@@ -179,57 +185,122 @@ const ChatView: React.FC = () => {
     };
   }, [state.chatHistory?.messages?.length]);
 
-  const handleSendMessage = useCallback(async () => {
-    if (!botId || !state.message.trim() || state.isSending) return;
-    
-    setState(prev => ({ ...prev, isSending: true }));
-    
-    try {
-      const response = await sendMessage(botId, { message: state.message });
-      console.log('Server response:', response);
-      
-      const messageData = response.data as ServerMessageResponse;
-      
-      if (!messageData || !messageData.user_message || !messageData.response) {
-        throw new Error('Respuesta inválida del servidor');
-      }
+  useEffect(() => {
+    const initializeSession = async () => {
+      if (!agentId || state.sessionId || state.isHistoricalView) return;
 
-      setState(prev => {
-        if (!prev.chatHistory) return prev;
-        
-        const newMessages = [
-          ...prev.chatHistory.messages,
-          // Mensaje del usuario
-          {
-            content: messageData.user_message.content,
-            role: messageData.user_message.role,
-            timestamp: messageData.user_message.timestamp
-          },
-          // Respuesta del bot
-          {
-            content: messageData.response.content,
-            role: messageData.response.role,
-            timestamp: messageData.response.timestamp
-          }
-        ];
-        
-        return {
+      try {
+        const sessionId = await createSession(agentId);
+        setState(prev => ({
           ...prev,
-          isSending: false,
-          message: "",
-          chatHistory: {
+          sessionId,
+          chatHistory: prev.chatHistory ? {
             ...prev.chatHistory,
-            conversation: messageData.conversation,
-            messages: newMessages
+            conversation: sessionId
+          } : {
+            conversation: sessionId,
+            messages: [],
+            customer: '',
+            customer_agent: ''
           }
-        };
-      });
+        }));
+      } catch (error) {
+        console.error('Error creating session:', error);
+        ErrorToast(t.errorCreatingSession);
+      }
+    };
+
+    initializeSession();
+  }, [agentId, createSession, state.sessionId, state.isHistoricalView]);
+
+  useEffect(() => {
+    const sendWelcomeMessage = async () => {
+      if (
+        !state.welcomeMessageSent && 
+        state.sessionId && 
+        state.agentData && 
+        isConnected && 
+        !state.isHistoricalView
+      ) {
+        try {
+          const welcomeMessage = `¡Hola! Soy ${state.agentData.name}. ¿En qué puedo ayudarte hoy?`;
+          sendMessage(welcomeMessage);
+          
+          setState(prev => ({
+            ...prev,
+            welcomeMessageSent: true
+          }));
+        } catch (error) {
+          console.error('Error sending welcome message:', error);
+        }
+      }
+    };
+
+    sendWelcomeMessage();
+  }, [state.sessionId, state.agentData, isConnected, state.welcomeMessageSent, state.isHistoricalView]);
+
+  const handleSendMessage = useCallback(async () => {
+    if (!state.message.trim() || state.isSending) return;
+
+    if (!isConnected) {
+      ErrorToast(t.errorNoConnection);
+      return;
+    }
+
+    setState(prev => ({ ...prev, isSending: true }));
+
+    try {
+      const messageData = {
+        type: 'chat.message',
+        content: state.message,
+        metadata: {
+          timestamp: new Date().toISOString(),
+          sessionId: state.sessionId
+        }
+      };
+
+      sendMessage(JSON.stringify(messageData));
+
+      const newMessage = {
+        content: state.message,
+        role: 'client' as const,
+        timestamp: new Date().toISOString()
+      };
+
+      setState(prev => ({
+        ...prev,
+        message: '',
+        isSending: false,
+        chatHistory: prev.chatHistory ? {
+          ...prev.chatHistory,
+          messages: [...prev.chatHistory.messages, newMessage]
+        } : null
+      }));
     } catch (error) {
-      console.error('Error al enviar mensaje:', error);
+      console.error('Error sending message:', error);
       setState(prev => ({ ...prev, isSending: false }));
       ErrorToast(t.errorSendingMessage);
     }
-  }, [botId, sendMessage, state.message, t.errorSendingMessage]);
+  }, [state.message, state.isSending, sendMessage, isConnected, state.sessionId]);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      const formattedMessage: ChatMessage = {
+        content: lastMessage.content,
+        role: lastMessage.role === 'system' ? 'agent' : lastMessage.role,
+        timestamp: lastMessage.timestamp
+      };
+      
+      setState(prev => ({
+        ...prev,
+        chatHistory: prev.chatHistory ? {
+          ...prev.chatHistory,
+          messages: [...prev.chatHistory.messages, formattedMessage]
+        } : null
+      }));
+    }
+  }, [messages]);
 
   const handleFinishSession = async () => {
     const currentChatHistory = state.chatHistory;
@@ -240,12 +311,14 @@ const ChatView: React.FC = () => {
     }
     
     try {
-      await closeChat(currentChatHistory.conversation);
+      await endSession(currentChatHistory.conversation);
       
       setState(prev => ({
         ...prev,
         isInitialized: false,
-        chatHistory: null
+        chatHistory: null,
+        sessionId: null,
+        welcomeMessageSent: false
       }));
       
       loadData();
@@ -315,7 +388,7 @@ const ChatView: React.FC = () => {
       conversation: conversation.conversation_id,
       messages: conversation.messages,
       customer: state.chatHistory?.customer || '',
-      customer_bot: conversation.customer_bot
+      customer_agent: conversation.customer_agent
     } }));
   };
 
@@ -323,6 +396,18 @@ const ChatView: React.FC = () => {
     setState(prev => ({ ...prev, isHistoricalView: false, chatHistory: null }));
     loadData();
   };
+
+  const renderMessageAvatar = (role: 'agent' | 'client') => (
+    <Avatar sx={{
+      bgcolor: role === "agent" ? '#50c878' : '#4a90e2',
+      width: 40,
+      height: 40,
+      marginRight: role === "agent" ? '12px' : '6px',
+      marginLeft: role === "agent" ? '6px' : '12px',
+    }}>
+      {role === "agent" ? "AI" : "U"}
+    </Avatar>
+  );
 
   if (state.isLoading && !state.isInitialized) {
     return (
@@ -398,26 +483,32 @@ const ChatView: React.FC = () => {
       </SidebarContainer>
       <ChatContainer>
         <Header>
-          <Typography variant="h5" fontWeight="bold">
-            {t.agentPanel.replace("{agentName}", state.agentData?.name || t.defaultAgentName)}
-          </Typography>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Typography variant="h5" fontWeight="bold">
+              {t.agentPanel.replace("{agentName}", state.agentData?.name || t.defaultAgentName)}
+            </Typography>
+            <Box
+              sx={{
+                width: 10,
+                height: 10,
+                borderRadius: '50%',
+                backgroundColor: isConnected ? '#4caf50' : '#f44336',
+                transition: 'background-color 0.3s'
+              }}
+            />
+          </Box>
           <LanguageSelector />
         </Header>
         <MessagesContainer ref={chatContainerRef}>
           {state.chatHistory?.messages.map((msg, index) => (
-            <MessageBubble key={index} role={msg.role}>
-              <Avatar sx={{
-                bgcolor: msg.role === "bot" ? '#50c878' : '#4a90e2',
-                width: 40,
-                height: 40,
-                marginRight: msg.role === "bot" ? '12px' : '6px',
-                marginLeft: msg.role === "bot" ? '6px' : '12px',
-              }}>
-                {msg.role === "bot" ? "AI" : "U"}
-              </Avatar>
+            <MessageBubble 
+              key={index} 
+              role={msg.role as 'agent' | 'client'}
+            >
+              {renderMessageAvatar(msg.role)}
               <MessageContent>
                 <Typography variant="subtitle2" fontWeight="bold" mb={1}>
-                  {msg.role === "bot" ? (state.agentData?.name || t.assistant) : t.user}
+                  {msg.role === "agent" ? (state.agentData?.name || t.assistant) : t.user}
                 </Typography>
                 <Typography variant="body1">
                   {renderMessageContent(msg.content)}

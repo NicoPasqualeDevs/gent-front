@@ -1,10 +1,11 @@
 import { createContext } from "react";
 import { AuthUser } from "@/types/Auth";
-import { AiTeamsDetails } from "@/types/AiTeams";
+import { AiTeamsDetails } from "@/types/Teams";
 import { PathData } from "@/types/Pathbar";
 import { Breakpoint } from "@mui/material";
 import { menuStorage } from "@/services/menu";
 import { languageStorage } from "@/services/language";
+import { fontStorage } from "@/services/font";
 
 export interface AppContextState {
   menu: boolean;
@@ -13,13 +14,14 @@ export interface AppContextState {
     device: string | undefined;
   };
   loaded: boolean;
-  aiTeams: AiTeamsDetails[];
+  teams: AiTeamsDetails[];
   auth: AuthUser | null;
   navElevation: string;
   appNavigation: PathData[];
   language: string;
   clientPage: number;
   showRobotCardHelp: boolean;
+  fontLoaded: boolean;
   setAiTeams: React.Dispatch<React.SetStateAction<AiTeamsDetails[]>>;
   setLoaded: React.Dispatch<React.SetStateAction<boolean>>;
   setMenu: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,6 +33,7 @@ export interface AppContextState {
   setLanguage: React.Dispatch<React.SetStateAction<string>>;
   setClientPage: (page: number) => void;
   setShowRobotCardHelp: React.Dispatch<React.SetStateAction<boolean>>;
+  setFontLoaded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const INITIAL_STATE: AppContextState = {
@@ -40,13 +43,14 @@ export const INITIAL_STATE: AppContextState = {
     device: undefined
   },
   loaded: false,
-  aiTeams: [],
+  teams: [],
   auth: null,
   navElevation: "0",
   appNavigation: [],
   language: languageStorage().getLanguage(),
   clientPage: 1,
   showRobotCardHelp: true,
+  fontLoaded: fontStorage.getFontLoaded(),
   setAiTeams: () => { /* noop */ },
   setLoaded: () => { /* noop */ },
   setMenu: () => { /* noop */ },
@@ -58,6 +62,7 @@ export const INITIAL_STATE: AppContextState = {
   setLanguage: () => { /* noop */ },
   setClientPage: () => { /* noop */ },
   setShowRobotCardHelp: () => { /* noop */ },
+  setFontLoaded: () => { /* noop */ },
 };
 
 export const AppContext = createContext<AppContextState | undefined>(undefined);

@@ -1,7 +1,9 @@
-import { styled } from "@mui/material";
-import "../../assets/fonts/ROBO.css"
+import { styled, Skeleton } from "@mui/material";
+import { motion, AnimatePresence } from "framer-motion";
+import { useAppContext } from "@/context";
+import { memo } from "react";
 
-const GlowingText = styled('h1')(({ theme }) => ({
+const StyledGlowingText = styled(motion.h1)(({ theme }) => ({
     color: '#fff',
     fontSize: '4.5rem',
     fontWeight: 'bold',
@@ -33,5 +35,43 @@ const GlowingText = styled('h1')(({ theme }) => ({
         fontSize: '3rem',
     }
 }));
+
+const GlowingText: React.FC<{ children: React.ReactNode }> = memo(({ children }) => {
+    const { fontLoaded } = useAppContext();
+
+    return (
+        <AnimatePresence mode="wait">
+            {fontLoaded ? (
+                <StyledGlowingText
+                    key="glowing-text"
+                    transition={{ duration: 0.5 }}
+                >
+                    {children}
+                </StyledGlowingText>
+            ) : (
+                <Skeleton 
+                    key="skeleton"
+                    sx={{
+                        bgcolor: 'rgba(255, 255, 255, 0.1)',
+                        color: '#fff',
+                        fontSize: '4.5rem',
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        letterSpacing: '8px',
+                        textTransform: 'none',
+                        marginBottom: '180px',
+                        lineHeight: 1.2,
+                        fontFamily: "ROBO",
+                    }} 
+                    variant="text" 
+                    width="100%" 
+                    height={100} 
+                />
+            )}
+        </AnimatePresence>
+    );
+});
+
+GlowingText.displayName = 'GlowingText';
 
 export default GlowingText; 
