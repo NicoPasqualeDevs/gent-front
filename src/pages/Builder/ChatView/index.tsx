@@ -250,17 +250,7 @@ const ChatView: React.FC = () => {
     setState(prev => ({ ...prev, isSending: true }));
 
     try {
-      const messageData = {
-        type: 'chat.message',
-        message: {
-          content: state.message,
-          role: 'client',
-          timestamp: new Date().toISOString()
-        }
-      };
-
       sendMessage(state.message);
-
       const newMessage: ChatMessage = {
         content: state.message,
         role: 'client',

@@ -1,6 +1,6 @@
 import React, { BaseSyntheticEvent, useState } from "react";
 import { StyledTextField } from "@/utils/StyledInputUtils";
-import { Ktag } from "@/types/Agents";
+import { Ktag } from "@/types/ContextEntry";
 import theme from "@/styles/theme";
 
 const getInputNameUtil = (propKey: string) => {

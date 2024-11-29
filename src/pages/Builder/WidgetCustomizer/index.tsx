@@ -457,14 +457,6 @@ export const WidgetCustomizer: React.FC = () => {
   });
   const [emptyMessagesTemplate, setEmptyMessagesTemplate] = useState<CustomGreetingData[]>([]);
 
-  // Actualizar el tipo para incluir la nueva vista
-  const [activeView, setActiveView] = useState<'customization' | 'knowledge' | 'prompt'>('customization');
-
-  // Función para manejar el cambio de vista
-  const handleViewChange = (view: 'customization' | 'knowledge' | 'prompt') => {
-    setActiveView(view);
-  };
-
   // Actualizar la configuración de formik
   const formik = useFormik({
     initialValues: getInitialValues(theme),

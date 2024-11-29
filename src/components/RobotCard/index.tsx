@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import './styles.css';
 import { IconButton, Tooltip, Typography, Menu, MenuItem, CircularProgress } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import WidgetsIcon from '@mui/icons-material/Widgets';
 import ApiIcon from '@mui/icons-material/Api';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -15,7 +14,6 @@ import useProfile from '@/hooks/apps/accounts/useProfile';
 import { ApiKey } from '@/types/UserProfile';
 import { toast } from 'react-toastify';
 import useApiKeys from "@/hooks/apps/accounts/useApiKeys";
-import { useNavigate } from 'react-router-dom';
 
 interface RobotCardProps {
   name: string;
@@ -42,7 +40,6 @@ interface RobotCardProps {
 const RobotCard: React.FC<RobotCardProps> = ({
   name,
   agentId,
-  onWidget,
   onApi,
   onEdit,
   onDelete,

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, Button, Paper } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import { useAppContext } from "@/context";
 import ChatIcon from '@mui/icons-material/Chat';
 
 // Components

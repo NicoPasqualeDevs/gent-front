@@ -399,20 +399,12 @@ export const DataEntry: React.FC = () => {
   // Agregar este nuevo estado para controlar el Accordion expandido
   const [expandedIndex, setExpandedIndex] = useState<number | false>(false);
 
-  // Agregar esta función para manejar el cambio de expansión
-  const handleAccordionChange = (index: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
-    setExpandedIndex(isExpanded ? index : false);
-  };
-
   // Agregar estos estados nuevos
   const [selectedItemPosition, setSelectedItemPosition] = useState<{ top: number; left: number } | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
   // Primero, agregamos un nuevo estado para controlar la animación de salida
   const [isClosing, setIsClosing] = useState(false);
-
-  // Agregar nuevo estado para controlar la visibilidad del scrollbar
-  const [showScrollbar, setShowScrollbar] = useState(true);
 
   // Agregar un nuevo estado para guardar la posición del scroll
   const [savedScrollPosition, setSavedScrollPosition] = useState<number>(0);

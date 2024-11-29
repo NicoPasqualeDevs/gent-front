@@ -531,7 +531,7 @@ export const DataEntry: React.FC = () => {
                       </Button>
                       <Button
                         onClick={() => {
-                          if (set.id) {
+                          if (set.id && config.agentId) {
                             deleteKnowledgeTag(config.agentId, set.id)
                               .then(() => {
                                 setFormValues(prev => ({

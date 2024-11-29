@@ -5,9 +5,9 @@ import {
   AgentDataFormData,
   ChatHistory,
   ConversationData,
-  Ktag,
   PromptTemplateData
 } from "@/types/Agents";
+import { Ktag } from "@/types/ContextEntry";
 import useApi from "@/hooks/api/useApi";
 
 interface ChatResponse {
