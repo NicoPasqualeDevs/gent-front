@@ -9,10 +9,9 @@ import { Search, SearchIconWrapper, StyledInputBase } from "@/components/SearchB
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SaveIcon from '@mui/icons-material/Save';
-import ChatIcon from '@mui/icons-material/Chat';
 import { Ktag } from '@/types/ContextEntry';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Fade, Slide } from '@mui/material';
+import { Fade } from '@mui/material';
 
 // Constantes
 const MAX_FILE_SIZE = 10; // MB
@@ -364,6 +363,31 @@ export const DataEntry: React.FC = () => {
         }));
       }
       SuccessToast('Conjunto de conocimiento guardado correctamente');
+      
+      // Iniciamos el proceso de cierre animado
+      setIsClosing(true);
+      setLastClosedIndex(index); // Guardamos el índice para la iluminación
+      setTimeout(() => {
+        setExpandedIndex(false);
+        setIsClosing(false);
+        // Esperamos a que termine la animación del contenedor antes de restaurar el scroll
+        setTimeout(() => {
+          if (scrollContainerRef.current) {
+            scrollContainerRef.current.style.scrollBehavior = 'smooth';
+            scrollContainerRef.current.scrollTop = savedScrollPosition;
+            setTimeout(() => {
+              if (scrollContainerRef.current) {
+                scrollContainerRef.current.style.scrollBehavior = 'auto';
+              }
+              // Limpiamos el lastClosedIndex después de la iluminación
+              setTimeout(() => {
+                setLastClosedIndex(null);
+              }, 500);
+            }, 1000);
+          }
+        }, 250);
+      }, 250);
+
     } catch (error) {
       console.error('Error saving knowledge tag:', error);
       ErrorToast('Error al guardar el conjunto de conocimiento');
@@ -384,27 +408,77 @@ export const DataEntry: React.FC = () => {
   const [selectedItemPosition, setSelectedItemPosition] = useState<{ top: number; left: number } | null>(null);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Modificar la función que maneja el click
+  // Primero, agregamos un nuevo estado para controlar la animación de salida
+  const [isClosing, setIsClosing] = useState(false);
+
+  // Agregar nuevo estado para controlar la visibilidad del scrollbar
+  const [showScrollbar, setShowScrollbar] = useState(true);
+
+  // Agregar un nuevo estado para guardar la posición del scroll
+  const [savedScrollPosition, setSavedScrollPosition] = useState<number>(0);
+
+  // Agregar un nuevo estado para rastrear la última etiqueta cerrada
+  const [lastClosedIndex, setLastClosedIndex] = useState<number | null>(null);
+
+  // Modificar la función handleItemClick
   const handleItemClick = (index: number, event: React.MouseEvent<HTMLElement>) => {
-    if (expandedIndex === index) {
-      setExpandedIndex(false);
+    const isHeader = (event.target as HTMLElement).closest('[data-header="true"]');
+    if (expandedIndex === index && !isHeader) {
       return;
     }
 
-    const element = event.currentTarget;
-    const rect = element.getBoundingClientRect();
-    const scrollTop = scrollContainerRef.current?.scrollTop || 0;
+    if (expandedIndex === index) {
+      setIsClosing(true);
+      setLastClosedIndex(index); // Guardamos el índice de la etiqueta que se está cerrando
+      setTimeout(() => {
+        setExpandedIndex(false);
+        setIsClosing(false);
+        // Esperamos a que termine la animación del contenedor antes de restaurar el scroll
+        setTimeout(() => {
+          if (scrollContainerRef.current) {
+            scrollContainerRef.current.style.scrollBehavior = 'smooth';
+            scrollContainerRef.current.scrollTop = savedScrollPosition;
+            setTimeout(() => {
+              if (scrollContainerRef.current) {
+                scrollContainerRef.current.style.scrollBehavior = 'auto';
+              }
+              // Limpiamos el lastClosedIndex después de la iluminación
+              setTimeout(() => {
+                setLastClosedIndex(null);
+              }, 500); // Duración de la iluminación
+            }, 1000);
+          }
+        }, 250);
+      }, 250);
+      return;
+    }
+
+    // Guardar la posición actual del scroll antes de abrir
+    if (scrollContainerRef.current) {
+      setSavedScrollPosition(scrollContainerRef.current.scrollTop);
+      // Resetear el scroll a 0 inmediatamente sin transición
+      scrollContainerRef.current.style.scrollBehavior = 'auto';
+      scrollContainerRef.current.scrollTop = 0;
+    }
     
-    // Guardamos la posición inicial
-    setSelectedItemPosition({
-      top: rect.top + scrollTop,
-      left: rect.left
-    });
+    // Obtener las dimensiones del contenedor padre
+    const containerRect = scrollContainerRef.current?.getBoundingClientRect();
+    const element = event.currentTarget;
+    const elementRect = element.getBoundingClientRect();
+    
+    if (containerRect) {
+      const top = containerRect.top + (containerRect.height - elementRect.height) / 2;
+      const left = containerRect.left + (containerRect.width - elementRect.width) / 2;
+      
+      setSelectedItemPosition({
+        top,
+        left
+      });
+    }
     
     setIsAnimating(true);
     setExpandedIndex(index);
 
-    // Resetear la posición después de la animación
     setTimeout(() => {
       setIsAnimating(false);
     }, 1000);
@@ -427,76 +501,88 @@ export const DataEntry: React.FC = () => {
         display: 'flex',
         flexDirection: 'column',
         minHeight: expandedIndex !== false ? '100%' : 'calc(100% - 93px)',
+        transition: 'min-height 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
       }}>
         {/* Buscador y botón fijos */}
         {expandedIndex === false && (
-          <Box sx={{ 
-            display: 'flex',
-            gap: 2,
-            width: '100%',
-            p: 1.5,
-            borderBottom: '1px solid',
-            borderColor: 'divider',
-            backgroundColor: 'background.paper',
-          }}>
-            <Search sx={{ 
-              flex: 1,
-              backgroundColor: 'background.paper',
-              boxShadow: 1,
-              borderRadius: 1,
+          <Fade 
+            in={expandedIndex === false} 
+            timeout={750} // Mismo tiempo que los otros elementos
+          >
+            <Box sx={{ 
               display: 'flex',
-              alignItems: 'center',
+              gap: 2,
+              width: '100%',
+              p: 1.5,
+              borderBottom: '1px solid',
+              borderColor: 'divider',
+              backgroundColor: 'background.paper',
+              opacity: isClosing ? 0 : 1,
+              transition: 'opacity 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
             }}>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder={t.dataEntry.searchKnowledge || "Buscar por clave de conocimiento..."}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+              <Search sx={{ 
+                flex: 1,
+                backgroundColor: 'background.paper',
+                boxShadow: 1,
+                borderRadius: 1,
+                display: 'flex',
+                alignItems: 'center',
+                opacity: isClosing ? 0 : 1,
+                transition: 'opacity 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
+              }}>
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  placeholder={t.dataEntry.searchKnowledge || "Buscar por clave de conocimiento..."}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  sx={{
+                    flex: 1,
+                    '& .MuiInputBase-input': {
+                      padding: '8px 8px 8px 0',
+                      height: '24px',
+                      lineHeight: '24px',
+                    },
+                    '& input': {
+                      paddingLeft: '48px !important',
+                    },
+                    '& input::placeholder': {
+                      paddingLeft: '0 !important',
+                      opacity: 1,
+                    }
+                  }}
+                />
+              </Search>
+
+              <Button
+                onClick={handleAddSet}
                 sx={{
-                  flex: 1,
-                  '& .MuiInputBase-input': {
-                    padding: '8px 8px 8px 0',
-                    height: '24px',
-                    lineHeight: '24px',
-                  },
-                  '& input': {
-                    paddingLeft: '48px !important',
-                  },
-                  '& input::placeholder': {
-                    paddingLeft: '0 !important',
-                    opacity: 1,
+                  height: '48px',
+                  borderRadius: 1,
+                  border: '1px dashed',
+                  borderColor: 'divider',
+                  backgroundColor: 'background.default',
+                  justifyContent: 'flex-start',
+                  pl: 2,
+                  pr: 2,
+                  color: 'text.secondary',
+                  whiteSpace: 'nowrap',
+                  minWidth: '240px',
+                  width: '240px',
+                  opacity: isClosing ? 0 : 1,
+                  transition: 'all 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
+                  '&:hover': {
+                    backgroundColor: 'background.default',
+                    borderColor: 'primary.main',
+                    color: 'primary.main',
                   }
                 }}
-              />
-            </Search>
-
-            <Button
-              onClick={handleAddSet}
-              sx={{
-                height: '48px',
-                borderRadius: 1,
-                border: '1px dashed',
-                borderColor: 'divider',
-                backgroundColor: 'background.default',
-                justifyContent: 'flex-start',
-                pl: 2,
-                pr: 2,
-                color: 'text.secondary',
-                whiteSpace: 'nowrap',
-                minWidth: '240px',
-                width: '240px',
-                '&:hover': {
-                  backgroundColor: 'background.default',
-                  borderColor: 'primary.main',
-                  color: 'primary.main',
-                }
-              }}
-            >
-              + {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
-            </Button>
-          </Box>
+              >
+                + {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
+              </Button>
+            </Box>
+          </Fade>
         )}
 
         {/* Contenedor de ktags con scroll */}
@@ -507,27 +593,38 @@ export const DataEntry: React.FC = () => {
             position: 'relative',
             p: 1.5,
             overflow: expandedIndex === false ? 'auto' : 'hidden',
+            transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
             '&::-webkit-scrollbar': {
               width: '6px',
               backgroundColor: 'transparent',
+              transition: 'all 1s cubic-bezier(0.4, 0, 0.2, 1) 150ms',
             },
             '&::-webkit-scrollbar-track': {
               backgroundColor: 'transparent',
               margin: '4px 0',
+              transition: 'all 1s cubic-bezier(0.4, 0, 0.2, 1) 150ms',
             },
             '&::-webkit-scrollbar-thumb': {
-              backgroundColor: 'primary.main',
-              opacity: 0.3,
+              backgroundColor: isClosing ? 'background.paper' : 'primary.main',
+              opacity: expandedIndex === false ? (isClosing ? 0 : 0.3) : 0,
               borderRadius: '3px',
+              transition: 'all 1s cubic-bezier(0.4, 0, 0.2, 1) 150ms',
               '&:hover': {
-                backgroundColor: 'primary.dark',
-                opacity: 0.5,
+                backgroundColor: isClosing ? 'background.paper' : 'primary.dark',
+                opacity: expandedIndex === false ? (isClosing ? 0 : 0.5) : 0,
+                transition: 'all 1s cubic-bezier(0.4, 0, 0.2, 1) 150ms',
               }
             },
             overflowX: 'hidden',
-            msOverflowStyle: 'none',
-            scrollbarWidth: 'thin',
-            scrollbarColor: 'var(--mui-palette-primary-main) transparent',
+            msOverflowStyle: expandedIndex === false ? 'auto' : 'none',
+            scrollbarWidth: expandedIndex === false ? 'thin' : 'none',
+            scrollbarColor: expandedIndex === false ? 
+              (isClosing ? 'var(--mui-palette-background-paper) transparent' : 'var(--mui-palette-primary-main) transparent') : 
+              'transparent transparent',
+            transitionProperty: 'all, scrollbar-color',
+            transitionDuration: '1s, 1s',
+            transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1), cubic-bezier(0.4, 0, 0.2, 1)',
+            transitionDelay: '150ms, 150ms',
           }}
         >
           {formState.loadingKnowledge ? (
@@ -560,22 +657,27 @@ export const DataEntry: React.FC = () => {
                         sx={{
                           bgcolor: 'background.default',
                           borderRadius: 1,
-                          cursor: 'pointer',
-                          position: isAnimating && expandedIndex === index ? 'fixed' : 'relative',
+                          cursor: expandedIndex === index ? 'default' : 'pointer',
+                          position: isAnimating && expandedIndex === index ? 'fixed' : 
+                            expandedIndex === index ? 'absolute' : 'relative',
                           top: isAnimating && expandedIndex === index ? 
                             `${selectedItemPosition?.top}px` : 
-                            expandedIndex === index ? 0 : 'auto',
+                            expandedIndex === index ? '50%' : 'auto',
                           left: isAnimating && expandedIndex === index ? 
                             `${selectedItemPosition?.left}px` : 
-                            expandedIndex === index ? 0 : 'auto',
+                            expandedIndex === index ? '50%' : 'auto',
                           width: expandedIndex === index ? '100%' : 'auto',
                           height: expandedIndex === index ? '100%' : 'auto',
-                          transition: 'all 1s ease',
-                          transform: expandedIndex === index && !isAnimating ? 
-                            'translate(0, 0)' : 
+                          transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                          transform: expandedIndex === index ? 
+                            (!isAnimating ? 'translate(-50%, -50%)' : 'none') : 
                             'none',
-                          opacity: expandedIndex !== false && expandedIndex !== index ? 0 : 1,
-                          visibility: expandedIndex !== false && expandedIndex !== index ? 'hidden' : 'visible',
+                          opacity: expandedIndex !== false ? 
+                            (expandedIndex === index ? 
+                              (isClosing ? 0 : 1) : 
+                              (isClosing && expandedIndex === index ? 1 : 0)) : 
+                            1,
+                          pointerEvents: (expandedIndex !== false && expandedIndex !== index) || isClosing ? 'none' : 'auto',
                           zIndex: expandedIndex === index ? 1000 : 1,
                           '&::before': {
                             content: '""',
@@ -585,14 +687,18 @@ export const DataEntry: React.FC = () => {
                             right: '90px',
                             bottom: 0,
                             backgroundColor: 'primary.main',
-                            opacity: 0,
-                            transition: 'opacity 1s ease',
+                            opacity: lastClosedIndex === index ? 0.3 : 0,
+                            transition: lastClosedIndex === index ? 
+                              'opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1)' : 
+                              'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                             borderRadius: 1,
                             zIndex: 0,
                           },
                           '&:hover': {
                             '&::before': {
-                              opacity: expandedIndex === false ? 1 : 0,
+                              opacity: expandedIndex === false ? 
+                                (lastClosedIndex === index ? 0.3 : 1) : 
+                                0,
                             },
                             '& .ktag-title': {
                               color: expandedIndex === false ? 'primary.contrastText' : 'inherit',
@@ -601,15 +707,15 @@ export const DataEntry: React.FC = () => {
                           },
                           ...(expandedIndex === index && {
                             position: 'absolute',
-                            left: 0,
-                            right: 0,
-                            top: 0,
-                            bottom: 0,
+                            left: '50%',
+                            top: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            width: '100%',
+                            height: '100%',
                             zIndex: 10,
                             margin: '0 !important',
                             boxShadow: 3,
                             backgroundColor: 'background.paper',
-                            width: '100%',
                             display: 'flex',
                             flexDirection: 'column',
                             '&::before': {
@@ -620,135 +726,232 @@ export const DataEntry: React.FC = () => {
                       >
                         {/* Header */}
                         <Box
+                          data-header="true"
                           sx={{
                             display: 'flex',
                             alignItems: 'center',
                             minHeight: '48px',
                             px: 2,
                             position: 'relative',
-                            transition: 'all 1s ease',
                             backgroundColor: expandedIndex === index ? 'primary.light' : 'transparent',
-                            borderTopLeftRadius: 1,
-                            borderTopRightRadius: 1,
-                            '& .MuiButton-root': {
-                              transition: 'all 1s ease',
-                              transform: expandedIndex === index ? 'scale(1)' : 'scale(0.9)',
-                            },
-                            '& .ktag-title': {
-                              transition: 'all 1s ease',
-                              color: expandedIndex === index ? 'primary.contrastText' : 'text.primary',
-                            },
-                            '& .MuiSvgIcon-root': {
-                              transition: 'all 1s ease',
-                              color: expandedIndex === index ? 'primary.contrastText' : 'text.secondary',
-                            }
+                            borderTopLeftRadius: '8px',
+                            borderTopRightRadius: '8px',
+                            cursor: 'pointer',
+                            opacity: isClosing ? 0 : 1,
+                            transition: 'opacity 0.3s ease',
                           }}
                         >
-                          <Typography 
-                            className="ktag-title"
-                            sx={{ 
-                              fontWeight: 'bold',
-                              fontSize: '0.95rem',
-                              flex: 1,
-                              position: 'relative',
-                              transition: 'all 1s ease',
-                            }}
-                          >
-                            {set.knowledge_key || `${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
-                          </Typography>
-                          
-                          <Box sx={{ 
-                            display: 'flex', 
-                            gap: 1,
-                            alignItems: 'center',
-                            position: 'relative',
-                            zIndex: 2,
-                            transition: 'all 1s ease',
-                          }}>
-                            {expandedIndex === index && (
-                              <Fade in={expandedIndex === index} timeout={1000}>
+                          {expandedIndex === index ? (
+                            <Fade in={expandedIndex === index} timeout={1000}>
+                              <Box sx={{ 
+                                display: 'flex', 
+                                alignItems: 'center',
+                                width: '100%',
+                                gap: 1
+                              }}>
+                                <Typography 
+                                  className="ktag-title"
+                                  sx={{ 
+                                    fontWeight: 'bold',
+                                    fontSize: '0.95rem',
+                                    flex: 1,
+                                    position: 'relative',
+                                    color: 'primary.contrastText',
+                                  }}
+                                >
+                                  {set.knowledge_key || `${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
+                                </Typography>
+                                
+                                <Box sx={{ 
+                                  display: 'flex', 
+                                  gap: 1,
+                                  alignItems: 'center',
+                                  position: 'relative',
+                                  zIndex: 2,
+                                }}>
+                                  <Button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleSaveSet(index);
+                                    }}
+                                    disabled={savingTagIndex === index}
+                                    sx={{
+                                      minWidth: '32px',
+                                      width: '32px',
+                                      height: '32px',
+                                      padding: 0,
+                                      borderRadius: '50%',
+                                      color: 'success.main',
+                                      backgroundColor: 'background.paper',
+                                      transition: 'all 0.3s ease',
+                                      '&:hover': {
+                                        backgroundColor: 'success.main',
+                                        color: 'success.contrastText',
+                                        '& .MuiSvgIcon-root': {
+                                          color: 'success.contrastText',
+                                        }
+                                      },
+                                      '& .MuiSvgIcon-root': {
+                                        transition: 'color 0.3s ease',
+                                        color: 'inherit'
+                                      }
+                                    }}
+                                  >
+                                    {savingTagIndex === index ? (
+                                      <CircularProgress size={20} sx={{ color: 'success.main' }} />
+                                    ) : (
+                                      <SaveIcon sx={{ fontSize: 20 }} />
+                                    )}
+                                  </Button>
+                                  <Button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (set.id && config.agentId) {
+                                        deleteKnowledgeTag(config.agentId, set.id)
+                                          .then(() => {
+                                            setFormValues(prev => ({
+                                              ...prev,
+                                              knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                                            }));
+                                            SuccessToast('Conjunto de conocimiento eliminado correctamente');
+                                            setExpandedIndex(false); // Cerramos la tarjeta después de eliminar
+                                          })
+                                          .catch(() => {
+                                            ErrorToast('Error al eliminar el conjunto de conocimiento');
+                                          });
+                                      } else {
+                                        setFormValues(prev => ({
+                                          ...prev,
+                                          knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                                        }));
+                                        setExpandedIndex(false); // Cerramos la tarjeta después de eliminar
+                                      }
+                                    }}
+                                    sx={{
+                                      minWidth: '32px',
+                                      width: '32px',
+                                      height: '32px',
+                                      padding: 0,
+                                      borderRadius: '50%',
+                                      color: 'error.main',
+                                      backgroundColor: 'background.paper',
+                                      transition: 'all 0.3s ease',
+                                      '&:hover': {
+                                        backgroundColor: 'error.main',
+                                        color: 'error.contrastText',
+                                        '& .MuiSvgIcon-root': {
+                                          color: 'error.contrastText',
+                                        }
+                                      },
+                                      '& .MuiSvgIcon-root': {
+                                        transition: 'color 0.3s ease',
+                                        color: 'inherit'
+                                      }
+                                    }}
+                                  >
+                                    <DeleteOutlineIcon sx={{ fontSize: 20 }} />
+                                  </Button>
+                                  <ExpandMoreIcon 
+                                    sx={{ 
+                                      transform: 'rotate(180deg)',
+                                      color: 'primary.contrastText',
+                                    }} 
+                                  />
+                                </Box>
+                              </Box>
+                            </Fade>
+                          ) : (
+                            // Contenido del header cuando no está expandido
+                            <>
+                              <Typography 
+                                className="ktag-title"
+                                sx={{ 
+                                  fontWeight: 'bold',
+                                  fontSize: '0.95rem',
+                                  flex: 1,
+                                  position: 'relative',
+                                }}
+                              >
+                                {set.knowledge_key || `${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
+                              </Typography>
+                              
+                              <Box sx={{ 
+                                display: 'flex', 
+                                gap: 1,
+                                alignItems: 'center',
+                                position: 'relative',
+                                zIndex: 2,
+                              }}>
                                 <Button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleSaveSet(index);
+                                    if (set.id && config.agentId) {
+                                      deleteKnowledgeTag(config.agentId, set.id)
+                                        .then(() => {
+                                          setFormValues(prev => ({
+                                            ...prev,
+                                            knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                                          }));
+                                          SuccessToast('Conjunto de conocimiento eliminado correctamente');
+                                          setExpandedIndex(false); // Cerramos la tarjeta después de eliminar
+                                        })
+                                        .catch(() => {
+                                          ErrorToast('Error al eliminar el conjunto de conocimiento');
+                                        });
+                                    } else {
+                                      setFormValues(prev => ({
+                                        ...prev,
+                                        knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                                      }));
+                                      setExpandedIndex(false); // Cerramos la tarjeta después de eliminar
+                                    }
                                   }}
-                                  disabled={savingTagIndex === index}
                                   sx={{
                                     minWidth: '32px',
                                     width: '32px',
                                     height: '32px',
                                     padding: 0,
                                     borderRadius: '50%',
-                                    color: 'success.main',
-                                    backgroundColor: 'background.paper',
-                                    transition: 'all 1s ease',
+                                    color: 'error.main',
+                                    backgroundColor: 'transparent',
+                                    transition: 'all 0.3s ease',
                                     '&:hover': {
-                                      backgroundColor: 'background.paper',
+                                      backgroundColor: 'error.main',
+                                      color: 'error.contrastText',
+                                      '& .MuiSvgIcon-root': {
+                                        color: 'error.contrastText',
+                                      }
+                                    },
+                                    '& .MuiSvgIcon-root': {
+                                      transition: 'color 0.3s ease',
+                                      color: 'inherit'
                                     }
                                   }}
                                 >
-                                  {savingTagIndex === index ? (
-                                    <CircularProgress size={20} sx={{ color: 'success.main' }} />
-                                  ) : (
-                                    <SaveIcon sx={{ fontSize: 20 }} />
-                                  )}
+                                  <DeleteOutlineIcon sx={{ fontSize: 20 }} />
                                 </Button>
-                              </Fade>
-                            )}
-                            <Button
-                              className="delete-button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                if (set.id && config.agentId) {
-                                  deleteKnowledgeTag(config.agentId, set.id)
-                                    .then(() => {
-                                      setFormValues(prev => ({
-                                        ...prev,
-                                        knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
-                                      }));
-                                      SuccessToast('Conjunto de conocimiento eliminado correctamente');
-                                    })
-                                    .catch(() => {
-                                      ErrorToast('Error al eliminar el conjunto de conocimiento');
-                                    });
-                                } else {
-                                  setFormValues(prev => ({
-                                    ...prev,
-                                    knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
-                                  }));
-                                }
-                              }}
-                              sx={{
-                                minWidth: '32px',
-                                width: '32px',
-                                height: '32px',
-                                padding: 0,
-                                borderRadius: '50%',
-                                color: 'error.main',
-                                backgroundColor: expandedIndex === index ? 'background.paper' : 'transparent',
-                                '&:hover': {
-                                  backgroundColor: expandedIndex === index ? 'background.paper' : 'error.lighter',
-                                }
-                              }}
-                            >
-                              <DeleteOutlineIcon sx={{ fontSize: 20 }} />
-                            </Button>
-                            <ExpandMoreIcon 
-                              sx={{ 
-                                transform: expandedIndex === index ? 'rotate(180deg)' : 'none',
-                                transition: 'transform 0.3s',
-                                color: expandedIndex === index ? 'primary.contrastText' : 'text.secondary',
-                              }} 
-                            />
-                          </Box>
+                                <ExpandMoreIcon 
+                                  sx={{ 
+                                    color: 'text.secondary',
+                                  }} 
+                                />
+                              </Box>
+                            </>
+                          )}
                         </Box>
 
                         {/* Contenido */}
                         {expandedIndex === index && (
                           <Fade 
-                            in={expandedIndex === index} 
-                            timeout={1000}
-                            style={{ transitionDelay: '2000ms' }}
+                            in={expandedIndex === index && !isClosing}
+                            timeout={{ 
+                              enter: 750,
+                              exit: 375
+                            }}
+                            style={{ 
+                              transitionDelay: isClosing ? '0ms' : '300ms',
+                              transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                            }}
                           >
                             <Box 
                               sx={{ 
@@ -758,12 +961,22 @@ export const DataEntry: React.FC = () => {
                                 flexDirection: 'column',
                                 minHeight: '640px',
                                 height: '100%',
-                                opacity: 0,
-                                animation: 'fadeIn 1s ease 2s forwards',
+                                transition: 'opacity 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transform: 'none',
+                                opacity: isClosing ? 0 : 1,
+                                '& .MuiTextField-root': {
+                                  transition: 'opacity 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
+                                  opacity: isClosing ? 0 : 1,
+                                },
                                 '@keyframes fadeIn': {
-                                  from: { opacity: 0 },
-                                  to: { opacity: 1 }
-                                }
+                                  from: { 
+                                    opacity: 0,
+                                  },
+                                  to: { 
+                                    opacity: 1,
+                                  }
+                                },
+                                animation: 'fadeIn 0.375s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards',
                               }}
                             >
                               <Box sx={{ 
@@ -771,6 +984,8 @@ export const DataEntry: React.FC = () => {
                                 flexDirection: 'column', 
                                 gap: 2,
                                 height: '100%',
+                                opacity: isClosing ? 0 : 1,
+                                transition: 'opacity 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
                               }}>
                                 <TextField
                                   name={`knowledge_key_${index}`}
@@ -854,7 +1069,7 @@ export const DataEntry: React.FC = () => {
             p: 1.5,
             textAlign: 'center',
             cursor: 'pointer',
-            transition: 'border-color 0.2s',
+            transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
             width: '100%',
             display: 'flex',
             flexDirection: 'column',
