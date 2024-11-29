@@ -40,7 +40,7 @@ export interface ContextEntryData {
 }
 
 export interface PromptTemplateData {
-  data: string;
+  prompt_template: string;
 }
 
 export interface PromptTemplatePost {

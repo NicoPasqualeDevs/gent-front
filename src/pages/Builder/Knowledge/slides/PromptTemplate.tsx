@@ -31,10 +31,12 @@ Asistente: "¡Hola! Con gusto te ayudo. Nuestro horario de atención es de lunes
         try {
           const response = await getPromptTemplate(agentId);
           if (response.data) {
-            if (response.data.data.trim() === "Prompt template file not initialized.") {
+            if (response.data.prompt_template === "Prompt template file not initialized.") {
+              setPromptText(placeholderTemplate);
+            } else if (response.data.prompt_template === "") {
               setPromptText(placeholderTemplate);
             } else {
-              setPromptText(response.data.data);
+              setPromptText(response.data.prompt_template);
             }
           }
         } catch (error) {

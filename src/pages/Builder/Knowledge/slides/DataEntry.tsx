@@ -547,32 +547,50 @@ export const DataEntry: React.FC = () => {
                 />
               </Search>
 
-              <Button
-                onClick={handleAddSet}
-                sx={{
-                  height: '48px',
-                  borderRadius: 1,
-                  border: '1px dashed',
-                  borderColor: 'divider',
-                  backgroundColor: 'background.default',
-                  justifyContent: 'flex-start',
-                  pl: 2,
-                  pr: 2,
-                  color: 'text.secondary',
-                  whiteSpace: 'nowrap',
-                  minWidth: '240px',
-                  width: '240px',
-                  opacity: isClosing ? 0 : 1,
-                  transition: 'all 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
-                  '&:hover': {
+              <Box sx={{ 
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+              }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{
+                    whiteSpace: 'nowrap',
+                    opacity: isClosing ? 0 : 1,
+                    transition: 'opacity 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                >
+                  {formValues.knowledgeSets.length} Ktags
+                </Typography>
+
+                <Button
+                  onClick={handleAddSet}
+                  sx={{
+                    height: '48px',
+                    borderRadius: 1,
+                    border: '1px dashed',
+                    borderColor: 'divider',
                     backgroundColor: 'background.default',
-                    borderColor: 'primary.main',
-                    color: 'primary.main',
-                  }
-                }}
-              >
-                + {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
-              </Button>
+                    justifyContent: 'flex-start',
+                    pl: 2,
+                    pr: 2,
+                    color: 'text.secondary',
+                    whiteSpace: 'nowrap',
+                    minWidth: '240px',
+                    width: '240px',
+                    opacity: isClosing ? 0 : 1,
+                    transition: 'all 0.375s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '&:hover': {
+                      backgroundColor: 'background.default',
+                      borderColor: 'primary.main',
+                      color: 'primary.main',
+                    }
+                  }}
+                >
+                  + {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
+                </Button>
+              </Box>
             </Box>
           </Fade>
         )}
@@ -749,8 +767,31 @@ export const DataEntry: React.FC = () => {
                                     flex: 1,
                                     position: 'relative',
                                     color: 'primary.contrastText',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 1,
                                   }}
                                 >
+                                  <Box
+                                    component="span"
+                                    sx={{
+                                      minWidth: '20px',
+                                      height: '20px',
+                                      borderRadius: '4px',
+                                      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                                      color: 'rgba(255, 255, 255, 0.7)',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      fontSize: '0.7rem',
+                                      fontWeight: '500',
+                                      marginRight: '8px',
+                                      lineHeight: 1,
+                                      paddingTop: '1px',
+                                    }}
+                                  >
+                                    {index + 1}
+                                  </Box>
                                   {set.knowledge_key || `${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
                                 </Typography>
                                 
@@ -862,8 +903,33 @@ export const DataEntry: React.FC = () => {
                                   fontSize: '0.95rem',
                                   flex: 1,
                                   position: 'relative',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: 1,
                                 }}
                               >
+                                <Box
+                                  component="span"
+                                  sx={{
+                                    minWidth: '20px',
+                                    height: '20px',
+                                    borderRadius: '4px',
+                                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                                    color: 'text.secondary',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '0.7rem',
+                                    fontWeight: '500',
+                                    marginRight: '8px',
+                                    transition: 'all 0.3s ease',
+                                    zIndex: 1,
+                                    lineHeight: 1,
+                                    paddingTop: '1px',
+                                  }}
+                                >
+                                  {index + 1}
+                                </Box>
                                 {set.knowledge_key || `${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
                               </Typography>
                               
