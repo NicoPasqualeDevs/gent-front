@@ -99,6 +99,11 @@ echo "📦 Instalando dependencias..."
 npm install
 handle_error $? "Error al instalar dependencias"
 
+# Ejecutar npm audit fix
+echo "🔒 Ejecutando npm audit fix..."
+npm audit fix --force
+handle_error $? "Error al ejecutar npm audit fix"
+
 # Asegurar que terser está instalado correctamente
 echo "📦 Verificando e instalando terser..."
 if ! npm list terser >/dev/null 2>&1; then
