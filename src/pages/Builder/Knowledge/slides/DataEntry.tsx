@@ -10,6 +10,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import SaveIcon from '@mui/icons-material/Save';
 import ChatIcon from '@mui/icons-material/Chat';
+import { Ktag } from '@/types/ContextEntry';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Fade, Slide } from '@mui/material';
 
 // Constantes
 const MAX_FILE_SIZE = 10; // MB
@@ -37,22 +40,6 @@ interface FormState {
   uploadProgress: number;
   loadingKnowledge: boolean;
 }
-
-// Agregar interfaz para el tipo de tag
-interface KnowledgeTag {
-  id: string;
-  name: string;
-  value: string;
-}
-
-// Modificar la interfaz KnowledgeTag para asegurar que id es requerido
-interface KnowledgeTag {
-  id: string;
-  name: string;
-  value: string;
-}
-
-// Modificar la interfaz Ktag para que coincida con KnowledgeTag
 
 export const DataEntry: React.FC = () => {
   const navigate = useNavigate();
@@ -293,13 +280,16 @@ export const DataEntry: React.FC = () => {
   // Función para agregar un nuevo conjunto
   const handleAddSet = useCallback(() => {
     console.log('Adding new knowledge set');
+    const newIndex = formValues.knowledgeSets.length;
     setFormValues(prev => ({
       ...prev,
       knowledgeSets: [...prev.knowledgeSets, { knowledge_key: '', context: '' }]
     }));
-    // Agregamos un pequeño delay para asegurar que el DOM se ha actualizado
-    setTimeout(scrollToLastTag, 100);
-  }, [scrollToLastTag]);
+    // Expandimos inmediatamente la nueva ktag
+    setTimeout(() => {
+      setExpandedIndex(newIndex);
+    }, 100);
+  }, [formValues.knowledgeSets.length]);
 
   // Función para actualizar un conjunto específico
   const handleSetChange = useCallback((index: number, field: keyof KnowledgeSet, value: string) => {
@@ -321,15 +311,15 @@ export const DataEntry: React.FC = () => {
         setFormState(prev => ({ ...prev, loadingKnowledge: true }));
         const response = await getKnowledgeTags(config.agentId);
         if (response?.data) {
-          // Aseguramos que los tipos coincidan
-          const tags = response.data as KnowledgeTag[];
+          // Convertir los Ktag a KnowledgeSet
+          const tags = response.data.map(tag => ({
+            id: tag.id,
+            knowledge_key: tag.name,
+            context: tag.value
+          }));
           setFormValues(prev => ({
             ...prev,
-            knowledgeSets: tags.map(tag => ({
-              id: tag.id,
-              knowledge_key: tag.name,
-              context: tag.value
-            }))
+            knowledgeSets: tags
           }));
           setTimeout(scrollToLastTag, 100);
         }
@@ -352,19 +342,18 @@ export const DataEntry: React.FC = () => {
     const set = formValues.knowledgeSets[index];
     if (!config.agentId) return;
 
-    const tagData = {
+    const tagData: Ktag = {
       name: set.knowledge_key,
       value: set.context,
-      description: set.knowledge_key,
-      customer_bot: config.agentId,
-      customer_agent: config.agentId
+      agent: config.agentId,
+      id: set.id ?? ''
     };
 
     try {
       setSavingTagIndex(index);
       
       if (set.id) {
-        await updateKnowledgeTag(set.id, tagData);
+        await updateKnowledgeTag(config.agentId, set.id, tagData);
       } else {
         const response = await createKnowledgeTag(config.agentId, tagData);
         setFormValues(prev => ({
@@ -383,84 +372,162 @@ export const DataEntry: React.FC = () => {
     }
   };
 
+  // Agregar este nuevo estado para controlar el Accordion expandido
+  const [expandedIndex, setExpandedIndex] = useState<number | false>(false);
+
+  // Agregar esta función para manejar el cambio de expansión
+  const handleAccordionChange = (index: number) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpandedIndex(isExpanded ? index : false);
+  };
+
+  // Agregar estos estados nuevos
+  const [selectedItemPosition, setSelectedItemPosition] = useState<{ top: number; left: number } | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Modificar la función que maneja el click
+  const handleItemClick = (index: number, event: React.MouseEvent<HTMLElement>) => {
+    if (expandedIndex === index) {
+      setExpandedIndex(false);
+      return;
+    }
+
+    const element = event.currentTarget;
+    const rect = element.getBoundingClientRect();
+    const scrollTop = scrollContainerRef.current?.scrollTop || 0;
+    
+    // Guardamos la posición inicial
+    setSelectedItemPosition({
+      top: rect.top + scrollTop,
+      left: rect.left
+    });
+    
+    setIsAnimating(true);
+    setExpandedIndex(index);
+
+    // Resetear la posición después de la animación
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 1000);
+  };
+
   return (
     <Box sx={{ 
       display: 'flex', 
       flexDirection: 'column', 
       gap: 3,
-      height: 'auto', // Aseguramos que el contenedor principal se ajuste al contenido
+      height: '100%',
     }}>
-      {/* Barra de búsqueda y botones */}
-      <Box sx={{ 
-        display: 'flex', 
-        gap: 2,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%'
-      }}>
-        <Search sx={{ 
-          flex: 1,
-          maxWidth: '400px',
-          backgroundColor: 'background.paper',
-          boxShadow: 1,
-          borderRadius: 1
-        }}>
-          <SearchIconWrapper>
-            <SearchIcon />
-          </SearchIconWrapper>
-          <StyledInputBase
-            placeholder={t.dataEntry.searchKnowledge || "Buscar por clave de conocimiento..."}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </Search>
-
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            variant="outlined"
-            onClick={() => navigate(`/chat/${agentId}`)}
-            startIcon={<ChatIcon />}
-            sx={{
-              minWidth: '140px',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {"Probar Bot"}
-          </Button>
-
-          <Button
-            variant="contained"
-            onClick={handleAddSet}
-            sx={{
-              minWidth: '180px',
-              whiteSpace: 'nowrap',
-              color: 'white',
-              '&:hover': {
-                color: 'white'
-              }
-            }}
-          >
-            {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
-          </Button>
-        </Box>
-      </Box>
-
-      {/* Contenedor principal sin overflow */}
+      {/* Contenedor principal */}
       <Box sx={{ 
         bgcolor: 'background.paper',
         borderRadius: 1,
         boxShadow: 1,
         width: '100%',
-        height: 'auto'
+        flexGrow: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: expandedIndex !== false ? '100%' : 'calc(100% - 93px)',
       }}>
-        {/* Contenedor con scroll para los conjuntos */}
+        {/* Buscador y botón fijos */}
+        {expandedIndex === false && (
+          <Box sx={{ 
+            display: 'flex',
+            gap: 2,
+            width: '100%',
+            p: 1.5,
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            backgroundColor: 'background.paper',
+          }}>
+            <Search sx={{ 
+              flex: 1,
+              backgroundColor: 'background.paper',
+              boxShadow: 1,
+              borderRadius: 1,
+              display: 'flex',
+              alignItems: 'center',
+            }}>
+              <SearchIconWrapper>
+                <SearchIcon />
+              </SearchIconWrapper>
+              <StyledInputBase
+                placeholder={t.dataEntry.searchKnowledge || "Buscar por clave de conocimiento..."}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                sx={{
+                  flex: 1,
+                  '& .MuiInputBase-input': {
+                    padding: '8px 8px 8px 0',
+                    height: '24px',
+                    lineHeight: '24px',
+                  },
+                  '& input': {
+                    paddingLeft: '48px !important',
+                  },
+                  '& input::placeholder': {
+                    paddingLeft: '0 !important',
+                    opacity: 1,
+                  }
+                }}
+              />
+            </Search>
+
+            <Button
+              onClick={handleAddSet}
+              sx={{
+                height: '48px',
+                borderRadius: 1,
+                border: '1px dashed',
+                borderColor: 'divider',
+                backgroundColor: 'background.default',
+                justifyContent: 'flex-start',
+                pl: 2,
+                pr: 2,
+                color: 'text.secondary',
+                whiteSpace: 'nowrap',
+                minWidth: '240px',
+                width: '240px',
+                '&:hover': {
+                  backgroundColor: 'background.default',
+                  borderColor: 'primary.main',
+                  color: 'primary.main',
+                }
+              }}
+            >
+              + {t.dataEntry.addKnowledgeSet || "Agregar nuevo conjunto"}
+            </Button>
+          </Box>
+        )}
+
+        {/* Contenedor de ktags con scroll */}
         <Box 
           ref={scrollContainerRef}
           sx={{ 
-            maxHeight: '510px',
-            overflow: 'auto',
+            flex: 1,
+            position: 'relative',
             p: 1.5,
-            minHeight: '200px',
+            overflow: expandedIndex === false ? 'auto' : 'hidden',
+            '&::-webkit-scrollbar': {
+              width: '6px',
+              backgroundColor: 'transparent',
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'transparent',
+              margin: '4px 0',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: 'primary.main',
+              opacity: 0.3,
+              borderRadius: '3px',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+                opacity: 0.5,
+              }
+            },
+            overflowX: 'hidden',
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'thin',
+            scrollbarColor: 'var(--mui-palette-primary-main) transparent',
           }}
         >
           {formState.loadingKnowledge ? (
@@ -469,7 +536,6 @@ export const DataEntry: React.FC = () => {
               justifyContent: 'center', 
               alignItems: 'center',
               height: '100%',
-              minHeight: '200px' 
             }}>
               <CircularProgress />
             </Box>
@@ -479,143 +545,284 @@ export const DataEntry: React.FC = () => {
               flexDirection: 'column', 
               gap: 1.5,
               width: '100%',
-              minHeight: 'min-content'
+              height: '100%',
             }}>
               {filteredKnowledgeSets.length > 0 ? (
-                filteredKnowledgeSets.map((set, index) => (
-                  <Box 
-                    key={index}
-                    sx={{ 
-                      display: 'flex', 
-                      flexDirection: 'column', 
-                      gap: 1.5,
-                      p: 1.5,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      borderRadius: 1,
-                      bgcolor: 'background.default',
-                      position: 'relative'
-                    }}
-                  >
-                    {/* Botones de acción */}
-                    <Box sx={{ 
-                      position: 'absolute',
-                      right: '12px',
-                      top: '12px',
-                      display: 'flex',
-                      gap: 1
-                    }}>
-                      <Button
-                        onClick={() => handleSaveSet(index)}
-                        disabled={savingTagIndex === index}
+                <>
+                  {filteredKnowledgeSets.map((set, index) => (
+                    <Fade 
+                      key={index}
+                      in={expandedIndex === false || expandedIndex === index}
+                      timeout={1000}
+                    >
+                      <Box
+                        onClick={(e) => handleItemClick(index, e)}
                         sx={{
-                          minWidth: '32px',
-                          width: '32px',
-                          height: '32px',
-                          padding: 0,
-                          borderRadius: '50%',
-                          color: 'success.main',
+                          bgcolor: 'background.default',
+                          borderRadius: 1,
+                          cursor: 'pointer',
+                          position: isAnimating && expandedIndex === index ? 'fixed' : 'relative',
+                          top: isAnimating && expandedIndex === index ? 
+                            `${selectedItemPosition?.top}px` : 
+                            expandedIndex === index ? 0 : 'auto',
+                          left: isAnimating && expandedIndex === index ? 
+                            `${selectedItemPosition?.left}px` : 
+                            expandedIndex === index ? 0 : 'auto',
+                          width: expandedIndex === index ? '100%' : 'auto',
+                          height: expandedIndex === index ? '100%' : 'auto',
+                          transition: 'all 1s ease',
+                          transform: expandedIndex === index && !isAnimating ? 
+                            'translate(0, 0)' : 
+                            'none',
+                          opacity: expandedIndex !== false && expandedIndex !== index ? 0 : 1,
+                          visibility: expandedIndex !== false && expandedIndex !== index ? 'hidden' : 'visible',
+                          zIndex: expandedIndex === index ? 1000 : 1,
+                          '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: '90px',
+                            bottom: 0,
+                            backgroundColor: 'primary.main',
+                            opacity: 0,
+                            transition: 'opacity 1s ease',
+                            borderRadius: 1,
+                            zIndex: 0,
+                          },
                           '&:hover': {
-                            backgroundColor: 'success.lighter',
-                          }
+                            '&::before': {
+                              opacity: expandedIndex === false ? 1 : 0,
+                            },
+                            '& .ktag-title': {
+                              color: expandedIndex === false ? 'primary.contrastText' : 'inherit',
+                              zIndex: 1,
+                            },
+                          },
+                          ...(expandedIndex === index && {
+                            position: 'absolute',
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                            bottom: 0,
+                            zIndex: 10,
+                            margin: '0 !important',
+                            boxShadow: 3,
+                            backgroundColor: 'background.paper',
+                            width: '100%',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            '&::before': {
+                              display: 'none',
+                            },
+                          })
                         }}
                       >
-                        {savingTagIndex === index ? (
-                          <CircularProgress
-                            size={20}
-                            sx={{ color: 'success.main' }}
-                          />
-                        ) : (
-                          <SaveIcon sx={{ fontSize: 20 }} />
-                        )}
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          if (set.id) {
-                            deleteKnowledgeTag(set.id)
-                              .then(() => {
-                                setFormValues(prev => ({
-                                  ...prev,
-                                  knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
-                                }));
-                                SuccessToast('Conjunto de conocimiento eliminado correctamente');
-                              })
-                              .catch(() => {
-                                ErrorToast('Error al eliminar el conjunto de conocimiento');
-                              });
-                          } else {
-                            setFormValues(prev => ({
-                              ...prev,
-                              knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
-                            }));
-                          }
-                        }}
-                        sx={{
-                          minWidth: '32px',
-                          width: '32px',
-                          height: '32px',
-                          padding: 0,
-                          borderRadius: '50%',
-                          color: 'error.main',
-                          '&:hover': {
-                            backgroundColor: 'error.lighter',
-                          }
-                        }}
-                      >
-                        <DeleteOutlineIcon sx={{ fontSize: 20 }} />
-                      </Button>
-                    </Box>
-
-                    <Typography variant="subtitle1" sx={{ 
-                      fontWeight: 'bold',
-                      fontSize: '0.95rem',
-                      pr: 5,
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1
-                    }}>
-                      {`${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
-                      {set.id && (
-                        <Typography 
-                          component="span" 
-                          sx={{ 
-                            color: 'success.main',
-                            fontSize: '0.75rem',
-                            fontWeight: 'normal'
+                        {/* Header */}
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            minHeight: '48px',
+                            px: 2,
+                            position: 'relative',
+                            transition: 'all 1s ease',
+                            backgroundColor: expandedIndex === index ? 'primary.light' : 'transparent',
+                            borderTopLeftRadius: 1,
+                            borderTopRightRadius: 1,
+                            '& .MuiButton-root': {
+                              transition: 'all 1s ease',
+                              transform: expandedIndex === index ? 'scale(1)' : 'scale(0.9)',
+                            },
+                            '& .ktag-title': {
+                              transition: 'all 1s ease',
+                              color: expandedIndex === index ? 'primary.contrastText' : 'text.primary',
+                            },
+                            '& .MuiSvgIcon-root': {
+                              transition: 'all 1s ease',
+                              color: expandedIndex === index ? 'primary.contrastText' : 'text.secondary',
+                            }
                           }}
                         >
-                          ({'Guardado'})
-                        </Typography>
-                      )}
-                    </Typography>
-                    
-                    <TextField
-                      name={`knowledge_key_${index}`}
-                      label={t.dataEntry.knowledgeKey || "Clave de conocimiento"}
-                      value={set.knowledge_key}
-                      onChange={(e) => handleSetChange(index, 'knowledge_key', e.target.value)}
-                      fullWidth
-                      required
-                      size="small"
-                      helperText={t.dataEntry.knowledgeKeyHelper || "Ingrese una clave para identificar este conocimiento"}
-                    />
+                          <Typography 
+                            className="ktag-title"
+                            sx={{ 
+                              fontWeight: 'bold',
+                              fontSize: '0.95rem',
+                              flex: 1,
+                              position: 'relative',
+                              transition: 'all 1s ease',
+                            }}
+                          >
+                            {set.knowledge_key || `${t.dataEntry.knowledgeSet || 'Conjunto de conocimiento'} ${index + 1}`}
+                          </Typography>
+                          
+                          <Box sx={{ 
+                            display: 'flex', 
+                            gap: 1,
+                            alignItems: 'center',
+                            position: 'relative',
+                            zIndex: 2,
+                            transition: 'all 1s ease',
+                          }}>
+                            {expandedIndex === index && (
+                              <Fade in={expandedIndex === index} timeout={1000}>
+                                <Button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleSaveSet(index);
+                                  }}
+                                  disabled={savingTagIndex === index}
+                                  sx={{
+                                    minWidth: '32px',
+                                    width: '32px',
+                                    height: '32px',
+                                    padding: 0,
+                                    borderRadius: '50%',
+                                    color: 'success.main',
+                                    backgroundColor: 'background.paper',
+                                    transition: 'all 1s ease',
+                                    '&:hover': {
+                                      backgroundColor: 'background.paper',
+                                    }
+                                  }}
+                                >
+                                  {savingTagIndex === index ? (
+                                    <CircularProgress size={20} sx={{ color: 'success.main' }} />
+                                  ) : (
+                                    <SaveIcon sx={{ fontSize: 20 }} />
+                                  )}
+                                </Button>
+                              </Fade>
+                            )}
+                            <Button
+                              className="delete-button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (set.id && config.agentId) {
+                                  deleteKnowledgeTag(config.agentId, set.id)
+                                    .then(() => {
+                                      setFormValues(prev => ({
+                                        ...prev,
+                                        knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                                      }));
+                                      SuccessToast('Conjunto de conocimiento eliminado correctamente');
+                                    })
+                                    .catch(() => {
+                                      ErrorToast('Error al eliminar el conjunto de conocimiento');
+                                    });
+                                } else {
+                                  setFormValues(prev => ({
+                                    ...prev,
+                                    knowledgeSets: prev.knowledgeSets.filter((_, i) => i !== index)
+                                  }));
+                                }
+                              }}
+                              sx={{
+                                minWidth: '32px',
+                                width: '32px',
+                                height: '32px',
+                                padding: 0,
+                                borderRadius: '50%',
+                                color: 'error.main',
+                                backgroundColor: expandedIndex === index ? 'background.paper' : 'transparent',
+                                '&:hover': {
+                                  backgroundColor: expandedIndex === index ? 'background.paper' : 'error.lighter',
+                                }
+                              }}
+                            >
+                              <DeleteOutlineIcon sx={{ fontSize: 20 }} />
+                            </Button>
+                            <ExpandMoreIcon 
+                              sx={{ 
+                                transform: expandedIndex === index ? 'rotate(180deg)' : 'none',
+                                transition: 'transform 0.3s',
+                                color: expandedIndex === index ? 'primary.contrastText' : 'text.secondary',
+                              }} 
+                            />
+                          </Box>
+                        </Box>
 
-                    <TextField
-                      name={`context_${index}`}
-                      label={t.dataEntry.context}
-                      value={set.context}
-                      onChange={(e) => handleSetChange(index, 'context', e.target.value)}
-                      multiline
-                      rows={4}
-                      fullWidth
-                      required
-                      size="small"
-                    />
-                  </Box>
-                ))
+                        {/* Contenido */}
+                        {expandedIndex === index && (
+                          <Fade 
+                            in={expandedIndex === index} 
+                            timeout={1000}
+                            style={{ transitionDelay: '2000ms' }}
+                          >
+                            <Box 
+                              sx={{ 
+                                p: 3,
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                minHeight: '640px',
+                                height: '100%',
+                                opacity: 0,
+                                animation: 'fadeIn 1s ease 2s forwards',
+                                '@keyframes fadeIn': {
+                                  from: { opacity: 0 },
+                                  to: { opacity: 1 }
+                                }
+                              }}
+                            >
+                              <Box sx={{ 
+                                display: 'flex', 
+                                flexDirection: 'column', 
+                                gap: 2,
+                                height: '100%',
+                              }}>
+                                <TextField
+                                  name={`knowledge_key_${index}`}
+                                  label={t.dataEntry.knowledgeKey || "Clave de conocimiento"}
+                                  value={set.knowledge_key}
+                                  onChange={(e) => handleSetChange(index, 'knowledge_key', e.target.value)}
+                                  fullWidth
+                                  required
+                                  size="small"
+                                  helperText={t.dataEntry.knowledgeKeyHelper || "Ingrese una clave para identificar este conocimiento"}
+                                  sx={{ flexShrink: 0 }}
+                                />
+
+                                <TextField
+                                  name={`context_${index}`}
+                                  label={t.dataEntry.context}
+                                  value={set.context}
+                                  onChange={(e) => handleSetChange(index, 'context', e.target.value)}
+                                  multiline
+                                  fullWidth
+                                  required
+                                  size="small"
+                                  sx={{ 
+                                    flex: 1,
+                                    display: 'flex',
+                                    height: '500px',
+                                    minHeight: '520px',
+                                    '& .MuiInputBase-root': {
+                                      height: '100%',
+                                      minHeight: '520px',
+                                      alignItems: 'flex-start',
+                                    },
+                                    '& .MuiInputBase-input': {
+                                      height: 'calc(100% - 32px) !important',
+                                      minHeight: 'calc(520px - 32px) !important',
+                                      overflow: 'auto !important',
+                                    }
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                          </Fade>
+                        )}
+                      </Box>
+                    </Fade>
+                  ))}
+                </>
               ) : (
                 <Box sx={{ 
                   display: 'flex', 
+                  flexDirection: 'column',
+                  gap: 2,
                   justifyContent: 'center', 
                   alignItems: 'center',
                   minHeight: '200px'
@@ -632,60 +839,63 @@ export const DataEntry: React.FC = () => {
         </Box>
       </Box>
 
-      {/* Área de drop para documentos */}
-      <Box
-        onDragEnter={(e) => { e.preventDefault(); setFormState({ ...formState, dragActive: true }); }}
-        onDragOver={(e) => { e.preventDefault(); setFormState({ ...formState, dragActive: true }); }}
-        onDragLeave={(e) => { e.preventDefault(); setFormState({ ...formState, dragActive: false }); }}
-        onDrop={handleDrop}
-        sx={{
-          position: 'relative',
-          border: '2px dashed',
-          borderColor: formState.dragActive ? 'primary.main' : 'divider',
-          borderRadius: 1,
-          p: 3,
-          textAlign: 'center',
-          cursor: 'pointer',
-          transition: 'border-color 0.2s',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          minHeight: '120px',
-          '&:hover': {
-            borderColor: 'primary.main',
-          },
-        }}
-      >
-        <input
-          type="file"
-          multiple
-          onChange={handleFileSelect}
-          accept={ALLOWED_FILE_TYPES.join(',')}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
+      {/* Área de drop */}
+      <Fade in={expandedIndex === false}>
+        <Box
+          onDragEnter={(e) => { e.preventDefault(); setFormState({ ...formState, dragActive: true }); }}
+          onDragOver={(e) => { e.preventDefault(); setFormState({ ...formState, dragActive: true }); }}
+          onDragLeave={(e) => { e.preventDefault(); setFormState({ ...formState, dragActive: false }); }}
+          onDrop={handleDrop}
+          sx={{
+            position: 'relative',
+            border: '2px dashed',
+            borderColor: formState.dragActive ? 'primary.main' : 'divider',
+            borderRadius: 1,
+            p: 1.5,
+            textAlign: 'center',
+            cursor: 'pointer',
+            transition: 'border-color 0.2s',
             width: '100%',
-            height: '100%',
-            opacity: 0,
-            cursor: 'pointer'
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '70px',
+            flexShrink: 0,
+            '&:hover': {
+              borderColor: 'primary.main',
+            },
           }}
-        />
-        <Typography variant="body1" sx={{ mb: 1 }}>{t.dataEntry.dragAndDrop}</Typography>
-        <Typography variant="caption" color="text.secondary">
-          {t.dataEntry.maxSize.replace("{size}", MAX_FILE_SIZE.toString())}
-        </Typography>
-        {formState.uploadProgress > 0 && (
-          <Box sx={{ width: '100%', mt: 2 }}>
-            <LinearProgress variant="determinate" value={formState.uploadProgress} />
-            <Typography variant="caption" color="text.secondary">
-              {t.dataEntry.uploadProgress.replace("{progress}", formState.uploadProgress.toString())}
-            </Typography>
-          </Box>
-        )}
-      </Box>
+        >
+          <input
+            type="file"
+            multiple
+            onChange={handleFileSelect}
+            accept={ALLOWED_FILE_TYPES.join(',')}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              opacity: 0,
+              cursor: 'pointer'
+            }}
+          />
+          <Typography variant="body1" sx={{ mb: 1 }}>{t.dataEntry.dragAndDrop}</Typography>
+          <Typography variant="caption" color="text.secondary">
+            {t.dataEntry.maxSize.replace("{size}", MAX_FILE_SIZE.toString())}
+          </Typography>
+          {formState.uploadProgress > 0 && (
+            <Box sx={{ width: '100%', mt: 2 }}>
+              <LinearProgress variant="determinate" value={formState.uploadProgress} />
+              <Typography variant="caption" color="text.secondary">
+                {t.dataEntry.uploadProgress.replace("{progress}", formState.uploadProgress.toString())}
+              </Typography>
+            </Box>
+          )}
+        </Box>
+      </Fade>
     </Box>
   );
 };

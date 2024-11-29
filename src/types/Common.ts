@@ -7,11 +7,3 @@ export interface ApiResponse<T> {
   status: string;
   error?: string;
 }
-
-// Tipo para KTags
-export interface Ktag {
-  name: string;
-  description: string;
-  value: string;
-  customer_bot: string;
-}

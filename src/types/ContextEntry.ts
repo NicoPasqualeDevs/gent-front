@@ -12,3 +12,12 @@ export interface ContextEntryState extends PageState {
   isSubmitting: boolean;
   isEditing: boolean;
 } 
+
+// Tipo para KTags
+export interface Ktag {
+  [propKey: string]: string | undefined;
+  id: string;
+  agent: string;
+  name: string;
+  value: string;
+}

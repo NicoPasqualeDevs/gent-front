@@ -47,14 +47,6 @@ export interface PromptTemplatePost {
   prompt_template: string;
 }
 
-export interface Ktag {
-  [propKey: string]: string | undefined;
-  id: string;
-  agent: string;
-  name: string;
-  value: string;
-}
-
 // Definimos tipos específicos para configuration y capabilities
 interface AgentConfiguration {
   temperature?: number;
