@@ -252,19 +252,22 @@ const ChatView: React.FC = () => {
     try {
       const messageData = {
         type: 'chat.message',
-        content: state.message,
-        metadata: {
-          timestamp: new Date().toISOString(),
-          sessionId: state.sessionId
+        message: {
+          content: state.message,
+          role: 'client',
+          timestamp: new Date().toISOString()
         }
       };
 
-      sendMessage(JSON.stringify(messageData));
+      sendMessage(state.message);
 
-      const newMessage = {
+      const newMessage: ChatMessage = {
         content: state.message,
-        role: 'client' as const,
-        timestamp: new Date().toISOString()
+        role: 'client',
+        timestamp: new Date().toISOString(),
+        metadata: {
+          sessionId: state.sessionId
+        }
       };
 
       setState(prev => ({
@@ -274,7 +277,12 @@ const ChatView: React.FC = () => {
         chatHistory: prev.chatHistory ? {
           ...prev.chatHistory,
           messages: [...prev.chatHistory.messages, newMessage]
-        } : null
+        } : {
+          conversation: state.sessionId || '',
+          messages: [newMessage],
+          customer: '',
+          customer_agent: ''
+        }
       }));
     } catch (error) {
       console.error('Error sending message:', error);
@@ -286,21 +294,33 @@ const ChatView: React.FC = () => {
   useEffect(() => {
     if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
+      console.log('New message received in ChatView:', lastMessage);
+      
       const formattedMessage: ChatMessage = {
         content: lastMessage.content,
-        role: lastMessage.role === 'system' ? 'agent' : lastMessage.role,
-        timestamp: lastMessage.timestamp
+        role: lastMessage.role as 'agent' | 'client',
+        timestamp: lastMessage.timestamp,
+        metadata: {}
       };
-      
-      setState(prev => ({
-        ...prev,
-        chatHistory: prev.chatHistory ? {
-          ...prev.chatHistory,
-          messages: [...prev.chatHistory.messages, formattedMessage]
-        } : null
-      }));
+
+      setState(prev => {
+        const newState = {
+          ...prev,
+          chatHistory: prev.chatHistory ? {
+            ...prev.chatHistory,
+            messages: [...prev.chatHistory.messages, formattedMessage]
+          } : {
+            conversation: state.sessionId || '',
+            messages: [formattedMessage],
+            customer: '',
+            customer_agent: ''
+          }
+        };
+        console.log('Updated chat state:', newState);
+        return newState;
+      });
     }
-  }, [messages]);
+  }, [messages, state.sessionId]);
 
   const handleFinishSession = async () => {
     const currentChatHistory = state.chatHistory;

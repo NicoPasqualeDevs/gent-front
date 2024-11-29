@@ -17,13 +17,16 @@ export const useWebSocket = (sessionId: string) => {
     if (!sessionId) return;
 
     const isProduction = import.meta.env.MODE === 'production';
-    const wsUrl = isProduction 
+    const baseUrl = isProduction 
         ? import.meta.env.VITE_PROD_WS_URL 
         : import.meta.env.VITE_DEV_WS_URL;
 
-    const wsEndpoint = `${wsUrl}/ws/chat/${sessionId}/`;
-    const finalWsUrl = wsEndpoint.replace(/^http/, 'ws');
-    const ws = new WebSocket(finalWsUrl);
+    const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+    const wsEndpoint = `${cleanBaseUrl}/ws/chat/${sessionId}/`;
+    
+    console.log('Attempting to connect to:', wsEndpoint);
+    
+    const ws = new WebSocket(wsEndpoint);
     
     ws.onopen = () => {
       console.log('WebSocket conectado exitosamente');
@@ -34,6 +37,27 @@ export const useWebSocket = (sessionId: string) => {
           type: 'authentication',
           token: auth.token
         }));
+      }
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('Received WebSocket message:', data);
+
+        if (data.type === 'chat.message' && data.message) {
+          const newMessage: WebSocketMessage = {
+            content: data.message.content,
+            role: data.message.role,
+            timestamp: data.message.timestamp
+          };
+          console.log('Adding new message to state:', newMessage);
+          setMessages(prev => [...prev, newMessage]);
+        } else if (data.type === 'error') {
+          console.error('Error from server:', data.content);
+        }
+      } catch (error) {
+        console.error('Error processing WebSocket message:', error);
       }
     };
 
@@ -53,17 +77,6 @@ export const useWebSocket = (sessionId: string) => {
       }
     };
 
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === 'chat.message') {
-          setMessages(prev => [...prev, data.message]);
-        }
-      } catch (error) {
-        console.error('Error al procesar mensaje:', error);
-      }
-    };
-
     wsRef.current = ws;
 
     return () => {
@@ -74,24 +87,24 @@ export const useWebSocket = (sessionId: string) => {
   }, [sessionId, auth]);
 
   useEffect(() => {
-    connectWebSocket();
+    const cleanup = connectWebSocket();
     return () => {
-      if (wsRef.current) {
-        wsRef.current.close();
-      }
+      cleanup?.();
     };
   }, [connectWebSocket]);
 
   const sendMessage = useCallback((content: string) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({
+      const message = {
         type: 'chat.message',
         message: {
-          content,
+          content: content,
           role: 'client',
           timestamp: new Date().toISOString()
         }
-      }));
+      };
+      console.log('Sending message:', message);
+      wsRef.current.send(JSON.stringify(message));
     } else {
       console.error('WebSocket no está conectado');
     }
