@@ -67,7 +67,7 @@ const useTools = () => {
 
   const addToolToBot = useCallback(async (agentId: string, toolIds: number[]): Promise<void> => {
     try {
-      await apiPost(`tools/relate/${agentId}/`, { agent_tool_ids: toolIds });
+      await apiPost(`tools/add/${agentId}/`, { agent_tool_ids: toolIds });
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al relacionar las herramientas con el bot");
     }
