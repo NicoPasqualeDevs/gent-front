@@ -115,8 +115,8 @@ const useAgentsApi = (): UseAgentsApi => {
     return apiGet(`agents/prompt-templates/${agentId}/`);
   };
 
-  const savePromptTemplate = async (agentId: string, template: string): Promise<ApiResponse<PromptTemplateData>> => {
-    return apiPost(`agents/prompt-templates/${agentId}/`, { template });
+  const savePromptTemplate = async (agentId: string, prompt_template: string): Promise<ApiResponse<PromptTemplateData>> => {
+    return apiPost(`agents/prompt-templates/${agentId}/`, { prompt_template });
   };
 
   return {
