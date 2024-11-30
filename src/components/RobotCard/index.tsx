@@ -8,6 +8,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import MenuBookIcon from '@mui/icons-material/MenuBook';
 import BuildIcon from '@mui/icons-material/Build';
 import PaletteIcon from '@mui/icons-material/Palette';
+import MonitorIcon from '@mui/icons-material/Monitor';
 import { TranslationType } from '@/utils/Traslations/types';
 import { useAppContext } from '@/context';
 import useProfile from '@/hooks/apps/accounts/useProfile';
@@ -51,7 +52,8 @@ const RobotCard: React.FC<RobotCardProps> = ({
   status,
   selectedApiKey,
   modelAi,
-  onConfigureLLM
+  onConfigureLLM,
+  onTest
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const eyesRef = useRef<HTMLDivElement>(null);
@@ -171,7 +173,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
     stream();
   };
 
-  const handleButtonHover = (buttonType: 'widget' | 'customization' | 'api' | 'tools' | 'edit' | 'test' | 'delete' | 'knowledge') => {
+  const handleButtonHover = (buttonType: 'widget' | 'customization' | 'api' | 'tools' | 'edit' | 'test' | 'delete' | 'knowledge' | 'monitor') => {
     if (!showRobotCardHelp) return;
     
     if (bubbleTimeoutRef.current) {
@@ -346,8 +348,35 @@ const RobotCard: React.FC<RobotCardProps> = ({
       width: '100%',
       minWidth: '300px',
       maxWidth: '460px',
-      margin: '0 auto'
+      margin: '0 auto',
+      position: 'relative'
     }}>
+      <Tooltip title={t?.delete || "Delete"}>
+        <IconButton 
+          className="action-button delete" 
+          onClick={onDelete}
+          onMouseEnter={() => handleButtonHover('delete')}
+          onMouseLeave={handleButtonLeave}
+          sx={{
+            position: 'absolute',
+            bottom: '8px',
+            right: '8px',
+            padding: '4px',
+            color: 'error.main',
+            '&:hover': {
+              color: 'error.dark',
+              backgroundColor: 'transparent'
+            },
+            width: '28px',
+            height: '28px',
+            backgroundColor: 'transparent',
+            zIndex: 1
+          }}
+        >
+          <DeleteIcon sx={{ fontSize: '16px' }} />
+        </IconButton>
+      </Tooltip>
+
       <div className="robot-actions">
         {/* Sección de actualizaciones - volvemos al estado original */}
         <div className="action-row top">
@@ -434,25 +463,37 @@ const RobotCard: React.FC<RobotCardProps> = ({
               <EditIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t?.testAgent || "Test Agent"}>
+          <Tooltip title={t?.testAgent || "Test Chat"}>
             <IconButton 
               className="action-button test" 
-              onClick={onChat}
+              onClick={(e) => {
+                e.preventDefault();
+                window.open(`/builder/agents/test/${agentId}`, '_blank');
+              }}
               onMouseEnter={() => handleButtonHover('test')}
               onMouseLeave={handleButtonLeave}
-              sx={{ backgroundColor: 'primary.main', color: 'white', '&:hover': { backgroundColor: 'primary.dark' } }}
+              sx={{ 
+                backgroundColor: 'primary.main', 
+                color: 'white', 
+                '&:hover': { backgroundColor: 'primary.dark' }
+              }}
             >
               <PlayArrowIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t?.delete || "Delete"}>
+          <Tooltip title={t?.monitorAgent || "Monitor"}>
             <IconButton 
-              className="action-button delete" 
-              onClick={onDelete}
-              onMouseEnter={() => handleButtonHover('delete')}
+              className="action-button test" 
+              onClick={onChat}
+              onMouseEnter={() => handleButtonHover('monitor')}
               onMouseLeave={handleButtonLeave}
+              sx={{ 
+                backgroundColor: 'primary.main', 
+                color: 'white', 
+                '&:hover': { backgroundColor: 'primary.dark' } 
+              }}
             >
-              <DeleteIcon />
+              <MonitorIcon />
             </IconButton>
           </Tooltip>
         </div>

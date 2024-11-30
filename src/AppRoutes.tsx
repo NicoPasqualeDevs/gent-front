@@ -8,6 +8,7 @@ import { useAppContext } from '@/context';
 import { useLocation } from 'react-router-dom';
 import LoadingFallback from "@/components/LoadingFallback";
 import AgentsList from "./pages/Builder/Agents/List";
+import TestAgent from "./pages/Builder/TestAgent";
 
 // Interfaces
 interface ProtectedRouteProps {

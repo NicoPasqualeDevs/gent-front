@@ -404,12 +404,14 @@ export interface TranslationType {
       tools: string;
       edit: string;
       test: string;
+      monitor: string;
       delete: string;
     };
     configLLM: string;
     emptyApiKeys: string;
     errorLoadingApiKeys: string;
     knowledge: string;
+    monitorAgent: string;
   };
 }
 

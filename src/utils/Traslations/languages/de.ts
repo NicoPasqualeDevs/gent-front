@@ -394,7 +394,8 @@ const de: TranslationType = {
     useAPI: "API verwenden",
     tools: "Werkzeuge",
     edit: "Bearbeiten",
-    testAgent: "Agent testen",
+    testAgent: "Chat Testen",
+    monitorAgent: "Überwachen",
     delete: "Löschen",
     defaultStatus: "Agent funktioniert normal",
     statusOnline: "Agent online",
@@ -420,6 +421,7 @@ const de: TranslationType = {
       tools: "Greifen Sie auf Werkzeuge zu, mit denen Sie die Fähigkeiten Ihres Assistenten speziell für Ihr Unternehmen erweitern oder automatisieren können",
       edit: "Bearbeiten Sie die Grundkonfiguration Ihres Assistenten",
       test: "Testen und beobachten Sie das Verhalten Ihres Assistenten in Echtzeit und nehmen Sie an Gesprächen teil",
+      monitor: "Überwachen Sie aktive Gespräche und die Leistung Ihres Assistenten in Echtzeit",
       delete: "Löschen Sie Ihren Assistenten von der Plattform, Vorsicht Sie werden die vorgenommenen Einstellungen verlieren"
     }
   }

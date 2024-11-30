@@ -16,23 +16,21 @@ const NotFoundModule: React.FC = () => {
   const t = languages[language as keyof typeof languages].notFound;
 
   useEffect(() => {
-    setData({ countdown: 5 });
+    let countdown = 5;
+    setData({ countdown });
     
     const timer = setInterval(() => {
-      if (state.data) {
-        setData({ 
-          countdown: state.data.countdown - 1 
-        });
+      countdown -= 1;
+      setData({ countdown });
+      
+      if (countdown <= 0) {
+        clearInterval(timer);
+        navigate(-1);
       }
     }, 1000);
 
-    const redirectTimer = setTimeout(() => {
-      navigate(-1);
-    }, 5000);
-
     return () => {
       clearInterval(timer);
-      clearTimeout(redirectTimer);
     };
   }, [navigate, setData]);
 

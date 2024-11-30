@@ -99,7 +99,7 @@ const useTools = () => {
 
   const setToolRelation = useCallback(async (data: ToolRelation): Promise<ApiResponse<void>> => {
     try {
-      return await apiPost('agents/set-tool-Relation/', data);
+      return await apiPost('agents/set-tool-relation/', data);
     } catch (error: unknown) {
       throw new Error(error instanceof Error ? error.message : "Error al establecer la relación de la herramienta");
     }

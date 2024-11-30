@@ -6,6 +6,7 @@ import { ErrorToast } from '@/components/Toast';
 import { languages } from "@/utils/Traslations";
 import useLoadingState from '@/hooks/useLoadingState';
 import Register from '@/pages/Auth/Register';
+import AuthChecker from "@/components/AuthChecker";
 
 // Lazy loaded components
 const AiTeamsList = lazy(() => import("@/pages/Builder/Teams/List"));
@@ -53,14 +54,16 @@ const BuilderModule: React.FC<ModuleProps> = () => {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<AiTeamsList />} />
-      <Route path="/form/:teamName?/:teamId?" element={<AiTeamsForm />} />
-      <Route path="/profile/*" element={<ProfileModule />} />
-      <Route path="/agents/*" element={<AgentsDetailsModule />} />
-      <Route path="/admin-tools-form" element={<ToolsForm />} />
-      <Route path="register-user" element={<Register />} />
-    </Routes>
+    <AuthChecker>
+      <Routes>
+        <Route path="/" element={<AiTeamsList />} />
+        <Route path="/form/:teamName?/:teamId?" element={<AiTeamsForm />} />
+        <Route path="/profile/*" element={<ProfileModule />} />
+        <Route path="/agents/*" element={<AgentsDetailsModule />} />
+        <Route path="/admin-tools-form" element={<ToolsForm />} />
+        <Route path="register-user" element={<Register />} />
+      </Routes>
+    </AuthChecker>
   );
 };
 

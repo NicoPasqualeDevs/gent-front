@@ -394,7 +394,8 @@ const en: TranslationType = {
     useAPI: "Use API",
     tools: "Tools",
     edit: "Edit",
-    testAgent: "Test Agent",
+    testAgent: "Test Chat",
+    monitorAgent: "Monitor",
     delete: "Delete",
     defaultStatus: "Agent working normally",
     statusOnline: "Agent online",
@@ -415,6 +416,7 @@ const en: TranslationType = {
       tools: "Access tools that allow you to expand or automate your assistant's capabilities specifically for your business",
       edit: "Edit your assistant's basic configuration",
       test: "Test and observe your assistant's behavior in real time and participate in conversations",
+      monitor: "Monitor active conversations and your assistant's performance in real time",
       delete: "Delete your assistant from the platform, be careful you will lose the configurations made",
       knowledge: "Manage the knowledge and information your assistant will use to respond"
     },
