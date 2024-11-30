@@ -48,7 +48,6 @@ const ChatView: React.FC = () => {
     isTransitioning: false,
     isInitialized: false,
     sessionId: null,
-    welcomeMessageSent: false
   };
 
   const [state, setState] = useState<ChatViewState>(initialState);
@@ -213,32 +212,6 @@ const ChatView: React.FC = () => {
     initializeSession();
   }, [agentId, createSession, state.sessionId, state.isHistoricalView]);
 
-  useEffect(() => {
-    const sendWelcomeMessage = async () => {
-      if (
-        !state.welcomeMessageSent && 
-        state.sessionId && 
-        state.agentData && 
-        isConnected && 
-        !state.isHistoricalView
-      ) {
-        try {
-          const welcomeMessage = `¡Hola! Soy ${state.agentData.name}. ¿En qué puedo ayudarte hoy?`;
-          sendMessage(welcomeMessage);
-          
-          setState(prev => ({
-            ...prev,
-            welcomeMessageSent: true
-          }));
-        } catch (error) {
-          console.error('Error sending welcome message:', error);
-        }
-      }
-    };
-
-    sendWelcomeMessage();
-  }, [state.sessionId, state.agentData, isConnected, state.welcomeMessageSent, state.isHistoricalView]);
-
   const handleSendMessage = useCallback(async () => {
     if (!state.message.trim() || state.isSending) return;
 
@@ -286,29 +259,37 @@ const ChatView: React.FC = () => {
       const lastMessage = messages[messages.length - 1];
       console.log('New message received in ChatView:', lastMessage);
       
-      const formattedMessage: ChatMessage = {
-        content: lastMessage.content,
-        role: lastMessage.role as 'agent' | 'client',
-        timestamp: lastMessage.timestamp,
-        metadata: {}
-      };
+      const isDuplicate = state.chatHistory?.messages.some(
+        msg => msg.content === lastMessage.content && 
+               msg.role === lastMessage.role &&
+               msg.timestamp === lastMessage.timestamp
+      );
 
-      setState(prev => {
-        const newState = {
-          ...prev,
-          chatHistory: prev.chatHistory ? {
-            ...prev.chatHistory,
-            messages: [...prev.chatHistory.messages, formattedMessage]
-          } : {
-            conversation: state.sessionId || '',
-            messages: [formattedMessage],
-            customer: '',
-            customer_agent: ''
-          }
+      if (!isDuplicate) {
+        const formattedMessage: ChatMessage = {
+          content: lastMessage.content,
+          role: lastMessage.role as 'agent' | 'client',
+          timestamp: lastMessage.timestamp,
+          metadata: {}
         };
-        console.log('Updated chat state:', newState);
-        return newState;
-      });
+
+        setState(prev => {
+          const newState = {
+            ...prev,
+            chatHistory: prev.chatHistory ? {
+              ...prev.chatHistory,
+              messages: [...prev.chatHistory.messages, formattedMessage]
+            } : {
+              conversation: state.sessionId || '',
+              messages: [formattedMessage],
+              customer: '',
+              customer_agent: ''
+            }
+          };
+          console.log('Updated chat state:', newState);
+          return newState;
+        });
+      }
     }
   }, [messages, state.sessionId]);
 
@@ -328,7 +309,6 @@ const ChatView: React.FC = () => {
         isInitialized: false,
         chatHistory: null,
         sessionId: null,
-        welcomeMessageSent: false
       }));
       
       loadData();
