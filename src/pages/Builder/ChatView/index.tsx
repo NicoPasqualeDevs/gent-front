@@ -48,6 +48,7 @@ const ChatView: React.FC = () => {
     isTransitioning: false,
     isInitialized: false,
     sessionId: null,
+    welcomeMessageSent: false
   };
 
   const [state, setState] = useState<ChatViewState>(initialState);

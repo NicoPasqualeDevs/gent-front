@@ -52,8 +52,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
   status,
   selectedApiKey,
   modelAi,
-  onConfigureLLM,
-  onTest
+  onConfigureLLM
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const eyesRef = useRef<HTMLDivElement>(null);
