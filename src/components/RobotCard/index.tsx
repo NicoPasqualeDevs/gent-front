@@ -468,7 +468,7 @@ const RobotCard: React.FC<RobotCardProps> = ({
               className="action-button test" 
               onClick={(e) => {
                 e.preventDefault();
-                window.open(`/builder/agents/test/${agentId}`, '_blank');
+                window.open(`/builder/agents/test-view/${agentId}`, '_blank');
               }}
               onMouseEnter={() => handleButtonHover('test')}
               onMouseLeave={handleButtonLeave}

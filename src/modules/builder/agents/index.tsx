@@ -21,7 +21,7 @@ const AgentsDetailsModule: React.FC = () => {
         <Route path="knowledge/:agentId" element={<Knowledge />} />
 
         {/* Nueva ruta para Test */}
-        <Route path="test/:agentId" element={<TestAgent />} />
+        <Route path="test-view/:agentId" element={<TestAgent />} />
 
         {/* Rutas de herramientas */}
         <Route path="tools">

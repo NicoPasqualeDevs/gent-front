@@ -2,12 +2,12 @@ import { useAppContext } from "@/context";
 import { ApiResponse } from "@/types/Api";
 import { getCsrfToken } from "../apps/access";
 
-// Primero definimos un tipo para los datos que se pueden enviar a la API
 type ApiData = Record<string, unknown> | FormData;
 
 interface ApiConfig extends Record<string, unknown> {
   headers?: Record<string, string>;
   skipCsrf?: boolean;
+  skipAuth?: boolean;
 }
 
 export interface UseApiHook {
@@ -23,7 +23,7 @@ const useApi = (): UseApiHook => {
   const { auth } = useAppContext();
   const token = auth?.token;
   
-  let apiBase : string;
+  let apiBase: string;
 
   if(import.meta.env.MODE === 'development') {
     apiBase = import.meta.env.VITE_DEV_API_BASE;
@@ -32,6 +32,15 @@ const useApi = (): UseApiHook => {
   }
 
   const handleResponse = async <T>(response: Response): Promise<ApiResponse<T>> => {
+    if (response.headers.get('content-type')?.includes('text/html')) {
+      const text = await response.text();
+      return {
+        success: true,
+        message: "Success",
+        data: text as unknown as T
+      };
+    }
+
     if (!response.ok) {
       const error = await response.json();
       throw error;
@@ -54,32 +63,33 @@ const useApi = (): UseApiHook => {
     };
   };
 
-
-
-  // Modificamos getHeaders para manejar el Content-Type basado en el tipo de datos
   const getHeaders = async (data?: ApiData, config?: ApiConfig): Promise<Record<string, string>> => {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json'
-    };
+    const headers: Record<string, string> = {};
+
+    if (!(data instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (!config?.skipCsrf) {
       const csrfToken = await getCsrfToken(apiBase);
-      headers['X-CSRFToken'] = csrfToken;
+      if (csrfToken) {
+        headers['X-CSRFToken'] = csrfToken;
+      }
     }
 
-    if (data instanceof FormData) {
-      delete headers['Content-Type'];
-    }
-
-    if (token) {
+    if (token && !config?.skipAuth) {
       headers['Authorization'] = `Token ${token}`;
     }
 
-    return { ...headers, ...config?.headers };
+    if (config?.headers) {
+      Object.assign(headers, config.headers);
+    }
+
+    return headers;
   };
 
   const apiGet = async <T>(path: string, config?: ApiConfig): Promise<ApiResponse<T>> => {
-    const headers = await getHeaders(config);
+    const headers = await getHeaders(undefined, config);
     const response = await fetch(`${apiBase}${path}`, {
       method: 'GET',
       headers,
