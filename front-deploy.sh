@@ -101,8 +101,13 @@ handle_error $? "Error al instalar dependencias"
 
 # Ejecutar npm audit fix
 echo "🔒 Ejecutando npm audit fix..."
-npm audit fix --force
+npm audit fix
 handle_error $? "Error al ejecutar npm audit fix"
+
+# Si hay vulnerabilidades que requieren --force, intentar arreglarlas
+echo "🔒 Ejecutando npm audit fix --force para vulnerabilidades restantes..."
+npm audit fix --force
+handle_error $? "Error al ejecutar npm audit fix --force"
 
 # Asegurar que terser está instalado correctamente
 echo "📦 Verificando e instalando terser..."
